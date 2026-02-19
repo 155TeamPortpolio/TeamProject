@@ -40,7 +40,7 @@ HRESULT CMiyabi_Ghost::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	Initialize_Effects();
+	//Initialize_Effects();
 
 	return S_OK;
 }

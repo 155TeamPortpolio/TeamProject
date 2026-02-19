@@ -897,9 +897,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Born">
       <UniqueIdentifier>{c2a0b3f3-c8a4-46a4-81b3-aa0f1e1a74dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase">
-      <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Death">
       <UniqueIdentifier>{2db3d7c9-b8f9-4c75-93f2-be7ffd8ff4a9}</UniqueIdentifier>
     </Filter>
@@ -1518,6 +1515,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\Jaeger3">
       <UniqueIdentifier>{76d183b0-7c77-4102-8491-3ea9e304c6ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\06. Tutorial">
+      <UniqueIdentifier>{937f8cb6-d299-481d-8f88-01dfe42cc7ae}</UniqueIdentifier>
+          </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\SpeechBubble">
       <UniqueIdentifier>{a3eec9a0-1ba0-4d0c-95de-cd036d0d0857}</UniqueIdentifier>
     </Filter>
@@ -1526,6 +1526,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Gacha\Page\CharacterIntro">
       <UniqueIdentifier>{dd1f3198-c1c4-4c33-a3b6-a39970004598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase">
+      <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2963,6 +2966,9 @@
     <ClInclude Include="..\Public\Jaeger3.h">
       <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Tutorial_Level.h">
+      <Filter>01. Level\06. Tutorial</Filter>
+          </ClInclude>
     <ClInclude Include="..\Public\UI_SpeechBubble.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\SpeechBubble</Filter>
     </ClInclude>
@@ -4361,6 +4367,9 @@
     <ClCompile Include="..\Private\Jaeger3.cpp">
       <Filter>02. GameObject\Object\Npc\Service\Jaeger3</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Tutorial_Level.cpp">
+      <Filter>01. Level\06. Tutorial</Filter>
+          </ClCompile>
     <ClCompile Include="..\Private\UI_SpeechBubble.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\SpeechBubble</Filter>
     </ClCompile>

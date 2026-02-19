@@ -484,6 +484,7 @@
     <ClInclude Include="..\public\ScottCar.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
     <ClInclude Include="..\Public\UI_GachaCharacterIntro.h" />
+    <ClInclude Include="..\public\Tutorial_Level.h" />
     <ClInclude Include="..\Public\UI_Mouse.h" />
     <ClInclude Include="..\Public\UI_SpeechBubble.h" />
     <ClInclude Include="..\public\ZeroStage_Rest.h" />
@@ -1007,6 +1008,7 @@
     <ClCompile Include="..\private\ScottCar.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
     <ClCompile Include="..\Private\UI_GachaCharacterIntro.cpp" />
+    <ClCompile Include="..\private\Tutorial_Level.cpp" />
     <ClCompile Include="..\Private\UI_Mouse.cpp" />
     <ClCompile Include="..\Private\UI_SpeechBubble.cpp" />
     <ClCompile Include="..\private\ZeroStage_Rest.cpp" />

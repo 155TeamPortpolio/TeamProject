@@ -55,18 +55,7 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 	m_isUseInspector = pDesc->isUseInspector;
 #endif
 
-	switch (m_eEnemyClass)
-	{
-	case Client::CEnemy::ENEMY_CLASS::NORMAL:
-		m_tStatus.iPlayerComboCount = 1;
-		break;
-	case Client::CEnemy::ENEMY_CLASS::ELITE:
-		m_tStatus.iPlayerComboCount = 2;
-		break;
-	case Client::CEnemy::ENEMY_CLASS::BOSS:
-		m_tStatus.iPlayerComboCount = 3;
-		break;
-	}
+	Reset_ComboCount();
 
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Global/Sound/Enemy");
 
@@ -81,6 +70,9 @@ void CEnemy::Awake()
 
 	m_fDeathSqueneDuration = 0.9f;
 	m_fDeathSquenceElapsedTime = 0.f;
+
+	m_fSpawnSequenceDuration = 0.9f;
+	m_fSpawnSequenceElapsedTime = 0.f;
 
 	/* Bind Material Params */
 	m_fUseVanish = 0.f;
@@ -140,6 +132,22 @@ BATTLEOBJ_INFO* CEnemy::GetCharacterOnField()
 	return nullptr;
 }
 
+void CEnemy::Reset_ComboCount()
+{
+	switch (m_eEnemyClass)
+	{
+	case Client::CEnemy::ENEMY_CLASS::NORMAL:
+		m_tStatus.iPlayerComboCount = 1;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::ELITE:
+		m_tStatus.iPlayerComboCount = 2;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::BOSS:
+		m_tStatus.iPlayerComboCount = 3;
+		break;
+	}
+}
+
 void CEnemy::Update_DeathSquence(_float dt)
 {
 	if (m_fDeathSquenceElapsedTime < m_fDeathSqueneDuration)
@@ -164,6 +172,37 @@ void CEnemy::Update_DeathSquence(_float dt)
 	}
 	else
 		m_fDissolveProgress = 1.1f;
+}
+
+void CEnemy::Update_SpawnSequence(_float dt)
+{
+	// 1. 진행 시간이 지속 시간보다 작을 때 실행
+	if (m_fSpawnSequenceElapsedTime < m_fSpawnSequenceDuration)
+	{
+		m_fUseVanish = 1.f;
+		m_fSpawnSequenceElapsedTime += dt;
+
+		_float t = m_fSpawnSequenceElapsedTime / m_fSpawnSequenceDuration;
+
+		_vector3 vStartColor(0.7f, 0.2f, 0.f);
+		_vector3 vEndColor(0.2f, 0.1f, 0.f);  
+
+		m_fEmissiveStrength = Math::Lerp(1.f, 0.f, Math::ApplyEase(EaseType::InQuint, t));
+		m_vEmissiveColor = _vector3::Lerp(vStartColor, vEndColor, Math::ApplyEase(EaseType::OutSine, t));
+
+		m_fDissolveProgress = Math::Lerp(1.0f, 0.0f, Math::ApplyEase(EaseType::Linear, t));
+
+		_float glitchSpeed = Math::Lerp(50.f, 0.f, Math::ApplyEase(EaseType::OutQuad, t));
+		_float glitchStrength = Math::Lerp(0.1f, 0.0f, Math::ApplyEase(EaseType::OutQuad, t));
+		RenderSystem()->Set_GlitchDesc({ glitchSpeed, glitchStrength });
+	}
+	else
+	{
+		m_fDissolveProgress = 0.0f;
+		m_fEmissiveStrength = 0.0f;
+		RenderSystem()->Set_GlitchDesc({ 0.f, 0.f });
+		m_fUseVanish = 0.f;
+	}
 }
 
 void CEnemy::ComputeTargetingInfo()
@@ -536,6 +575,7 @@ void CEnemy::ManageGroggy(const _float dt)
 		m_tStatus.isGroggy = true;
 		// UI 효과용
 		m_tStatus.isGroggyStay = true;
+		Reset_ComboCount();
 	}
 
 	if (true == m_tStatus.isGroggy)

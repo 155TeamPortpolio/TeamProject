@@ -84,13 +84,12 @@ public:
     void                SetParryEnable(_bool is) { m_isParryEnable = is; }
     // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
     void                Decrease_ComboCount() { --m_tStatus.iPlayerComboCount; }
-    
-    
-
+    void                Reset_ComboCount();
 
     // 몬스터 사망 연출용, 머터리얼 파라미터 업데이트
     void Active_Vanish() { m_fUseVanish = 1.f; }
     virtual void Update_DeathSquence(_float dt);
+    virtual void Update_SpawnSequence(_float dt);
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
@@ -157,6 +156,10 @@ protected:
 
     _float m_fDeathSquenceElapsedTime{};
     _float m_fDeathSqueneDuration{};
+    _float m_fSpawnSequenceElapsedTime{};
+    _float m_fSpawnSequenceDuration{};
+
+
     vector<_float3> m_EmissiveColors;
 #ifdef _USING_GUI
     _bool m_isUseInspector = { false };

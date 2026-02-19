@@ -256,6 +256,7 @@ void CJaneDoeState_Rush03_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_03")
         .Apply();
+    pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
 }
 
 void CJaneDoeState_Rush03_Start::Update(CJaneDoe* pOwner, _float dt)
@@ -264,7 +265,39 @@ void CJaneDoeState_Rush03_Start::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    if (IsCrossAnimProgress(0.12f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
+    if (IsCrossAnimProgress(0.32f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    }
+    if (IsCrossAnimProgress(0.47f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
+    if (IsCrossAnimProgress(0.6f))
+    {
+        pOwner->Clear_MotionBlur();
+    }
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "MotionBlur")
+        {
+            pOwner->Add_MotionBlur();
+        }
+    }
+
     Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Rush03_Start::Exit(CJaneDoe* pOwner)
+{
+    pOwner->Clear_MotionBlur();
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
 }
 
 void CJaneDoeState_Rush03_Start::Update_Effects(CJaneDoe* pOwner)

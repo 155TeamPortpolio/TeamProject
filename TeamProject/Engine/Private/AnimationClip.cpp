@@ -136,11 +136,21 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 {
 	for (auto& Event : m_Events)
 	{
-		//이전 프레임엔 작았고 현재프레임엔 크면
-		if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
+		_bool bTrigger = false;
+
+		if (PrevTrackPos <= CurTrackPos) //평시 체크
 		{
-			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
+			if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
+				bTrigger = true;
 		}
+		else // 루프시 체크
+		{
+			if (Event.EventTime > PrevTrackPos || Event.EventTime <= CurTrackPos)
+				bTrigger = true;
+		}
+
+		if (bTrigger)
+			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
 	}
 }
 
