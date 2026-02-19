@@ -17,6 +17,9 @@ private:
 	virtual ~CUI_GachaCharacterIntro() DEFAULT;
 
 public:
+	void Play_Video(CUI_GachaPage::CHANNEL eChannel);
+
+public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
 	virtual void	Awake()							 override;

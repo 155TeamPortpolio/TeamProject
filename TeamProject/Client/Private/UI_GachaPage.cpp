@@ -28,7 +28,7 @@ void CUI_GachaPage::Select_Channel(class CUI_GachaChannel* pSelected)
     m_pSelectedChannel->UI_Active();
 
     if (m_pIntro)
-        m_pIntro->UI_Active();
+        m_pIntro->UI_Active();// Play_Video(m_pSelectedChannel->Get_Channel());// m_pIntro->UI_Active();
 }
 
 HRESULT CUI_GachaPage::Initialize_Prototype()
@@ -53,7 +53,7 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Create_CharacterIntro();
+    //Create_CharacterIntro();
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha.json")));
 
