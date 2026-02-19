@@ -31,10 +31,7 @@ HRESULT CBattlePlayer::Initialize()
     if (m_BattleCharacters.empty()) {
         vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
         SetBattleCharacters(BattleCharacters);
-   }
-   
-   
-
+    }
     return S_OK;
 }
 
@@ -815,7 +812,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
     }
 
     m_pCurrentCharacter->Set_MainCharacter(false);
-    m_pCurrentCharacter->On_SwitchOut();
+    m_pCurrentCharacter->On_SwitchOut(m_bReserveParry);
     m_input.ResetBuffer();
 
     if (!m_bChainParry)

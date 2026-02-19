@@ -182,7 +182,7 @@ public: // 행동 이벤트
     virtual void    On_SwitchIn(SWITCH eType) {}
     virtual void    On_ParryImpact() {}
     virtual void    On_ChainParry() {}
-    virtual void    On_SwitchOut();
+    virtual void    On_SwitchOut(_bool isParry = false);
     virtual void    On_Ultimate();
     virtual void    On_Special() {}
     virtual void    On_Hit(DAMAGE_TYPE eType) {}
@@ -241,6 +241,8 @@ protected:
     // 컴포넌트
     CAnimator3D* m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
+    _int                  m_iDefaultMask = 0xFFFFFFFF -
+        (ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK));
     // 기본 정보
     string      m_strAnimName = "";
     string      m_strName = "";
