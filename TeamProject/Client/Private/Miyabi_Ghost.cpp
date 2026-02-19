@@ -4,7 +4,9 @@
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Animator3D.h"
+#include "ObjectContainer.h"
 
+#include "EffectContainer.h"
 
 CMiyabi_Ghost::CMiyabi_Ghost()
 	: CGameObject()
@@ -25,6 +27,7 @@ HRESULT CMiyabi_Ghost::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CAnimator3D>();
 	Add_Component<CRigidBody>();
+	Add_Component<CObjectContainer>();
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Miyabi_Ghost.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Miyabi_Ghost.mat");
@@ -36,6 +39,8 @@ HRESULT CMiyabi_Ghost::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
+
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -69,6 +74,7 @@ void CMiyabi_Ghost::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	FollowTarget(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CMiyabi_Ghost::Late_Update(_float dt)
@@ -113,6 +119,17 @@ void CMiyabi_Ghost::Update_Dissolve(_float dt)
 		m_fDissolveProgress += 10.f * dt;
 		m_fDissolveProgress = min(m_fDissolveProgress, 1.f);
 	}
+}
+
+void CMiyabi_Ghost::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("ghost_fire.json")
+		.Build("Ghost_Fire");
+
+	pObjectContainer->Add_Child(pEffect);
 }
 
 CMiyabi_Ghost* CMiyabi_Ghost::Create()

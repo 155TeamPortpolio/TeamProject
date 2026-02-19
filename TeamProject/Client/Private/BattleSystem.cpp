@@ -12,6 +12,7 @@
 #include "BattleFXFlow.h"
 #include"BattleSystem_Panel.h"
 #include "AudioSource.h"
+#include "CamDirector.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -148,6 +149,12 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 	}
 }
 
+void CBattleSystem::SetBattleCharacters(const vector<CHARACTER>& eCharacters)
+{
+	if(m_pBattlePlayer)
+		m_pBattlePlayer->SetBattleCharacters(eCharacters);
+}
+
 void CBattleSystem::SetChainParryToPlayer(_bool onStart)
 {
 	if (!m_pBattlePlayer)
@@ -163,7 +170,7 @@ void CBattleSystem::SetChainParryToPlayer(_bool onStart)
 void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc)
 {
 	_float fRadiusSq = fRadius * fRadius;
-
+	_uint HitCount = {};
 	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
 		_float3 vDiff = info.vPos - vCenter;
@@ -171,7 +178,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 
 		if (fDistSq > fRadiusSq)
 			continue;
-
+		HitCount++;
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
 		{
@@ -189,7 +196,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			}
 		}
 	}
-	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+	if (HitCount != 0)
 		HitVFX(hitDesc.eDamageType);
 }
 
@@ -199,6 +206,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 	_float fCosHalfAngle = cosf(XMConvertToRadians(fAngle * 0.5f));
 	_vector3 vDirNorm = vDir;
 	vDirNorm.Normalize();
+	_uint HitCount = {};
 
 	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
@@ -217,6 +225,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 
 		if (vToTarget.Dot(vDirFlat) < fCosHalfAngle)
 			continue;
+		HitCount++;
 
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
@@ -235,7 +244,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			}
 		}
 	}
-	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+	if (HitCount!=0)
 		HitVFX(hitDesc.eDamageType);
 }
 
@@ -243,6 +252,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 {
 	_quaternion qInverse;
 	qRotation.Inverse(qInverse);
+	_uint HitCount = {};
 
 	for (auto& info : m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER])
 	{
@@ -253,6 +263,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			fabs(vLocal.z) > vHalfExtents.z)
 			continue;
 
+		HitCount++;
 		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
 		if (pEnemy)
 		{
@@ -270,7 +281,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			}
 		}
 	}
-	if (!m_BattleSnapShots[BATTLE_OBJ_TYPE::MONSTER].empty())
+	if (HitCount!=0)
 		HitVFX(hitDesc.eDamageType);
 }
 
@@ -467,10 +478,11 @@ vector<BATTLEOBJ_INFO>& CBattleSystem::FindBattleType(BATTLE_OBJ_TYPE eObjType)
 _bool CBattleSystem::RemoveFromListSwapPop(TypeVector& infoList, _uint removeIndex, BATTLE_OBJ_TYPE objType)
 {
 	const _uint lastIndex = (_uint)infoList.size() - 1;
+	if (removeIndex >= infoList.size())
+		return true;
 	if (removeIndex != lastIndex)
 	{
 		infoList[removeIndex] = infoList[lastIndex];
-
 		OBJECT_HANDLE movedHandle = infoList[removeIndex].hObject; 
 		auto itMoved = m_BattleObjIndex.find(movedHandle);
 		if (itMoved != m_BattleObjIndex.end())

@@ -309,14 +309,64 @@
           "EventTag": "CheckCombo"
         },
         {
-          "EventTime": 1.2293696403503418,
+          "EventTime": 0.12373224645853043,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.7599999904632568,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
         },
         {
-          "EventTime": 1.2293696403503418,
+          "EventTime": 0.7599999904632568,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8326185345649719,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        },
+        {
+          "EventTime": 0.19837555289268494,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.22910980880260468,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2514619827270508,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2710201144218445,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.30454838275909424,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7068875432014465,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7432098388671875,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.8745288848876953,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -340,9 +390,24 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01",
       "Events": [
         {
+          "EventTime": 0.0,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.06959064304828644,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.10916179418563843,
           "EventType": "Notify",
           "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.16510720551013947,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.26471734046936035,
@@ -364,6 +429,11 @@
           "EventTag": "RHandStart"
         },
         {
+          "EventTime": 0.07953216880559921,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.08187134563922882,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
@@ -377,6 +447,26 @@
           "EventTime": 0.09122807532548904,
           "EventType": "Notify",
           "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.11461988836526871,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.1801169514656067,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.24327486753463745,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2947368621826172,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.39532163739204407,
@@ -398,6 +488,16 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_03",
       "Events": [
         {
+          "EventTime": 0.12144248932600021,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.14463937282562256,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.17056529223918915,
           "EventType": "Notify",
           "EventTag": "LHandStart"
@@ -406,6 +506,16 @@
           "EventTime": 0.17056529223918915,
           "EventType": "Notify",
           "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.19922025501728058,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.23879142105579376,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.27017542719841003,
@@ -432,6 +542,11 @@
           "EventTag": "LHandStart"
         },
         {
+          "EventTime": 0.16725145280361176,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.20272904634475708,
           "EventType": "Notify",
           "EventTag": "RHandStart"
@@ -442,9 +557,24 @@
           "EventTag": "LHandEnd"
         },
         {
+          "EventTime": 0.23313839733600616,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.25341129302978516,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.26185837388038635,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.2669265568256378,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.4476933181285858,
@@ -476,6 +606,21 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_05",
       "Events": [
         {
+          "EventTime": 0.054061081260442734,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.06588693708181381,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.09460689127445221,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.11319037526845932,
           "EventType": "Notify",
           "EventTag": "LFootStart"
@@ -486,9 +631,29 @@
           "EventTag": "LHandStart"
         },
         {
+          "EventTime": 0.14022092521190643,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.20779727399349213,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
           "EventTime": 0.22300195693969727,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.2939571142196655,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3057829737663269,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.4105263352394104,
@@ -518,6 +683,56 @@
           "EventTime": 0.13567252457141876,
           "EventType": "Notify",
           "EventTag": "RFootStart"
+        },
+        {
+          "EventTime": 0.20116959512233734,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.2502923905849457,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.28304094076156616,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3461988568305969,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.40000003576278687,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5005847811698914,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5169590711593628,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5356725454330444,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.5567251443862915,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.8584795594215393,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.8608187437057495,
@@ -704,7 +919,53 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Back_03",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.03872644528746605,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.07000000029802322,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.10000000149011612,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.10999999940395355,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.12586094439029694,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.16458739340305328,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.17426900565624237,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.18395061790943146,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.19363223016262054,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Front_01",
@@ -716,7 +977,58 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Front_03",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.07076023519039154,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.10220922529697418,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.12579597532749176,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.14000000059604645,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.1599999964237213,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.16510720551013947,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.18083171546459198,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.18869395554065704,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.1965562105178833,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.26731643080711365,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Hit_H_Back",

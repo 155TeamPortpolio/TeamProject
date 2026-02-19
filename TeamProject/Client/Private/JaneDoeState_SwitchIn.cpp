@@ -98,8 +98,8 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
-    if (pOwner->Is_Passion())
-        pOwner->Add_MotionBlur();
+    //if (pOwner->Is_Passion())
+    //    pOwner->Add_MotionBlur();
 }
 
 void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)

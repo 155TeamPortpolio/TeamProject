@@ -29,6 +29,10 @@ void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
 
         m_pSubStateMachine->Set_DefaultState("UltimateAttack_Start");
     }
+
+    pOwner->Increase_Passion(100.f);
+    pOwner->Set_Salchow(true);
+
     __super::Enter(pOwner);
 
     CamDirector()->RequestSequence(CamSeqType::Ultimate);

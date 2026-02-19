@@ -7,6 +7,7 @@
 #include "CamDialogueController.h"
 #include "CamParryController.h"
 #include "CamWipeOutController.h"
+#include "CamSwitchController.h"
 
 NS_BEGIN(Client)
 
@@ -72,14 +73,20 @@ public:
     void          Update(_float dt);
 
     void          StartBattleIntro(CamSeqType type);
+    // Dialog
     void          StartDialog();
-
+    void          EndDialog();
+    // WipeOut
     void          BeginWipeOut() { m_wipeOut.Begin(); }
     void          EndWipeOut() { m_wipeOut.End(); }
-    void          EndDialog();
-
+    // Parry
     void          StartParry();
     void          EndParry() { m_parry.End(); }
+    // Switch
+    void          EnterSwitch();
+    void          SwitchTo();
+    void          EndSwitch();
+    _bool         IsSwitchMode() const { return m_switchMode; }
 
     void          AbortSequenceToOrbit(_bool resetTime);
 
@@ -101,6 +108,7 @@ private:
     CCamDialogueController m_dialogue{};
     CamParryController     m_parry{};
     CamWipeOutController   m_wipeOut{};
+    CamSwitchController    m_switch{};
 
     OBJECT_HANDLE          m_spaceRefHandle{};
     CamType                m_returnCamType = CamType::None;
@@ -112,6 +120,7 @@ private:
     string                 m_lastEndedKey{};
     _bool                  m_seqInputLocked = false;
     _bool                  m_dialogueUnlockPending = false;
+    _bool                  m_switchMode = false;
 
     inline static const string kEmpty{};
 }; 

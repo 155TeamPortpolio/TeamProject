@@ -257,7 +257,12 @@ PS_OUT_RESULT PS_ADDICTIVECOLOR(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+    float4 v3DUI = UI3DTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (v3DUI.a > 0.001)
+    {
+        Out.vResult = scene;
+        return Out;
+    }
     if(bSkinned)
     {
         float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
@@ -327,6 +332,7 @@ PS_OUT_RESULT PS_DISTORTION(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
+
     float4 distortionDesc = DistortionCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 effect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     float2 distortion = distortionDesc.rg;
@@ -335,6 +341,12 @@ PS_OUT_RESULT PS_DISTORTION(PS_IN In)
     float2 distortedUV = saturate(In.vTexcoord + distortion);
    
     float4 scene = FinalTexture.Sample(DefaultSampler, distortedUV);
+    float4 v3DUI = UI3DTexture.Sample(DefaultSampler, distortedUV);
+    if(v3DUI.a >0.001)
+    {
+        Out.vResult = scene;
+        return Out;
+    }
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, distortedUV);
     scene.rgb = scene.rgb + hdrBloom.rgb * 0.3;
     scene.rgb = effect.rgb + scene.rgb * (1.f - effect.a);

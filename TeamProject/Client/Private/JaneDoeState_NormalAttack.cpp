@@ -91,6 +91,18 @@ void CJaneDoeState_NormalAttack::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
+    if (pOwner->Is_Passion())
+    {
+        for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+        {
+            if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+            if (Event.Tag == "MotionBlur")
+            {
+                pOwner->Add_MotionBlur();
+            }
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
@@ -138,6 +150,7 @@ void CJaneDoeState_Attack_01::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack_01::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Clear_MotionBlur();
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
 }
 
@@ -218,6 +231,7 @@ void CJaneDoeState_Attack_02::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack_02::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Clear_MotionBlur();
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(1);
 }
 
@@ -299,6 +313,7 @@ void CJaneDoeState_Attack_03::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack_03::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Clear_MotionBlur();
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
 }
 
@@ -404,6 +419,7 @@ void CJaneDoeState_Attack_04::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack_04::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Clear_MotionBlur();
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
 }
 
@@ -519,11 +535,23 @@ void CJaneDoeState_Attack_05::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.1f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    }
+
+    if (IsCrossAnimProgress(0.3f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
+
     Update_Effects(pOwner);
 }
 
 void CJaneDoeState_Attack_05::Exit(CJaneDoe* pOwner)
 {
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    pOwner->Clear_MotionBlur();
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
 }
 
@@ -623,6 +651,7 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Attack_06::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Clear_MotionBlur();
     // 마스크 복구
     if(m_pOwnerStateMachine->Get_Bool("Penetrate"))
     {

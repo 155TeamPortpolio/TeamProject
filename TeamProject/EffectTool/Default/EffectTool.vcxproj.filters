@@ -55,6 +55,9 @@
     <Filter Include="02. Object\ToolMap">
       <UniqueIdentifier>{6db58492-a663-44bb-9d7a-66a1801b4c58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\Water">
+      <UniqueIdentifier>{bb64801f-60e1-4564-8de4-0211eacbbc8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -156,6 +159,9 @@
     <ClInclude Include="..\Public\ToolMap.h">
       <Filter>02. Object\ToolMap</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Tool_WaterWave.h">
+      <Filter>02. Object\Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -238,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ToolMap.cpp">
       <Filter>02. Object\ToolMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tool_WaterWave.cpp">
+      <Filter>02. Object\Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

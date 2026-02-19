@@ -44,6 +44,7 @@ public: //setter
 	void	SetActive(_bool is);
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
+	void	SetBattleCharacters(const vector<CHARACTER>& eCharacters);
 	void	SetChainParryToPlayer(_bool onStart);
 public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
@@ -98,6 +99,7 @@ public:
 	const decltype(m_BattleObjIndex)& Debug_GetIndexMap() const { return m_BattleObjIndex; }
 	CBattleFXFlow* Debug_GetFXFlow() const { return m_pFXFlow; }
 	_bool Debug_IsActive() const { return m_isActive; }
+	const array<string, ENUM(BATTLE_OBJ_TYPE::END)>& Get_BattleLayer() { return m_pFXFlow->Get_BattleLayer(); };
 #endif
 
 private:

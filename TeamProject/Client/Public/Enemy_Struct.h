@@ -73,7 +73,7 @@ namespace Client
     {
         _float      iMaxHP = { 100.f };
         _float      iNowHP = iMaxHP;
-        _int        iGroggyValue = {};
+        _float        iGroggyValue = {};
         _bool       isGroggy = {};
         _bool       isGroggyStay = { false }; // ForUI
         _int        iPlayerComboCount = {};

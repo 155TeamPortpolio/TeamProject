@@ -788,7 +788,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
         vToCharacter.Normalize();
 
         // bNext(Left) : +60도, !bNext(Right) : -60도 회전
-        _float fAngle = XMConvertToRadians(bNext ? 60.f : -60.f);
+        _float fAngle = XMConvertToRadians(bNext ? 45.f : -45.f);
         _float fCos = cosf(fAngle);
         _float fSin = sinf(fAngle);
 
@@ -797,7 +797,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
         vSwitchDir.y = 0.f;
         vSwitchDir.z = -vToCharacter.x * fSin + vToCharacter.z * fCos;
 
-        _vector3 vSwitch = vTargetPos + vSwitchDir * 2.f;
+        _vector3 vSwitch = vTargetPos + vSwitchDir * 5.f;
         m_vSwitchPosition = XMVectorSet(vSwitch.x, vCharacterPos.y + 1.f, vSwitch.z, 1.f);
 
         // 스폰 지점에서 몬스터를 바라보는 방향

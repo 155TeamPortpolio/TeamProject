@@ -16,7 +16,7 @@ HRESULT CVideoPanel::Initialize()
     m_PlayerID = VideoService()->CreatePlayer(decoder);
 	m_pPlayer=  VideoService()->GetPlayer(m_PlayerID);
 	CVideoPlayer::VIDEO_PLAYER_DESC desc;
-	desc.filePath = "../Bin/Resources/Video/test.mp4"; // 더미는 무시함
+	desc.filePath = "../Bin/Resources/Video/Ramen.mp4"; 
 	desc.loop = true;
 
 	m_pPlayer->Open(desc);

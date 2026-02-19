@@ -47,9 +47,12 @@ public:
             _float minPivotAboveFootY = 0.25f;
             _float minCamAboveFootY = 0.05f;
 
+            _float chainEnterCamAboveFootY = 0.25f;
+
             EaseType approachEase = EaseType::InOutSine;
             EaseType impactEase = EaseType::OutSine;
         } common;
+
         struct Impact
         {
             _float punchDistDelta = 1.3f;
@@ -59,6 +62,10 @@ public:
 
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
+
+            _float chainEndCamAboveFootY = 0.35f;
+            _float chainTargetCamYMix = 1.00f;
+
             _float pivotDropY = 0.12f;
 
             _float recoverRollSec = 0.25f;

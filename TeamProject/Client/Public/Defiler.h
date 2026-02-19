@@ -74,7 +74,6 @@ private:
 
 public:
     void ResetAllFlags();
-    void Start_WaveTime();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -97,6 +96,7 @@ private:
         ENUM(COLLISION_GROUP::PLAYER) | 
         ENUM(COLLISION_GROUP::PLAYER_ATTACK);
     _bool m_isRecovering = false;
+    _float m_pendToRecover = {};
 
     _float m_BaseY = {};
 
