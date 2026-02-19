@@ -84,9 +84,7 @@ public:
     void                SetParryEnable(_bool is) { m_isParryEnable = is; }
     // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
     void                Decrease_ComboCount() { --m_tStatus.iPlayerComboCount; }
-    
-    
-
+    void                Reset_ComboCount();
 
     // 몬스터 사망 연출용, 머터리얼 파라미터 업데이트
     void Active_Vanish() { m_fUseVanish = 1.f; }

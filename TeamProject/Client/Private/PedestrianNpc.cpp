@@ -79,8 +79,8 @@ void CPedestrianNpc::Calc_Destination(_float dt)
         m_CurPointIdx = 0;
 
     const _uint indexA = m_CurPointIdx;
-    const _uint indexB = (indexA + 1 <= lastIndex) ? (indexA + 1) : 0;
-    const _uint indexC = (indexB + 1 <= lastIndex) ? (indexB + 1) : 0;
+    const _uint indexB = (indexA + 1 <= lastIndex) ? (indexA + 1) : indexA;
+    const _uint indexC = (indexB + 1 <= lastIndex) ? (indexB + 1) : indexB;
 
     const _vector3 pointA = route[indexA];
     const _vector3 pointB = route[indexB];
@@ -193,7 +193,7 @@ void CPedestrianNpc::Calc_Destination(_float dt)
 
     if (passedB)
     {
-        if (indexB == 0)
+        if (indexB == lastIndex)
         {
             SnapToStart();
             return;

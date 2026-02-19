@@ -77,6 +77,11 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01",
       "Events": [
         {
+          "EventTime": 0.15000000596046448,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_Spin_1.wav"
+        },
+        {
           "EventTime": 0.2526315748691559,
           "EventType": "Notify",
           "EventTag": "LFootStart"
@@ -144,6 +149,11 @@
           "EventTime": 1.0058479309082031,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_Spin_2.wav"
         }
       ]
     },
@@ -319,6 +329,26 @@
           "EventTag": "LFootStart"
         },
         {
+          "EventTime": 0.12373224645853043,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8326185345649719,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        },
+        {
           "EventTime": 0.19837555289268494,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -352,21 +382,6 @@
           "EventTime": 0.7432098388671875,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.7599999904632568,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.7599999904632568,
-          "EventType": "Notify",
-          "EventTag": "RFootEnd"
-        },
-        {
-          "EventTime": 0.8326185345649719,
-          "EventType": "Notify",
-          "EventTag": "CheckCombo"
         },
         {
           "EventTime": 0.8745288848876953,

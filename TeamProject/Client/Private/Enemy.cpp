@@ -55,18 +55,7 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 	m_isUseInspector = pDesc->isUseInspector;
 #endif
 
-	switch (m_eEnemyClass)
-	{
-	case Client::CEnemy::ENEMY_CLASS::NORMAL:
-		m_tStatus.iPlayerComboCount = 1;
-		break;
-	case Client::CEnemy::ENEMY_CLASS::ELITE:
-		m_tStatus.iPlayerComboCount = 2;
-		break;
-	case Client::CEnemy::ENEMY_CLASS::BOSS:
-		m_tStatus.iPlayerComboCount = 3;
-		break;
-	}
+	Reset_ComboCount();
 
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Global/Sound/Enemy");
 
@@ -138,6 +127,22 @@ BATTLEOBJ_INFO* CEnemy::GetCharacterOnField()
 			return &info;
 	}
 	return nullptr;
+}
+
+void CEnemy::Reset_ComboCount()
+{
+	switch (m_eEnemyClass)
+	{
+	case Client::CEnemy::ENEMY_CLASS::NORMAL:
+		m_tStatus.iPlayerComboCount = 1;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::ELITE:
+		m_tStatus.iPlayerComboCount = 2;
+		break;
+	case Client::CEnemy::ENEMY_CLASS::BOSS:
+		m_tStatus.iPlayerComboCount = 3;
+		break;
+	}
 }
 
 void CEnemy::Update_DeathSquence(_float dt)
@@ -536,6 +541,7 @@ void CEnemy::ManageGroggy(const _float dt)
 		m_tStatus.isGroggy = true;
 		// UI È¿°ú¿ë
 		m_tStatus.isGroggyStay = true;
+		Reset_ComboCount();
 	}
 
 	if (true == m_tStatus.isGroggy)

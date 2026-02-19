@@ -82,9 +82,7 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey() , "../Bin/Resources/Zero/Enemy/Claymore/Sound");
-	
 	Get_Component<CAudioSource>()->Slot("claymore_Spawn.wav").Attribute3D(true).Loop(false).Play();
-
 
 	return S_OK;
 }
@@ -106,6 +104,7 @@ void CClaymore::Update(_float dt)
 
 	__super::Update(dt);
 
+	ManageTutorialMode(dt);
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
 }
@@ -126,6 +125,41 @@ void CClaymore::Render_GUI()
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	GUI_DebugButton();
+
+#pragma region Tutorial
+	ImGui::SeparatorText("Tutorial");
+	ImGui::Checkbox("Tutorial##SetTutorial", &m_isTutorial);
+	const _char* charTutorialLabels[] =
+	{
+		"Extreme Evade",
+		"Extreme Support",
+		"Decibel Ultimate",
+		"Groggy Combo",
+	};
+
+	_int kCount = static_cast<_int>(TUTORIAL::END);
+	_int cur = static_cast<_int>(m_eCurTutorial);
+	if (cur < 0 || cur >= kCount) cur = 0;
+
+	const _char* preview = charTutorialLabels[cur];
+	if (ImGui::BeginCombo("Tutorial##SelectTutorialMode", preview))
+	{
+		for (int n = 0; n < kCount; ++n)
+		{
+			const bool selected = (cur == n);
+			if (ImGui::Selectable(charTutorialLabels[n], selected))
+			{
+				cur = n;
+				SetTutorialMode(static_cast<TUTORIAL>(cur));
+			}
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+#pragma endregion
+
 #pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
@@ -138,7 +172,7 @@ void CClaymore::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
 
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -146,6 +180,7 @@ void CClaymore::Render_GUI()
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
+		ImGui::Text("ComboCount : %d", m_tStatus.iPlayerComboCount);
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
@@ -313,6 +348,14 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
 
+	if (m_isTutorial)
+	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP;
+
+		if (m_eCurTutorial != TUTORIAL::GROGGY_COMBO)
+			m_tStatus.iGroggyValue = 0.f;
+	}
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -335,6 +378,25 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
+	}
+}
+
+void CClaymore::SetTutorialMode(TUTORIAL eMode)
+{
+	if (!m_isTutorial || eMode == TUTORIAL::END)
+		return;
+
+	m_eCurTutorial = eMode;
+
+	if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
+	{
+		m_eEnemyClass = ENEMY_CLASS::BOSS;
+		m_tStatus.iGroggyValue = 99.f;
+	}
+	else
+	{
+		m_eEnemyClass = ENEMY_CLASS::NORMAL;
+		m_tStatus.iGroggyValue = 0.f;
 	}
 }
 
@@ -434,22 +496,28 @@ void CClaymore::Update_States(_float dt)
 
 void CClaymore::ControlState(const _float dt)
 {
-	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
-		0 >= m_tStatus.iNowHP)
+	if (!m_isTutorial)
 	{
-		RequestRemoveOnDeathToBattleSystem();
-		m_pStateMachine->Change_State("Death");
+		if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
+			0 >= m_tStatus.iNowHP)
+		{
+			RequestRemoveOnDeathToBattleSystem();
+			m_pStateMachine->Change_State("Death");
+		}
+
+		if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
+			"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
+			true == m_tStatus.isGroggy)
+			m_pStateMachine->Change_State("Groggy");
 	}
-
-	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
-		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
-		true == m_tStatus.isGroggy)
-		m_pStateMachine->Change_State("Groggy");
-
 
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
+		// Æ©Åä¸®¾ó Áß ±×·Î±â¿Í ±Ã±Ø±âÇÒ ¶© »óÅÂº¯°æ X
+		if (m_isTutorial &&
+			(m_eCurTutorial == TUTORIAL::GROGGY_COMBO || m_eCurTutorial == TUTORIAL::DECIBEL_ULTIMATE))
+			return;
 
 		m_vIdleTime.y += dt;
 
@@ -457,8 +525,8 @@ void CClaymore::ControlState(const _float dt)
 		{
 			if (true == m_pStateMachine->Get_Bool("Chase"))
 				m_pStateMachine->Set_Trigger("Idle_To_Chase");
-			else if (true == m_pStateMachine->Get_Bool("Death"))
-				m_pStateMachine->Set_Trigger("Idle_To_Death");
+			//else if (true == m_pStateMachine->Get_Bool("Death"))
+			//	m_pStateMachine->Set_Trigger("Idle_To_Death");
 			else if ("Attack" != m_pStateMachine->Get_PrevStateName())
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			else
@@ -479,4 +547,32 @@ void CClaymore::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
+}
+
+void CClaymore::ManageTutorialMode(const _float dt)
+{
+	if (!m_isTutorial)
+		return;
+
+ 	if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
+	{
+		if (m_isPrevGroggy == true && m_tStatus.isGroggy == false)
+			m_isTutorialGroggyCool = true;
+
+		if (m_isTutorialGroggyCool)
+		{
+			m_vTutorialGroggyTime.y += dt;
+
+			if (m_vTutorialGroggyTime.x <= m_vTutorialGroggyTime.y)
+			{
+				m_vTutorialGroggyTime.y = 0.f;
+				m_tStatus.iGroggyValue = 99.f;
+				m_isTutorialGroggyCool = false;
+			}
+		}
+
+		m_isPrevGroggy = m_tStatus.isGroggy;
+
+	}
+
 }
