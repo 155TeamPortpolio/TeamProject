@@ -53,12 +53,27 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		_float Prev = m_pSelectAnimator->Get_AnimLayers()[0].fPrevTrackPosition;
 		if (m_iCurClipIndex != -1)
 		{
-			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
-				if (Prev < Event.EventTime && Event.EventTime <= Cur) {
-					if (Event.EventType == CLIP_EVENT_TYPE::SOUND) {
-						auto AS = m_pSelectModel->Get_Component<CAudioSource>();
-						if (AS) AS->Play(Event.EventTag);
-					}
+			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events)
+			{
+				bool bTrigger = false;
+
+				if (Prev <= Cur)
+				{
+					// 老馆 柳青
+					if (Prev < Event.EventTime && Event.EventTime <= Cur)
+						bTrigger = true;
+				}
+				else
+				{
+					// 风橇 惯积 (Prev > Cur)
+					if (Event.EventTime > Prev || Event.EventTime <= Cur)
+						bTrigger = true;
+				}
+
+				if (bTrigger && Event.EventType == CLIP_EVENT_TYPE::SOUND)
+				{
+					auto AS = m_pSelectModel->Get_Component<CAudioSource>();
+					if (AS) AS->Play(Event.EventTag);
 				}
 			}
 		}

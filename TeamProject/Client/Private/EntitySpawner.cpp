@@ -282,10 +282,10 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 
 	auto Slot = Desc.SlotDataValues.find("AmbientActorSlot");
 
-	CAmbientActor::AMBIENTACTOR_DESC* pAmbientActorDesc = new CAmbientActor::AMBIENTACTOR_DESC;
+	CAmbientActor::AMBIENTACTOR_DESC* pAmbientActorDesc = nullptr;
 
 	if (Slot != Desc.SlotDataValues.end()) {
-		CAmbientActor::AMBIENTACTOR_DESC* pAmbientActorDesc = new CAmbientActor::AMBIENTACTOR_DESC;
+		pAmbientActorDesc = new CAmbientActor::AMBIENTACTOR_DESC;
 
 		for (auto tFieldData : Slot->second) {
 			if (tFieldData.TagName == "AnimationName")
@@ -303,6 +303,7 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 		.Rotate(Desc.vRotation)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
+
 	if (!Object)
 		return OBJECT_HANDLE{};
 
