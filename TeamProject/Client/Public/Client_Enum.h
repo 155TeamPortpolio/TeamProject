@@ -36,6 +36,8 @@ namespace Client {
 	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
 
 	enum class BOSS { Sacrifice, Defiler, End };
+
+	enum class TUTORIAL { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
 }
 
 #endif

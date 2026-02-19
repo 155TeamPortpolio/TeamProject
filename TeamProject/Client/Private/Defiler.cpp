@@ -75,12 +75,12 @@ HRESULT CDefiler::Initialize_Prototype()
 
 HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 {
+	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	__super::Initialize(pArg);
 	Get_Component<CAudioSource>()->SoundFolder("Zero_Level","../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
 	m_BaseY = _vector3(Get_Component<CCharacterController>()->Get_FootPosition()).y;
 
-	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	vector<_uint> ProMeshes = Get_Component<CSkeletalModel>()->Hide_MehsByName("Pro");
 	vector<_uint> WeaponMeshes = Get_Component<CSkeletalModel>()->Show_MehsByName("Weapon");
 
@@ -172,14 +172,6 @@ void CDefiler::Update(_float dt)
 
 void CDefiler::Late_Update(_float dt)
 {
-	if (m_isRecovering && m_tStatus.iNowHP < m_tStatus.iMaxHP) {
-		m_tStatus.iNowHP += dt* m_tStatus.iMaxHP;
-		if (m_tStatus.iMaxHP <= m_tStatus.iNowHP) {
-			m_tStatus.iNowHP = m_tStatus.iMaxHP;
-			m_isRecovering = false;
-		}
-	}
-
 	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
@@ -190,6 +182,7 @@ void CDefiler::Render_GUI()
 	Client::DefilerDebugGUI::Render(m_BlackBoard);
 #endif
 }
+
 void CDefiler::Change_CollisionMask(_uint iMask)
 {
 	_uint Mask = Get_Component<CCharacterController>()->Get_CollisionMask();
@@ -207,10 +200,20 @@ void CDefiler::Release_AttackCollider()
 	};
 
 }
-
 void CDefiler::ChainParry(_bool OnStart)
 {
 	BattleSystem()->SetChainParryToPlayer(OnStart);
+}
+void CDefiler::Control_TargetEnable(_bool On)
+{
+	if (!On) {
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	else {
+		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+
+	Get_Component<CCharacterController>()->Set_CompActive(On);
 }
 
 void CDefiler::HideHUD(_bool hide)
@@ -218,12 +221,10 @@ void CDefiler::HideHUD(_bool hide)
 	if (m_BoneHUD.isValid())
 		m_BoneHUD.Get()->Set_Alive(!hide);
 }
-
 void CDefiler::Hide_MeshGroup(const string& mesh)
 {
 	Get_Component<CSkeletalModel>()->Hide_MehsByName(mesh);
 }
-
 void CDefiler::Show_MeshGroup(const string& mesh)
 {
 	Get_Component<CSkeletalModel>()->Show_MehsByName(mesh);
@@ -281,10 +282,9 @@ FOUR_DIR CDefiler::Get_FourDirection()
 		return (forwardDot >= 0.f) ? FOUR_DIR::FRONT : FOUR_DIR::BACK;
 	return (rightDot >= 0.f) ? FOUR_DIR::RIGHT : FOUR_DIR::LEFT;
 }
-
 void CDefiler::Parried()
 {
-	m_tStatus.iGroggyValue += 1;
+	m_tStatus.iGroggyValue += 1.f;
 }
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
@@ -569,18 +569,7 @@ void CDefiler::RotateToTarget(_float dt, _float rotateSpeed)
 	m_pTransform->Set_Look(vCurrDir);
 }
 
-void CDefiler::Update_States(_float dt)
-{
-	if (InputDevice()->Key_Tap('P'))
-	{
-		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.02f;
-		m_tStatus.iGroggyValue = 99;
-	}
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName()
-		&& "Death" != m_pStateMachine->Get_CurrentStateName() 
-		&& m_tStatus.isGroggy)
-		m_pStateMachine->Change_State("Groggy");
-}
+
 
 void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 {
@@ -648,6 +637,33 @@ void CDefiler::Controll_Attack(const string& event)
 	}
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }
+void CDefiler::Control_Summon(const string& event)
+{
+	string levelKey = LevelManager()->Get_NowLevelKey();
+	if (event == "Blade") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Blade, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y, this);
+	}
+	else if (event == "Grandier") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
+			m_tTargetingInfo.vTargetPos.y, this);
+	}
+	else if (event == "Heavy") {
+		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
+			m_tTargetingInfo.vTargetPos.y, this);
+	}
+	else if (event == "Weapon") {
+		Hide_MeshGroup(event);
+		m_MiasmaSpawner.Spawn(MiasmaType::Weapon, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
+			m_tTargetingInfo.vTargetPos.y, this);
+	}
+	else if (event == "WeaponShow") {
+		Show_MeshGroup("Weapon");
+	}
+	else if (event == "Tsunami") {
+		SummonWave();
+	}
+}
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
@@ -657,10 +673,9 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
-		m_tStatus.iGroggyValue += 1;
+		m_tStatus.iGroggyValue += .5f;
 
-	if(!m_isRecovering)
-		m_tStatus.iNowHP -= fTakeDamage;
+	m_tStatus.iNowHP -= fTakeDamage;
 
 	if (0 >= m_tStatus.iNowHP) {
 		m_tStatus.iNowHP = 0.f;
@@ -670,6 +685,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 		}
 		else {
 			m_isRecovering = true;
+			m_pendToRecover = m_tStatus.iMaxHP;
 		}
 	}
 
@@ -713,6 +729,29 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	Send_DamageText(fDamage, charaName);
 }
 
+void CDefiler::Update_States(_float dt)
+{
+	if (InputDevice()->Key_Tap('P'))
+	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.02f;
+		m_tStatus.iGroggyValue = 99;
+	}
+
+	if (m_isRecovering && m_pendToRecover >= 0.f) {
+		m_tStatus.iNowHP += dt * m_tStatus.iMaxHP * 2;
+		m_pendToRecover -= dt * m_tStatus.iMaxHP * 2;
+	}
+	else if (m_pendToRecover <= 0.f) {
+		m_pendToRecover = 0;
+		m_isRecovering = false;
+	}
+
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName()
+		&& "Death" != m_pStateMachine->Get_CurrentStateName()
+		&& m_tStatus.isGroggy)
+		m_pStateMachine->Change_State("Groggy");
+}
+
 void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
 {
 	DAMAGE_DESC desc{};
@@ -732,38 +771,6 @@ void CDefiler::ResetAllFlags()
 	m_isParryEnable = false;
 	m_BlackBoard.LockTarget = false;
 	m_BlackBoard.LockRotate = false;
-}
-
-void CDefiler::Start_WaveTime()
-{
-}
-
-void CDefiler::Control_Summon(const string& event)
-{
-	string levelKey = LevelManager()->Get_NowLevelKey();
-	if (event == "Blade") {
-		m_MiasmaSpawner.Spawn(MiasmaType::Blade, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
-			m_tTargetingInfo.vTargetPos.y, this);
-	}
-	else if (event == "Grandier") {
-		m_MiasmaSpawner.Spawn(MiasmaType::Grandier, 8, m_tTargetingInfo.vTargetPos, Get_BipedPos(),
-			m_tTargetingInfo.vTargetPos.y,this);
-	}
-	else if (event == "Heavy") {
-		m_MiasmaSpawner.Spawn(MiasmaType::Heavy, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Weapon_03"),
-			m_tTargetingInfo.vTargetPos.y,this);
-	}
-	else if (event == "Weapon") {
-		Hide_MeshGroup(event);
-		m_MiasmaSpawner.Spawn(MiasmaType::Weapon, 1, m_tTargetingInfo.vTargetPos, Get_BipedPos("Ctr_M_Prop_01"),
-			m_tTargetingInfo.vTargetPos.y,this);
-	}
-	else if (event == "WeaponShow") {
-		Show_MeshGroup("Weapon");
-	}
-	else if (event == "Tsunami") {
-		SummonWave();
-	}
 }
 
 void CDefiler::SummonWave()
@@ -800,16 +807,6 @@ void CDefiler::SummonWave()
 		.Position({ -55.f,-4,0.f })
 		.Build("WaterWave1");
 	ObjectManager()->Add_Object(WaterWave, { nowLevelKey , "Enemy_Layer" });
-}
-void CDefiler::Control_TargetEnable(_bool On)
-{
-	if (!On) {
-		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
-	}
-	else {
-		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
-	}
-	Get_Component<CCharacterController>()->Set_CompActive(On);
 }
 
 void CDefiler::Update_Dissolve(_float deltaTime)

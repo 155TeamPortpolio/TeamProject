@@ -85,6 +85,11 @@ public:
     atomic<bool> m_replayRequested{ false };
     uint64_t m_playPtsMs = 0;
 
+private:
+    uint64_t m_ptsBaseMs = 0;
+    _bool    m_hasPtsBase = false;
+    uint64_t m_lastPushedPtsMs = 0;
+
 public:
     static CVideoPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual void Free() override;

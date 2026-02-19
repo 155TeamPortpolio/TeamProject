@@ -19,17 +19,16 @@ static vector<string> NPC_MALE_ANIM = {
 };
 
 static vector<string> NPC_FEMALE_ANIM = {
-    "_Idle_200",
-    "_Stand_Cough01_075",
-    "_Stand_DF_Idle01_051",
+    "_Stand_Calm01_017",
+    "_Stand_Calm01_018",
     "_Stand_Idle01_001",
-    "_Stand_Idle02_002",
-    "_Stand_Look_048",
-    "_Stand_Positive_026",
-    "_Stand_Talk03_010",
-    "_Stand_Thinking01_008",
-    "_Stand_Wait01_006",
-    "_Stand_Wait01_007",
+    "_Stand_Positive_028",
+    "_Stand_Talk02_007",
+    "_Stand_Talk03_008",
+    "_Stand_Talk04_009",
+    "_Stand_Talk05_010",
+    "_Stand_Talk_006",
+    "_Stand_Thinking02_012",
 };
 
 struct NpcColorPreset
@@ -500,15 +499,20 @@ public:
         isMale = Helper::Get_Random_Bool();
 
         string genderWord = isMale ? "Male" : "Female";
-        _int variation = Helper::Get_Random_Int(1, isMale ? 5 : 5);
+        _int variation = Helper::Get_Random_Int(1, isMale ? 6 : 5);
 
         string model = genderWord + "0" + to_string(variation) + ".model";
         string material = genderWord + "0" + to_string(variation) + ".mat";
         string meta = genderWord + "0" + to_string(variation) + "_Meta.json";
 
-        pModel->Link_Model("MainCity_Level", model);
-        pMaterial->Link_Material("MainCity_Level", material);
+        HRESULT Modelhr =pModel->Link_Model("MainCity_Level", model);
+        HRESULT MatHr = pMaterial->Link_Material("MainCity_Level", material);
 
+        if (FAILED(Modelhr) || FAILED(MatHr))
+            return;
+
+        pModel->Hide_MehsByName("Package");
+        pModel->Hide_MehsByName("Static");
         pAnimator->LinkAnimate_Model("MainCity_Level", model);
         pAnimator->Link_MetaData("MainCity_Level", meta);
 

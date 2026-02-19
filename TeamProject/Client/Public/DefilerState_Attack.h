@@ -208,6 +208,7 @@ private:
 	_float m_Duration = 5.f;
 	_float m_Elapsed = 0.f;
 	_float  m_Interval = 0.f;
+
 public:
 	static CDefilerState_Attack_08_01_Loop* Create() { return new CDefilerState_Attack_08_01_Loop(); }
 	virtual void Free() override { __super::Free(); }

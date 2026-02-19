@@ -556,7 +556,7 @@ PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
     
     float4 color = vMotionBlurColor;    
     
-    float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 2.0f);
+    float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 3.f);
     heightNormalized = 1.0f - heightNormalized;
     Out.vDiffuse = color * DiffuseTexture.Sample(DefaultSampler, In.vTexcoord).a;
     Out.fHeight = iUseHeightGradient ? heightNormalized : 1.0f;

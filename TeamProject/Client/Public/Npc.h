@@ -33,6 +33,7 @@ public:
 
 protected:
     HRESULT         Add_NameIndicator();
+    HRESULT         Add_SpeechBubble();
     HRESULT         Add_InteractZonePrototype();
     HRESULT         Add_InteractZone(_float4 vCenter, _float3 vOffset,
         _float3 vRotate, _float3 vSize = _float3(1.f,1.f,1.f));
@@ -40,6 +41,7 @@ protected:
 protected:
     string m_strAnimName = "";
     wstring m_strName = TEXT("");
+    wstring m_strSpeech = TEXT("¸»Ç³¼±");
     _float m_fCamFadeAlpha = 0.f;
 
 public:

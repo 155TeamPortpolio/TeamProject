@@ -802,7 +802,7 @@ void CamParryController::Begin()
     piv.aBase = attackerSample.basePivot;
     piv.aFace = attackerSample.facePivot;
 
-    const OBJECT_HANDLE target = CamDirector()->GetCurTarget();
+    const OBJECT_HANDLE target = BattleSystem()->GetBattlePlayer()->GetParryHandle();
     const PivotSample targetSample = SamplePivots(target, offsetY);
     if (targetSample.valid)
     {

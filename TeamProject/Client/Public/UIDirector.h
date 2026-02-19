@@ -36,6 +36,9 @@ public:
 	/* 씬 프레임을 화면에서 숨김 (화면 위, 아래에 프레임) */
 	void Hide_SceneFrame();
 
+	void Show_Mouse();
+	void Hide_Mouse();
+
 	//==================== HUD ===============
 	/* HUD를 화면에 표시 */
 	void Show_HUD(HUD hud, _bool isFade = true);
@@ -45,6 +48,8 @@ public:
 	//==================== Scott ===============
 	void Show_Party(vector<CHARACTER> characters);
 	void Hide_Party();
+	void Show_Tutorial(TUTORIAL eTutorial);
+	void Hide_Tutorial();
 
 	//==================== Battle ===============
 	void Request_DamageText(const DAMAGE_DESC& desc);

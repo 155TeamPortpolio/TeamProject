@@ -69,6 +69,12 @@ public:
 
     void  DialogueYaw_Set(_float yawGoalDeg, _float weight);
     void  DialogueYaw_Clear() { m_dialogueYaw = {}; }
+
+public:
+    void  SwitchMode_Begin() { m_switchMode = true; }
+    void  SwitchMode_End() { m_switchMode = false; }
+    _bool IsSwitchMode() const { return m_switchMode; }
+    void  SwitchMode_ResumeSync();
     
 public:
     void  ParryMode_Begin() { m_parryMode = true; }
@@ -145,6 +151,7 @@ private:
     _bool            m_hasLockFocus = false;
     _bool            m_dialogueMode = false;
     _bool            m_parryMode    = false;
+    _bool            m_switchMode   = false;
 
     OrbitAutoYaw  m_autoYaw{};
     OrbitSwitch   m_switch{};

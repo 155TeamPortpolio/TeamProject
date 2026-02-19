@@ -120,7 +120,7 @@ void CZeroStage_Boss::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
-		WipeOutFX();
+ 		WipeOutFX();
 		m_eStageState = StageState::BattleEnd;
 	}
 }

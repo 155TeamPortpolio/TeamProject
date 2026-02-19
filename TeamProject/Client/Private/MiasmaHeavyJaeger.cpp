@@ -90,7 +90,7 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 		WeaponDesc.tagBone = "RootNode";
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		WeaponDesc.vAttackSize = _float3{ 5.f,2.5f,2.5f };
+		WeaponDesc.vAttackSize = _float3{ 5.f,2.5f,3.5f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
@@ -206,6 +206,7 @@ void CMiasmaHeavyJaeger::Parried()
 {
 	m_bStopMove = true;
 	m_pStateMachine->Set_Trigger("Parried");
+	Get_Component<CCollider>()->Set_CompActive(false);
 	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
 }
 

@@ -257,6 +257,15 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 			pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
 		}
 	}
+	else
+	{
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+
+		if (0 == m_iUseDepthTest)
+			pMaterialInstance->Override_Pass("None_Depth");
+		else
+			pMaterialInstance->Override_Pass("Default");
+	}
 
 	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
 	_quaternion vQuaternion(vOffsetQuaternion[0], vOffsetQuaternion[1], vOffsetQuaternion[2], vOffsetQuaternion[3]);
@@ -406,16 +415,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
-	if (ImGui::Checkbox("Use Mask", &m_UseMask))
-	{
-		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-
-		if (m_UseMask)
-			pMaterialInstance->Override_Pass("MaskPass");
-		else
-			pMaterialInstance->Override_Pass("Default");
-	}
-
+	isDirty |= ImGui::Checkbox("Use Mask", &m_UseMask);
 
 	{
 		_float rimLightColor[3] = { m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z };
@@ -559,5 +559,16 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.vScrollSpeed = m_vScrollSpeed;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
+
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		if (m_UseMask)
+			pMaterialInstance->Override_Pass("MaskPass");
+		else
+		{
+			if (0 == m_iUseDepthTest)
+				pMaterialInstance->Override_Pass("None_Depth");
+			else
+				pMaterialInstance->Override_Pass("Default");
+		}
 	}
 }
