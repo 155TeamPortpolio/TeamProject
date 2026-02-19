@@ -77,6 +77,11 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01",
       "Events": [
         {
+          "EventTime": 0.15000000596046448,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_Spin_1.wav"
+        },
+        {
           "EventTime": 0.2526315748691559,
           "EventType": "Notify",
           "EventTag": "LFootStart"
@@ -106,6 +111,11 @@
           "EventTag": "RFootStart"
         },
         {
+          "EventTime": 0.6118908524513245,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
+        },
+        {
           "EventTime": 1.0058479309082031,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
@@ -116,9 +126,9 @@
           "EventTag": "RFootEnd"
         },
         {
-          "EventTime": 0.6118908524513245,
-          "EventType": "Notify",
-          "EventTag": "CheckCombo"
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_Spin_2.wav"
         }
       ]
     },
@@ -284,14 +294,19 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial",
       "Events": [
         {
+          "EventTime": 0.12293697148561478,
+          "EventType": "Notify",
+          "EventTag": "RFootStart"
+        },
+        {
           "EventTime": 0.12373224645853043,
           "EventType": "Notify",
           "EventTag": "LFootStart"
         },
         {
-          "EventTime": 0.12293697148561478,
+          "EventTime": 0.8326185345649719,
           "EventType": "Notify",
-          "EventTag": "RFootStart"
+          "EventTag": "CheckCombo"
         },
         {
           "EventTime": 1.2293696403503418,
@@ -302,11 +317,6 @@
           "EventTime": 1.2293696403503418,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
-        },
-        {
-          "EventTime": 0.8326185345649719,
-          "EventType": "Notify",
-          "EventTag": "CheckCombo"
         }
       ]
     },
@@ -422,14 +432,14 @@
           "EventTag": "LHandStart"
         },
         {
-          "EventTime": 0.21624432504177094,
-          "EventType": "Notify",
-          "EventTag": "LHandEnd"
-        },
-        {
           "EventTime": 0.20272904634475708,
           "EventType": "Notify",
           "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.21624432504177094,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
         },
         {
           "EventTime": 0.26185837388038635,
