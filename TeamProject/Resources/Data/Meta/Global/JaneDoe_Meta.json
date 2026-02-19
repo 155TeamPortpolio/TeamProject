@@ -329,26 +329,6 @@
           "EventTag": "LFootStart"
         },
         {
-          "EventTime": 0.12373224645853043,
-          "EventType": "Notify",
-          "EventTag": "LFootStart"
-        },
-        {
-          "EventTime": 0.7599999904632568,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.7599999904632568,
-          "EventType": "Notify",
-          "EventTag": "RFootEnd"
-        },
-        {
-          "EventTime": 0.8326185345649719,
-          "EventType": "Notify",
-          "EventTag": "CheckCombo"
-        },
-        {
           "EventTime": 0.19837555289268494,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -382,6 +362,21 @@
           "EventTime": 0.7432098388671875,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.8326185345649719,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         },
         {
           "EventTime": 0.8745288848876953,
