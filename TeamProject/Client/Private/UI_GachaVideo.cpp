@@ -41,7 +41,8 @@ void CUI_GachaVideo::Set_OnVideoFinished(function<void()> onVideoFinished)
 
 HRESULT CUI_GachaVideo::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -52,7 +53,8 @@ HRESULT CUI_GachaVideo::Initialize_Prototype()
 
 HRESULT CUI_GachaVideo::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     /*비디오를 읽는 디코더를 우선 생성*/
     m_pDecoder = CMFVideoDecoderBackend::Create();

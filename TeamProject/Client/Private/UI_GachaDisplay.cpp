@@ -9,7 +9,8 @@
 
 HRESULT CUI_GachaDisplay::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 	
 	Add_Component<CObjectContainer>();
 
@@ -18,10 +19,11 @@ HRESULT CUI_GachaDisplay::Initialize_Prototype()
 
 HRESULT CUI_GachaDisplay::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     DISPLAY_INIT_DESC* pDesc = static_cast<DISPLAY_INIT_DESC*>(pArg);
     m_eGrade = pDesc->eGrade;
-
-	__super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_display.json")));
     Cache();

@@ -31,7 +31,8 @@ void CUI_GachaPage::Select_Channel(class CUI_GachaChannel* pSelected)
 
 HRESULT CUI_GachaPage::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -47,7 +48,8 @@ HRESULT CUI_GachaPage::Initialize_Prototype()
 
 HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     Create_CharacterIntro();
 
@@ -83,7 +85,6 @@ void CUI_GachaPage::UI_Active(void* pArg)
 void CUI_GachaPage::UI_DeActive(void* pArg)
 {
     Deactive_SelectedChannel();
-
     Set_Alive(false);
     if (m_pIntro)
         m_pIntro->UI_DeActive();
@@ -109,6 +110,7 @@ void CUI_GachaPage::Create_BackButton()
     if (!pObj)
         return;
 
+    pObj->Set_OnClick([this]() { UI_DeActive(); FieldSystem()->RequestExitTop(); });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
