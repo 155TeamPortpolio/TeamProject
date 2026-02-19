@@ -23,6 +23,8 @@ CMeleeJaeger_Shield::CMeleeJaeger_Shield(const CMeleeJaeger_Shield& rhg)
 
 HRESULT CMeleeJaeger_Shield::Initialize_Prototype()
 {
+	__super::Initialize_Prototype();
+
 	Add_Component<CObjectContainer>();
 	Add_Component<CCollider>();
 	Add_Component<CRigidBody>();
@@ -78,6 +80,9 @@ void CMeleeJaeger_Shield::Update(_float dt)
 	}
 	ComputePosition();
 	ComputeRoll(dt);
+
+	//if (m_fSpawnSequenceDuration > m_fSpawnSequenceElapsedTime)
+	//	Update_SpawnSequence(dt);
 
 	__super::Update(dt);
 }

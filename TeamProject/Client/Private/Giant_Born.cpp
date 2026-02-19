@@ -14,6 +14,7 @@ void CGiant_Born::Enter(CGiant* pOwner)
 
 void CGiant_Born::Update(CGiant* pOwner, _float dt)
 {
+	pOwner->Update_SpawnSequence(dt);
 }
 
 void CGiant_Born::Exit(CGiant* pOwner)
