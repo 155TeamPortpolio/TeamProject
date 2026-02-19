@@ -91,8 +91,6 @@ public:
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();
-    void          UpdateInput(_float dt);
-    void          SyncSeqInputLock();
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
     _uint         RequestSequence(const string& key, const CamSeqReqDesc& req);
