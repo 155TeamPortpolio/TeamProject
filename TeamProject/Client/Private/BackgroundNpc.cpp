@@ -126,8 +126,10 @@ void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
 		SpeechBubbleDesc Desc = CDataBase::GetInstance()->GetNpcSpeechBubble({ NowLevel,Version });
 		CCrowdNpc::CrowdNpcDesc* crowdDesc = new CCrowdNpc::CrowdNpcDesc;
 		crowdDesc->Text = Desc.Text;
+
+		CGameObject* child = nullptr;
 		if (Round) {
-			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
+			child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
 				.Position({ pos.x, 0.f, pos.z })
 				.Rotate({ 0.f, yaw, 0.f })
 				.Add_ObjDesc(crowdDesc)
@@ -135,16 +137,19 @@ void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);
 
-			dynamic_cast<CNpc*>(child)->Add_SpeechBubble();
+
 		}
 		else {
-			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
+			child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
 				.Position({ idx * radius, 0.f, pos.z * 0.4f })
 				.Add_ObjDesc(crowdDesc)
 				.Build("Crowd_L" + to_string(idx));
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);
 		}
+
+		if (!Desc.Text.empty())
+			dynamic_cast<CNpc*>(child)->Add_SpeechBubble();
 	}
 }
 

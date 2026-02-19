@@ -111,15 +111,26 @@ NpcDialogueDesc CDataBase::GetNpcDialogueDesc(pair<string, _uint> dialogueID)
 
 SpeechBubbleDesc CDataBase::GetNpcSpeechBubble(pair<string, _uint> speechBubbleID)
 {
+	if (Helper::Get_Random_Bool() == false)
+		return SpeechBubbleDesc{};
+
 	auto range = m_SpeechBubbleTables.equal_range(speechBubbleID);
 	if (range.first == range.second)
 		return SpeechBubbleDesc{};
 
 	_uint count = (_uint)distance(range.first, range.second);
+	auto& [shuffled, cursor] = m_ShuffledSpeechBubbleIndices[speechBubbleID];
+
+	if (shuffled.empty() || cursor >= count)
+	{
+		shuffled.resize(count);
+		iota(shuffled.begin(), shuffled.end(), 0);
+		shuffle(shuffled.begin(), shuffled.end(), mt19937{ random_device{}() });
+		cursor = 0;
+	}
 
 	auto iter = range.first;
-	advance(iter, Helper::Get_Random_Int(0, count -1));
-
+	advance(iter, shuffled[cursor++]);
 	return iter->second;
 }
 

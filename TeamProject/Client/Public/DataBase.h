@@ -84,6 +84,7 @@ private:
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
     multimap<pair<string, _uint>, SpeechBubbleDesc>		        m_SpeechBubbleTables;
+    map<pair<string, _uint>, pair<vector<_uint>, _uint>> m_ShuffledSpeechBubbleIndices;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     //FieldData
     unordered_map<_int, GACHA_RESULT_DESC>                  m_ResultTables;
