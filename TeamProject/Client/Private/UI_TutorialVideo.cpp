@@ -77,7 +77,7 @@ void CUI_TutorialVideo::UI_DeActive(void* pArg)
     m_pPlayer->Stop();
 }
 
-const char* CUI_TutorialVideo::Get_VideoPath(TUTORIAL eTutorial)
+string CUI_TutorialVideo::Get_VideoPath(TUTORIAL eTutorial)
 {
     switch (eTutorial)
     {

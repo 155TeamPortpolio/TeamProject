@@ -1,22 +1,23 @@
 #pragma once
 #include "UI_Object.h"
+#include "UI_GachaPage.h"
 
 NS_BEGIN(Engine)
 class CVideoPlayer;
 class CMFVideoDecoderBackend;
 NS_END
 
-NS_BEGIN(Client)
+NS_BEGIN(Client) 
 
-class CUI_TutorialVideo final : public CUI_Object
+class CUI_GachaCharacterIntro final : public CUI_Object
 {
 private:
-	CUI_TutorialVideo() {}
-	CUI_TutorialVideo(const CUI_TutorialVideo& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_TutorialVideo() DEFAULT;
+	CUI_GachaCharacterIntro() {}
+	CUI_GachaCharacterIntro(const CUI_GachaCharacterIntro& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_GachaCharacterIntro() DEFAULT;
 
 public:
-	void Play(TUTORIAL eTutorial);
+	void Play_Video(CUI_GachaPage::CHANNEL eChannel);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -34,9 +35,6 @@ private:
 	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
 	_uint64 m_startTimeSec = 0.0;
 	_uint m_PlayerID = {};
-
-private:
-	string Get_VideoPath(TUTORIAL eTutorial);
 
 public:
 	static  CGameObject* Create();

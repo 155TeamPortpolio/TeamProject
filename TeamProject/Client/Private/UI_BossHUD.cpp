@@ -9,7 +9,8 @@
 
 HRESULT CUI_BossHUD::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -18,12 +19,13 @@ HRESULT CUI_BossHUD::Initialize_Prototype()
 
 HRESULT CUI_BossHUD::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     // 외부에서 전달받은 몬스터 정보 설정
     BOSS_HUD_DESC* pDesc = static_cast<BOSS_HUD_DESC*>(pArg);
     m_pMonsterStatus = pDesc->pMonsterStatus;
     m_eBoss = pDesc->eBoss;
-
-    __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("hud_boss.json")));
     Cache_Children();
