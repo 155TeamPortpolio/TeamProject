@@ -28,9 +28,12 @@ CBattlePlayer::CBattlePlayer()
 
 HRESULT CBattlePlayer::Initialize()
 {
+    if (m_BattleCharacters.empty()) {
+        vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
+        SetBattleCharacters(BattleCharacters);
+   }
    
-    //vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
-    //SetBattleCharacters(BattleCharacters);
+   
 
     return S_OK;
 }
@@ -1026,10 +1029,6 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 CBattlePlayer* CBattlePlayer::Create()
 {
     CBattlePlayer* Instance = new CBattlePlayer();
-    if (FAILED(Instance->Initialize()))
-    {
-        Safe_Release(Instance);
-    }
     return Instance;
 }
 
