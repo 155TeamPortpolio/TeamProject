@@ -21,8 +21,8 @@ HRESULT CBackgroundNpc::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	PrototypeManager()->Add_ProtoType("MainCity_Level","Proto_GameObject_Pedestrian", CPedestrianNpc::Create());
-	PrototypeManager()->Add_ProtoType("MainCity_Level","Proto_GameObject_Crowd", CCrowdNpc::Create());
+	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_Pedestrian", CPedestrianNpc::Create());
+	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_Crowd", CCrowdNpc::Create());
 	Add_Component<CObjectContainer>();
 
 	return S_OK;
@@ -32,26 +32,32 @@ HRESULT CBackgroundNpc::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	if (pArg == nullptr) {
-		Build_Crowd(Helper::Get_Random_Int(1,3), Helper::Get_Random_Bool());
+		Build_Crowd(Helper::Get_Random_Int(1, 3), Helper::Get_Random_Bool());
 	}
 	else {
 		auto desc = dynamic_cast<BackgroundDesc*>(pArg);
-		if(desc){
+		if (desc) {
 			if (desc->isPedestrian) {
 				Build_Pedestrian(desc->BackgroundCount, desc->movePoint);
 			}
 			else {
 				Build_Crowd(desc->BackgroundCount, desc->isCircle);
 			}
-		}else
-			Build_Crowd(Helper::Get_Random_Int(1, 3), Helper::Get_Random_Bool());
+		}
+		else {
+			string NowLevel = LevelManager()->Get_NowLevelKey();
+			if (NowLevel == "Scott_Level")
+				Build_Crowd(3, true);
+			else
+				Build_Crowd(Helper::Get_Random_Int(1, 3), Helper::Get_Random_Bool());
+		}
 	}
 	return S_OK;
 }
 
 void CBackgroundNpc::Awake()
 {
-	
+
 }
 
 void CBackgroundNpc::Priority_Update(_float dt)
@@ -71,72 +77,73 @@ void CBackgroundNpc::Late_Update(_float dt)
 
 void CBackgroundNpc::Build_Crowd(_uint Count, _bool Round)
 {
-    const _uint count = (Count == 0) ? 1u : Count;
-    const _float radius = 0.6f;
-    const _float arc = XM_PI * 1.6f;
-    const _float angleStep = (count <= 1) ? 0.f : (arc / static_cast<_float>(count - 1));
-    auto* transform = Get_Component<CTransform>(); 
-    _vector3 look = transform ? (_vector3)transform->Dir(STATE::LOOK) : _vector3(0.f, 0.f, 1.f);
+	const _uint count = (Count == 0) ? 1u : Count;
+	const _float radius = 0.6f;
+	const _float arc = XM_PI * 1.6f;
+	const _float angleStep = (count <= 1) ? 0.f : (arc / static_cast<_float>(count - 1));
+	auto* transform = Get_Component<CTransform>();
+	_vector3 look = transform ? (_vector3)transform->Dir(STATE::LOOK) : _vector3(0.f, 0.f, 1.f);
 
-    look.y = 0.f;
-    if (look.LengthSquared() < 1e-8f)
-        look = _vector3(0.f, 0.f, 1.f);
-    look.Normalize();
+	look.y = 0.f;
+	if (look.LengthSquared() < 1e-8f)
+		look = _vector3(0.f, 0.f, 1.f);
+	look.Normalize();
 
-    _vector3 axisDir = -look;
-    axisDir.Normalize();
+	_vector3 axisDir = -look;
+	axisDir.Normalize();
 
-    const _vector3 center(0.f, 0.f, 0.f);
+	const _vector3 center(0.f, 0.f, 0.f);
 
-    for (_uint idx = 0; idx < count; ++idx)
-    {
-        const _float angleOffset = -arc * 0.5f + angleStep * static_cast<_float>(idx);
+	for (_uint idx = 0; idx < count; ++idx)
+	{
+		const _float angleOffset = -arc * 0.5f + angleStep * static_cast<_float>(idx);
 
-        const _float c = cosf(angleOffset);
-        const _float s = sinf(angleOffset);
+		const _float c = cosf(angleOffset);
+		const _float s = sinf(angleOffset);
 
-        _vector3 dir;
-        dir.x = axisDir.x * c - axisDir.z * s;
-        dir.y = 0.f;
-        dir.z = axisDir.x * s + axisDir.z * c;
-        dir.Normalize();
+		_vector3 dir;
+		dir.x = axisDir.x * c - axisDir.z * s;
+		dir.y = 0.f;
+		dir.z = axisDir.x * s + axisDir.z * c;
+		dir.Normalize();
 
-        _vector3 pos = center + dir * radius;
+		_vector3 pos = center + dir * radius;
 
-        _vector3 toCenter = center - pos;
-        toCenter.y = 0.f;
-        if (toCenter.LengthSquared() < 1e-8f)
-            toCenter = _vector3(0.f, 0.f, 1.f);
-        toCenter.Normalize();
+		_vector3 toCenter = center - pos;
+		toCenter.y = 0.f;
+		if (toCenter.LengthSquared() < 1e-8f)
+			toCenter = _vector3(0.f, 0.f, 1.f);
+		toCenter.Normalize();
 
-        _float yaw = atan2f(toCenter.x, toCenter.z);
+		_float yaw = atan2f(toCenter.x, toCenter.z);
 
 		if (Round) {
 			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
 				.Position({ pos.x, 0.f, pos.z })
 				.Rotate({ 0.f, yaw, 0.f })
 				.Build("Crowd_R_" + to_string(idx));
+			string NowLevel = LevelManager()->Get_NowLevelKey();
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);
 		}
 		else {
 			auto child = Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Crowd" })
-				.Position({ idx *radius, 0.f, pos.z*0.4f })
+				.Position({ idx * radius, 0.f, pos.z * 0.4f })
 				.Build("Crowd_L" + to_string(idx));
 
 			Get_Component<CObjectContainer>()->Add_Child(child, true);
 		}
-    }
+	}
 }
 
-void CBackgroundNpc::Build_Pedestrian(_uint Count , vector<_float3> points)
+void CBackgroundNpc::Build_Pedestrian(_uint Count, vector<_float3> points)
 {
 	_uint count = Count;
 	for (_uint idx = 0; idx < count; ++idx)
 	{
-		auto child = 
+		auto child =
 			Builder::Create_Object({ "MainCity_Level", "Proto_GameObject_Pedestrian" }).
-			Build("Pedestrian_"+to_string(idx));
+			Build("Pedestrian_" + to_string(idx));
 		dynamic_cast<CPedestrianNpc*>(child)->Set_MovePoint(points);
 		Get_Component<CObjectContainer>()->Add_Child(child, false);
 	}
