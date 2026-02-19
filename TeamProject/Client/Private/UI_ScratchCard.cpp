@@ -10,7 +10,8 @@
 
 HRESULT CUI_ScratchCard::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -19,11 +20,12 @@ HRESULT CUI_ScratchCard::Initialize_Prototype()
 
 HRESULT CUI_ScratchCard::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     SCRATCH_DESC* pDesc = static_cast<SCRATCH_DESC*>(pArg);
     m_pParentState = pDesc->pParentState;
     m_onScratchCompleted = pDesc->onScratchCompleted;
-
-    __super::Initialize(pArg);
 
     // JSON ·Îµå
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("scratchCard.json")));

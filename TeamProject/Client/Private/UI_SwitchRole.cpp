@@ -21,6 +21,7 @@ void CUI_SwitchRole::Set_Side(SIDE eSide)
 void CUI_SwitchRole::Change_RoleIcon(CHARACTER eCharacter)
 {
     UI_Active();
+
     switch (eCharacter)
     {
     case CHARACTER::Corin:

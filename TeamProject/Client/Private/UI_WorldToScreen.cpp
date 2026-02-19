@@ -9,14 +9,16 @@
 
 HRESULT CUI_WorldToScreen::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CUI_WorldToScreen::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
 	return S_OK;
 }

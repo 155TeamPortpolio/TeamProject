@@ -7,7 +7,8 @@
 
 HRESULT CUI_RamenAttributeIcon::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	Add_Component<CObjectContainer>();
 
@@ -16,9 +17,10 @@ HRESULT CUI_RamenAttributeIcon::Initialize_Prototype()
 
 HRESULT CUI_RamenAttributeIcon::Initialize(INIT_DESC* pArg)
 {
-    ATTRIBUTE_DESC* pDesc = static_cast<ATTRIBUTE_DESC*>(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
-	__super::Initialize(pArg);
+    ATTRIBUTE_DESC* pDesc = static_cast<ATTRIBUTE_DESC*>(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_attribute.json")));
 

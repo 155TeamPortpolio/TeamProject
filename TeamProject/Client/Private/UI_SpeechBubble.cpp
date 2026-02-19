@@ -28,6 +28,9 @@ HRESULT CUI_SpeechBubble::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+    SPEECHBUBBLE_DESC* pDesc = static_cast<SPEECHBUBBLE_DESC*>(pArg);
+    m_pCCT = pDesc->pCCT;
+
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("speechBubble.json")));
     Cache();
      

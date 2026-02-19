@@ -27,6 +27,7 @@
         1.0,
         1.0
     ],
+    "stencilMode": 0,
     "pass": "Opaque",
     "colorTexKey": "empty.png",
     "colorTexMode": 0,
@@ -58,7 +59,7 @@
                 ],
                 "size": [
                     1600.0,
-                    900.0
+                    85.0
                 ],
                 "scale": [
                     1.0,
@@ -76,6 +77,60 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "empty.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -800.0,
+                    -84.0
+                ],
+                "size": [
+                    1600.0,
+                    84.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -128,6 +183,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -150,58 +206,6 @@
             "children": [],
             "typeTag": "Image",
             "textureTag": "GachaMenuBg.png"
-        },
-        {
-            "alive": true,
-            "instanceName": "Image",
-            "transform": {
-                "anchor": 2,
-                "anchorOffset": [
-                    -1403.0,
-                    -364.5
-                ],
-                "size": [
-                    1403.0,
-                    731.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                0.19607843458652496,
-                0.19607843458652496,
-                0.19607843458652496,
-                1.0
-            ],
-            "pass": "Opaque",
-            "colorTexKey": "empty.png",
-            "colorTexMode": 0,
-            "colorTexMix": 1.0,
-            "colorUVUse": 0,
-            "colorUVOffset": [
-                0.0,
-                0.0
-            ],
-            "colorUVScale": [
-                1.0,
-                1.0
-            ],
-            "colorUVAutoScroll": false,
-            "colorUVSpeed": [
-                0.0,
-                0.0
-            ],
-            "animClips": [],
-            "children": [],
-            "typeTag": "Image",
-            "textureTag": "empty.png"
         },
         {
             "alive": true,
@@ -232,6 +236,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -281,6 +286,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "NineSlice",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -357,6 +363,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -550,6 +557,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -764,6 +772,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -813,6 +822,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "NineSlice",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -889,6 +899,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1103,6 +1114,7 @@
                 1.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
             "colorTexKey": "empty.png",
             "colorTexMode": 0,
@@ -1152,6 +1164,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "NineSlice",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1228,6 +1241,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1280,6 +1294,7 @@
                         0.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1332,6 +1347,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1384,6 +1400,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "SpriteAnimation",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1443,6 +1460,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,
@@ -1495,6 +1513,7 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
                     "colorTexKey": "empty.png",
                     "colorTexMode": 0,

@@ -50,7 +50,8 @@ void CUI_GachaResultItem::Set_ResultDesc(GACHA_RESULT_DESC desc)
 
 HRESULT CUI_GachaResultItem::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	Add_Component<CObjectContainer>();
 
@@ -59,7 +60,8 @@ HRESULT CUI_GachaResultItem::Initialize_Prototype()
 
 HRESULT CUI_GachaResultItem::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
 	Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha_result_item.json")));
     Cache();

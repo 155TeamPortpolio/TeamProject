@@ -12,7 +12,8 @@
 
 HRESULT CUI_RamenMenu::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	Add_Component<CObjectContainer>();
 
@@ -21,11 +22,12 @@ HRESULT CUI_RamenMenu::Initialize_Prototype()
 
 HRESULT CUI_RamenMenu::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     RAMENMENU_DESC* pDesc = static_cast<RAMENMENU_DESC*>(pArg);
     m_onSelect = pDesc->onSelect;
     m_tRamenDesc = pDesc->tRamenDesc;
-
-    __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_menu.json")));
     Cache();

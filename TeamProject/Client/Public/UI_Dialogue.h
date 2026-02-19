@@ -44,7 +44,7 @@ private:
 	void Add_Children(const string& strLevelTag, const string& strPrototypeTag, CHILD child);
 	void Bind_EventListener();
 
-	_bool Is_RoomChoiceTrue() const;
+	_bool Is_ChoiceValueTrue(const string& strValueName) const;
 	void Open_Dialogue(const string& strNewSequenceID, _uint iNewSequenceID);
 	
 	void Change_State(STATE eState);
