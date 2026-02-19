@@ -23,7 +23,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 11;
+	Type = 9;
 	switch (Type)
 	{
 	case 0 :
@@ -612,6 +612,10 @@ void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_07::Update_Effects(CDefiler* pOwner)
 {
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Defiler_Smoke_Trail", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.5f))
+		pOwner->Stop_Effect("Defiler_Smoke_Trail");
 	if (IsCrossAnimProgress(0.25f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 5.8f, 0.f), _quaternion(0.76f, 0.17f, -0.5f, 0.38f));
 	if(IsCrossAnimProgress(0.31f))
@@ -641,10 +645,26 @@ void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_Start::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_01_Start::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_08_01_Start::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.25f))
+	{
+		pOwner->Play_Effect("Defiler_Axe_Light3", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Play_Effect("Defiler_Smoke_Trail", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
+	if (IsCrossAnimProgress(0.79f))
+	{
+		pOwner->Play_Effect("Defiler_Axe_Charge1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Stop_Effect("Defiler_Axe_Light3");
+		pOwner->Stop_Effect("Defiler_Smoke_Trail");
+	}
 }
 
 void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
@@ -695,11 +715,18 @@ void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_End::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_01_End::Exit(CDefiler* pOwner)
 {
 	pOwner->Control_TargetEnable(true);
+}
+
+void CDefilerState_Attack_08_01_End::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.07f))
+		pOwner->Stop_Effect("Defiler_Axe_Charge1");
 }
 
 void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)

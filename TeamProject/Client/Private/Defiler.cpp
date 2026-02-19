@@ -976,6 +976,14 @@ HRESULT CDefiler::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
 
+	/* Default Particle */
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_default_particle.json")
+		.Build("Defiler_Default_Particle");
+
+	pEffect->AttachBone(pAnimator, "Bip001_Head");
+	pObjectContainer->Add_Child(pEffect, false);
+
 	/* Laser */
 	for (_uint i = 0; i < 3; ++i)
 	{
@@ -1129,6 +1137,17 @@ HRESULT CDefiler::Initialize_Effects()
 	}
 	{
 		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(2.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_charge1.json")
+			.Build("Defiler_Axe_Charge1");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
 		offsetMatrix.Translation(_vector3(0.5f, 0.f, 0.f));
 
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
@@ -1156,6 +1175,17 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_axe_light2.json")
 			.Build("Defiler_Axe_Light2");
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(1.f, 0.f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_axe_light3.json")
+			.Build("Defiler_Axe_Light3");
 		pEffect->Stop();
 		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);
@@ -1205,6 +1235,17 @@ HRESULT CDefiler::Initialize_Effects()
 			.Asset("defiler_miasma_explode.json")
 			.Build("Defiler_Miasma_Explode");
 		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	/* Smoke Trail */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_smoke_trail.json")
+			.Build("Defiler_Smoke_Trail");
+
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Bip001");
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 	return S_OK;
