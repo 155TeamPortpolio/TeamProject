@@ -34,41 +34,41 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 1 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });/*내리찍*/
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//내리찍
 		break;
 	}
 	case 2 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });/*레이저*/
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });/*내리찍*/
+		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });//레이저
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//내리찍
 		break;
 	}
 	case 3 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack02",0.f,1.f });/*회전*/
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });/*내리찍*/
+		blackBoard.patternTransition.push_back({ "Attack02",0.f,1.f });//회전
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//내리찍
 		break;
 	}
 	case 4 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack05",0.f,1.f });/*돌진*/
-		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });/*복귀*/
+		blackBoard.patternTransition.push_back({ "Attack05",0.f,1.f });//돌진
+		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//복귀
 		break;
 	}
 	case 5 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });/*총잽이*/
-		blackBoard.patternTransition.push_back({ "Attack_Grab",0.f,1.f });/*돌진*/
-		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });/*복귀*/
+		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });//총잽이
+		blackBoard.patternTransition.push_back({ "Attack_Grab",0.f,1.f });//돌진
+		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//복귀
 		break;
 	}
 	case 6 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack01_03",0.f,1.f });/*꼬리*/
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });/*내리찍2*/
+		blackBoard.patternTransition.push_back({ "Attack01_03",0.f,1.f });//꼬리
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//내리찍2
 		break;
 	}
 	case 7 :
@@ -80,13 +80,13 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	{
 		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,0.41f });
 		blackBoard.patternTransition.push_back({ "Attack01_02",0.19f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });/*내리찍2*/
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//내리찍2
 		break;
 	}
 	case 9 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); /*방패병*/
+		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); //방패병
 		blackBoard.patternTransition.push_back({ "Attack08_01_Loop",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_01_End",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f });
@@ -105,13 +105,13 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	case 11 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });/*이야즈마*/
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });/*내리찍*/
+		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });//이야즈마
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//내리찍
 		break;
 	}
 	case 12 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); /*창 내리찍*/
+		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); //창 내리찍
 		break;
 	}
 	case 13 :
