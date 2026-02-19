@@ -84,7 +84,7 @@ HRESULT CZero_Level::Initialize()
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
-
+	
 	m_Context.isFirstIn = true;
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 	Ready_Stage();
@@ -202,8 +202,7 @@ void CZero_Level::Ready_Stage()
 		Boss_Process = 2; //Start BossMap Index;
 
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
-	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", ++Boss_Process);
-
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <=2)? Boss_Process : 1);
 	ChangeStage(StageType::Boss);
 }
 

@@ -29,12 +29,8 @@ CBattlePlayer::CBattlePlayer()
 HRESULT CBattlePlayer::Initialize()
 {
     if (m_BattleCharacters.empty()) {
-        vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
-        SetBattleCharacters(BattleCharacters);
-   }
-   
-   
-
+        SetBattleCharacters({ CHARACTER::Corin });
+    }
     return S_OK;
 }
 
@@ -288,6 +284,8 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
         Initialize_CharacterPrototype();
         m_bInitialized = true;
     }
+    
+    ClearCharacters();
 
     for (auto& character : battleCharacters)
     {
@@ -304,6 +302,24 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
     m_pCurrentCharacter->Set_MainCharacter(true);
     m_pCurrentCharacter->Active_Character();
 
+    BattleSystem()->SetPlayer(m_CharacterHandles);
+}
+
+void CBattlePlayer::SetBattleCharacter(CHARACTER battleCharacter)
+{
+    /*개별 캐릭터 추가 로직*/
+    for (size_t i = 0; i < m_BattleCharacters.size(); i++)
+    {
+        auto character = m_BattleCharacters[i];
+        if (character && character->Get_CharacterName() == battleCharacter)
+            return;
+    }
+
+    auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(battleCharacter));
+    newCharacter->Set_MainCharacter(false);
+    newCharacter->DeActive_Character();
+    m_BattleCharacters.push_back(newCharacter);
+    m_CharacterHandles.push_back(newCharacter->Get_Handle());
     BattleSystem()->SetPlayer(m_CharacterHandles);
 }
 
@@ -344,10 +360,16 @@ HRESULT CBattlePlayer::SwitchCharacter(_int iTargetIndex)
 
 HRESULT CBattlePlayer::ClearCharacters()
 {
+    for (auto& character : m_BattleCharacters)
+    {
+        BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::PLAYER, character->Get_Handle());
+        Safe_Release(character);
+    }
     m_BattleCharacters.clear();
     m_iCurrentIndex = 0;
     m_pCurrentCharacter = nullptr;
     return S_OK;
+
 }
 
 void CBattlePlayer::Set_Move(_vector3 vPos, _vector3 vRot)
@@ -987,7 +1009,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     characterCCT.fHeight = 1.13;
     characterCCT.fRadius = 0.3f;
     characterCCT.vPos = { 0.f, 1.5f, 0.f };
-
+    string nowLevelKey = LevelManager()->Get_NowLevelKey();
     switch (character)
     {
     case CHARACTER::JaneDoe:
@@ -996,7 +1018,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("JaneDoe");
-        ObjectManager()->Add_Object(JaneDoe, { G_GlobalLevelKey, "Model_Layer" });
+        ObjectManager()->Add_Object(JaneDoe, { nowLevelKey, "Model_Layer" });
+        Safe_AddRef(JaneDoe);
         return JaneDoe;
     }
     case CHARACTER::Corin:
@@ -1007,7 +1030,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("Corin");
-        ObjectManager()->Add_Object(Corin, { G_GlobalLevelKey, "Model_Layer" });
+        ObjectManager()->Add_Object(Corin, { nowLevelKey, "Model_Layer" });
+        Safe_AddRef(Corin);
         return Corin;
     }
     case CHARACTER::Miyabi:
@@ -1018,7 +1042,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
             .Build("Miyabi");
-        ObjectManager()->Add_Object(Miyabi, { G_GlobalLevelKey, "Model_Layer" });
+        ObjectManager()->Add_Object(Miyabi, { nowLevelKey, "Model_Layer" });
+        Safe_AddRef(Miyabi);
         return Miyabi;
     }
     }
@@ -1035,4 +1060,8 @@ CBattlePlayer* CBattlePlayer::Create()
 void CBattlePlayer::Free()
 {
     __super::Free();
+    m_CharacterHandles.clear();
+    for (auto& character : m_BattleCharacters) {
+        Safe_Release(character);
+    }
 }

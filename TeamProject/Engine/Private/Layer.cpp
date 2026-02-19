@@ -153,7 +153,9 @@ CGameObject* CLayer::Find_ObjectByID(_uint ObjectID)
 void CLayer::Clear_Layer()
 {
 	for (auto& pGameObject : m_GameObjects)
-		if(pGameObject)Safe_Release(pGameObject);
+		if (pGameObject&& pGameObject->Is_Root()) {
+			Safe_Release(pGameObject);
+		}
 
 	vector<CGameObject*> emptyVec;
 	unordered_map<_uint, _uint> emptyMap;

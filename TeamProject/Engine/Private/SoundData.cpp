@@ -7,6 +7,8 @@
 CSoundData::CSoundData(const string& soundKey)
 	:m_SoundKey{ soundKey }
 {
+	m_pService = AudioDevice();
+	Safe_AddRef(m_pService);
 }
 
 HRESULT CSoundData::Initialize(const string& filePath)
@@ -32,7 +34,9 @@ CSoundData* CSoundData::Create( const string& filePath, const string& soundKey)
 
 void CSoundData::Free()
 {
-	if (!m_pSound) return;   // 置社 号嬢
-	m_pSound->release();
+	if (!m_pSound) 
+		return;   // 置社 号嬢
+	
 	m_pSound = nullptr;
+	Safe_Release(m_pService);
 }

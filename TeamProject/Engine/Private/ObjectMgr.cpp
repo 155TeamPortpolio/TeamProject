@@ -25,24 +25,28 @@ void CObjectMgr::Pre_EngineUpdate(_float dt)
 	auto Releasesnap = m_ReleaseObjs;
 
 	m_ReleaseObjs.clear();
-	m_DeleteIDs.clear();
+	m_ReleaseIDs.clear();
 	for (auto pObject : Releasesnap)
 	{
 		if (!pObject) continue;
 		Release_Subtree_ToPool(pObject);
 	}
-	m_ReleaseObjs.clear();
-	m_DeleteIDs.clear();
 
 	auto snap = m_DeleteObjs;
 
 	m_DeleteObjs.clear();
 	m_DeleteIDs.clear();
-	for (auto pObject : snap)
+	for (auto& pObject : snap)
 	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		if(auto pLayer= pObject->Get_Layer())
+		LAYER_DESC desc = pObject->Get_LayerDesc();
+		if (auto pLayer = Get_Layer(desc)) {
+			_uint ObjectID = pObject->Get_ObjectID();
 			pLayer->Remove_GameObject(ObjectID);
+			pObject = nullptr;
+		}
+		else {
+			Safe_Release(pObject);
+		}
 	}
 
 	for (auto& pair : m_Layers)
@@ -76,8 +80,6 @@ void CObjectMgr::Late_Update(_float dt)
 	for (auto& pair : m_Layers)
 		for (auto& layers : pair.second)
 			layers.second->Late_Update(dt);
-
-
 }
 
 void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)

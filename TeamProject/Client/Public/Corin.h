@@ -18,7 +18,8 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-
+public:
+    _uint Release() override;
 public: // 상태머신
     CStateMachine<CCorin>* Get_StateMachine() { return m_pStateMachine; }
 

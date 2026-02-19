@@ -118,6 +118,7 @@ protected:
 	CTransform* m_pTransform = { nullptr };
 	class CLayer* m_pLayer = { nullptr };
 	string m_LevelTag = {};
+	string m_LayerTag = {};
 	
 	string m_InstanceName = {};
 	string m_InstanceTag = {};

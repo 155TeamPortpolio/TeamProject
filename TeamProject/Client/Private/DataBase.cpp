@@ -848,6 +848,16 @@ vector<string_view> CDataBase::SplitFileName(string_view s, _char delim)
 	return out;
 }
 
+vector<CHARACTER> CDataBase::Get_EnableCharacters()
+{
+	vector<CHARACTER> results;
+
+	for (int i = 0; i <= m_iCurrentGachaOrder; ++i) {
+		results.push_back(static_cast<CHARACTER>(i));
+	}
+	return results;
+}
+
 DayPhase CDataBase::StringToDayPhase(const string& str)
 {
 	if (str == "EarlyMorning") return DayPhase::EarlyMorning;
