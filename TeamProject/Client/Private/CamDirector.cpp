@@ -20,6 +20,7 @@
 #include "BattlePlayer.h"
 #include "BattleSystem.h"
 #include "Animator3D.h"
+#include "Jaeger.h"
 
 namespace
 {
@@ -99,29 +100,21 @@ void CCamDirector::AutoTarget()
 void CCamDirector::AutoField(CamStartDir dir)
 {
     AutoTarget();
-
     switch (dir)
     {
     case CamStartDir::Front: RequestSequence("Field/Front"); break;
     case CamStartDir::Back:  RequestSequence("Field/Back");  break;
     }
-
-    //if (m_gate.Pass())
-    //    RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::AutoBattle(CamStartDir dir)
 {
     AutoTarget();
-
     switch (dir)
     {
     case CamStartDir::Front: RequestSequence("Battle/Front"); break;
     case CamStartDir::Back:  RequestSequence("Battle/Back");  break;
     }
-
-    //if (m_gate.Pass())
-    //    RenderSystem()->SetOn(false);
 }
 
 void CCamDirector::Update(_float dt)
@@ -137,8 +130,7 @@ void CCamDirector::Update(_float dt)
         if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
         {
             AbortSequenceToOrbit(true);
-            SyncSeqInputLock();
-            UpdateInput(dt);
+            CamDebugInput::UpdateInput(dt);
             return;
         }
 
@@ -167,8 +159,6 @@ void CCamDirector::Update(_float dt)
         }
     }
 
-    SyncSeqInputLock();
-
     if (IsValid())
         m_dialogue.Update(dt);
 
@@ -182,7 +172,7 @@ void CCamDirector::Update(_float dt)
         m_dialogueUnlockPending = false;
     }
 
-    UpdateInput(dt);
+    CamDebugInput::UpdateInput(dt);
 }
 
 void CCamDirector::StartBattleIntro(CamSeqType type)
@@ -206,11 +196,6 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
     return key;
 }
 
-void CCamDirector::UpdateInput(_float dt)
-{
-    CamDebugInput::UpdateInput(dt);
-}
-
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
 {
     m_lastEndedValid = false;
@@ -227,28 +212,6 @@ void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
     CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.f);
 
     m_playing = {};
-    SyncSeqInputLock();
-}
-
-void CCamDirector::SyncSeqInputLock()
-{
-    _bool wantLock = m_playing.active;
-
-    if (wantLock && IsParrySeqKey(m_playing.key) && BattleSystem()->GetBattlePlayer()->Is_ChainParry() && m_parry.IsChainReentryOpen())
-        wantLock = false;
-
-    if (wantLock && !m_seqInputLocked)
-    {
-        GetPlayer()->Lock_Input();
-        m_seqInputLocked = true;
-        return;
-    }
-
-    if (!wantLock && m_seqInputLocked)
-    {
-        GetPlayer()->Unlock_Input();
-        m_seqInputLocked = false;
-    }
 }
  
 void CCamDirector::StartDialog()
@@ -465,8 +428,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     const _bool ok = CameraManager()->Pop(handle, blendOutSec);
 
     m_playing = {};
-    SyncSeqInputLock();
-
     return ok;
 }
 
