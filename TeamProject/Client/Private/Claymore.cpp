@@ -104,6 +104,7 @@ void CClaymore::Update(_float dt)
 
 	__super::Update(dt);
 
+	ManageTutorialMode(dt);
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
 }
@@ -149,15 +150,7 @@ void CClaymore::Render_GUI()
 			if (ImGui::Selectable(charTutorialLabels[n], selected))
 			{
 				cur = n;
-				m_eCurTutorial = static_cast<TUTORIAL>(cur);
-
-				if (m_isTutorial)
-				{
-					if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
-						m_tStatus.iGroggyValue = 99.f;
-					else
-						m_tStatus.iGroggyValue = 0.f;
-				}
+				SetTutorialMode(static_cast<TUTORIAL>(cur));
 			}
 			if (selected)
 				ImGui::SetItemDefaultFocus();
@@ -179,7 +172,7 @@ void CClaymore::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
 
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -187,6 +180,7 @@ void CClaymore::Render_GUI()
 		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 		ImGui::Text("Groggy StayTime : %d", m_tGroggyManage.fGroggyStayTime);
+		ImGui::Text("ComboCount : %d", m_tStatus.iPlayerComboCount);
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
@@ -354,6 +348,14 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
 
+	if (m_isTutorial)
+	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP;
+
+		if (m_eCurTutorial != TUTORIAL::GROGGY_COMBO)
+			m_tStatus.iGroggyValue = 0.f;
+	}
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -385,6 +387,17 @@ void CClaymore::SetTutorialMode(TUTORIAL eMode)
 		return;
 
 	m_eCurTutorial = eMode;
+
+	if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
+	{
+		m_eEnemyClass = ENEMY_CLASS::BOSS;
+		m_tStatus.iGroggyValue = 99.f;
+	}
+	else
+	{
+		m_eEnemyClass = ENEMY_CLASS::NORMAL;
+		m_tStatus.iGroggyValue = 0.f;
+	}
 }
 
 /* For.State Machine */
@@ -534,4 +547,32 @@ void CClaymore::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
+}
+
+void CClaymore::ManageTutorialMode(const _float dt)
+{
+	if (!m_isTutorial)
+		return;
+
+ 	if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
+	{
+		if (m_isPrevGroggy == true && m_tStatus.isGroggy == false)
+			m_isTutorialGroggyCool = true;
+
+		if (m_isTutorialGroggyCool)
+		{
+			m_vTutorialGroggyTime.y += dt;
+
+			if (m_vTutorialGroggyTime.x <= m_vTutorialGroggyTime.y)
+			{
+				m_vTutorialGroggyTime.y = 0.f;
+				m_tStatus.iGroggyValue = 99.f;
+				m_isTutorialGroggyCool = false;
+			}
+		}
+
+		m_isPrevGroggy = m_tStatus.isGroggy;
+
+	}
+
 }

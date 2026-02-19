@@ -52,6 +52,7 @@ private:
     void Update_States(const _float dt);
     void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
+    void ManageTutorialMode(const _float dt);
 
 private:
     CStateMachine<CClaymore>* m_pStateMachine = { nullptr };
@@ -63,6 +64,9 @@ private:
     /* Fot. Tutorial */
     _bool               m_isTutorial = { false };
     TUTORIAL            m_eCurTutorial = {};
+    _bool               m_isPrevGroggy = { false };
+    _bool               m_isTutorialGroggyCool = { false };
+    _float2             m_vTutorialGroggyTime = {2.f, 0.f};
 
     /* For.Idle */
     _bool               m_isIdle = { false };
