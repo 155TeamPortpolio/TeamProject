@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "FieldSystem.h"
+#include "CamDirector.h"
 
 //component
 #include "SkeletalModel.h"
