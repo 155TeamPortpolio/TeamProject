@@ -6,6 +6,7 @@ class CMiasmaBlade :
 {
 public:
     struct BladeDesc : GAMEOBJECT_DESC {
+        _uint iCount = {};
         _float3 vTargetPos = {};
         class CDefiler* pOwner = { nullptr };
     };
@@ -29,10 +30,10 @@ public:
 
 private:
     _bool   Try_Hit(CGameObject* pTarget);
-
+    void Initialize_Effects();
 private:
     _float m_ElapsedTime = {};
-    _float m_fMoveSpeed = {35};
+    _float m_fMoveSpeed = {70.f};
     _vector3 m_vTargetVelocity = {};
     _vector3 m_vVelocity = {};
     class CDefiler* m_pOwner = { nullptr };

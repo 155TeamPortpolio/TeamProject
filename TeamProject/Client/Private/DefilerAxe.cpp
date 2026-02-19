@@ -179,13 +179,14 @@ void CDefilerAxe::SummonWall()
 void CDefilerAxe::SpawnEffect()
 {
 	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+	vWorldPosition.y += 1.5f;
 
 	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("defiler_wave_explode.json")
 		.Position(vWorldPosition)
 		.Build("Defiler_Wave_Explode");
 
-	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
+	ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer"});
 }
 
 
