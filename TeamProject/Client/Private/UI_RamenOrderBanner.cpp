@@ -10,7 +10,8 @@
 
 HRESULT CUI_RamenOrderBanner::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -21,10 +22,11 @@ HRESULT CUI_RamenOrderBanner::Initialize_Prototype()
 
 HRESULT CUI_RamenOrderBanner::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     ORDER_BANNER_DESC* pDesc = static_cast<ORDER_BANNER_DESC*>(pArg);
     m_OnClick = pDesc->onOrderComfirm;
-
-	__super::Initialize(pArg);
 
 	Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("ramen_order_banner.json")));
     Cache();

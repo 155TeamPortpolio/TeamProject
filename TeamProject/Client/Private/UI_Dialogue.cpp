@@ -99,7 +99,8 @@ void CUI_Dialogue::Show_Choices()
 
 HRESULT CUI_Dialogue::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -114,7 +115,8 @@ HRESULT CUI_Dialogue::Initialize_Prototype()
 
 HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
      
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CHILD::MESSAGE);
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CHILD::CHOICE);
