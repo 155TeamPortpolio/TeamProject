@@ -14,6 +14,7 @@
 
 #include "MapLoader.h"
 #include "Player.h"
+#include "ProceduralSky.h"
 
 CTutorial_Level::CTutorial_Level(const string& LevelKey)
     :CLevel(LevelKey),
@@ -32,15 +33,21 @@ HRESULT CTutorial_Level::Awake()
     UIDirector()->FadeIn_Screen(1.f);
 
     Ready_Map("Tutorial_Level", "TrainingRoom");
-
     m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
     m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
-    auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));	
+    BattleSystem()->SetBattleCharacters({CHARACTER::Corin });
+
+    auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+    pCloud->Set_Alive(true);
+    dynamic_cast<CProceduralSky*>(pCloud)->Set_CloudInfo({ _float3(0.151,0.109,0.074),_float3(0.15,0.158, 0.032), _float3(0.0,0.0,0.0),1.f,
+        _float3(1.0,0.25,0.0),_float3(1.0,0.649, 0.0), 0.0 });
 
     auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
     auto pTransform = pShadowCam->Get_Component<CTransform>();
     pTransform->Set_Pos(_float4(0.f, 100.f, 0.f, 1.f));
+
+    CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 
     LIGHT_DESC lightDesc = {};
     lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
@@ -59,6 +66,8 @@ HRESULT CTutorial_Level::Awake()
 
 void CTutorial_Level::Update()
 {
+    CBattleSystem::GetInstance()->Update();
+
 }
 
 HRESULT CTutorial_Level::Render()
