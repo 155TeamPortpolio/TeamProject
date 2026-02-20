@@ -452,13 +452,12 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    //float4 vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
 
     //float3 hdrColor = effect.rgb + scene.rgb * (1.f - effect.a);
     //float alpha = max(scene.a, effect.a);
     float3 hdrColor = scene.rgb;
     
-    float3 mapped = ZZZStyleTonemap(hdrColor)/* + vEffect.rgb*/;
+    float3 mapped = ZZZStyleTonemap(hdrColor);
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
