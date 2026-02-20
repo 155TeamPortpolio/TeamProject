@@ -622,8 +622,6 @@ void CamParryController::ComputeSideFromCam()
 
 string CamParryController::BuildParryKey() const
 {
-    if (IsChainParry()) return "Parry/Chain";
-
     const CHARACTER charaName = CamDirector()->GetCharacterName();
     string key = "Parry/";
     key += Helper::EnumToString(charaName);

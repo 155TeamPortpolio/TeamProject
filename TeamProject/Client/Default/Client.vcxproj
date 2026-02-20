@@ -484,6 +484,7 @@
     <ClInclude Include="..\public\Room_Scott.h" />
     <ClInclude Include="..\public\ScottCar.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
+    <ClInclude Include="..\Public\UI_Banner.h" />
     <ClInclude Include="..\Public\UI_GachaCharacterIntro.h" />
     <ClInclude Include="..\public\Tutorial_Level.h" />
     <ClInclude Include="..\Public\UI_Mouse.h" />
@@ -1012,6 +1013,7 @@
     <ClCompile Include="..\private\Room_Scott.cpp" />
     <ClCompile Include="..\private\ScottCar.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
+    <ClCompile Include="..\Private\UI_Banner.cpp" />
     <ClCompile Include="..\Private\UI_GachaCharacterIntro.cpp" />
     <ClCompile Include="..\private\Tutorial_Level.cpp" />
     <ClCompile Include="..\Private\UI_Mouse.cpp" />

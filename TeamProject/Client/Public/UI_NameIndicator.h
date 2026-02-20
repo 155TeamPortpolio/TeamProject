@@ -21,7 +21,7 @@ private:
 	enum CHILD { NAME, ARROWL, ARROWR, END };
 	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "name", "arrowL", "arrowR" };
 
-	enum class STATE_VISIBLE { VISIBLE, HIDDEN, END };
+	enum class STATE_VISIBLE { VISIBLE, INVISIBLE, END };
 	enum class STATE_INTERACT { INTERACTABLE, NOTINTERACTABLE, END };
 
 private:
@@ -46,7 +46,7 @@ private:
 	wstring				m_strName = { };
 	_float3				m_vPosition = {};
 
-	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::END };
+	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::INVISIBLE };
 	STATE_INTERACT		m_eInteract = { STATE_INTERACT::END };
 
 	static constexpr _float	m_fRadius = { 4.f };// { 6.f };

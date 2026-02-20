@@ -90,6 +90,13 @@ void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
         pOwner->Get_StateMachine()->Reset_Trigger("ReserveParryImpact");
         m_pOwnerStateMachine->Set_Trigger("ParryImpact");
     }
+
+    if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+    {
+        TUTORIAL_ACTION_DESC desc;
+        desc.eAction = TUTORIAL_ACTION::ASSIST;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+    }
 }
 
 void CCorinState_SwitchInParryAid_Start::Update(CCorin* pOwner, _float dt)
@@ -118,22 +125,15 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
         static_cast<CEffectContainer*>(pParryEffect)->Play();
     }
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-
-    //OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    //if (handle.isValid())
-    //{
-    //    TARGET_LOCK_DESC desc;
-    //    desc.bLock = false;
-    //    desc.tHandle = handle;
-    //    EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
-    //}
 }
 
 void CCorinState_SwitchInParryAid_L_Loop::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt,
-        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
+    desc.fMoveWeight = 5.f;
+    pOwner->Process_RootMotion(dt, desc);
 }
 
 void CCorinState_SwitchInParryAid_L_End::Enter(CCorin* pOwner)
