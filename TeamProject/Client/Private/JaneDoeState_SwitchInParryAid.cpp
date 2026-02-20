@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "EventSystem.h"
 
 #include "JaneDoe.h"
 #include "Enemy.h"
@@ -87,6 +88,13 @@ void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
     {
         pOwner->Get_StateMachine()->Reset_Trigger("ReserveParryImpact");
         m_pOwnerStateMachine->Set_Trigger("ParryImpact");
+    }
+
+    if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+    {
+        TUTORIAL_ACTION_DESC desc;
+        desc.eAction = TUTORIAL_ACTION::ASSIST;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
     }
 }
 

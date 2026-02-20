@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "JaneDoeState_CounterAttack.h"
+
+#include "GameInstance.h"
+#include "EventSystem.h"
+
 #include "JaneDoe.h"
 
 CJaneDoeState_CounterAttack* CJaneDoeState_CounterAttack::Create()
@@ -48,6 +52,14 @@ void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 	}
 
 	pOwner->Rush_Target();
+
+	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+	{
+		TUTORIAL_ACTION_DESC desc;
+		desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+	}
+
 	__super::Enter(pOwner);
 }
 

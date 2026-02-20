@@ -30,6 +30,13 @@ void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
+    if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)
+    {
+        TUTORIAL_ACTION_DESC desc;
+        desc.eAction = TUTORIAL_ACTION::COMBO;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+    }
+
     __super::Enter(pOwner);
 }
 

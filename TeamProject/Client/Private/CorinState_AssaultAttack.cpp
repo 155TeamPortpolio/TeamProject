@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "CorinState_AssaultAttack.h"
+
+#include "GameInstance.h"
+#include "EventSystem.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 #include "Corin.h"
@@ -29,6 +32,14 @@ void CCorinState_AssaultAttack::Enter(CCorin* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
+
+	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+	{
+		TUTORIAL_ACTION_DESC desc;
+		desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
+		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+	}
+
 	__super::Enter(pOwner);
 }
 
