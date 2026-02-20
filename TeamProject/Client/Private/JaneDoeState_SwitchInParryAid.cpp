@@ -116,22 +116,15 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
         static_cast<CEffectContainer*>(pParryEffect)->Play();
     }
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-
-    //OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    //if (handle.isValid())
-    //{
-    //    TARGET_LOCK_DESC desc;
-    //    desc.bLock = false;
-    //    desc.tHandle = handle;
-    //    EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
-    //}
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt,
-        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.iModeMask = ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION);
+    desc.fMoveWeight = 5.f;
+    pOwner->Process_RootMotion(dt, desc);
 }
 
 void CJaneDoeState_SwitchInParryAid_L_End::Enter(CJaneDoe* pOwner)
