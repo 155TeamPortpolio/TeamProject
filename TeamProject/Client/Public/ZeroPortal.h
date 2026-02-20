@@ -39,9 +39,14 @@ public:
     int  GetChoiceIndex() const { return m_choiceIndex; }
 
 private:
+    void Initialize_Effects();
     void Focus(_float dt);
     void Extend(_float dt);
     void Contract(_float dt);
+
+    /* For Debug */
+    void Active_Portal();
+    void On_InPlayer() { m_bInPlayer = true; }
 
 private:
     _bool  m_bVisible = { false };
