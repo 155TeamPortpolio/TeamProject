@@ -16,7 +16,6 @@
 #include "PostRenderer.h"
 #include "Texture.h"
 #include "UIDirector.h"
-#include "CamDirector.h"
 
 CZeroPortal::CZeroPortal()
 	: CInteractable()
@@ -96,15 +95,6 @@ void CZeroPortal::Update(_float dt)
 
 void CZeroPortal::Late_Update(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_F3))
-	{
-		CamDirector()->EnterPortal(Get_Handle());
-		Active_Portal();
-	}
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CamDirector()->ExitPortal();
-	}
 }
 
 void CZeroPortal::Render_GUI()
@@ -130,8 +120,6 @@ void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
 		.Attribute3D(true)
 		.Loop(false)
 		.Play();
-
-	
 }
 
 void CZeroPortal::OnTriggerStay(CGameObject* pOher)
@@ -157,7 +145,6 @@ void CZeroPortal::Interact(CGameObject* pObject)
 	m_pOwnerStage->StageChangeOn(m_choiceIndex);
 	m_bIsInteractable = false;
 	Get_Component<CAudioSource>()->Slot("ZeroPortal_Enter.wav").Play();
-
 }
 
 OBJECT_HANDLE CZeroPortal::Get_InteractHandle()
@@ -295,27 +282,23 @@ void CZeroPortal::PortalEffectFlowSetting()
 		m_OnActive = true;
 		});
 
-	//m_PortalFlow.AddWait(sequenceId, 0.4);
-	//
-	//m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-	//	UIDirector()->FadeOut_Screen(0.15f);
-	//	});
-	//m_PortalFlow.AddWait(sequenceId, 0.15);
+	m_PortalFlow.AddWait(sequenceId, 0.5);
+	
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeOut_Screen(0.2f);
+		});
+	m_PortalFlow.AddWait(sequenceId, 0.2);
 
-	//m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-	//	UIDirector()->FadeIn_Screen(0.15f);
-	//	});
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeIn_Screen(0.05f);
+		NoiseSequence();
+		});
 
-	//m_PortalFlow.AddWait(sequenceId, 0.15);
+	m_PortalFlow.AddWait(sequenceId, 0.1);
 
-	//m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-	//	NoiseSequence();
-	//	UIDirector()->FadeOut_Screen(0.45f);
-	//	});
-	//m_PortalFlow.AddWait(sequenceId, 0.05);
-	//m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-	//	NoiseSequence();
-	//	});
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeOut_Screen(0.05f);
+		});
 
 	m_PortalFlow.EndSequence(sequenceId);
 }

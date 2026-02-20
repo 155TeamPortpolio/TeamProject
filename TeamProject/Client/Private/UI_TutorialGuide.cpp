@@ -232,7 +232,7 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         m_fTimer = 0.f;
         m_isFadeout = false;
         //GameInstance()->Set_EngineTimeScale(0.f);
-        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
+        BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::CLEAR);
         break;
     case STATE::INACTIVE:
         AdvanceTutorial(); 

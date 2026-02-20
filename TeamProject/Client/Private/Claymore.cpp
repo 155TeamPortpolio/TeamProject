@@ -410,6 +410,9 @@ void CClaymore::SetTutorialMode(TUTORIAL_TYPE eMode)
 		m_eEnemyClass = ENEMY_CLASS::NORMAL;
 		m_tStatus.iGroggyValue = 0.f;
 	}
+
+	Get_Component<CCharacterController>()->Set_Position(XMVectorSet(-0.18f, 2.f, 1.59f, 1.f));
+	m_pTransform->Rotate(_float3(0.f, XMConvertToRadians(180.f), 0.f));
 }
 
 /* For.State Machine */
