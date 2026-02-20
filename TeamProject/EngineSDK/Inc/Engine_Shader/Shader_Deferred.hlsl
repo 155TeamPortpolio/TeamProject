@@ -27,6 +27,10 @@ bool    bSaturateEffectUse;
 
 bool    bSkinned = false;
 
+float2 FlareCenter = float2(0.5, 0.5);
+float FlareIntensity = 1.f;
+float3 FlareTintColor = float3(1.f, 1.f, 1.f);
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -380,6 +384,49 @@ PS_OUT_RESULT PS_DISTORTION(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_FLARE(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+ 
+    float2 uv = In.vTexcoord - FlareCenter.xy;
+
+    uv.x *= fScreenWidth / fScreenHeight;
+
+    float dist = length(uv);
+    float angle = atan2(uv.y, uv.x);
+
+    float coreGlow = exp(-dist * 12.f);
+    float softGlow = exp(-dist * 4.f);
+
+    float rays = 0.f;
+    rays += pow(abs(cos(angle * 4.f)), 80.f) * exp(-dist * 5.f);
+    rays += pow(abs(cos(angle * 8.f + 0.5f)), 120.f) * exp(-dist * 3.f) * 0.5f;
+    rays += pow(abs(cos(angle * 16.f + 1.2f)), 200.f) * exp(-dist * 2.f) * 0.3f;
+
+    float cross1 = pow(abs(cos(angle)), 60.f);
+    float cross2 = pow(abs(sin(angle)), 60.f);
+    float starburst = (cross1 + cross2) * exp(-dist * 3.f) * 0.4f;
+
+    float3 colorCore = float3(1.f, 1.f, 1.f);
+    float3 colorMid = float3(0.6f, 0.3f, 1.f);
+    float3 colorOuter = float3(0.3f, 0.5f, 1.f);
+
+    float3 flareColor = lerp(colorOuter, colorMid, exp(-dist * 5.f));
+    flareColor = lerp(flareColor, colorCore, exp(-dist * 15.f));
+    
+    flareColor *= FlareTintColor.rgb;
+    
+    float intensity = coreGlow * 2.f + softGlow * 0.5f + rays + starburst;
+    intensity *= FlareIntensity;
+
+    float3 finalColor = scene.rgb + flareColor * intensity;
+
+    Out.vResult = float4(finalColor, 1.f);
+    
+    return Out;
+}
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
@@ -575,6 +622,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISTORTION();
+    }
+
+    pass FLARE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_FLARE();
     }
 
     pass GLITCH
