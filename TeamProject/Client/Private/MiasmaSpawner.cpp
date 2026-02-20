@@ -61,9 +61,7 @@ _float3 CMiasmaSpawner::ComputeParabolarPos(const _float3& ownerPos, const _floa
     _vector3 offset = right * (sideOffset * sideSign) + forward * forwardOffset;
 
     _vector3 pos = _vector3(ownerPos) + offset;
-    if (targetPos.y > -1.f)
-        __debugbreak();
-
+   
     return _float3{ pos.x, targetPos.y, pos.z };
 }
 

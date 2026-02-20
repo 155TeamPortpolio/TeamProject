@@ -111,8 +111,6 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 
 void CDefiler::Awake()
 {
-	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
-	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	auto pMaterial = Get_Component<CMaterial>();
@@ -122,12 +120,10 @@ void CDefiler::Awake()
 	for (const auto& instance : materialInstances)
 	{
 		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
-
+	m_MatPreset.Initialize(pMaterial);
 }
 
 void CDefiler::Priority_Update(_float dt)
@@ -177,10 +173,10 @@ void CDefiler::Late_Update(_float dt)
 
 void CDefiler::Render_GUI()
 {
-	__super::Render_GUI();
 #ifdef _USING_GUI
 	Client::DefilerDebugGUI::Render(m_BlackBoard);
 #endif
+	__super::Render_GUI();
 }
 
 void CDefiler::Change_CollisionMask(_uint iMask)

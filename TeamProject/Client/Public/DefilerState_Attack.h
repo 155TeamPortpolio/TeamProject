@@ -327,6 +327,9 @@ public:
 public:
 	static CDefilerState_Attack_Summon* Create() { return new CDefilerState_Attack_Summon(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
 };
 
 class CDefilerState_RePos_Front:  public CDefilerState_Attack

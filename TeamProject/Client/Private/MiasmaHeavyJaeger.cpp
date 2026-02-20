@@ -206,7 +206,7 @@ void CMiasmaHeavyJaeger::OnTriggerEnter(CGameObject* pOther)
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		if(m_bParried)
+		if(!m_bParried)
 			m_vVelocity = {0,0,0};
 		m_pStateMachine->Set_Trigger("Parried");
 	}

@@ -24,6 +24,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
+	Type = 9;
 	switch (Type)
 	{
 	case 0 :
@@ -582,7 +583,7 @@ void CDefilerState_Attack_06::Update_Effects(CDefiler* pOwner)
 		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_1");
 		static_cast<CDefilerLaser*>(pLaser)->Set_ActiveLaser(true, CDefilerLaser::LASER_TYPE::NORMAL);
 	}
-	
+
 	if (IsCrossAnimProgress(0.57f))
 	{
 		auto pLaser = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Defiler_Laser_2");
@@ -619,15 +620,19 @@ void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_07::Update_Effects(CDefiler* pOwner)
 {
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Defiler_Smoke_Trail", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.5f))
+		pOwner->Stop_Effect("Defiler_Smoke_Trail");
 	if (IsCrossAnimProgress(0.25f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 5.8f, 0.f), _quaternion(0.76f, 0.17f, -0.5f, 0.38f));
-	if(IsCrossAnimProgress(0.31f))
+	if (IsCrossAnimProgress(0.31f))
 		pOwner->Play_Effect("Defiler_Slash0_1", _vector3(0.f, 5.8f, 0.f), _quaternion(-0.46f, 0.44f, 0.77f, 0.f));
 	if (IsCrossAnimProgress(0.41f))
 		pOwner->Play_Effect("Defiler_Miasma_Explode", _vector3(0.f, 6.f, 2.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
-	if(IsCrossAnimProgress(0.53f))
+	if (IsCrossAnimProgress(0.53f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 1.2f, 0.f), _quaternion(0.04f, 0.72f, 0.68f, 0.1f));
-	if(IsCrossAnimProgress(0.64f))
+	if (IsCrossAnimProgress(0.64f))
 		pOwner->Play_Effect("Defiler_Slash1_0", _vector3(0.f, 1.3f, 0.f), _quaternion(-0.01f, 0.68f, 0.73f, 0.07f));
 }
 
@@ -648,10 +653,26 @@ void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_Start::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_01_Start::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_08_01_Start::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.25f))
+	{
+		pOwner->Play_Effect("Defiler_Axe_Light3", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Play_Effect("Defiler_Smoke_Trail", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
+	if (IsCrossAnimProgress(0.79f))
+	{
+		pOwner->Play_Effect("Defiler_Axe_Charge1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Stop_Effect("Defiler_Axe_Light3");
+		pOwner->Stop_Effect("Defiler_Smoke_Trail");
+	}
 }
 
 void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
@@ -702,11 +723,23 @@ void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_End::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_01_End::Exit(CDefiler* pOwner)
 {
 	pOwner->Control_TargetEnable(true);
+}
+
+void CDefilerState_Attack_08_01_End::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.07f))
+		pOwner->Stop_Effect("Defiler_Axe_Charge1");
+	if (IsCrossAnimProgress(0.14f))
+	{
+		pOwner->Play_Effect("Defiler_Sting0_0", _vector3(0.4f, 9.f, 0.8f), _quaternion(0.71f, 0.f, 0.f, 0.71f), false);
+		pOwner->Play_Effect("Defiler_HitGround1", _vector3(0.1f, 0.f, 0.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
@@ -726,10 +759,17 @@ void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_02::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_08_02::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Defiler_HitGround2", _vector3(0.1f, 0.1f, 0.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
@@ -789,7 +829,7 @@ void CDefilerState_Attack_09_Loop::Update(CDefiler* pOwner, _float dt)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	m_ElapsedTime += dt;
-	if(m_ElapsedTime > 15.f)
+	if (m_ElapsedTime > 15.f)
 		blackBoard.isRequestNext = true;
 }
 
@@ -872,10 +912,22 @@ void CDefilerState_Attack_Summon::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_Summon::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_Summon::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_Summon::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.13f))
+		pOwner->Play_Effect("Defiler_Hand_Charge0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.63f))
+	{
+		pOwner->Stop_Effect("Defiler_Hand_Charge0");
+		pOwner->Play_Effect("Defiler_Hand_Explode0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_RePos_Front::Enter(CDefiler* pOwner)
@@ -895,7 +947,7 @@ void CDefilerState_RePos_Front::Update(CDefiler* pOwner, _float dt)
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
-		pOwner->Set_CCTPos({ -15.f,-1.f,0.f});
+		pOwner->Set_CCTPos({ -15.f,-1.f,0.f });
 	}
 	else if (m_eState == EVADE_OUT && dissolve.isComplete()) {
 		blackBoard.isRequestNext = true;
@@ -921,7 +973,7 @@ void CDefilerState_RePos_Back::Update(CDefiler* pOwner, _float dt)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	auto& dissolve = pOwner->GetDissolve();
-	
+
 	if (m_eState == EVADE_IN && dissolve.isComplete()) {
 		m_eState = EVADE_OUT;
 		dissolve.Set_DissolveState(dissolve.APPEAR, .5f);
