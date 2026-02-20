@@ -68,6 +68,14 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pPhysics) return E_FAIL;
     if (!PxInitExtensions(*m_pPhysics, m_pPvd)) return E_FAIL;   // Extensions 초기화 (필수적인 확장 기능들)
 
+    PxCudaContextManagerDesc cudaDesc;
+    m_pCudaManager = PxCreateCudaContextManager(*m_pFoundation, cudaDesc, PxGetProfilerCallback());
+    if (m_pCudaManager && !m_pCudaManager->contextIsValid())
+    {
+        m_pCudaManager->release();
+        m_pCudaManager = nullptr;
+    }
+
     const _uint threadCount = min(4u, max(1u, (unsigned int)std::thread::hardware_concurrency() - 1));
     m_pDispatcher = PxDefaultCpuDispatcherCreate(threadCount);      // Dispatcher 생성
 
@@ -77,10 +85,26 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.cpuDispatcher = m_pDispatcher;
     sceneDesc.filterShader = SimulationFilterShader; // 기본 충돌 필터
     sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
-    sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+    //sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+    if (m_pCudaManager)
+    {
+        // GPU 가속 활성화 (NVIDIA 전용)
+        sceneDesc.cudaContextManager = m_pCudaManager;
+        sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+        sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+
+        OutputDebugStringA("[PhysX] GPU Acceleration Enabled\n");
+    }
+    else
+    {
+        // CPU 폴백 (AMD 또는 CUDA 미지원 환경)
+        sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+        OutputDebugStringA("[PhysX] GPU Unavailable, CPU Fallback\n");
+    }
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    sceneDesc.ccdMaxPasses = 4;
+    sceneDesc.ccdMaxPasses = 0;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
+
 #ifdef _PHYSICS_DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
     if (m_pPvd->isConnected())
@@ -131,15 +155,11 @@ void CPhysicsSystem::Update(_float dt)
     if (!m_pScene) return;
 
     m_fAccumulator += dt;
-
-
-
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
 {
     //m_pScene->fetchResults(true);
-
     while (m_fAccumulator >= m_fFixedTimeStep)
     {
         m_pScene->simulate(m_fFixedTimeStep);
@@ -613,6 +633,12 @@ void CPhysicsSystem::Free()
         pair.second->release();
     m_Materials.clear();
     m_pMaterial = nullptr;
+
+    if (m_pCudaManager)
+    {
+        m_pCudaManager->release();
+        m_pCudaManager = nullptr;
+    }
 
     if (m_pControllerManager)
     {
