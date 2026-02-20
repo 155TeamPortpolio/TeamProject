@@ -112,7 +112,12 @@ void CUI_TutorialGuide::Update(_float dt)
         break;
     case STATE::DEACTIVATING:
         m_fTimer += dt;
-        if (m_fTimer >= m_fDuration)
+        if (m_fTimer >= m_fDurationFadeout && !m_isFadeout)
+        {
+            UIDirector()->FadeOut_Screen(0.2f);
+            m_isFadeout = true;
+        } 
+        if (m_fTimer >= m_fDurationWipeout)
             Change_State(STATE::INACTIVE);
         //if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
         //    Change_State(STATE::INACTIVE); 
@@ -191,11 +196,12 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         if (m_pSlotComplete)
             m_pSlotComplete->UI_Active();
         m_fTimer = 0.f;
+        m_isFadeout = false;
         //GameInstance()->Set_EngineTimeScale(0.f);
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
         break;
     case STATE::INACTIVE:
-        AdvanceTutorial();
+        AdvanceTutorial(); 
         Set_Alive(false);
         break;
     }

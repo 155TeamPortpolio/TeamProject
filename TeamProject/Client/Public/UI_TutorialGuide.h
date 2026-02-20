@@ -33,8 +33,10 @@ private:
 	map<TUTORIAL_ACTION, CUI_Object*> m_pSlots;
 	map<TUTORIAL_ACTION, _bool> m_slotsProgress;
 
+	_bool m_isFadeout = {};
 	_float m_fTimer = {};
-	const _float m_fDuration = { 4.7f };
+	const _float m_fDurationWipeout = { 6.f };// { 4.7f };
+	const _float m_fDurationFadeout = { 4.5f };
 
 private:
 	HRESULT Create_GuideStart();

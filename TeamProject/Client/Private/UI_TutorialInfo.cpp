@@ -74,6 +74,7 @@ void CUI_TutorialInfo::UI_Active(void* pArg)
     Set_Alive(true);
     
     UIDirector()->Show_Mouse();
+    UIDirector()->FadeIn_Screen();
     GameInstance()->Set_EngineTimeScale(0.f);
 }
 
