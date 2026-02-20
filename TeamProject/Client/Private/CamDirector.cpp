@@ -174,6 +174,7 @@ void CCamDirector::Update(_float dt)
     m_parry.Update(dt);
     m_wipeOut.Update(dt);
     m_switch.Update(dt);
+    m_portal.Update(dt);
 
     if (m_dialogueUnlockPending && !m_dialogue.IsBusy())
     {
@@ -204,6 +205,7 @@ string CCamDirector::ResolveSeqKey(CamSeqType type) const
     key += charToken;
     return key;
 }
+
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
 {
