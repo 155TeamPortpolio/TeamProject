@@ -29,7 +29,7 @@ CBattlePlayer::CBattlePlayer()
 HRESULT CBattlePlayer::Initialize()
 {
     if (m_BattleCharacters.empty()) {
-        SetBattleCharacters({ CHARACTER::Corin,CHARACTER::JaneDoe,CHARACTER::Miyabi });
+        SetBattleCharacters({ CHARACTER::Miyabi,CHARACTER::JaneDoe,CHARACTER::Corin });
     }
     return S_OK;
 }
