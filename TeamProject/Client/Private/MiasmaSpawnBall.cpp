@@ -111,7 +111,7 @@ void CMiasmaSpawnBall::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-	if (timeRatio >= 1.f&& (Get_Position().y <= -1.9f))
+	if (timeRatio >= 1.f)
 	{
 		SpawnJaeger();
 
@@ -183,11 +183,11 @@ void CMiasmaSpawnBall::SpawnJaeger()
 
 	COLLIDER_DESC ColDesc = {};
 	ColDesc.eGroup = COLLISION_GROUP::MONSTER;
-	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND)| ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) | ENUM(COLLISION_GROUP::PLAYER) ;
 	ColDesc.bTrigger = false;
 	ColDesc.bAutoFit = false;
 	ColDesc.eType = COLLIDER_TYPE::BOX;
-	ColDesc.vSize = { 5.f,5.f, 3.f };
+	ColDesc.vSize = { 5.f,3.5f, 3.f };
 	auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaHeavy" })
 		.Position(m_targetPos)
 		.Collider(ColDesc)
