@@ -316,7 +316,12 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	if (true == parryEnable) {
 		if (BattleSystem()->GetPlayerParryingCount() <= 0)
 			IsReallyParryEnable = false;
+
+		const vector<BATTLEOBJ_INFO> Characters = BattleSystem()->GetBattleObjects(BATTLE_OBJ_TYPE::PLAYER);
+		if (1 == Characters.size())
+			IsReallyParryEnable = false;
 	}
+
 
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 
