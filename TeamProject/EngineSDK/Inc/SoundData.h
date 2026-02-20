@@ -14,6 +14,7 @@ public:
 private:
     string m_SoundKey;
     FMOD::Sound* m_pSound = { nullptr };
+    class IAudioService* m_pService = { nullptr };
 public:
     static CSoundData* Create(const string& filePath, const string& soundKey);
     virtual void Free() override;

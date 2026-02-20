@@ -140,12 +140,8 @@ void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 {
 	for (auto& hPlayer : hPlayers)
 	{
-		if (!hPlayer.isValid()) continue;
-
-		BATTLEOBJ_INFO playerInfo = {};
-		playerInfo.hObject = hPlayer;
-		playerInfo.isOnField = true;
-		m_BattleObjInfos[BATTLE_OBJ_TYPE::PLAYER].push_back(playerInfo);
+		if (!hPlayer.isValid()) continue; 
+		EnterBattleObject(BATTLE_OBJ_TYPE::PLAYER, hPlayer);
 	}
 }
 
@@ -336,7 +332,9 @@ void CBattleSystem::CleanUp_Data()
 		for (size_t i = 0; i < vector.size(); i++)
 		{
 			if (!vector[i].isOnField) continue;
-			if (!vector[i].hObject.isValid()) continue;
+			if (!vector[i].hObject.isValid()) {
+				ExitBattleObject(eType, vector[i].hObject);
+			};
 			snapVector.push_back(vector[i]);
 		}
 	}

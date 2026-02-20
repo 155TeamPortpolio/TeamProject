@@ -65,6 +65,7 @@ public:
 public: // 캐릭터 관리
     OBJECT_HANDLE   GetCurCharacterHandle();
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
+    void            SetBattleCharacter(CHARACTER battleCharacter);
     void            Active_Battle();
     void            DeActive_Battle();
     void            QuestStart();

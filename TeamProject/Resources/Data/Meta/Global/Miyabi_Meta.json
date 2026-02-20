@@ -238,7 +238,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 0.6754385828971863,
+          "EventTime": 0.6385964751243591,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -328,7 +328,7 @@
           "EventTag": "KatanaAttackEnd"
         },
         {
-          "EventTime": 0.11734892427921295,
+          "EventTime": 0.10006497800350189,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -499,7 +499,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 0.5313839912414551,
+          "EventTime": 0.5031188726425171,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -1002,7 +1002,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 1.2762116193771362,
+          "EventTime": 1.063742756843567,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }

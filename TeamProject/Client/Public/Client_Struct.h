@@ -76,11 +76,11 @@ namespace Client {
 		variant<monostate, _bool, _int, _float, string> Value;
 	};
 
-	struct SpeechBubble
+	struct SpeechBubbleDesc
 	{
 		string			Level;
 		_int			Version;
-		string			Text;
+		wstring			Text;
 	};
 
 	typedef struct tagMapDataFilePacket {

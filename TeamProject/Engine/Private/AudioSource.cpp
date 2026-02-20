@@ -634,7 +634,6 @@ CComponent* CAudioSource::Clone()
 void CAudioSource::Free()
 {
 	__super::Free();
-
 	for (auto& pair : m_Audios)
 	{
 		AUDIO_SLOT& slot = pair.second;
@@ -648,11 +647,9 @@ void CAudioSource::Free()
 				ch->stop();
 			}
 		}
-
 		slot.pChannels.clear();
 		Safe_Release(slot.pSound);
 	}
-
 	m_Audios.clear();
 	m_Sequences.clear();
 }

@@ -355,7 +355,6 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	vWorldPosition.y += 1.2f;
 	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
 		.Position(vWorldPosition)
-		.FromPool()
 		.Build("BasicHit");
 
 	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });

@@ -6,6 +6,11 @@ NS_BEGIN(Client)
 class CCrowdNpc :
     public CNpc
 {
+public:
+    struct CrowdNpcDesc : GAMEOBJECT_DESC {
+        wstring Text;
+    };
+
 protected:
     CCrowdNpc();
     CCrowdNpc(const CCrowdNpc& rhs);
@@ -23,6 +28,7 @@ public:
 private:
     NpcColorPreset colorPreset;
     NpcModelPreset modelPreset;
+
 public:
     static CCrowdNpc* Create();
     CGameObject* Clone(INIT_DESC* pArg);
