@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
+#include "AudioSource.h"
 
 #include "BattleSystem.h"
 #include "UIDirector.h"
@@ -19,6 +20,8 @@ HRESULT CUI_TutorialGuide::Initialize_Prototype()
 
 	Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideStart", CUI_TutorialGuideStart::Create());
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideSlot", CUI_TutorialGuideSlot::Create());
@@ -188,7 +191,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         if (m_pGuideStart)
             m_pGuideStart->UI_DeActive();
         UIDirector()->Hide_Mouse();
-        GameInstance()->Set_EngineTimeScale(1.f); 
+        GameInstance()->Set_EngineTimeScale(1.f);
+        Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
         break;
     case STATE::DEACTIVATING:
         for (auto& pair : m_pSlots)

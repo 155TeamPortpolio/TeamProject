@@ -74,7 +74,7 @@ void CUI_TutorialInfo::UI_Active(void* pArg)
     Set_Alive(true);
     
     UIDirector()->Show_Mouse();
-    UIDirector()->FadeIn_Screen();
+    UIDirector()->FadeIn_Screen(0.2f);
     GameInstance()->Set_EngineTimeScale(0.f);
 }
 
@@ -123,7 +123,7 @@ HRESULT CUI_TutorialInfo::Create_EnterButton()
 {
     CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
     pDesc->strJsonKey = "tutorial_enterButton.json";
-
+   
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel"})
         .Add_UIDesc(pDesc)
         .Build("buttonEnter");

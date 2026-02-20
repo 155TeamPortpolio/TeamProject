@@ -35,7 +35,7 @@ private:
 
 	_bool m_isFadeout = {};
 	_float m_fTimer = {};
-	const _float m_fDurationWipeout = { 6.f };// { 4.7f };
+	const _float m_fDurationWipeout = { 5.f };// { 4.7f };
 	const _float m_fDurationFadeout = { 4.5f };
 
 private:

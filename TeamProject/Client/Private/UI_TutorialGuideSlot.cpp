@@ -39,6 +39,9 @@ HRESULT CUI_TutorialGuideSlot::Initialize(INIT_DESC* pArg)
             if (desc.eAction != m_eAction)
                 return;
 
+            if (m_iCurrentCount >= m_iTargetCount)
+                return;
+
             m_iCurrentCount++;
             Set_CountText();
 
