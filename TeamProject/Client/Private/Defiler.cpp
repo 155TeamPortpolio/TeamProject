@@ -29,6 +29,7 @@
 #include "DefilerWall.h"
 #include "WaterWaves.h"
 
+#include "EventListener.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -36,7 +37,6 @@
 #include "CamDirector.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
-
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -105,7 +105,6 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
 	Create_MeshPyramid();
-
 	return S_OK;
 }
 
@@ -282,6 +281,7 @@ void CDefiler::Parried()
 {
 	m_tStatus.iGroggyValue += 1.f;
 }
+
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
 	if (m_passDampTime > 0.f)

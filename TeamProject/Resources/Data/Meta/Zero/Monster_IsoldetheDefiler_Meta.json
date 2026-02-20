@@ -898,6 +898,11 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_07",
       "Events": [
         {
+          "EventTime": 0.550000011920929,
+          "EventType": "Notify",
+          "EventTag": "TraceType_TrackTarget"
+        },
+        {
           "EventTime": 2.2923977375030518,
           "EventType": "Notify",
           "EventTag": "ParrySign"
@@ -961,11 +966,6 @@
           "EventTime": 4.80994176864624,
           "EventType": "Notify",
           "EventTag": "ParrySign"
-        },
-        {
-          "EventTime": 0.550000011920929,
-          "EventType": "Notify",
-          "EventTag": "TraceType_TrackTarget"
         },
         {
           "EventTime": 5.628654956817627,
@@ -1140,7 +1140,7 @@
           "EventTag": "TargetLockOn"
         },
         {
-          "EventTime": 2.690000057220459,
+          "EventTime": 2.430000066757202,
           "EventType": "Sound",
           "EventTag": "Defiler_Fierce.wav"
         },
@@ -1226,6 +1226,11 @@
           "EventTime": 2.077777862548828,
           "EventType": "Notify",
           "EventTag": "ShowMesh_Pro"
+        },
+        {
+          "EventTime": 2.390000104904175,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Crash01.wav"
         }
       ]
     },

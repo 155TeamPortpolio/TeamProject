@@ -24,7 +24,6 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 5;
 	switch (Type)
 	{
 	case 0 :
@@ -1024,12 +1023,12 @@ void CDefilerState_Attack_Barrier::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
-	blackBoard.TraceType_IgnoreRotation();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_EtherBarrier")
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
 }
 
 void CDefilerState_Attack_Barrier::Update(CDefiler* pOwner, _float dt)

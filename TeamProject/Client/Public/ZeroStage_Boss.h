@@ -36,7 +36,6 @@ private:
 
 private:
 	_bool m_isSequenceEnd = {};
-	
 
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);
