@@ -282,26 +282,22 @@ void CZeroPortal::PortalEffectFlowSetting()
 		m_OnActive = true;
 		});
 
-	m_PortalFlow.AddWait(sequenceId, 0.4);
+	m_PortalFlow.AddWait(sequenceId, 0.5);
 	
 	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-		UIDirector()->FadeOut_Screen(0.15f);
+		UIDirector()->FadeOut_Screen(0.2f);
 		});
-	m_PortalFlow.AddWait(sequenceId, 0.15);
+	m_PortalFlow.AddWait(sequenceId, 0.2);
 
 	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-		UIDirector()->FadeIn_Screen(0.15f);
-		});
-
-	m_PortalFlow.AddWait(sequenceId, 0.15);
-
-	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeIn_Screen(0.05f);
 		NoiseSequence();
-		UIDirector()->FadeOut_Screen(0.45f);
 		});
-	m_PortalFlow.AddWait(sequenceId, 0.05);
+
+	m_PortalFlow.AddWait(sequenceId, 0.1);
+
 	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-		NoiseSequence();
+		UIDirector()->FadeOut_Screen(0.05f);
 		});
 
 	m_PortalFlow.EndSequence(sequenceId);

@@ -246,7 +246,6 @@ CMiasmaHeavyJaeger_DisAppear* CMiasmaHeavyJaeger_DisAppear::Create()
 
 void CMiasmaHeavyJaeger_DisAppear::Enter(CMiasmaHeavyJaeger* pOwner)
 {
-	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
 	pOwner->Dissolve(false);
 
 	/* Effect */
