@@ -407,7 +407,6 @@ void CCharacter::On_SwitchOut(_bool isParry)
     Push_Invincible();
     Lock_Move();
     Stop_Rotation();
-    m_bReserveCombo = false;
     m_pCCT->Set_CollisionMask(m_iDefaultMask - ENUM(COLLISION_GROUP::MONSTER));
 }
 
