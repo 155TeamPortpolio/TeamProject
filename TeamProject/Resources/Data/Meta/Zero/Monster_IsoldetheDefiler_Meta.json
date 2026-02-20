@@ -1394,8 +1394,6 @@
           "EventTag": "ShowMesh_Pro"
         },
         {
-          "EventTime": 2.390000104904175,
- },{
           "EventTime": 0.23000000417232513,
           "EventType": "Sound",
           "EventTag": "VO_Blaster.wav"
