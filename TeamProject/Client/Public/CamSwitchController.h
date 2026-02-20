@@ -1,4 +1,3 @@
-// CamSwitchController.h
 #pragma once
 
 #include "OrbitCamTypes.h"
@@ -8,7 +7,7 @@ NS_BEGIN(Client)
 class CamSwitchController
 {
 public:
-    enum class State { None, Enter, Hold, Switching, Recover };
+    enum class State { None, Enter, Hold, Switching, Recover, CancelRecover };
 
     struct SwitchTuning
     {
@@ -23,6 +22,9 @@ public:
             _float   maxVictimDist = 12.f;
 
             _float   pivotFollowLerpSpeed = 18.f;
+
+            _float   cancelFovSec = 0.5f;
+            EaseType cancelFovEase = EaseType::OutCubic;
         } common;
 
         struct Goal
@@ -40,16 +42,19 @@ public:
 
         struct Switch
         {
-            _float   blendSec = 0.3f;
+            _float   blendSec = 1.0f;
             EaseType blendEase = EaseType::OutCubic;
 
-            _float   recoverPoseSec = 1.75f;
+            _float   fovBlendSec = 1.0f;
+            EaseType fovBlendEase = EaseType::OutCubic;
+
+            _float   recoverPoseSec = 0.45f;
             EaseType recoverPoseEase = EaseType::OutCubic;
 
-            _float   fovRecoverSec = 1.5f;
-            EaseType fovRecoverEase = EaseType::OutCubic;
+            _float   arriveRollDeg = 2.5f;
 
-            _float   rollPeakDeg = 5.f;
+            _float   rollSettleSec = 0.35f;
+            EaseType rollSettleEase = EaseType::OutCubic;
         } sw;
 
         struct PivotFilter
@@ -81,7 +86,7 @@ public:
     {
         _float fovSaved = 0.f;
         _float fovFrom = 0.f;
-        _float recoverFromFov = 0.f;
+        _float holdDesiredFov = 0.f;
     } lens;
 
     struct PivotStab
@@ -136,16 +141,30 @@ public:
         Pose recoverTo{};
         PivotStab pivotStab{};
         _bool active = false;
+
+        _float fovFrom = 0.f;
+        _float fovTo = 0.f;
     } sw;
+
+    struct CancelData
+    {
+        _float fovFrom = 0.f;
+        _float fovTo = 0.f;
+        _float dur = 0.f;
+        EaseType ease = EaseType::OutCubic;
+    } cancel;
 
 public:
     void Begin();
     void Update(_float dt);
     void End();
 
+    void Switch();
+
 private:
     void EnsureAutoSwitch();
     void BeginSwitchTo(OBJECT_HANDLE newTarget);
+    void BeginCancelRecover();
 
 private:
     void CaptureHoldPose();
@@ -155,7 +174,10 @@ private:
     void ApplyPose(const Pose& p) const;
     void ApplyFovTarget(_float desiredFov);
 
-    _float EvalRecoverFov(_float tSec) const;
+    _float EvalCancelFov(_float tSec) const;
+    _float EvalSwitchFov(_float tSec) const;
+    _float EvalRollSettle(_float tSec) const;
+
     _float CalcBehindYawDeg(OBJECT_HANDLE target) const;
 
 private:

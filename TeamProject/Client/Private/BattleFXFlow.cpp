@@ -472,7 +472,7 @@ void CBattleFXFlow::Cancle_Switch()
 		Cancel();
 		UIDirector()->Hide_Switch();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
-		//CamDirector()->EndSwitch();
+		CamDirector()->EndSwitch();
 	}
 }
 
