@@ -16,7 +16,7 @@ private:
 	virtual ~CUI_TutorialVideo() DEFAULT;
 
 public:
-	void Play(TUTORIAL eTutorial);
+	void Play(TUTORIAL_TYPE eType);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -36,7 +36,7 @@ private:
 	_uint m_PlayerID = {};
 
 private:
-	string Get_VideoPath(TUTORIAL eTutorial);
+	string Get_VideoPath(TUTORIAL_TYPE eType);
 
 public:
 	static  CGameObject* Create();

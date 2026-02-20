@@ -3,7 +3,8 @@
 
 namespace Client {
 	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
-	enum class CHARACTER { JaneDoe, Corin, Miyabi, END };
+	enum class CHARACTER { Corin, Miyabi, JaneDoe, END };
+
 	enum class ATTRIBUTE { Electric, Ether, Fire, Ice, Physical, END };
 	enum class SPECIALTY { Attack, Anomaly, Defenses, Rupture, Stun, Support, END };
 
@@ -37,7 +38,9 @@ namespace Client {
 
 	enum class BOSS { Sacrifice, Defiler, End };
 
-	enum class TUTORIAL { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
+	enum class TUTORIAL_TYPE { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
+	enum class TUTORIAL_STATE { INFO, PLAY, END };
+	enum class TUTORIAL_ACTION { DODGE, DODGE_COUNTER, ASSIST, ASSIST_CHARGE, ULTIMATE, COMBO, END };
 }
 
 #endif

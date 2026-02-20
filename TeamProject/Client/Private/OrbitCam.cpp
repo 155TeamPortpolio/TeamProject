@@ -3,6 +3,8 @@
 #include "CamOcclusionTracker.h"
 #include "ICamCollidable.h"
 #include "Enemy.h"
+#include "BattleSystem.h"   
+#include "BattlePlayer.h"
 // Engine
 #include "GameInstance.h"
 #include "Helper_Func.h"
@@ -229,11 +231,16 @@ void COrbitCam::ClearLockOn()
 
 void COrbitCam::Lock_ReenterBlend(_float blendInSec)
 {
+    Lock_ReenterBlend(blendInSec, m_prof.lockBlendInEase);
+}
+
+void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
+{
     m_lockBlend.active = true;
     m_lockBlend.entering = true;
     m_lockBlend.elapsed = 0.f;
     m_lockBlend.duration = max(blendInSec, 0.0001f);
-    m_lockBlend.ease = m_prof.lockBlendInEase;
+    m_lockBlend.ease = ease;
     m_lockBlend.weight = 0.f;
 
     m_lockFocus = {};
@@ -1029,58 +1036,7 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
     if (!m_target.isValid()) return out;
 
     const Vector3 playerPivot = GetBasePivotTargetPos(m_target);
-
-    out.focusPos = m_hasLockFocus ? m_lockFocus : playerPivot;
-
-    if (m_lockBlend.active && !m_lockBlend.entering)
-    {
-        out.hasDist = true;
-        const _float k = 1.f - w;
-        out.dist = curDist + (m_lock.savedDist - curDist) * k;
-    }
-
-    if (w <= 0.f) return out;
-    if (!m_lock.handle.isValid()) return out;
-
-    const Vector3 targetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
-
-    Vector3 flat = targetPivot - playerPivot;
-    flat.y = 0.f;
-
-    const _float len = flat.Length();
-    if (len == 0.f) return out;
-
-    flat /= len;
-
-    const _float desiredYawDeg = XMConvertToDegrees(atan2f(flat.x, flat.z));
-    const _float deltaYawDeg = Math::WrapDeg(desiredYawDeg - curYawDeg);
-
-    const _float a = ExpAlphaSpeed(m_prof.lockYawSpeed, dt);
-
-    out.yawAddDeg = deltaYawDeg * a * w;
-
-    _float distT = len / (len + m_prof.lockFocusDist);
-    distT = clamp(distT, 0.f, 1.f);
-
-    const _float focusT = m_prof.lockFocusNear + (m_prof.lockFocusFar - m_prof.lockFocusNear) * distT;
-    out.focusPos = Vector3::Lerp(playerPivot, targetPivot, focusT);
-
-    m_lockFocus = out.focusPos;
-    m_hasLockFocus = true;
-
-    if (m_prof.lockAutoZoom && !out.hasDist)
-    {
-        const _float wanted = len * m_prof.lockAutoZoomFactor;
-        const _float clampedDist = clamp(wanted, m_prof.distMin, m_prof.distMax);
-
-        if (curDist < clampedDist)
-        {
-            out.hasDist = true;
-            out.dist = curDist + (clampedDist - curDist) * w;
-        }
-    }
-
-    return out;
+    return EvalLock_PlayerPivot(dt, playerPivot, curYawDeg, curDist);
 }
 
 void COrbitCam::Lock_BlendStart(_bool entering)
@@ -1208,6 +1164,101 @@ Vector3 COrbitCam::PivotStab_Eval(_float dt, const Vector3& rawPivot)
     return m_pivotStab.filteredPivot;
 }
 
+OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPivot, _float curYawDeg, _float curDist)
+{
+    OrbitLockEval out{};
+
+    const _float w = Lock_Weight();
+    out.weight = w;
+
+    out.focusPos = m_hasLockFocus ? m_lockFocus : playerPivot;
+
+    if (m_lockBlend.active && !m_lockBlend.entering)
+    {
+        out.hasDist = true;
+        const _float k = 1.f - w;
+        out.dist = curDist + (m_lock.savedDist - curDist) * k;
+    }
+
+    if (w <= 0.f) return out;
+    if (!m_lock.handle.isValid()) return out;
+
+    const Vector3 targetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
+
+    Vector3 flat = targetPivot - playerPivot;
+    flat.y = 0.f;
+
+    const _float len = flat.Length();
+    if (len == 0.f) return out;
+
+    flat /= len;
+
+    const _float desiredYawDeg = XMConvertToDegrees(atan2f(flat.x, flat.z));
+    const _float deltaYawDeg = Math::WrapDeg(desiredYawDeg - curYawDeg);
+
+    const _float a = ExpAlphaSpeed(m_prof.lockYawSpeed, dt);
+
+    out.yawAddDeg = deltaYawDeg * a * w;
+
+    _float distT = len / (len + m_prof.lockFocusDist);
+    distT = clamp(distT, 0.f, 1.f);
+
+    const _float focusT = m_prof.lockFocusNear + (m_prof.lockFocusFar - m_prof.lockFocusNear) * distT;
+    out.focusPos = Vector3::Lerp(playerPivot, targetPivot, focusT);
+
+    m_lockFocus = out.focusPos;
+    m_hasLockFocus = true;
+
+    if (m_prof.lockAutoZoom && !out.hasDist)
+    {
+        const _float wanted = len * m_prof.lockAutoZoomFactor;
+        const _float clampedDist = clamp(wanted, m_prof.distMin, m_prof.distMax);
+
+        if (curDist < clampedDist)
+        {
+            out.hasDist = true;
+            out.dist = curDist + (clampedDist - curDist) * w;
+        }
+    }
+
+    return out;
+}
+
+void COrbitCam::DrawDebugPivot()
+{
+#ifdef _USING_GUI
+    const Vector3 pivotWorld = m_pose.pivotCurWorld;
+
+    const Vector3 camPos = m_pTransform->Get_WorldPos();
+    const Vector3 camLook = m_pTransform->Dir(STATE::LOOK);
+    const Vector3 camUp = m_pTransform->Dir(STATE::UP);
+
+    const auto& io = ImGui::GetIO();
+    const float w = io.DisplaySize.x;
+    const float h = io.DisplaySize.y;
+    const float aspect = w / max(h, 0.0001f);
+
+    const float fovDeg = CameraManager()->GetFov();
+    const float fovRad = XMConvertToRadians(fovDeg);
+
+    const Matrix view = Matrix::CreateLookAt(camPos, camPos + camLook, camUp);
+    const Matrix proj = Matrix::CreatePerspectiveFieldOfView(fovRad, aspect, 0.1f, 1000.f);
+
+    const Matrix viewProj = view * proj;
+    const Vector4 clip = Vector4::Transform(Vector4(pivotWorld.x, pivotWorld.y, pivotWorld.z, 1.f), viewProj);
+
+    const float invW = 1.f / clip.w;
+    const float ndcX = clip.x * invW;
+    const float ndcY = clip.y * invW;
+
+    const float sx = (ndcX * 0.5f + 0.5f) * w;
+    const float sy = (-ndcY * 0.5f + 0.5f) * h;
+
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+    dl->AddCircleFilled(ImVec2(sx, sy), 4.f, IM_COL32(255, 0, 0, 255));
+#endif
+}
+
 void COrbitCam::SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist)
 {
     auto cc = Get_Component<CCharacterController>();
@@ -1250,7 +1301,6 @@ void COrbitCam::SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& c
     ClampTargets();
 }
 
-
 COrbitCam* COrbitCam::Create()
 {
     auto inst = new COrbitCam();
@@ -1271,4 +1321,64 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
         Safe_Release(inst);
     }
     return inst;
+}
+
+void COrbitCam::Render_GUI()
+{
+    Get_Component<CTransform>()->Render_GUI();
+
+#ifdef _USING_GUI
+    ImGui::SeparatorText("OrbitCam");
+
+    const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+    const float childHeight = (textLineHeight * 9) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+    const Vector3 pivotWorld = m_pose.pivotCurWorld;
+    const Vector3 localOffset = m_pose.pivotInternalOffset + m_pose.pivotExternalOffset;
+
+    const _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
+
+    ImGui::BeginChild("##OrbitCamChild", ImVec2{0, childHeight}, true);
+
+    if (ImGui::BeginTable("##OrbitCamInfo", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit))
+    {
+        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 160.f);
+        ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("ChainParry");
+        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(isChainParry ? "O" : "X");
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Distance");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("%.3f", m_pose.distCur);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Pivot World");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("x %.3f   y %.3f   z %.3f", pivotWorld.x, pivotWorld.y, pivotWorld.z);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Pivot LocalOffset");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("x %.3f   y %.3f   z %.3f", localOffset.x, localOffset.y, localOffset.z);
+
+        ImGui::EndTable();
+    }
+
+    ImGui::EndChild();
+
+    const auto& io = ImGui::GetIO();
+    const float w = io.DisplaySize.x;
+    const float h = io.DisplaySize.y;
+
+    const Matrix view = *CameraManager()->Get_ViewMatrix();
+    const Matrix proj = *CameraManager()->Get_ProjMatrix();
+
+    const _float4 vp = {0.f, 0.f, w, h};
+
+    Vector2 screen{};
+
+    ImDrawList* dl = ImGui::GetBackgroundDrawList();
+    if (Helper::WorldToScreen(pivotWorld, screen, view, proj, vp))
+        dl->AddCircleFilled(ImVec2(screen.x, screen.y), 4.f, IM_COL32(255, 0, 0, 255));
+#endif
 }

@@ -37,6 +37,7 @@ private:
     bool QuerySizeFromCurrentType(); // m_width/m_height/m_stride 세팅
 
 private:
+    std::mutex m_decodeGate;   // ? DecodeNextRGBA / Close / Open 상호배제
     Microsoft::WRL::ComPtr<IMFSourceReader> m_reader;
     string m_lastFilePath = {};
     bool m_isOpened = false;
@@ -57,6 +58,11 @@ private:
 
 public:
     static CMFVideoDecoderBackend* Create() { return new CMFVideoDecoderBackend(); }
+    void CloseInternal_NoDecodeGate();
     virtual void Free() override;
+
+    // IVideoDecoderBackend을(를) 통해 상속됨
+    void RequestStopDecode() override;
+    void ResetStopDecode() override;
 };
 NS_END

@@ -24,6 +24,7 @@ public:
     const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
     NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
+    SpeechBubbleDesc         GetNpcSpeechBubble(pair<string, _uint> speechBubbleID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
     RAMEN_DESC                      GetRamenDesc(const string& strName);
     vector<const RAMEN_DESC*>       GetRamenTable();
@@ -32,6 +33,7 @@ public:
     TV_DESC                         GetTVDesc(const string& strName);
     const vector<GACHA_CHANNEL_DESC>& GeGachaChannels();
     PARTY_DESC              GetPartyData(CHARACTER eCharacter);
+    vector<TUTORIAL_ACTION_DESC> GetTutorialActions(TUTORIAL_TYPE eType);
 
 public:
     HRESULT LoadPlayerCreationTable(const string& csvPath);
@@ -48,6 +50,9 @@ public:
     HRESULT LoadTVData(const string& csvPath);
     HRESULT LoadGachaChannelData(const string& csvPath);
     HRESULT LoadPartyData(const string& csvPath);
+    HRESULT LoadTutorialData(const string& csvPath);
+    vector<CHARACTER> Get_EnableCharacters();
+    HRESULT LoadSpeechBubble(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -56,7 +61,6 @@ public:
 
 private:
     vector<string_view> SplitFileName(string_view s, _char delim);
-
 //enum 변환함수
 private:
     DayPhase        StringToDayPhase(const string& str);
@@ -69,6 +73,8 @@ private:
     CHARACTER       StringToCharacter(const string& str);
     ATTRIBUTE       StringToAttribute(const string& str);
     SPECIALTY       StringToSpecialty(const string& str);
+    TUTORIAL_TYPE   StringToTutorialType(const string& str);
+    TUTORIAL_ACTION StringToTutorialAction(const string& str);
 
 private:
     // 몬스터 세팅 테이블(CCT 정보, 각종 Status(HP, 공격력 등))
@@ -81,6 +87,8 @@ private:
     //NpcData
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
+    multimap<pair<string, _uint>, SpeechBubbleDesc>		        m_SpeechBubbleTables;
+    map<pair<string, _uint>, pair<vector<_uint>, _uint>> m_ShuffledSpeechBubbleIndices;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     //FieldData
     unordered_map<_int, GACHA_RESULT_DESC>                  m_ResultTables;
@@ -91,6 +99,8 @@ private:
     // BattleField Data
     // PartyData
     unordered_map<CHARACTER, PARTY_DESC>                    m_PartyTables;
+    // TutorialData
+    map<TUTORIAL_TYPE, vector<TUTORIAL_ACTION_DESC>> m_TutorialTables;
 
     //맵 데이터 <-> 런타임 데이터 연결용 (현재 작동중인 레벨에서만)
     unordered_map<string, CASHED_OBJ_DATA>  m_CashedData;

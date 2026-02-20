@@ -5,6 +5,7 @@
 #include "BattleSystem.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 CMiyabiState_CounterAttack* CMiyabiState_CounterAttack::Create()
 {
@@ -51,6 +52,7 @@ void CMiyabiState_CounterAttack::Update(CMiyabi* pOwner, _float dt)
 		Is_AnimEnd())
 	{
 		m_pSubStateMachine->Set_Bool("ReserveNormal", false);
+		m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
 		m_pParentState->Get_SubStateMachine()->Set_Trigger("ToNormalAttack");
 		return;
 	}
@@ -78,6 +80,9 @@ void CMiyabiState_Counter_Start::Enter(CMiyabi* pOwner)
 		.ReserveSpeed(0.4f, 0.9f, 1.5f, EaseType::OutCubic)
 		.EndAt(0.9f)
 		.Apply();
+	pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_CounterAttack_SFX.wav")
+		.Attribute3D(true)
+		.Play();
 
 	m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
 	pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));

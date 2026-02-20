@@ -8,6 +8,7 @@
 
 #include "DefilerLaser.h"
 #include "DisplayGate.h"
+#include "CameraMgr.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -34,41 +35,41 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 1 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//?‚´ë¦¬ì°
 		break;
 	}
 	case 2 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });//ë ˆì´ì €
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });//? ˆ?´???
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//?‚´ë¦¬ì°
 		break;
 	}
 	case 3 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack02",0.f,1.f });//íšŒì „
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack02",0.f,1.f });//?šŒ? „
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//?‚´ë¦¬ì°
 		break;
 	}
 	case 4 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack05",0.f,1.f });//ëŒì§„
-		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//ë³µê·€
+		blackBoard.patternTransition.push_back({ "Attack05",0.f,1.f });//?Œì§?
+		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//ë³µê??
 		break;
 	}
 	case 5 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });//ì´ìž½ì´
-		blackBoard.patternTransition.push_back({ "Attack_Grab",0.f,1.f });//ëŒì§„
-		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//ë³µê·€
+		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });//ì´ìž½?´
+		blackBoard.patternTransition.push_back({ "Attack_Grab",0.f,1.f });//?Œì§?
+		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//ë³µê??
 		break;
 	}
 	case 6 :
 	{
 		blackBoard.patternTransition.push_back({ "Attack01_03",0.f,1.f });//ê¼¬ë¦¬
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//ë‚´ë¦¬ì°2
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//?‚´ë¦¬ì°2
 		break;
 	}
 	case 7 :
@@ -80,13 +81,13 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	{
 		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,0.41f });
 		blackBoard.patternTransition.push_back({ "Attack01_02",0.19f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//ë‚´ë¦¬ì°2
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//?‚´ë¦¬ì°2
 		break;
 	}
 	case 9 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); //ë°©íŒ¨ë³‘
+		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); //ë°©íŒ¨ë³?
 		blackBoard.patternTransition.push_back({ "Attack08_01_Loop",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_01_End",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f });
@@ -105,17 +106,18 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	case 11 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });//ì´ì•¼ì¦ˆë§ˆ
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });//?´?•¼ì¦ˆë§ˆ
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//?‚´ë¦¬ì°
 		break;
 	}
 	case 12 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); //ì°½ ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); //ì°? ?‚´ë¦¬ì°
 		break;
 	}
 	case 13 :
 	{
+		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});
 		break;
 	}
 	default:
@@ -587,6 +589,7 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
 	blackBoard.TraceType_IgnoreRotation();
+	blackBoard.TractType_IgnoreAnim();
 
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_07")
@@ -601,8 +604,6 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
-
-
 }
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)

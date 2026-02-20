@@ -59,6 +59,9 @@
 /*PostRenderer*/
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
+#include "ProceduralSky.h"
+
+#include "AudioSource.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey)
@@ -71,20 +74,25 @@ HRESULT CZero_Level::Initialize()
 
 	/* UI */
 	CUIDirector::GetInstance()->Load_LevelObjects("Zero_Level");
+
 	/*ENV*/
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
-	pCloud->Set_Alive(false);
+	pCloud->Set_Alive(true);
 
 	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
 		->SetColor(_float4(0.08f, 0.02f, 0.02f, 1.0f))
 		->SetDensity(0.02f)
 		->SetEnable(true);
+	
+	/* BGM */
+	m_pBGM = CAudioSource::Create();
+	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/BGM");
 
 	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
-
+	
 	m_Context.isFirstIn = true;
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 	Ready_Stage();
@@ -113,6 +121,18 @@ void CZero_Level::Update()
 	CBattleSystem::GetInstance()->Update();
 	m_Context.pNowStage->Update();
 	BattleSystem()->Update();
+
+	_float dt = GameInstance()->Get_TimeMgr()->Get_DeltaTime(G_EngineTimerID);
+	m_tZeroCloud.Update_Cloud(dt);
+	m_tZeroFog.Update_Fog(dt);
+
+	if (GetAsyncKeyState('N')) {
+		m_tZeroFog.Change_FogState(FOG_DESC{ _float4(1,1,1,1), 1.f }, 1.f, EaseType::Linear);
+	}
+
+	if (GetAsyncKeyState('M')) {
+		m_tZeroFog.RollBack_Fog(1.f, EaseType::Linear);
+	}
 }
 
 HRESULT CZero_Level::Render()
@@ -134,6 +154,14 @@ HRESULT CZero_Level::ChangeStage(StageType type)
 
 	m_Context.pNowStage = found->second;
 	return m_Context.pNowStage->Enter_Stage(m_Context);
+}
+
+string CZero_Level::PopMapKey(StageType type)
+{
+	auto it = m_mapCycle.find(type);
+	if (it == m_mapCycle.end())
+		return {};
+	return it->second.Next();
 }
 
 void CZero_Level::Ready_Prototype()
@@ -202,8 +230,7 @@ void CZero_Level::Ready_Stage()
 		Boss_Process = 2; //Start BossMap Index;
 
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
-	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", ++Boss_Process);
-
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <=2)? Boss_Process : 1);
 	ChangeStage(StageType::Boss);
 }
 
@@ -218,14 +245,6 @@ void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
 		swap(Map[i], Map[Rand]);
 	}
 	
-}
-
-string CZero_Level::PopMapKey(StageType type)
-{
-	auto it = m_mapCycle.find(type);
-	if (it == m_mapCycle.end())
-		return {};
-	return it->second.Next();
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)
@@ -254,4 +273,179 @@ void CZero_Level::Free()
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Clear_Characters();
+	Safe_Release(m_pBGM);
 }
+
+#pragma region Fog
+void CZero_Level::Zero_Fog::Update_Fog(_float dt)
+{
+	if (eUpdate == ZeroUpdate::Nope)
+		return;
+
+	fElapsed += dt;
+
+	if (fDuration <= fElapsed) {
+		fElapsed = fDuration;
+		eUpdate = ZeroUpdate::Nope;
+	}
+
+	_float fRatio = (fDuration > 0.f) ? (fElapsed / fDuration) : 1.f;
+	_float t = Math::ApplyEase(eEase, clamp(fRatio, 0.f, 1.f));
+
+	const FOG_DESC* pSrcDesc = nullptr;
+	const FOG_DESC* pDstDesc = nullptr;
+
+	if (eUpdate == ZeroUpdate::Target) {
+		pSrcDesc = &tCurFog;
+		pDstDesc = &tTargetFog;
+	}
+	else if (eUpdate == ZeroUpdate::RollBack) {
+		pSrcDesc = &tCurFog;
+		pDstDesc = &tBaseFog;
+	}
+
+	if (pSrcDesc == nullptr || pDstDesc == nullptr) {
+		eUpdate = ZeroUpdate::Nope;
+		return;
+	}
+
+	Vector4 fogColor = XMVectorLerp(
+		XMLoadFloat4(&pSrcDesc->fogColor),
+		XMLoadFloat4(&pDstDesc->fogColor),
+		t
+	);
+	_float fogDensity = pSrcDesc->fogDensity + (pDstDesc->fogDensity - pSrcDesc->fogDensity) * t;
+
+	tCurFog = { fogColor, fogDensity };
+
+	RenderSystem()->GetPostRenderer()
+		->GetCommand<CFogCommand>()
+		->SetFogDesc(tCurFog)
+		->SetEnable(true);
+}
+
+void CZero_Level::Zero_Fog::Set_BaseFog(FOG_DESC FogDesc)
+{
+	tCurFog = tBaseFog = FogDesc;
+
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetFogDesc(tBaseFog);
+}
+
+void CZero_Level::Zero_Fog::Change_FogState(FOG_DESC FogDesc, _float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::Target;
+	tTargetFog = FogDesc;
+	fElapsed   = 0.f;
+	fDuration  = fTime;
+	eEase  = eEaseType;
+}
+
+void CZero_Level::Zero_Fog::RollBack_Fog(_float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::RollBack;
+	fElapsed = 0.f;
+	fDuration = fTime;
+	eEase = eEaseType;
+	tTargetFog = RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()->GetFogDesc();
+}
+
+void CZero_Level::Zero_Fog::Use_Fog(_bool b)
+{
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetEnable(b);
+}
+#pragma endregion
+
+#pragma region Cloud
+void CZero_Level::Zero_Cloud::Update_Cloud(_float dt)
+{
+	if (eUpdate == ZeroUpdate::Nope)
+		return;
+
+	fElapsed += dt;
+
+	if (fDuration <= fElapsed) {
+		fElapsed = fDuration;
+		eUpdate = ZeroUpdate::Nope;
+	}
+
+	_float fRatio = (fDuration > 0.f) ? (fElapsed / fDuration) : 1.f;
+	_float t = Math::ApplyEase(eEase, clamp(fRatio, 0.f, 1.f));
+
+	const CLOUD_DESC* pSrcDesc = nullptr;
+	const CLOUD_DESC* pDstDesc = nullptr;
+
+	if (eUpdate == ZeroUpdate::Target) {
+		pSrcDesc = &tCurCloud;
+		pDstDesc = &tTargetCloud;
+	}
+	else if (eUpdate == ZeroUpdate::RollBack) {
+		pSrcDesc = &tCurCloud;
+		pDstDesc = &tBaseCloud;
+	}
+
+	if (pSrcDesc == nullptr || pDstDesc == nullptr) {
+		eUpdate = ZeroUpdate::Nope;
+		return;
+	}
+		
+	Vector3 topCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->topColor),
+		XMLoadFloat3(&pDstDesc->topColor), t);
+	Vector3 horizonCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->horizonColor),
+		XMLoadFloat3(&pDstDesc->horizonColor), t);
+	Vector3 hazeCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->hazeColor),
+		XMLoadFloat3(&pDstDesc->hazeColor), t);
+	_float atmoBlend = pSrcDesc->atmosphereBlend + (pDstDesc->atmosphereBlend - pSrcDesc->atmosphereBlend) * t;
+	Vector3 brightCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->cloudBright),
+		XMLoadFloat3(&pDstDesc->cloudBright), t);
+	Vector3 darkCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->cloudDark),
+		XMLoadFloat3(&pDstDesc->cloudDark), t);
+	_float coverage = pSrcDesc->coverage + (pDstDesc->coverage - pSrcDesc->coverage) * t;
+
+	tCurCloud = { topCol,horizonCol,hazeCol,atmoBlend,brightCol,darkCol,coverage };
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud)pCloud->Set_CloudInfo(tCurCloud);
+}
+
+void CZero_Level::Zero_Cloud::Set_BaseCloud(CLOUD_DESC CloudDesc)
+{
+	tCurCloud = tBaseCloud = CloudDesc;
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud) pCloud->Set_CloudInfo(tBaseCloud);
+}
+
+void CZero_Level::Zero_Cloud::Change_CloudState(CLOUD_DESC CloudDesc, _float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::Target;
+	tTargetCloud = CloudDesc;
+	fElapsed = 0.f;
+	fDuration = fTime;
+	eEase = eEaseType;
+}
+
+void CZero_Level::Zero_Cloud::RollBack_Cloud(_float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::RollBack;
+	fElapsed = 0.f;
+	fDuration = fTime;
+	eEase = eEaseType;
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud)
+		tTargetCloud = pCloud->Get_CloudInfo();
+}
+
+void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
+{
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	if(pCloud) pCloud->Set_Alive(b);
+}
+
+#pragma endregion

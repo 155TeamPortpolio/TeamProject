@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "BattlePlayer.h"
 
 #include "CamObject.h"
 #include "Enemy.h"
@@ -247,6 +248,7 @@ _bool CCharacter::Can_SwitchIn() const
 
 void CCharacter::Active_Character()
 {
+    m_pCCT->Set_CollisionMask(m_iDefaultMask);
     m_pCCT->Set_CompActive(true);
     Active_ParryCollider(true);
     SetRenderLayer(RENDER_LAYER::Default);
@@ -280,6 +282,8 @@ _bool CCharacter::Can_Parry()
 
 OBJECT_HANDLE CCharacter::Calculate_Parry()
 {
+    _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
+
     CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
         (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
     _vector3 vPos = Get_WorldPos();
@@ -354,8 +358,8 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 #pragma endregion
         }
     }
-
     _float fFinalOffset = min(vAttackOffset * 3.f, fMinDist);   // 위치 튀는거 방지
+
     m_vParryPos = vAttackPos + vAttackLook * fFinalOffset;
     m_vParryPos.y = vPos.y + 1.f;
 
@@ -398,12 +402,13 @@ void CCharacter::On_Evade()
     m_bIsEvade = true;
 }
 
-void CCharacter::On_SwitchOut()
+void CCharacter::On_SwitchOut(_bool isParry)
 {
     Push_Invincible();
     Lock_Move();
     Stop_Rotation();
     m_bReserveCombo = false;
+    m_pCCT->Set_CollisionMask(m_iDefaultMask - ENUM(COLLISION_GROUP::MONSTER));
 }
 
 void CCharacter::On_Ultimate()

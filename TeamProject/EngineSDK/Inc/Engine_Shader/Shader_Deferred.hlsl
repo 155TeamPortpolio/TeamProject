@@ -328,6 +328,27 @@ PS_OUT_RESULT PS_SATURATION(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_SATURATION_FULL(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vNonLight = NonLightTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (vNonLight.a > 0.01)
+    {
+        Out.vResult = scene;
+        return Out;
+    }
+    
+    float gray = dot(scene.rgb, float3(0.2126, 0.7152, 0.0722));
+    float saturation = 1.0 - SaturationIntensity;
+    float3 desaturated = lerp(float3(gray, gray, gray), scene.rgb, saturation);
+    
+    Out.vResult = float4(desaturated, scene.a);
+    return Out;
+}
+
 PS_OUT_RESULT PS_DISTORTION(PS_IN In)
 {
     PS_OUT_RESULT Out;
@@ -524,6 +545,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SATURATION();
+    }
+
+    pass SATURATION_FULL
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SATURATION_FULL();
     }
 
     pass ADDICTIVECOLOR

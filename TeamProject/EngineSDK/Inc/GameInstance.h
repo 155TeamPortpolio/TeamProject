@@ -99,7 +99,6 @@ private:
 	CVideoService* m_pVideoService = { nullptr };
 public:
 	virtual void Free() override;
-
 };
 
 inline auto* GameInstance() { return CGameInstance::GetInstance(); }

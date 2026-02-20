@@ -18,6 +18,7 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
+    void    Render_GUI()                override;
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -40,6 +41,7 @@ public:
     void    Unlock_Input() { m_lockInput = false; }
     _bool   IsInputLocked() const { return m_lockInput; }
     void    Lock_ReenterBlend(_float blendInSec);
+    void    Lock_ReenterBlend(_float blendInSec, EaseType ease);
 
     void    ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease);
     _bool   ReturnPreset_Active() const { return m_returnPreset.active; }
@@ -58,6 +60,10 @@ public:
 
     void          Lock_BlendUpdate_External(_float dt) { Lock_BlendUpdate(dt); }
     OrbitLockEval Lock_Eval_External(_float dt, _float curYawDeg, _float curDist) { return EvalLock(dt, curYawDeg, curDist); }
+    OrbitLockEval Lock_Eval_FrozenPlayerPivot_External(_float dt, const Vector3& playerPivotWorld, _float curYawDeg, _float curDist)
+    {
+        return EvalLock_PlayerPivot(dt, playerPivotWorld, curYawDeg, curDist);
+    }
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
@@ -140,6 +146,9 @@ private:
 
     void    PivotStab_Reset(const Vector3& pivot);
     Vector3 PivotStab_Eval(_float dt, const Vector3& rawPivot);
+    OrbitLockEval EvalLock_PlayerPivot(_float dt, const Vector3& playerPivot, _float curYawDeg, _float curDist);
+
+    void    DrawDebugPivot();
 
 private:
     OrbitPose     m_pose{};

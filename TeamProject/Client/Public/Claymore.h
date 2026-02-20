@@ -42,7 +42,7 @@ public:
     void            Idle() { m_isIdle = true; }
     virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
     void            SetTutorial(_bool is) { m_isTutorial = is; }
-    void            SetTutorialMode(TUTORIAL eMode);
+    void            SetTutorialMode(TUTORIAL_TYPE eMode);
 
 private:
     HRESULT Initialize_StateMachine();
@@ -63,7 +63,7 @@ private:
 
     /* Fot. Tutorial */
     _bool               m_isTutorial = { false };
-    TUTORIAL            m_eCurTutorial = {};
+    TUTORIAL_TYPE       m_eCurTutorial = {};
     _bool               m_isPrevGroggy = { false };
     _bool               m_isTutorialGroggyCool = { false };
     _float2             m_vTutorialGroggyTime = {2.f, 0.f};

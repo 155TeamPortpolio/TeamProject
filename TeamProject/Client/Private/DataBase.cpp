@@ -39,7 +39,8 @@ HRESULT CDataBase::CreateTable()
 		return E_FAIL;
 	if (FAILED(LoadNpcIDData("../../Resources/Data/Npc/Npc_ID.csv")))
 		return E_FAIL;
-
+	if (FAILED(LoadSpeechBubble("../../Resources/Data/Npc/SpeechBubble.csv")))
+		return E_FAIL;
 	//Shop
 	if (FAILED(LoadRamenData("../../Resources/Data/Shop/Shop_Ramen.csv")))
 		return E_FAIL;
@@ -55,6 +56,10 @@ HRESULT CDataBase::CreateTable()
 
 	// Party
 	if (FAILED(LoadPartyData("../../Resources/Data/Party/Party.csv")))
+		return E_FAIL;
+
+	// Tutorial
+	if (FAILED(LoadTutorialData("../../Resources/Data/Tutorial/Tutorial.csv")))
 		return E_FAIL;
 
 	return S_OK;
@@ -105,6 +110,31 @@ NpcDialogueDesc CDataBase::GetNpcDialogueDesc(pair<string, _uint> dialogueID)
 	if (iter == m_DialogueTables.end())
 		return NpcDialogueDesc{};
 
+	return iter->second;
+}
+
+SpeechBubbleDesc CDataBase::GetNpcSpeechBubble(pair<string, _uint> speechBubbleID)
+{
+	if (Helper::Get_Random_Bool(0.6) == false)
+		return SpeechBubbleDesc{};
+
+	auto range = m_SpeechBubbleTables.equal_range(speechBubbleID);
+	if (range.first == range.second)
+		return SpeechBubbleDesc{};
+
+	_uint count = (_uint)distance(range.first, range.second);
+	auto& [shuffled, cursor] = m_ShuffledSpeechBubbleIndices[speechBubbleID];
+
+	if (shuffled.empty() || cursor >= count)
+	{
+		shuffled.resize(count);
+		iota(shuffled.begin(), shuffled.end(), 0);
+		shuffle(shuffled.begin(), shuffled.end(), mt19937{ random_device{}() });
+		cursor = 0;
+	}
+
+	auto iter = range.first;
+	advance(iter, shuffled[cursor++]);
 	return iter->second;
 }
 
@@ -205,6 +235,15 @@ PARTY_DESC CDataBase::GetPartyData(CHARACTER eCharacter)
 	auto iter = m_PartyTables.find(eCharacter);
 	if (iter == m_PartyTables.end())
 		return PARTY_DESC{};
+
+	return iter->second;
+}
+
+vector<TUTORIAL_ACTION_DESC> CDataBase::GetTutorialActions(TUTORIAL_TYPE eType)
+{
+	auto iter = m_TutorialTables.find(eType);
+	if (iter == m_TutorialTables.end())
+		return {};
 
 	return iter->second;
 }
@@ -813,6 +852,77 @@ HRESULT CDataBase::LoadPartyData(const string& csvPath)
 	return S_OK;
 }
 
+HRESULT CDataBase::LoadTutorialData(const string& csvPath)
+{
+	io::CSVReader<
+		3,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"TutorialID", "ActionID", "Count"
+	);
+
+	string strTutorialID, strActionID;
+	_uint iCount = {};
+
+	while (in.read_row(strTutorialID, strActionID, iCount))
+	{
+		TUTORIAL_ACTION_DESC desc = {};
+		desc.eAction = StringToTutorialAction(strActionID);
+		desc.iCount = iCount;
+
+		auto type = StringToTutorialType(strTutorialID);
+
+		if (type != TUTORIAL_TYPE::END)
+		{
+			auto& actions = m_TutorialTables[type];
+
+			auto iter = find_if(actions.begin(),actions.end(),[&](const TUTORIAL_ACTION_DESC& action)
+				{
+					return action.eAction == desc.eAction;
+				});
+
+			if (iter == actions.end())
+				actions.push_back(desc);
+		}
+	}
+	
+	return S_OK;
+}
+
+HRESULT CDataBase::LoadSpeechBubble(const string& csvPath)
+{
+	io::CSVReader<
+		3,
+		io::trim_chars<' ', '\t'>,
+		io::double_quote_escape<',', '"'>
+	>in(csvPath);
+
+	in.read_header(
+		io::ignore_extra_column | io::ignore_missing_column,
+		"Level", "Version", "Text"
+	);
+	string			Level, Text;
+	_int			Version;
+
+	while (in.read_row(Level, Version, Text))
+	{
+		if (Level.empty()) continue;
+
+		SpeechBubbleDesc desc = {};
+		desc.Level = Level;
+		desc.Version = Version;
+		desc.Text = StringToWString(Text);
+
+		m_SpeechBubbleTables.emplace(make_pair(desc.Level, desc.Version), move(desc));
+	}
+
+	return S_OK;
+}
+
 const CASHED_OBJ_DATA* CDataBase::Get_CashedData(const string& AreaTag)
 {
 	auto iter = m_CashedData.find(AreaTag);
@@ -846,6 +956,16 @@ vector<string_view> CDataBase::SplitFileName(string_view s, _char delim)
 		pos = next + 1;
 	}
 	return out;
+}
+
+vector<CHARACTER> CDataBase::Get_EnableCharacters()
+{
+	vector<CHARACTER> results;
+
+	for (int i = 0; i <= m_iCurrentGachaOrder; ++i) {
+		results.push_back(static_cast<CHARACTER>(i));
+	}
+	return results;
 }
 
 DayPhase CDataBase::StringToDayPhase(const string& str)
@@ -949,6 +1069,28 @@ SPECIALTY CDataBase::StringToSpecialty(const string& str)
 	if (str == "Support") return SPECIALTY::Support;
 
 	return SPECIALTY::END;
+}
+
+TUTORIAL_TYPE CDataBase::StringToTutorialType(const string& str)
+{
+	if (str == "ExtremeEvade") return TUTORIAL_TYPE::EXTREME_EVADE;
+	if (str == "ExtremeSupport") return TUTORIAL_TYPE::EXTREME_SUPPORT;
+	if (str == "DecibelUltimate") return TUTORIAL_TYPE::DECIBEL_ULTIMATE;
+	if (str == "GroggyCombo") return TUTORIAL_TYPE::GROGGY_COMBO;
+
+	return TUTORIAL_TYPE::END;
+}
+
+TUTORIAL_ACTION CDataBase::StringToTutorialAction(const string& str)
+{
+	if (str == "PerfectDodge") return TUTORIAL_ACTION::DODGE;
+	if (str == "PerfectDodgeCounter") return TUTORIAL_ACTION::DODGE_COUNTER;
+	if (str == "PerfectAssist") return TUTORIAL_ACTION::ASSIST;
+	if (str == "PerfectAssistCharge") return TUTORIAL_ACTION::ASSIST_CHARGE;
+	if (str == "UltimateSkill") return TUTORIAL_ACTION::ULTIMATE;
+	if (str == "ComboSkill") return TUTORIAL_ACTION::COMBO;
+
+	return TUTORIAL_ACTION::END;
 }
 
 void CDataBase::Free()
