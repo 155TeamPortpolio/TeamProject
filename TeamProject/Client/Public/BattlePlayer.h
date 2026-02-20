@@ -71,6 +71,7 @@ public: // 캐릭터 관리
     void            QuestStart();
     HRESULT         SwitchCharacter(_int iTargetIndex);
     HRESULT         ClearCharacters();
+    void            Reset_Character();
 
 public: // 타겟팅
     OBJECT_HANDLE   GetTargetHandle() const { return m_TargetHandle; }
