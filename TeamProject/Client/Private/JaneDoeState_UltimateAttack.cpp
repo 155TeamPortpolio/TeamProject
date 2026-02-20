@@ -33,13 +33,6 @@ void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
     pOwner->Increase_Passion(100.f);
     pOwner->Set_Salchow(true);
 
-    if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::DECIBEL_ULTIMATE)
-    {
-        TUTORIAL_ACTION_DESC desc;
-        desc.eAction = TUTORIAL_ACTION::ULTIMATE;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-    }
-
     __super::Enter(pOwner);
 
     CamDirector()->RequestSequence(CamSeqType::Ultimate);
@@ -90,15 +83,6 @@ void CJaneDoeState_UltimateAttack_Loop::Enter(CJaneDoe* pOwner)
 
     m_fDamageTimer = m_fDamageInterval;
     pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
-    if(IsCrossAnimProgress(0.62f))
-    {
-        if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)
-        {
-            TUTORIAL_ACTION_DESC desc;
-            desc.eAction = TUTORIAL_ACTION::COMBO;
-            EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-        }
-    }
     pOwner->Play_Effect("JaneDoe_Ultimate_Smoke", _vector3(0.f, 0.f, 6.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
@@ -136,6 +120,17 @@ void CJaneDoeState_UltimateAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
     {
         pOwner->SetRenderLayer(RENDER_LAYER::Default);
     }
+
+    if (IsCrossAnimProgress(0.62f))
+    {
+        if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::DECIBEL_ULTIMATE)
+        {
+            TUTORIAL_ACTION_DESC desc;
+            desc.eAction = TUTORIAL_ACTION::ULTIMATE;
+            EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+        }
+    }
+
     Update_Effects(pOwner);
 }
 

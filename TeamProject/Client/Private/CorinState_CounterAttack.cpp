@@ -41,12 +41,6 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 {
 	if (IsCrossAnimProgress(0.7f))
 	{
-		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
-		{
-			TUTORIAL_ACTION_DESC desc;
-			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
-			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-		}
 		m_eType = DAMAGE_TYPE::HARD;
 	}
 
@@ -113,6 +107,16 @@ void CCorinState_Counter_Start::Update(CCorin* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+	if (IsCrossAnimProgress(0.7f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 
 	Update_Effects(pOwner);
 }
