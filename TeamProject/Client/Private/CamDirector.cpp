@@ -49,6 +49,11 @@ OBJECT_HANDLE CCamDirector::GetCurTarget() const
     return BattleSystem()->GetBattlePlayer()->GetTargetHandle();
 }
 
+OBJECT_HANDLE CCamDirector::GetCurParry() const
+{
+    return BattleSystem()->GetBattlePlayer()->GetParryHandle();
+}
+
 _bool CCamDirector::Register(const string& key, const fs::path& path)
 {
     CamSeqReqDesc req{};

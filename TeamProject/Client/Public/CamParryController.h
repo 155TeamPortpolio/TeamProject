@@ -82,6 +82,7 @@ public:
             _float fovBiasDeg = 4.f;
 
             _float impactStartYawExtraDeg = 30.f;
+            _float chainImpactStartYawExtraDeg = 0.f;
         } impact;
     } tune;
 

@@ -599,6 +599,8 @@ void CamParryController::ComputeSideFromCam()
 
 string CamParryController::BuildParryKey() const
 {
+    if (IsChainParry()) return "Parry/Chain";
+
     const CHARACTER charaName = CamDirector()->GetCharacterName();
     string key = "Parry/";
     key += Helper::EnumToString(charaName);
@@ -852,15 +854,17 @@ void CamParryController::Begin()
     shot.shotTo = BuildBaseShot_NoLens(side.sideSign);
     shot.shotTo.dist = startDist;
 
+    const _int lookSign = -side.sideSign;
+    const _float startYawExtra = chain ? tune.impact.chainImpactStartYawExtraDeg : tune.impact.impactStartYawExtraDeg;
+
     if (chain)
     {
-        shot.shotTo.yawDeg = 0.f;
+        shot.shotTo.yawDeg = Math::WrapDeg((_float)lookSign * startYawExtra);
         shot.shotTo.yawWeight = 1.f;
     }
     else
     {
-        const _int lookSign = -side.sideSign;
-        shot.shotTo.yawDeg = Math::WrapDeg(shot.shotTo.yawDeg + (_float)lookSign * tune.impact.impactStartYawExtraDeg);
+        shot.shotTo.yawDeg = Math::WrapDeg(shot.shotTo.yawDeg + (_float)lookSign * startYawExtra);
     }
 
     piv.enterCamY = CurCamPosWorld().y;

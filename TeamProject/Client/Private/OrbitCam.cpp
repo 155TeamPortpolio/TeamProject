@@ -3,6 +3,8 @@
 #include "CamOcclusionTracker.h"
 #include "ICamCollidable.h"
 #include "Enemy.h"
+#include "BattleSystem.h"   
+#include "BattlePlayer.h"
 // Engine
 #include "GameInstance.h"
 #include "Helper_Func.h"
@@ -1320,31 +1322,40 @@ void COrbitCam::Render_GUI()
     ImGui::SeparatorText("OrbitCam");
 
     const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-    const float childHeight = (textLineHeight * 8) + (ImGui::GetStyle().WindowPadding.y * 2);
+    const float childHeight = (textLineHeight * 9) + (ImGui::GetStyle().WindowPadding.y * 2);
 
     const Vector3 pivotWorld = m_pose.pivotCurWorld;
+    const Vector3 localOffset = m_pose.pivotInternalOffset + m_pose.pivotExternalOffset;
+
+    const _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
 
     ImGui::BeginChild("##OrbitCamChild", ImVec2{0, childHeight}, true);
 
-    ImGui::Text("Distance");
-    ImGui::Text("%.3f", m_pose.distCur);
+    if (ImGui::BeginTable("##OrbitCamInfo", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit))
+    {
+        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 160.f);
+        ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
-    ImGui::Text("Pivot World");
-    ImGui::Text("x %.3f", pivotWorld.x);
-    ImGui::SameLine(); ImGui::Text("y %.3f", pivotWorld.y);
-    ImGui::SameLine(); ImGui::Text("z %.3f", pivotWorld.z);
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("ChainParry");
+        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(isChainParry ? "O" : "X");
 
-    const Vector3 localOffset = m_pose.pivotInternalOffset + m_pose.pivotExternalOffset;
-    ImGui::Text("Pivot LocalOffset");
-    ImGui::Text("x %.3f", localOffset.x);
-    ImGui::SameLine(); ImGui::Text("y %.3f", localOffset.y);
-    ImGui::SameLine(); ImGui::Text("z %.3f", localOffset.z);
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Distance");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("%.3f", m_pose.distCur);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Pivot World");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("x %.3f   y %.3f   z %.3f", pivotWorld.x, pivotWorld.y, pivotWorld.z);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Pivot LocalOffset");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("x %.3f   y %.3f   z %.3f", localOffset.x, localOffset.y, localOffset.z);
+
+        ImGui::EndTable();
+    }
 
     ImGui::EndChild();
-
-    const Vector3 camPos = m_pTransform->Get_WorldPos();
-    const Vector3 camLook = m_pTransform->Dir(STATE::LOOK);
-    const Vector3 camUp = m_pTransform->Dir(STATE::UP);
 
     const auto& io = ImGui::GetIO();
     const float w = io.DisplaySize.x;
@@ -1355,12 +1366,10 @@ void COrbitCam::Render_GUI()
 
     const _float4 vp = {0.f, 0.f, w, h};
 
-    GameInstance()->Get_ClientSize();
-
     Vector2 screen{};
 
     ImDrawList* dl = ImGui::GetBackgroundDrawList();
-    if (Helper::WorldToScreen(pivotWorld, screen, view, proj, vp)) 
+    if (Helper::WorldToScreen(pivotWorld, screen, view, proj, vp))
         dl->AddCircleFilled(ImVec2(screen.x, screen.y), 4.f, IM_COL32(255, 0, 0, 255));
 #endif
 }
