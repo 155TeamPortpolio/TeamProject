@@ -44,7 +44,7 @@ void CUI_SpeechBubble::Awake()
 void CUI_SpeechBubble::Update(_float dt)
 {
     Update_WorldToScreen(m_vPosition);
-
+   
     Update_Visible(CalcState_ByDistance());
 
     __super::Update(dt);
@@ -99,7 +99,7 @@ CUI_SpeechBubble::STATE_VISIBLE CUI_SpeechBubble::CalcState_ByDistance()
 
     Vector3 vDiff = (Vector3(m_vPosition) - Vector3(vPlayerPos));
 
-    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::HIDDEN;
+    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::INVISIBLE;
 }
 
 CGameObject* CUI_SpeechBubble::Create()
