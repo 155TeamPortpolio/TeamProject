@@ -34,6 +34,7 @@ public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
 
 private:
+    void Initialize_Effects();
     void SpawnJaeger();
 private:
     _float3 m_startPos = {};

@@ -429,6 +429,8 @@ _bool CRigidBody::Is_Sleeping()
 
 void CRigidBody::Set_CCD(_bool bEnable)
 {
+	if (m_bKinematic)
+		return;
 	PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 	if (pDynamic)
 		pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, bEnable);

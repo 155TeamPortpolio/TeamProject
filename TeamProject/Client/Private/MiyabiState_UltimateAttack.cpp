@@ -72,6 +72,9 @@ void CMiyabiState_UltimateAttack_Start::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Sequence("Ultimate")
         .Attribute3D(true)
         .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateStart_SFX")
+        .Attribute3D(true)
+        .Play();
 }
 
 void CMiyabiState_UltimateAttack_Start::Update(CMiyabi* pOwner, _float dt)
@@ -88,6 +91,10 @@ void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.34f, 0.48f, 0.7f, EaseType::InExpo)
         .ReserveSpeed(0.48f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_SFX_01")
+        .Attribute3D(true)
+        .Play();
 
     m_bDamageActive = false;
 
@@ -167,6 +174,13 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
                     , DAMAGE_TYPE::ULTIMATE)
             );
         }
+    }
+
+    if (IsCrossAnimProgress(0.4f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_SFX_02")
+            .Attribute3D(true)
+            .Play();
     }
 
     if (IsCrossAnimProgress(0.53f))
@@ -306,6 +320,10 @@ void CMiyabiState_UltimateAttack_End::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
         .EndAt(0.3f)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_End_SFX")
+        .Attribute3D(true)
+        .Play();
+
     pOwner->Unlock_Move();
 }
 

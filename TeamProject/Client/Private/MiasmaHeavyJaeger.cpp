@@ -23,6 +23,9 @@
 #include "AudioSource.h"
 
 #include "MiasmaDummyUnit.h"
+
+#include "EffectContainer.h"
+
 CMiasmaHeavyJaeger::CMiasmaHeavyJaeger()
 	: CEnemy()
 {
@@ -218,6 +221,8 @@ void CMiasmaHeavyJaeger::Parried()
 	m_pStateMachine->Set_Trigger("Parried");
 	Get_Component<CCollider>()->Set_CompActive(false);
 	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+
+
 }
 
 void CMiasmaHeavyJaeger::SpawnChild()

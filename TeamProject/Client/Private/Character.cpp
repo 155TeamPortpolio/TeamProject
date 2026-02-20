@@ -365,6 +365,9 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.y = 0.f;
+    // ·è¹æÇâ Æ¢´Â°Å ¹æÁö
+    if (m_vParryLook.LengthSquared() < 1e-6f)
+        m_vParryLook = -vAttackLook;
     m_vParryLook.Normalize();
 
     return targetHandle;
@@ -407,7 +410,6 @@ void CCharacter::On_SwitchOut(_bool isParry)
     Push_Invincible();
     Lock_Move();
     Stop_Rotation();
-    m_bReserveCombo = false;
     m_pCCT->Set_CollisionMask(m_iDefaultMask - ENUM(COLLISION_GROUP::MONSTER));
 }
 
