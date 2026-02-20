@@ -1,10 +1,10 @@
+// CameraMgr.cpp
 #include "Engine_Defines.h"
 #include "CameraMgr.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "Engine_Math.h"
 #include "GameInstance.h"
-#include "AudioDevice.h"
 
 CGameObject* CCameraMgr::ResolveObj(OBJECT_HANDLE handle) const
 {
@@ -106,9 +106,61 @@ void CCameraMgr::SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq,
     m_shake.SetAxisWave(axes, ampDeg, freq, dur, fadeOutSec, attackEase, decayEase);
 }
 
-void CCameraMgr::SetFov(_float deltaDeg, _float blendSec, EaseType easeType)
+void CCameraMgr::EnqueueFovStep(_float deltaDeg, _float sec, EaseType easeType)
 {
-    if (blendSec <= 0.f)
+    m_fovQueue.push_back({deltaDeg, sec, easeType});
+}
+
+_bool CCameraMgr::DequeueFovStep(FovStep& out)
+{
+    if (m_fovQueueHead >= m_fovQueue.size()) return false;
+
+    out = m_fovQueue[m_fovQueueHead++];
+    if (m_fovQueueHead >= m_fovQueue.size())
+    {
+        m_fovQueue.clear();
+        m_fovQueueHead = 0u;
+    }
+    return true;
+}
+
+void CCameraMgr::BeginFovBlend(_float from, _float to, _float sec, EaseType easeType)
+{
+    if (sec <= 0.f)
+    {
+        m_fovOffsetBlending = false;
+
+        m_fovOffsetCur = to;
+        m_fovOffsetFrom = to;
+        m_fovOffsetTo = to;
+        return;
+    }
+
+    m_fovOffsetFrom = from;
+    m_fovOffsetTo = to;
+
+    m_fovOffsetTime = 0.f;
+    m_fovOffsetDuration = max(sec, 0.0001f);
+    m_fovOffsetEaseType = easeType;
+
+    m_fovOffsetBlending = true;
+}
+
+void CCameraMgr::StartQueuedFovIfNeeded()
+{
+    if (m_fovOffsetBlending) return;
+
+    while (!m_fovOffsetBlending)
+    {
+        FovStep step{};
+        if (!DequeueFovStep(step)) break;
+        BeginFovBlend(m_fovOffsetCur, m_fovOffsetCur + step.deltaDeg, step.sec, step.ease);
+    }
+}
+
+void CCameraMgr::SetFov_Internal(_float deltaDeg, _float sec, EaseType easeType)
+{
+    if (sec <= 0.f)
     {
         m_fovOffsetCur += deltaDeg;
 
@@ -125,18 +177,29 @@ void CCameraMgr::SetFov(_float deltaDeg, _float blendSec, EaseType easeType)
         return;
     }
 
-    m_fovOffsetFrom = m_fovOffsetCur;
-    m_fovOffsetTo = m_fovOffsetCur + deltaDeg;
+    BeginFovBlend(m_fovOffsetCur, m_fovOffsetCur + deltaDeg, sec, easeType);
+}
 
-    m_fovOffsetTime = 0.f;
-    m_fovOffsetDuration = max(blendSec, 0.0001f);
-    m_fovOffsetEaseType = easeType;
+void CCameraMgr::SetFov(_float deltaDeg, _float blendSec, EaseType easeType)
+{
+    m_fovQueue.clear();
+    m_fovQueueHead = 0u;
 
-    m_fovOffsetBlending = true;
+    SetFov_Internal(deltaDeg, blendSec, easeType);
+}
+
+void CCameraMgr::SetFov(_float d0, _float s0, EaseType e0, _float d1, _float s1, EaseType e1)
+{
+    m_fovQueue.clear();
+    m_fovQueueHead = 0u;
+
+    EnqueueFovStep(d1, s1, e1);
+    SetFov_Internal(d0, s0, e0);
 }
 
 _float CCameraMgr::EvalFovOffset(_float dt)
 {
+    StartQueuedFovIfNeeded();
     if (!m_fovOffsetBlending) return m_fovOffsetCur;
 
     m_fovOffsetTime += dt;
@@ -146,8 +209,10 @@ _float CCameraMgr::EvalFovOffset(_float dt)
 
     if (rawT >= 1.f)
     {
-        m_fovOffsetBlending = false;
         m_fovOffsetCur = m_fovOffsetTo;
+        m_fovOffsetBlending = false;
+
+        StartQueuedFovIfNeeded();
         return m_fovOffsetCur;
     }
 
@@ -158,7 +223,8 @@ _float CCameraMgr::EvalFovOffset(_float dt)
 void CCameraMgr::ApplyFov(_float dt, _float baseFov)
 {
     const _float fovOffset = EvalFovOffset(dt);
-    m_outputPose.lens.fov = baseFov + fovOffset;
+    const _float zoomOffset = m_zoom.Apply(dt);
+    m_outputPose.lens.fov = baseFov + fovOffset + zoomOffset;
 }
 
 void CCameraMgr::SetZNear(_float zNear, _float blendSec, EaseType easeType)
@@ -212,7 +278,6 @@ void CCameraMgr::SetZFar(_float zFar, _float blendSec, EaseType easeType)
 
     m_farBlending = true;
 }
-
 
 void CCameraMgr::ApplyNearFarOverrides()
 {
@@ -270,7 +335,6 @@ void CCameraMgr::ApplyNearFarOverrides(_float dt)
     m_outputPose.lens.nearZ = EvalNearOverride(dt, baseNear);
     m_outputPose.lens.farZ = EvalFarOverride(dt, baseFar);
 }
-
 
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
@@ -416,9 +480,9 @@ void CCameraMgr::Update(_float dt)
 
     ApplyCache(main, m_outputPose);
 
-    if (m_shadowCamObj.isValid()) UpdateShadowCache();
+    if (m_shadowCamObj.isValid())
+        UpdateShadowCache();
 }
-
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
 {
@@ -480,6 +544,9 @@ void CCameraMgr::Free()
     m_fovOffsetFrom = 0.f;
     m_fovOffsetTo = 0.f;
     m_fovOffsetEaseType = EaseType::Linear;
+
+    m_fovQueue.clear();
+    m_fovQueueHead = 0u;
 
     m_overrideNear = false;
     m_overrideFar = false;

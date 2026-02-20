@@ -102,8 +102,6 @@ namespace
     }
 }
 
-NS_BEGIN(Client)
-
 void CamSwitchController::Begin()
 {
     if (core.active) return;
@@ -156,7 +154,7 @@ void CamSwitchController::End()
     if (delta != 0.f) CameraManager()->SetFov(delta, 0.f);
 
     auto orbit = CamDirector()->GetOrbitCam();
-    orbit->SwitchMode_ResumeSync();
+    orbit->ResumeSync();
     orbit->SwitchMode_End();
 
     core.active = false;
@@ -538,5 +536,3 @@ CamSwitchController::Pose CamSwitchController::BuildGoalPose_SimplePair() const
     g.dist = hold.pose.dist + add;
     return g;
 }
-
-NS_END

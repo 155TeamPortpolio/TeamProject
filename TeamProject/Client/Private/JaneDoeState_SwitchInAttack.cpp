@@ -30,13 +30,6 @@ void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)
-    {
-        TUTORIAL_ACTION_DESC desc;
-        desc.eAction = TUTORIAL_ACTION::COMBO;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -119,6 +112,16 @@ void CJaneDoeState_SwitchInAttack_Start::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    if (IsCrossAnimProgress(0.65f))
+    {
+        if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)
+        {
+            TUTORIAL_ACTION_DESC desc;
+            desc.eAction = TUTORIAL_ACTION::COMBO;
+            EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+        }
+    }
 
     Update_Effects(pOwner);
 }

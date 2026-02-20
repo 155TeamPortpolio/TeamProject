@@ -24,7 +24,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 5;
+	Type = 9;
 	switch (Type)
 	{
 	case 0 :
@@ -117,7 +117,8 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 13 :
 	{
-		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});
+		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});//미야즈마
+		//blackBoard.patternTransition.push_back({"Attack01_01_P2", 0.f, 1.f});
 		break;
 	}
 	default:

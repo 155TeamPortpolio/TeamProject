@@ -33,13 +33,6 @@ void CCorinState_AssaultAttack::Enter(CCorin* pOwner)
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
 
-	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
-	{
-		TUTORIAL_ACTION_DESC desc;
-		desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
-		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-	}
-
 	__super::Enter(pOwner);
 }
 
@@ -123,6 +116,15 @@ void CCorinState_Assault_Start::Update(CCorin* pOwner, _float dt)
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
+	if (IsCrossAnimProgress(0.5f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 	Update_Effects(pOwner);
 }
 

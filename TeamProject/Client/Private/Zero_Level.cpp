@@ -324,6 +324,7 @@ void CZero_Level::Zero_Fog::Update_Fog(_float dt)
 		->GetCommand<CFogCommand>()
 		->SetFogDesc(tCurFog)
 		->SetEnable(true);
+
 }
 
 void CZero_Level::Zero_Fog::Set_BaseFog(FOG_DESC FogDesc)

@@ -472,7 +472,7 @@ void CBattleFXFlow::Cancle_Switch()
 		Cancel();
 		UIDirector()->Hide_Switch();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
-		CamDirector()->EndSwitch();
+		//CamDirector()->EndSwitch();
 	}
 }
 
@@ -608,6 +608,10 @@ void CBattleFXFlow::StartVfx_Clear()
 			->SetEaseType(EaseType::OutBack)
 			->SetEnable(true);
 		});
+
+	AddCall([this]() { CameraManager()->SetFov(-30.f, 0.2f, EaseType::InOutQuad, 30.f, 1.3f, EaseType::InOutSine);});
+
+	AddWait(0.1f);
 
 	AddCall([this]() {
 		UIDirector()->Show_Clear();

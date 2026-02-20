@@ -375,6 +375,7 @@
     <ClInclude Include="..\Public\BattleSystem_Panel.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
+    <ClInclude Include="..\public\CamPortalController.h" />
     <ClInclude Include="..\public\CamSwitchController.h" />
     <ClInclude Include="..\public\CamWipeOutController.h" />
     <ClInclude Include="..\public\Claymore.h" />
@@ -906,6 +907,7 @@
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
+    <ClCompile Include="..\private\CamPortalController.cpp" />
     <ClCompile Include="..\private\CamSwitchController.cpp" />
     <ClCompile Include="..\private\CamWipeOutController.cpp" />
     <ClCompile Include="..\private\Claymore.cpp" />

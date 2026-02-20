@@ -29,13 +29,6 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
 
-    if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)
-    {
-        TUTORIAL_ACTION_DESC desc;
-        desc.eAction = TUTORIAL_ACTION::COMBO;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-    }
-
     __super::Enter(pOwner);
 }
 
@@ -107,6 +100,16 @@ void CCorinState_SwitchInAttack_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (IsCrossAnimProgress(0.45f))
+    {
+        if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)
+        {
+            TUTORIAL_ACTION_DESC desc;
+            desc.eAction = TUTORIAL_ACTION::COMBO;
+            EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+        }
+    }
 
     Update_Effects(pOwner);
 }
