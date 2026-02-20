@@ -304,10 +304,14 @@ void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 	const _bool stopAtTarget = HasFlag(traceFlags, TraceFlag::StopAtTarget);
 	const _bool allowThrough = HasFlag(traceFlags, TraceFlag::AllowThroughTarget);
 	const _bool ignoreTarget = HasFlag(traceFlags, TraceFlag::IgnoreTarget);
+	const _bool ignoreAnim = HasFlag(traceFlags, TraceFlag::IgnoreAnim);
 
-	const _vector3 rootDeltaLocal = animator->Get_RootBoneMoveDelta();
-	const _quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
-
+	_vector3 rootDeltaLocal = animator->Get_RootBoneMoveDelta();
+	_quaternion rootQuatLocal = animator->Get_RootBoneQuatDelta();
+	if (ignoreAnim) {
+		rootDeltaLocal = {};
+		rootQuatLocal.Identity;
+	}
 	_vector3 rootDeltaPlanar = rootDeltaLocal;
 	rootDeltaPlanar.y = 0.f;
 

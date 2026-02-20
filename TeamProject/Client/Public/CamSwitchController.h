@@ -1,3 +1,4 @@
+// CamSwitchController.h
 #pragma once
 
 #include "OrbitCamTypes.h"
@@ -79,8 +80,8 @@ public:
     struct Lens
     {
         _float fovSaved = 0.f;
-        _float fovAppliedOffset = 0.f;
-        _float recoverFromOffset = 0.f;
+        _float fovFrom = 0.f;
+        _float recoverFromFov = 0.f;
     } lens;
 
     struct PivotStab
@@ -152,9 +153,9 @@ private:
     Pose CaptureCurPose() const;
 
     void ApplyPose(const Pose& p) const;
-    void ApplyFovOffset(_float desiredOffset);
+    void ApplyFovTarget(_float desiredFov);
 
-    _float EvalRecoverFovOffset(_float tSec) const;
+    _float EvalRecoverFov(_float tSec) const;
     _float CalcBehindYawDeg(OBJECT_HANDLE target) const;
 
 private:
@@ -162,6 +163,5 @@ private:
     void UpdatePairPivots(_float dt);
     Pose BuildGoalPose_SimplePair() const;
 };
-
 
 NS_END
