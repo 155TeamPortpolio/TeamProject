@@ -7,38 +7,38 @@
 
 void CUI_GachaCharacterIntro::Play_Video(CUI_GachaPage::CHANNEL eChannel)
 {
-    //if (!m_pPlayer)
-    //    return;
-    //
-    //OutputDebugString(L"µé¾î¿È");
-    //
-    //m_pPlayer->Stop();
-    //m_pPlayer->Close();
-    //VideoService()->DestroyPlayer(m_PlayerID);
-    //
-    //string strFilePath = "";
-    //switch (eChannel)
-    //{
-    //case CUI_GachaPage::CHANNEL::MIYABI:
-    //    strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_Miyabi.mp4";
-    //    break;
-    //case CUI_GachaPage::CHANNEL::JANEDOE:
-    //    strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
-    //    break;
-    //default:
-    //    strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
-    //    break;
-    //}
-    //
-    //CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    //desc.filePath = strFilePath;
-    //desc.loop = false;
-    //m_pPlayer->Open(desc);
-    //
-    //VideoService()->StartDecode(m_PlayerID);
-    //m_pPlayer->Play();
-    //
-    //Set_Alive(true);
+    if (!m_pPlayer)
+        return;
+    
+    OutputDebugString(L"µé¾î¿È");
+    
+    m_pPlayer->Stop();
+    m_pPlayer->Close();
+    VideoService()->DestroyPlayer(m_PlayerID);
+    
+    string strFilePath = "";
+    switch (eChannel)
+    {
+    case CUI_GachaPage::CHANNEL::MIYABI:
+        strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_Miyabi.mp4";
+        break;
+    case CUI_GachaPage::CHANNEL::JANEDOE:
+        strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
+        break;
+    default:
+        strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
+        break;
+    }
+    
+    CVideoPlayer::VIDEO_PLAYER_DESC desc;
+    desc.filePath = strFilePath;
+    desc.loop = false;
+    m_pPlayer->Open(desc);
+    
+    VideoService()->StartDecode(m_PlayerID);
+    m_pPlayer->Play();
+    
+    Set_Alive(true);
 }
 
 HRESULT CUI_GachaCharacterIntro::Initialize_Prototype()

@@ -241,6 +241,8 @@ _bool CGameObject::Is_Root() {
 void CGameObject::Set_Layer(CLayer* pLayer)
 {
 	m_pLayer = pLayer;
+	if (!pLayer) return;
+	m_LayerTag = pLayer->Get_LayerTag();
 }
 
 const vector<CGameObject*> CGameObject::Get_Children()
@@ -259,7 +261,7 @@ const vector<CGameObject*> CGameObject::Get_Children()
 
 LAYER_DESC CGameObject::Get_LayerDesc()
 {
-	return LAYER_DESC{ m_LevelTag,m_pLayer->Get_LayerTag() };
+	return LAYER_DESC{ m_LevelTag,m_LayerTag };
 }
 
 OBJECT_HANDLE CGameObject::Get_Handle()
@@ -273,7 +275,7 @@ OBJECT_HANDLE CGameObject::Get_Handle()
 		return hObj;
 	}
 
-	hObj.Layer = m_pLayer->Get_LayerTag();
+	hObj.Layer = m_LayerTag;
 	hObj.Level = m_LevelTag;
 	hObj.hObjID = m_ObjectID;
 

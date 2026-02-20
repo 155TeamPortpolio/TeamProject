@@ -60,6 +60,7 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 		Is_AnimEnd())
 	{
 		m_pSubStateMachine->Set_Bool("ReserveNormal", false);
+		m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
 		m_pParentState->Get_SubStateMachine()->Set_Trigger("ToNormalAttack");
 		return;
 	}

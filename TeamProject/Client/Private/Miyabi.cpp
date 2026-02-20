@@ -180,11 +180,6 @@ void CMiyabi::Render_GUI()
 	__super::Render_GUI();
 }
 
-_uint CMiyabi::Release()
-{
-	return _uint();
-}
-
 void CMiyabi::Show_Ghost()
 {
 	if (m_pGhost)
@@ -313,7 +308,7 @@ void CMiyabi::On_ChainParry()
 	}
 }
 
-void CMiyabi::On_SwitchOut()
+void CMiyabi::On_SwitchOut(_bool isParry)
 {
 	__super::On_SwitchOut();
 
@@ -328,6 +323,12 @@ void CMiyabi::On_SwitchOut()
 	m_pStateMachine->Reset_Trigger("ToMove");
 	m_pStateMachine->Reset_Trigger("ToIdle");
 	m_pStateMachine->Reset_Trigger("ResetState");
+
+	if (isParry)
+	{
+		m_pStateMachine->Set_Trigger("SwitchOut");
+		return;
+	}
 
 	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{

@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Helper_Func.h"
 #include "Animator3D.h"
+#include "PipeLine.h"
 
 CPedestrianNpc::CPedestrianNpc()
 {
@@ -41,6 +42,17 @@ void CPedestrianNpc::Awake()
 
 void CPedestrianNpc::Priority_Update(_float dt)
 {
+    auto pPipeLine = RenderSystem()->Get_Pipeline();
+    if (pPipeLine) {
+        auto pModel = Get_Component<CModel>();
+        _bool isVisible = pPipeLine->isVisible(pModel->Get_LocalBoundingBox(), _smatrix(m_pTransform->Get_WorldMatrix()));
+        if (isVisible) {
+            m_eRenderLayer = RENDER_LAYER::Default;
+        }
+        else {
+            m_eRenderLayer = RENDER_LAYER::None;
+        }
+    }
 }
 
 void CPedestrianNpc::Update(_float dt)

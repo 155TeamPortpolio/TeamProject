@@ -54,6 +54,7 @@ void CMiyabiState_AssaultAttack::Update(CMiyabi* pOwner, _float dt)
 			m_fAnimProgress > 0.3f)
 		{
 			m_pSubStateMachine->Set_Bool("ReserveNormal", false);
+			m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
 			m_pParentState->Get_SubStateMachine()->Set_Trigger("ToNormalAttack");
 			return;
 		}

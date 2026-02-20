@@ -123,6 +123,15 @@ void CPlayer::Render_GUI()
 {
 	if (m_pBattlePlayer)
 	{
+		ImGui::SeparatorText("Character Inject");
+		for (size_t i = 0; i < ENUM(CHARACTER::END); i++)
+		{
+			CHARACTER eCharacter = static_cast<CHARACTER>(i);
+			string characterName = Helper::EnumToString(eCharacter);
+			if (ImGui::Button(characterName.c_str())) {
+				m_pBattlePlayer->SetBattleCharacter(eCharacter);
+			};
+		}
 		m_pBattlePlayer->Render_GUI();
 	}
 }
