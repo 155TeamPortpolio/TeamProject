@@ -39,9 +39,11 @@ public:
     int  GetChoiceIndex() const { return m_choiceIndex; }
 
 private:
+    void Initialize_Effects();
     void Focus(_float dt);
     void Extend(_float dt);
     void Contract(_float dt);
+    void Active_Portal();
 
 private:
     _bool  m_bVisible = { false };

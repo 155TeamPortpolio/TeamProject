@@ -41,13 +41,7 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-
-	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("zero_portal.json")
-		.Build("ZeroPortal");
-
-	pObjectContainer->Add_Child(pEffect);
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -88,6 +82,9 @@ void CZeroPortal::Late_Update(_float dt)
 void CZeroPortal::Render_GUI()
 {
 	__super::Render_GUI();
+
+	if (ImGui::Button("Active Portal"))
+		Active_Portal();
 }
 
 void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
@@ -140,6 +137,28 @@ void CZeroPortal::SetChoiceIndex(CStage* pOwener, int idx)
 	m_choiceIndex = idx;
 }
 
+void CZeroPortal::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("zero_portal.json")
+			.Build("ZeroPortal");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("zero_portal_active.json")
+			.Build("ZeroPortal_Active");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+}
+
 void CZeroPortal::Focus(_float dt)
 {
 	if (m_bInPlayer)
@@ -184,6 +203,15 @@ void CZeroPortal::Contract(_float dt)
 
 		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vBaseScale), Math::ApplyEase(EaseType::OutExpo, t));
 		m_pTransform->Scale(vCurrScale);
+	}
+}
+
+void CZeroPortal::Active_Portal()
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
+	if (pEffect)
+	{
+		static_cast<CEffectContainer*>(pEffect)->Play();
 	}
 }
 
