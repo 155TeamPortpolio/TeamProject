@@ -218,6 +218,11 @@ void CZeroPortal::Contract(_float dt)
 	}
 }
 
+void CZeroPortal::NoiseSequence()
+{
+
+}
+
 void CZeroPortal::Active_Portal()
 {
 	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
