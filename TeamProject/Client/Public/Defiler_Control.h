@@ -5,7 +5,7 @@
 #include "DefilerState_Attack.h"
 #include "DefilerState_Other.h"
 
-#include "ResourceMgr.h"
+#include "GameInstance.h"
 #include "Material.h"
 #include "Texture.h"
 
@@ -208,7 +208,7 @@ struct TsunamiDesc {
 
 
 struct DefilerMaterialParam {
-    _float3 vEmissiveColor{};
+    _float3 vEmissiveColor= { 1.378, 0.039, 0.039 };
     _float  fEmissiveStrength{};
     _float  fRimLightPower={4.f};
     _float3 vRimLightColor={ 0.378, 0.029, 0.070 };
@@ -226,9 +226,7 @@ struct DefilerMaterialPreset {
             auto instance = materialInstances[i];
             instance->Set_Param("vRimLightColor",       { &MaterialParams[i].vRimLightColor         ,"float3",sizeof(_float3) });
             instance->Set_Param("fRimLightPower",       { &MaterialParams[i].fRimLightPower         ,"float",sizeof(_float) });
-            instance->Set_Param("vEmissiveColor",       { &MaterialParams[i].vEmissiveColor         ,"float3",sizeof(_float3) });
-            instance->Set_Param("fEmissiveStrength",    { &MaterialParams[i].fEmissiveStrength      ,"float",sizeof(_float) });
-        }
+          }
     }
   
 };
