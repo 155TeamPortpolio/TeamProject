@@ -102,8 +102,6 @@ namespace
     }
 }
 
-NS_BEGIN(Client)
-
 void CamSwitchController::Begin()
 {
     if (core.active) return;
@@ -538,5 +536,3 @@ CamSwitchController::Pose CamSwitchController::BuildGoalPose_SimplePair() const
     g.dist = hold.pose.dist + add;
     return g;
 }
-
-NS_END

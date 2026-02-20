@@ -480,7 +480,8 @@ void CCameraMgr::Update(_float dt)
 
     ApplyCache(main, m_outputPose);
 
-    if (m_shadowCamObj.isValid()) UpdateShadowCache();
+    if (m_shadowCamObj.isValid())
+        UpdateShadowCache();
 }
 
 void CCameraMgr::AddImpact(_uint shakeType, _uint zoomType, _float strength)
