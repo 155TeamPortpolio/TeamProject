@@ -29,7 +29,8 @@ HRESULT CUI_TutorialGuideSlot::Initialize(INIT_DESC* pArg)
 
     Cache();
 
-    Set_CountText();
+    if(pDesc->desc.eAction != TUTORIAL_ACTION::END)
+        Set_CountText();
 
     //// ¿Ã∫•∆Æ : TUTORIAL_DESC
     //Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
@@ -107,7 +108,7 @@ string CUI_TutorialGuideSlot::Get_PrefabPath(TUTORIAL_ACTION eAction)
     case TUTORIAL_ACTION::ASSIST_CHARGE: return "tutorial_guide_slot_assistCharge.json";
     case TUTORIAL_ACTION::ULTIMATE: return "tutorial_guide_slot_ultimate.json";
     case TUTORIAL_ACTION::COMBO: return "tutorial_guide_slot_combo.json";
-    default: return"";
+    default: return "tutorial_guide_slot_complete.json";
     }
 }
 

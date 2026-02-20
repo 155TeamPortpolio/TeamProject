@@ -29,10 +29,12 @@ private:
 	STATE m_eState = { STATE::END };
 
 	CUI_Object* m_pGuideStart = {};
+	CUI_Object* m_pSlotComplete = {};
 	map<TUTORIAL_ACTION, CUI_Object*> m_pSlots;
 
 private:
 	HRESULT Create_GuideStart();
+	HRESULT Create_SlotComplete();
 
 	void Change_State(STATE eState);
 	void Ready_Slots(TUTORIAL_TYPE eType);

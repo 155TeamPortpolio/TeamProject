@@ -34,7 +34,8 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_guide.json")));
 
     Create_GuideStart();
-  
+    Create_SlotComplete();
+
     // ¿Ã∫•∆Æ : TUTORIAL_DESC
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
         {
@@ -100,6 +101,24 @@ HRESULT CUI_TutorialGuide::Create_GuideStart()
     return S_OK;
 }
 
+HRESULT CUI_TutorialGuide::Create_SlotComplete()
+{
+    CUI_TutorialGuideSlot::SLOT_DESC* pDesc = new CUI_TutorialGuideSlot::SLOT_DESC;
+    pDesc->desc.eAction = TUTORIAL_ACTION::END;
+
+    auto pObj = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialGuideSlot" })
+        .Add_UIDesc(pDesc)
+        .Build("complete");
+
+    if (!pObj)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pSlotComplete = pObj;
+
+    return S_OK;
+}
+
 void CUI_TutorialGuide::Change_State(STATE eState)
 {
     if (m_eState == eState)
@@ -122,6 +141,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
     case STATE::DEACTIVATING:
         for (auto& pair : m_pSlots)
             pair.second->UI_DeActive();
+        if (m_pSlotComplete)
+            m_pSlotComplete->UI_Active();
         //GameInstance()->Set_EngineTimeScale(0.f);
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
         break;
