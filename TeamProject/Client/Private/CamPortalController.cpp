@@ -5,24 +5,6 @@
 #include "CharacterController.h"
 #include "Helper_Func.h"
 
-Vector3 CamPortalController::SafeDirXZ(const Vector3& v, const Vector3& fallback)
-{
-    Vector3 d = v;
-    d.y = 0.f;
-    if (d.LengthSquared() <= 1e-10f) return fallback;
-    d.Normalize();
-    return d;
-}
-
-_float CamPortalController::YawFromDirXZ(const Vector3& dirXZ)
-{
-    Vector3 d = dirXZ;
-    d.y = 0.f;
-    if (d.LengthSquared() <= 1e-10f) return 0.f;
-    d.Normalize();
-    return XMConvertToDegrees(atan2f(d.x, d.z));
-}
-
 Quaternion CamPortalController::YawPitchQuatDeg(_float yawDeg, _float pitchDeg)
 {
     const _float yawRad = XMConvertToRadians(yawDeg);
@@ -40,11 +22,8 @@ CamPortalController::ShotGoal CamPortalController::ShotFromOrbitSnapshot(const O
 {
     ShotGoal g{};
     g.pivotWorld = s.pose.pivotCurWorld;
-    g.yawDeg = s.pose.rotCurDeg.x;
-    g.pitchDeg = s.pose.rotCurDeg.y;
     g.dist = s.pose.distCur;
     g.fov = fov;
-    g.yawWeight = 1.f;
     return g;
 }
 
@@ -100,19 +79,14 @@ CamPortalController::ShotGoal CamPortalController::BuildPivotGoal(_float u) cons
     const _float halfFovRad = XMConvertToRadians(m_from.fov * 0.5f);
     _float needDist = radius / tanf(halfFovRad);
     needDist *= tune.goal.frameDistMul;
-    if (needDist < m_from.dist) needDist = m_from.dist;
+
     if (needDist < tune.goal.distMin) needDist = tune.goal.distMin;
+    if (needDist < m_from.dist) needDist = m_from.dist;
 
     ShotGoal g{};
     g.pivotWorld = Vector3::Lerp(m_from.pivotWorld, portalAim, u);
-
-    g.yawDeg = m_pivotYawGoalDeg;
-    g.pitchDeg = tune.goal.pitchDeg;
-
     g.dist = Math::Lerp(m_from.dist, needDist, u);
     g.fov = m_from.fov;
-
-    g.yawWeight = u;
 
     return g;
 }
@@ -124,28 +98,19 @@ CamPortalController::ShotGoal CamPortalController::BuildEnterGoal(_float u) cons
     const Vector3 portalPos = portalTf->Get_WorldPos();
     const Vector3 portalAim = portalPos + Vector3(0.f, tune.goal.pivotYAdd, 0.f);
 
-    auto playerObj = ObjectManager()->Request_Object(m_player);
-    const Vector3 playerPos = playerObj->Get_WorldPos();
-
-    Vector3 dirToPortal = portalPos - playerPos;
-    dirToPortal = SafeDirXZ(dirToPortal, Vector3(0.f, 0.f, 1.f));
-
     const _float t = Math::ApplyEase(tune.common.enterEase, u);
 
-    const _float enterDist = max(tune.goal.distMin, m_enterFrom.dist * tune.goal.distMul);
-    const _float finalDist = max(tune.goal.distMin, enterDist * tune.goal.pullDistMul);
+    const _float enterMin = max(tune.goal.enterDistMin, 0.f);
+
+    const _float enterDist = max(enterMin, m_enterFrom.dist * tune.goal.distMul);
+    const _float finalDist = max(enterMin, enterDist * tune.goal.pullDistMul);
 
     const _float finalFov = m_enterFrom.fov + tune.goal.fovAdd + tune.goal.pullFovAdd;
 
     ShotGoal g{};
     g.pivotWorld = portalAim;
-    g.yawDeg = YawFromDirXZ(dirToPortal);
-    g.pitchDeg = tune.goal.pitchDeg;
-
     g.dist = Math::Lerp(m_enterFrom.dist, finalDist, t);
     g.fov = Math::Lerp(m_enterFrom.fov, finalFov, t);
-
-    g.yawWeight = t;
 
     return g;
 }
@@ -155,12 +120,10 @@ void CamPortalController::ApplyShot(const ShotGoal& g) const
     auto orbit = CamDirector()->GetOrbitCam();
     auto cam = CamDirector()->GetOrbitCamComp();
 
-    const _float yaw = m_startYawDeg + Math::WrapDeg(g.yawDeg - m_startYawDeg) * g.yawWeight;
-
     Vector3 pivot = g.pivotWorld;
-    ClampAboveGround(pivot, yaw, g.pitchDeg, g.dist);
+    ClampAboveGround(pivot, m_lockYawDeg, m_lockPitchDeg, g.dist);
 
-    const Quaternion q = YawPitchQuatDeg(yaw, g.pitchDeg);
+    const Quaternion q = YawPitchQuatDeg(m_lockYawDeg, m_lockPitchDeg);
     const Vector3 camPos = OrbitPos(pivot, q, g.dist);
 
     orbit->SnapFromOrbitPose(pivot, camPos, q, g.dist);
@@ -183,11 +146,11 @@ void CamPortalController::Reset()
     m_from = {};
     m_enterFrom = {};
 
-    m_startYawDeg = 0.f;
-    m_pivotYawGoalDeg = 0.f;
-
     m_pivotSec = 0.f;
     m_enterSec = 0.f;
+
+    m_lockYawDeg = 0.f;
+    m_lockPitchDeg = 0.f;
 }
 
 void CamPortalController::Begin(OBJECT_HANDLE portalHandle)
@@ -204,22 +167,9 @@ void CamPortalController::Begin(OBJECT_HANDLE portalHandle)
     m_prevFov = cam->Get_FOV();
 
     m_from = ShotFromOrbitSnapshot(m_prevOrbit, m_prevFov);
-    m_startYawDeg = m_from.yawDeg;
 
-    auto portalObj = ObjectManager()->Request_Object(m_portal);
-    auto portalTf = portalObj->Get_Component<CTransform>();
-    const Vector3 portalPos = portalTf->Get_WorldPos();
-
-    auto playerObj = ObjectManager()->Request_Object(m_player);
-    const Vector3 playerPos = playerObj->Get_WorldPos();
-
-    const Quaternion qYaw = YawPitchQuatDeg(m_from.yawDeg, 0.f);
-    const Vector3 fallbackFwd = Vector3::Transform(Vector3(0.f, 0.f, 1.f), qYaw);
-
-    Vector3 dirToPortal = portalPos - playerPos;
-    dirToPortal = SafeDirXZ(dirToPortal, fallbackFwd);
-
-    m_pivotYawGoalDeg = YawFromDirXZ(dirToPortal);
+    m_lockYawDeg = m_prevOrbit.pose.rotCurDeg.x;
+    m_lockPitchDeg = m_prevOrbit.pose.rotCurDeg.y;
 
     m_pivotSec = max(tune.common.pivotSec, 0.f);
     m_enterSec = max(tune.common.enterSec, 0.f);
@@ -269,7 +219,6 @@ void CamPortalController::Update(_float dt)
             m_elapsed = 0.f;
 
             m_enterFrom = CaptureCurAsShot();
-            m_startYawDeg = m_enterFrom.yawDeg;
         }
         return;
     }
@@ -282,8 +231,7 @@ void CamPortalController::Update(_float dt)
         const ShotGoal g = BuildEnterGoal(u);
         ApplyShot(g);
 
-        if (u >= 1.f)
-            End();
+        if (u >= 1.f) End();
 
         return;
     }

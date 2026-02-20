@@ -12,19 +12,16 @@ public:
     struct ShotGoal
     {
         Vector3 pivotWorld{};
-        _float  yawDeg = 0.f;
-        _float  pitchDeg = 0.f;
         _float  dist = 0.f;
         _float  fov = 0.f;
-        _float  yawWeight = 0.f;
     };
 
     struct PortalTuning
     {
         struct Common
         {
-            _float   pivotSec = 0.8f;
-            _float   enterSec = 0.5f;
+            _float   pivotSec = 0.6f;
+            _float   enterSec = 0.8f;
 
             EaseType pivotEase = EaseType::InOutSine;
             EaseType enterEase = EaseType::InCubic;
@@ -33,9 +30,11 @@ public:
         struct Goal
         {
             _float pitchDeg = -6.f;
-
+            
             _float distMul = 0.62f;
             _float distMin = 0.5f;
+
+            _float enterDistMin = 0.01f;
 
             _float pullDistMul = 0.80f;
 
@@ -69,11 +68,8 @@ private:
     ShotGoal BuildEnterGoal(_float u) const;
 
     void ApplyShot(const ShotGoal& g) const;
-
     void ClampAboveGround(Vector3& pivotWorld, _float yawDeg, _float pitchDeg, _float dist) const;
 
-    static Vector3    SafeDirXZ(const Vector3& v, const Vector3& fallback);
-    static _float     YawFromDirXZ(const Vector3& dirXZ);
     static Quaternion YawPitchQuatDeg(_float yawDeg, _float pitchDeg);
     static Vector3    OrbitPos(const Vector3& pivotWorld, const Quaternion& q, _float dist);
 
@@ -92,11 +88,11 @@ private:
     ShotGoal      m_from{};
     ShotGoal      m_enterFrom{};
 
-    _float        m_startYawDeg = 0.f;
-
     _float        m_pivotSec = 0.f;
     _float        m_enterSec = 0.f;
-    _float        m_pivotYawGoalDeg = 0.f;
+
+    _float        m_lockYawDeg = 0.f;
+    _float        m_lockPitchDeg = 0.f;
 };
 
 NS_END
