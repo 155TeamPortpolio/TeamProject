@@ -207,6 +207,11 @@ private:
         _bool         lookInit = false;
         _float        lookYawPrev = 0.f;
         _float        lookPitchPrev = 0.f;
+
+        _bool         lookHasPrevPos = false;
+        Vector3       lookPrevPivotWorld{};
+        Vector3       lookPrevCamPosWorld{};
+        Vector3       lookPrevLookAtWorld{};
     };
 
 private:

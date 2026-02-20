@@ -13,6 +13,12 @@ namespace
 {
     constexpr _float kMinParryDist = 0.35f;
 
+    constexpr _float kPivotTeleportCutDist = 0.90f;
+    constexpr _float kLookTeleportCutDist = 1.20f;
+
+    constexpr _float kLookMaxYawDegPerSec = 720.f;
+    constexpr _float kLookMaxPitchDegPerSec = 540.f;
+
     _float ClampParryDist(_float dist)
     {
         return max(dist, kMinParryDist);
@@ -269,9 +275,18 @@ void CamParryController::UpdatePivots(_float dt)
     const PivotSample attackerSample = SamplePivots(core.attacker, offsetY);
     if (attackerSample.valid)
     {
-        const _float t = clamp(dt * 18.f, 0.f, 1.f);
-        piv.aBase = Vector3::Lerp(piv.aBase, attackerSample.basePivot, t);
-        piv.aFace = Vector3::Lerp(piv.aFace, attackerSample.facePivot, t);
+        const _float baseJump = (attackerSample.basePivot - piv.aBase).Length();
+        if (baseJump > kPivotTeleportCutDist)
+        {
+            piv.aBase = attackerSample.basePivot;
+            piv.aFace = attackerSample.facePivot;
+        }
+        else
+        {
+            const _float t = clamp(dt * 18.f, 0.f, 1.f);
+            piv.aBase = Vector3::Lerp(piv.aBase, attackerSample.basePivot, t);
+            piv.aFace = Vector3::Lerp(piv.aFace, attackerSample.facePivot, t);
+        }
     }
 
     auto attackerObj = ObjectManager()->Request_Object(core.attacker);
@@ -284,8 +299,16 @@ void CamParryController::UpdatePivots(_float dt)
     const _float curYaw = YawFromDirXZ(side.dirXZ);
     const _float desiredYaw = YawFromDirXZ(desiredDir);
 
-    const _float a = clamp(dt * 18.f, 0.f, 1.f);
-    const _float yaw = curYaw + Math::WrapDeg(desiredYaw - curYaw) * a;
+    const _float yawDelta = Math::WrapDeg(desiredYaw - curYaw);
+    const _bool  isWarpLike = (attackerSample.valid && (attackerSample.basePivot - piv.aBase).Length() > kPivotTeleportCutDist);
+
+    _float yaw = 0.f;
+    if (isWarpLike || abs(yawDelta) > 140.f) yaw = desiredYaw;
+    else
+    {
+        const _float a = clamp(dt * 18.f, 0.f, 1.f);
+        yaw = curYaw + yawDelta * a;
+    }
 
     side.dirXZ = RotateYDegXZ(Vector3(0.f, 0.f, 1.f), yaw);
 }
@@ -784,6 +807,11 @@ void CamParryController::Reset()
     exit.lookInit = false;
     exit.lookYawPrev = 0.f;
     exit.lookPitchPrev = 0.f;
+
+    exit.lookHasPrevPos = false;
+    exit.lookPrevPivotWorld = Vector3::Zero;
+    exit.lookPrevCamPosWorld = Vector3::Zero;
+    exit.lookPrevLookAtWorld = Vector3::Zero;
 }
 
 void CamParryController::Begin()
@@ -792,7 +820,7 @@ void CamParryController::Begin()
 
     const _bool continuingChain = core.active && core.state == State::WaitEnd && IsChainReentryOpen() && core.beginWasChain;
     const _float prevChainRefDist = core.chainRefDist;
-
+        
     const _bool prevSavedLockWasOn = exit.savedLockWasOn;
     const OBJECT_HANDLE prevSavedLockHandle = exit.savedLockHandle;
 
@@ -972,7 +1000,7 @@ void CamParryController::Update(_float dt)
 
     core.elapsed += dt;
 
-    if (core.state == State::Enter || core.state == State::Impact || core.state == State::ExitBlend)
+    if (core.state == State::Enter || core.state == State::Impact)
         UpdatePivots(dt);
 
     if (core.state == State::Enter)
@@ -1035,10 +1063,15 @@ void CamParryController::Update(_float dt)
 
         ClampAboveGround(g);
 
-        Vector3 fwd, right;
-        BuildBasis(fwd, right);
+        Vector3 fwd = side.dirXZ;
+        fwd.y = 0.f;
+        fwd.Normalize();
 
-        const Vector3 basePivot = BasePivotWorld();
+        Vector3 right = Vector3::Up.Cross(fwd);
+        right.y = 0.f;
+        right.Normalize();
+
+        const Vector3 basePivot = exit.exitPivotWorld;
         const Vector3 pivotWorld = basePivot + right * g.pivotExt.x + Vector3::Up * g.pivotExt.y + fwd * g.pivotExt.z;
 
         const _float attackerYaw = YawFromDirXZ(fwd);
@@ -1047,9 +1080,17 @@ void CamParryController::Update(_float dt)
         const Quaternion qPos = YawPitchRollQuatDeg(yawWorldPivot, g.pitchDeg, 0.f);
         const Vector3 camPosWorld = OrbitPos(pivotWorld, qPos, g.dist);
 
-        OrbitLockEval lockRes = orbit->Lock_Eval_External(dt, yawWorldPivot, g.dist);
+        OrbitLockEval lockRes = orbit->Lock_Eval_FrozenPlayerPivot_External(dt, basePivot, yawWorldPivot, g.dist);
 
         Vector3 lookAt = Vector3::Lerp(pivotWorld, lockRes.focusPos, t);
+
+        _bool cut = !exit.lookInit;
+        if (!cut && exit.lookHasPrevPos)
+        {
+            if ((pivotWorld - exit.lookPrevPivotWorld).Length() > kLookTeleportCutDist) cut = true;
+            if ((camPosWorld - exit.lookPrevCamPosWorld).Length() > kLookTeleportCutDist) cut = true;
+            if ((lookAt - exit.lookPrevLookAtWorld).Length() > kLookTeleportCutDist) cut = true;
+        }
 
         Vector3 toLook = lookAt - camPosWorld;
         const float lookDist = toLook.Length();
@@ -1060,22 +1101,45 @@ void CamParryController::Update(_float dt)
         _float yawRaw = yawWorldPivot;
         if (flatLen > 0.0005f) yawRaw = XMConvertToDegrees(atan2f(toLook.x, toLook.z));
 
-        const _float pitchRaw = XMConvertToDegrees(asinf(clamp(-toLook.y, -1.f, 1.f)));
+        _float pitchRaw = XMConvertToDegrees(asinf(clamp(-toLook.y, -1.f, 1.f)));
+        pitchRaw = clamp(pitchRaw, -89.f, 89.f);
 
-        if (!exit.lookInit)
+        _float yawFinal = 0.f;
+        _float pitchFinal = 0.f;
+
+        if (cut)
         {
-            exit.lookYawPrev = yawRaw;
-            exit.lookPitchPrev = pitchRaw;
+            yawFinal = yawRaw;
+            pitchFinal = pitchRaw;
+
             exit.lookInit = true;
+            exit.lookYawPrev = yawFinal;
+            exit.lookPitchPrev = pitchFinal;
+        }
+        else
+        {
+            const _float maxYawStep = kLookMaxYawDegPerSec * dt;
+            const _float maxPitchStep = kLookMaxPitchDegPerSec * dt;
+
+            _float dy = Math::WrapDeg(yawRaw - exit.lookYawPrev);
+            dy = clamp(dy, -maxYawStep, maxYawStep);
+
+            _float dp = pitchRaw - exit.lookPitchPrev;
+            dp = clamp(dp, -maxPitchStep, maxPitchStep);
+
+            yawFinal = exit.lookYawPrev + dy;
+            pitchFinal = exit.lookPitchPrev + dp;
+
+            exit.lookYawPrev = yawFinal;
+            exit.lookPitchPrev = pitchFinal;
         }
 
-        const _float yawCont = exit.lookYawPrev + Math::WrapDeg(yawRaw - exit.lookYawPrev);
+        exit.lookPrevPivotWorld = pivotWorld;
+        exit.lookPrevCamPosWorld = camPosWorld;
+        exit.lookPrevLookAtWorld = lookAt;
+        exit.lookHasPrevPos = true;
 
-        exit.lookYawPrev = yawCont;
-        exit.lookPitchPrev = pitchRaw;
-
-        const Quaternion qRot = YawPitchRollQuatDeg(yawCont, pitchRaw, g.rollDeg);
-
+        const Quaternion qRot = YawPitchRollQuatDeg(yawFinal, pitchFinal, g.rollDeg);
         orbit->SnapFromOrbitPose(pivotWorld, camPosWorld, qRot, g.dist);
 
         if (u >= 1.f)
