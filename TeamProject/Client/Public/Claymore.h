@@ -72,6 +72,30 @@ private:
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+    /* For.Debug.DamageLog */
+    deque<_float>       m_DamageLog;
+    _bool               m_isAccDamage = {false};
+    _float              m_fAccDamage = {};
+
+
 };
 
 NS_END
+
+/*
+코린
+기본 공격 1사이클 : 13.97(풀콤보), 11(평균)
+특수 공격 1사이클 : 9.14
+
+제인도
+기본 공격 1사이클 : 10.93(풀콤보).
+특수 공격 1사이클 : 9.49
+
+열광상태 기본공격 1사이클 : 11
+
+미야비
+기본 공격 1사이클 : 33.31, 31.24, 32.25
+특수공격 : 8.94
+차징공격 26
+궁극기 : 54.32, 53.10
+*/
