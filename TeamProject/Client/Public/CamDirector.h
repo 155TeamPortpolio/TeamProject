@@ -96,6 +96,9 @@ private:
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
     _uint         RequestSequence(const string& key, const CamSeqReqDesc& req);
 
+    _bool         IsFreeCamActive() const { return CameraManager()->Get_ActiveCam() == GetFreeCamComp(); }
+    void          AbortSequence_NoCam(_bool resetTime);
+
 private:
     CMonitorGate           m_gate;
     CamSeqMap              m_seqs{};
