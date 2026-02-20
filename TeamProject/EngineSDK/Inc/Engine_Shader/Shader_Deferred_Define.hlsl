@@ -169,7 +169,9 @@ Texture2D EffectCombinedTexture : register(t63);
 Texture2D GlitchNoiseTexture : register(t65);
 //===========
 Texture2D GuassianBlurXTexture : register(t66);
-
+//===========
+Texture2D PostNoiseTexture : register(t67);
+//===========
 Texture2D FinalTexture : register(t69);
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Interactable.h"
 #include "IInteract.h"
+#include "EffectFlow.h"
 
 NS_BEGIN(Client)
 
@@ -49,6 +50,7 @@ private:
     void Active_Portal();
     void On_InPlayer() { m_bInPlayer = true; }
 
+    void    PortalEffectFlowSetting();
 private:
     _bool  m_bVisible = { false };
     string m_NextMapTag{};
@@ -74,7 +76,9 @@ private:
     _vector3 m_vExtendScale{};
 
     _float m_fActiveElapsedTime{};
-    _float m_fActiveDuration = 0.2f;
+    _float m_fActiveDuration = 0.7f;
+
+    EffectFlow      m_PortalFlow;
 
 public:
     static CZeroPortal* Create();
