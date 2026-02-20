@@ -163,7 +163,7 @@ HRESULT CUI_TutorialInfo::Create_ExitBanner()
 {
     CUI_Banner::BANNER_DESC* pDesc = new CUI_Banner::BANNER_DESC;
     pDesc->strTitle = L"튜토리얼을 나가시겠습니까?";
-    pDesc->strSubtitle = L"아뇨?";
+    pDesc->strSubtitle = L"튜토리얼 진행도는 저장되지 않습니다.";
     pDesc->onClickConfirm = []() { 
         UIDirector()->FadeOut_Screen(0.2f);
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
