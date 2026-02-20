@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "CorinState_CounterAttack.h"
+
+#include "GameInstance.h"
+#include "EventSystem.h"
 #include "Corin.h"
 
 CCorinState_CounterAttack* CCorinState_CounterAttack::Create()
@@ -30,6 +33,13 @@ void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
 	m_eType = DAMAGE_TYPE::NORMAL;
+
+	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+	{
+		TUTORIAL_ACTION_DESC desc;
+		desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+	}
 	__super::Enter(pOwner);
 }
 

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "JaneDoeState_AssaultAttack.h"
 
+#include "GameInstance.h"
+#include "EventSystem.h"
 #include "BattleSystem.h"
 
 #include "JaneDoe.h"
@@ -31,6 +33,14 @@ void CJaneDoeState_AssaultAttack::Enter(CJaneDoe* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
+
+	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+	{
+		TUTORIAL_ACTION_DESC desc;
+		desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
+		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+	}
+
 	__super::Enter(pOwner);
 }
 

@@ -25,16 +25,23 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	TUTORIAL_TYPE m_eType = {};
 	STATE m_eState = { STATE::END };
+	TUTORIAL_TYPE m_eType = {}; 
 
 	CUI_Object* m_pGuideStart = {};
 	CUI_Object* m_pSlotComplete = {};
 	map<TUTORIAL_ACTION, CUI_Object*> m_pSlots;
+	map<TUTORIAL_ACTION, _bool> m_slotsProgress;
+
+	_bool m_isFadeout = {};
+	_float m_fTimer = {};
+	const _float m_fDurationWipeout = { 5.f };// { 4.7f };
+	const _float m_fDurationFadeout = { 4.5f };
 
 private:
 	HRESULT Create_GuideStart();
 	HRESULT Create_SlotComplete();
+	HRESULT Show_ResultBanner();
 
 	void Change_State(STATE eState);
 	void Ready_Slots(TUTORIAL_TYPE eType);
