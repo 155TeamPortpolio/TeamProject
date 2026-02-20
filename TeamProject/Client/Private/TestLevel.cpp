@@ -23,6 +23,7 @@
 #include "SequenceCam.h"
 #include "CamPanel.h"
 #include "CamLoader.h"
+#include "DisplayGate.h"
 
 /* MapData */
 #include "MapLoader.h"
@@ -106,6 +107,10 @@ HRESULT CTestLevel::Initialize()
 
 
 	//RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+
+	CMonitorGate gate;
+	if (gate.Pass()) return S_OK;
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
 		.Position(_float3(0.f,1.f,0.f))
@@ -183,7 +188,7 @@ HRESULT CTestLevel::Awake()
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
 	CamDirector()->AutoBattle(CamStartDir::Back);
-	CameraManager()->SetFov(-10.f, 1.f, EaseType::InOutSine);
+	//CameraManager()->SetFov(-10.f, 1.f, EaseType::InOutSine);
 
 	//CMonitorGate gate;
 	//if (!gate.Pass())
@@ -446,7 +451,7 @@ void CTestLevel::Free()
 	//CBattleSystem::GetInstance()->DestroyInstance();
 	//CDataBase::GetInstance()->DestroyInstance();
 
-	CameraManager()->SetFov(10.f, 0.f, EaseType::InOutSine);
+	//CameraManager()->SetFov(10.f, 0.f, EaseType::InOutSine);
 
 	m_pPlayer->Clear_Characters();
 	m_pCamDirector->DestroyInstance();

@@ -1,3 +1,4 @@
+// CameraMgr.h
 #pragma once
 
 #include "ICameraService.h"
@@ -63,6 +64,8 @@ public:
 
 public:
     void     SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
+    void     SetFov(_float d0, _float s0, EaseType e0, _float d1, _float s1, EaseType e1);
+
     _float   GetFov() const override { return m_outputPose.lens.fov; }
 
     void     SetZNear(_float zNear, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
@@ -94,6 +97,7 @@ private:
         _uint         handle{};
         OBJECT_HANDLE camObj{};
     };
+
     struct CamLens
     {
         CamProjType projType = CamProjType::Perspective;
@@ -104,25 +108,34 @@ private:
         _float aspect{};
         _float orthoHeight = 10.f;
     };
+
     struct CamPoseFrame
     {
         Vector3     pos{};
         Quaternion  rot = Quaternion::Identity;
         CamLens     lens{};
     };
+
     struct CamCache
     {
-        Matrix  view    = Matrix::Identity;
-        Matrix  proj    = Matrix::Identity;
+        Matrix  view = Matrix::Identity;
+        Matrix  proj = Matrix::Identity;
         Matrix  invView = Matrix::Identity;
         Matrix  invProj = Matrix::Identity;
-        Vector4 pos     = {0.f, 0.f, 0.f, 1.f};
-        _float  farZ    = 0.f;
+        Vector4 pos = {0.f, 0.f, 0.f, 1.f};
+        _float  farZ = 0.f;
+    };
+
+    struct FovStep
+    {
+        _float   deltaDeg{};
+        _float   sec{};
+        EaseType ease = EaseType::Linear;
     };
 
 private:
     CGameObject* ResolveObj(OBJECT_HANDLE handle) const;
-    CCamera*     ResolveCam(OBJECT_HANDLE handle) const;
+    CCamera* ResolveCam(OBJECT_HANDLE handle) const;
 
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 
@@ -139,6 +152,13 @@ private:
     void         BeginBlendTo(OBJECT_HANDLE fromObj, OBJECT_HANDLE targetObj, _float blendSec);
 
     void         UpdateShadowCache();
+
+private:
+    void         SetFov_Internal(_float deltaDeg, _float sec, EaseType easeType);
+    void         BeginFovBlend(_float from, _float to, _float sec, EaseType easeType);
+    void         EnqueueFovStep(_float deltaDeg, _float sec, EaseType easeType);
+    _bool        DequeueFovStep(FovStep& out);
+    void         StartQueuedFovIfNeeded();
 
 private:
     _float       EvalFovOffset(_float dt);
@@ -181,6 +201,9 @@ private:
     _float   m_fovOffsetFrom = 0.f;
     _float   m_fovOffsetTo = 0.f;
     EaseType m_fovOffsetEaseType = EaseType::Linear;
+
+    vector<FovStep> m_fovQueue{};
+    _uint           m_fovQueueHead = 0u;
 
     _bool   m_overrideNear = false;
     _bool   m_overrideFar = false;
