@@ -1,7 +1,7 @@
 #include "Shader_Define.hlsl"
 
 vector g_Color = { 0.8f, 0.35f, 0.1f, 1.f };
-vector g_BrightColor = { 1.f, 0.4f, 0.1f, 1.f };
+vector g_BrightColor = { 0.8f, 0.35f, 0.1f, 1.f };
 float4x4 g_WorldMatrix;
 
 struct VS_IN
@@ -107,7 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     float linearDepth = saturate(In.viewZ / zFar);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
-    Out.vEmissive = float4(g_BrightColor.rgb * In.fBrightness, 1.f);
+    Out.vEmissive = float4(g_BrightColor.rgb * In.fBrightness * 3.f, 1.5f);
     Out.fEmissiveInfo = float2(0.f, 1.f);
     
     return Out;
