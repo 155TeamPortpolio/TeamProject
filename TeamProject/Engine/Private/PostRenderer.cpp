@@ -359,14 +359,26 @@ HRESULT CPostRenderer::Render_Saturation_Internal()
 
 	Bind_WorldMatrix();
 
-	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION", &pLayout);
-	m_pContext->IASetInputLayout(pLayout);
+	if (bSaturateEffectUse && bSaturateSkinnedUse && bSaturateStaticUse)
+	{
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION_FULL", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
-	m_pShader->Apply("SATURATION", m_pContext);
-	m_pVIBuffer->Bind_Buffer(m_pContext);
-	m_pVIBuffer->Render(m_pContext);
+		m_pShader->Apply("SATURATION_FULL", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+	}
+	else
+	{
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
+		m_pShader->Apply("SATURATION", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+	}
 	m_pTargetManager->End_MRT();
 
 	return S_OK;
