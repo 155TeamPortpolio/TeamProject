@@ -34,19 +34,21 @@ void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 	pOwner->Push_Invincible();
 	m_eType = DAMAGE_TYPE::NORMAL;
 
-	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
-	{
-		TUTORIAL_ACTION_DESC desc;
-		desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
-		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-	}
 	__super::Enter(pOwner);
 }
 
 void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 {
 	if (IsCrossAnimProgress(0.7f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
 		m_eType = DAMAGE_TYPE::HARD;
+	}
 
 	for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
 	{
