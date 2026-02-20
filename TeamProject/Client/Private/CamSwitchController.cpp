@@ -1,8 +1,8 @@
+// CamSwitchController.cpp
 #include "pch.h"
 #include "CamSwitchController.h"
+
 #include "CamDirector.h"
-// Engine
-#include "GameInstance.h"
 #include "CharacterController.h"
 #include "Animator3D.h"
 
@@ -19,9 +19,9 @@ namespace
         return pivotWorld + backDir * dist;
     }
 
-    CamSwitchController::Pose LerpPose(const CamSwitchController::Pose& a, const CamSwitchController::Pose& b, _float t)
+    Client::CamSwitchController::Pose LerpPose(const Client::CamSwitchController::Pose& a, const Client::CamSwitchController::Pose& b, _float t)
     {
-        CamSwitchController::Pose out{};
+        Client::CamSwitchController::Pose out{};
         out.pivotWorld = Vector3::Lerp(a.pivotWorld, b.pivotWorld, t);
         out.yawWorldDeg = a.yawWorldDeg + Math::WrapDeg(b.yawWorldDeg - a.yawWorldDeg) * t;
         out.pitchDeg = Math::Lerp(a.pitchDeg, b.pitchDeg, t);
@@ -43,11 +43,15 @@ namespace
     {
         Vector3 d = dir;
         d.y = 0.f;
-        d.Normalize();
+
+        const _float len = d.Length();
+        if (len <= 0.f) return 0.f;
+
+        d /= len;
         return XMConvertToDegrees(atan2f(d.x, d.z));
     }
 
-    void PivotStab_ApplyTuning(CamSwitchController::PivotStab& s, const CamSwitchController::SwitchTuning::PivotFilter& t)
+    void PivotStab_ApplyTuning(Client::CamSwitchController::PivotStab& s, const Client::CamSwitchController::SwitchTuning::PivotFilter& t)
     {
         s.velTau = t.velTau;
         s.rawTau = t.rawTau;
@@ -55,7 +59,7 @@ namespace
         s.outlierVel = t.outlierVel;
     }
 
-    void PivotStab_Reset(CamSwitchController::PivotStab& s, const Vector3& pivot)
+    void PivotStab_Reset(Client::CamSwitchController::PivotStab& s, const Vector3& pivot)
     {
         s.hasLast = true;
         s.lastRawPivot = pivot;
@@ -63,7 +67,7 @@ namespace
         s.filteredVel = Vector3::Zero;
     }
 
-    Vector3 PivotStab_Eval(CamSwitchController::PivotStab& s, _float dt, const Vector3& rawPivot)
+    Vector3 PivotStab_Eval(Client::CamSwitchController::PivotStab& s, _float dt, const Vector3& rawPivot)
     {
         if (!s.hasLast)
         {
@@ -98,6 +102,8 @@ namespace
     }
 }
 
+NS_BEGIN(Client)
+
 void CamSwitchController::Begin()
 {
     if (core.active) return;
@@ -107,8 +113,8 @@ void CamSwitchController::Begin()
     core.elapsed = 0.f;
 
     lens.fovSaved = CameraManager()->GetFov();
-    lens.fovAppliedOffset = 0.f;
-    lens.recoverFromOffset = 0.f;
+    lens.fovFrom = lens.fovSaved;
+    lens.recoverFromFov = lens.fovSaved;
 
     hold.target = CamDirector()->GetCurHandle();
 
@@ -138,17 +144,19 @@ void CamSwitchController::Begin()
     PivotStab_Reset(hold.pivotStab, hold.pose.pivotWorld);
 
     ApplyPose(hold.pose);
+    ApplyFovTarget(lens.fovFrom);
 }
 
 void CamSwitchController::End()
 {
     if (!core.active) return;
 
-    if (lens.fovAppliedOffset != 0.f) CameraManager()->SetFov(-lens.fovAppliedOffset, 0.f);
-    lens.fovAppliedOffset = 0.f;
+    const _float curFov = CameraManager()->GetFov();
+    const _float delta = lens.fovSaved - curFov;
+    if (delta != 0.f) CameraManager()->SetFov(delta, 0.f);
 
     auto orbit = CamDirector()->GetOrbitCam();
-    orbit->SwitchMode_ResumeSync();
+    orbit->ResumeSync();
     orbit->SwitchMode_End();
 
     core.active = false;
@@ -159,7 +167,8 @@ void CamSwitchController::End()
     pair = {};
     sw = {};
     lens.fovSaved = 0.f;
-    lens.recoverFromOffset = 0.f;
+    lens.fovFrom = 0.f;
+    lens.recoverFromFov = 0.f;
 }
 
 void CamSwitchController::EnsureAutoSwitch()
@@ -186,7 +195,6 @@ void CamSwitchController::EnsureAutoSwitch()
 
     BeginSwitchTo(cur);
 }
-
 
 void CamSwitchController::BeginSwitchTo(OBJECT_HANDLE newTarget)
 {
@@ -226,8 +234,8 @@ void CamSwitchController::Update(_float dt)
         FollowHoldPivot(dt);
         ApplyPose(hold.pose);
 
-        const _float desiredOffset = Math::Lerp(0.f, -tune.common.zoomInDeg, t);
-        ApplyFovOffset(desiredOffset);
+        const _float desiredFov = Math::Lerp(lens.fovFrom, tune.common.zoomInDeg, t);
+        ApplyFovTarget(desiredFov);
 
         if (u >= 1.f)
         {
@@ -242,7 +250,7 @@ void CamSwitchController::Update(_float dt)
         FollowHoldPivot(dt);
         ApplyPose(hold.pose);
 
-        ApplyFovOffset(-tune.common.zoomInDeg);
+        ApplyFovTarget(tune.common.zoomInDeg);
         return;
     }
 
@@ -265,11 +273,11 @@ void CamSwitchController::Update(_float dt)
         const Pose p = LerpPose(sw.from, sw.switchTo, tPose);
         ApplyPose(p);
 
-        ApplyFovOffset(-tune.common.zoomInDeg);
+        ApplyFovTarget(tune.common.zoomInDeg);
 
         if (uPose >= 1.f)
         {
-            lens.recoverFromOffset = lens.fovAppliedOffset;
+            lens.recoverFromFov = CameraManager()->GetFov();
 
             sw.recoverFrom = p;
             sw.recoverTo = sw.goal;
@@ -301,8 +309,8 @@ void CamSwitchController::Update(_float dt)
 
         ApplyPose(p);
 
-        const _float desiredOffset = EvalRecoverFovOffset(core.elapsed);
-        ApplyFovOffset(desiredOffset);
+        const _float desiredFov = EvalRecoverFov(core.elapsed);
+        ApplyFovTarget(desiredFov);
 
         const _float fovDur = max(tune.sw.fovRecoverSec, 0.0001f);
         if (core.elapsed >= poseDur && core.elapsed >= fovDur)
@@ -388,20 +396,20 @@ void CamSwitchController::ApplyPose(const Pose& p) const
     orbit->SnapFromExternalPose(p.pivotWorld, camPos, qRot, p.dist);
 }
 
-void CamSwitchController::ApplyFovOffset(_float desiredOffset)
+void CamSwitchController::ApplyFovTarget(_float desiredFov)
 {
-    const _float delta = desiredOffset - lens.fovAppliedOffset;
+    const _float curFov = CameraManager()->GetFov();
+    const _float delta = desiredFov - curFov;
     if (delta != 0.f) CameraManager()->SetFov(delta, 0.f);
-    lens.fovAppliedOffset = desiredOffset;
 }
 
-_float CamSwitchController::EvalRecoverFovOffset(_float tSec) const
+_float CamSwitchController::EvalRecoverFov(_float tSec) const
 {
     const _float dur = max(tune.sw.fovRecoverSec, 0.0001f);
     const _float u = clamp(tSec / dur, 0.f, 1.f);
     const _float t = Math::ApplyEase(tune.sw.fovRecoverEase, u);
 
-    return Math::Lerp(lens.recoverFromOffset, 0.f, t);
+    return Math::Lerp(lens.recoverFromFov, tune.common.zoomInDeg, t);
 }
 
 CamSwitchController::PivotSample CamSwitchController::SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul) const
@@ -530,3 +538,5 @@ CamSwitchController::Pose CamSwitchController::BuildGoalPose_SimplePair() const
     g.dist = hold.pose.dist + add;
     return g;
 }
+
+NS_END

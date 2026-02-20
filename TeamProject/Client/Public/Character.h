@@ -173,6 +173,9 @@ public: // 무적
     void  Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
     void  Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
+public: // 튜토리얼
+    TUTORIAL_TYPE Get_CurrentTutorial() const { return m_eTutorial; }
+
 public: // 행동 이벤트
     virtual void    Reset_State() {}
     virtual void    On_Start() {}
@@ -301,6 +304,8 @@ protected:
     _float      m_fMotionBlurFade = { 0.f };
     // 테스트
     _bool       m_bTest = { false };
+    // 튜토리얼
+    TUTORIAL_TYPE   m_eTutorial = TUTORIAL_TYPE::END;
 
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
     static constexpr _float EVADE_COOLDOWN = 1.f;

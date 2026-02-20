@@ -59,6 +59,7 @@
 #include "UI_BackButton.h"
 #include "UI_IconButton.h"
 #include "UI_TextButton.h"
+#include "UI_Banner.h"
 
 #include "UI_Logo.h"
 #include "UI_Loading.h"
@@ -154,7 +155,7 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Draw_Begin(&color);
 	m_pGameInstance->Draw();
 	m_pGameInstance->Draw_End();
-	return S_OK;
+	return S_OK;	
 }
 
 void CMainApp::Set_Levels() 
@@ -170,7 +171,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("MainCity_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -240,6 +241,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BackButton", CUI_BackButton::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconButton", CUI_IconButton::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TextButton", CUI_TextButton::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Banner", CUI_Banner::Create());
 
 	ResourceManager()->Add_ResourcePath("empty.png", "../Bin/Resources/Global/UI/Image/empty.png");
 	ResourceManager()->Add_ResourcePath("Run2.png", "../Bin/Resources/Global/UI/Image/Loading/Run2.png");

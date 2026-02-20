@@ -58,6 +58,7 @@ public:
         struct Impact
         {
             _float punchDistDelta = 1.3f;
+            _float chainFinalDist = 2.5f;
 
             _float rollMaxDeg = 30.f;
             _float rollArcMul = 0.85f;
@@ -65,7 +66,7 @@ public:
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
 
-            _float chainEndCamAboveFootY = 0.35f;
+            _float chainEndCamAboveFootY = 0.6f;
             _float chainTargetCamYMix = 1.00f;
 
             _float pivotDropY = 0.12f;
@@ -82,6 +83,7 @@ public:
             _float fovBiasDeg = 4.f;
 
             _float impactStartYawExtraDeg = 30.f;
+            _float chainImpactStartYawExtraDeg = 30.f;
         } impact;
     } tune;
 
@@ -192,12 +194,25 @@ private:
     {
         _bool         returnLockBlend = false;
         OBJECT_HANDLE returnLockHandle{};
+        ShotGoal      exitFrom{};
         ShotGoal      exitTo{};
         Vector3       exitPivotWorld{};
         Vector3       exitCamPosTo{};
         _float        exitSec = 0.f;
         Vector3       exitPivotFrom{};
         Vector3       exitCamPosFrom{};
+
+        _bool         savedLockWasOn = false;
+        OBJECT_HANDLE savedLockHandle{};
+
+        _bool         lookInit = false;
+        _float        lookYawPrev = 0.f;
+        _float        lookPitchPrev = 0.f;
+
+        _bool         lookHasPrevPos = false;
+        Vector3       lookPrevPivotWorld{};
+        Vector3       lookPrevCamPosWorld{};
+        Vector3       lookPrevLookAtWorld{};
     };
 
 private:

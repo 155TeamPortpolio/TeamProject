@@ -193,6 +193,12 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
+    if (IsCrossAnimProgress(0.5f))
+    {
+        auto& sound = *pOwner->Get_Component<CAudioSource>();
+        sound.Sequence("ExAttack_Voice").Attribute3D(true).Loop(false).PlayNext();
+    }
+
     Update_Effects(pOwner);
 }
 
@@ -210,10 +216,6 @@ void CCorinState_ExAttack_Start::Update_Effects(CCorin* pOwner)
 
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
 {
-    // Jehyun
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Sequence("ExAttack_Voice").Attribute3D(true).Loop(false).PlayNext();
-
     if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
     {
         pOwner->Unlock_Move();

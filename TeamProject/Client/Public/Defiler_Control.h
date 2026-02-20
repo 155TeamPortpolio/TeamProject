@@ -16,6 +16,7 @@ enum class TraceFlag : _uint
 	AllowThroughTarget = 1 << 2,  // 타겟 지나침 가능
 	IgnoreTarget = 1 << 3,  // 타겟 존재 무시 (연출/패턴 고정)
 	IgnoreRotation = 1 << 4,
+	IgnoreAnim = 1 << 5,
 };
 
 inline TraceFlag operator|(TraceFlag left, TraceFlag right)
@@ -126,6 +127,7 @@ typedef struct tagDefilerBlackBoard
 	void TraceType_OnTarget() { ResetTraceFlag(); eTraceFlag = TraceFlag::TrackTarget | TraceFlag::StopAtTarget; };
 	void TraceType_OnlyAnim() { ResetTraceFlag(); eTraceFlag = TraceFlag::IgnoreTarget; };
 	void TraceType_IgnoreRotation() { eTraceFlag += TraceFlag::IgnoreRotation; };
+    void TractType_IgnoreAnim() { eTraceFlag += TraceFlag::IgnoreAnim; };
 
 	/*전환 상태*/
 	void ReservePattern() {

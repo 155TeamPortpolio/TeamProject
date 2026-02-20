@@ -151,7 +151,14 @@ void CBattleSystem_Panel::DrawTab_Overview()
         }
         else
         {
+            layerPtr = ObjectManager()->Get_Layer({ G_GlobalLevelKey, layerKey });
+            if (layerPtr)
+            {
+                const _float timeScaleValue = layerPtr->Get_TimeScale();
+                ImGui::Text("%s : TimeScale: %.5f", layerKey.c_str(), (double)timeScaleValue);
+            }else{
             ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), "%s : (missing)", layerKey.c_str());
+        }
         }
     }
 }

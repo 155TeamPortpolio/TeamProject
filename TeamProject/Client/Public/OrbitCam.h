@@ -6,6 +6,8 @@
 
 NS_BEGIN(Client)
 
+enum class FreezeMode { None, Switch, Parry };
+
 class COrbitCam final : public CCamObject
 {
 private:
@@ -18,6 +20,7 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override;
+    void    Render_GUI()                override;
 
 public:
     void    SetTarget(OBJECT_HANDLE h);
@@ -40,6 +43,7 @@ public:
     void    Unlock_Input() { m_lockInput = false; }
     _bool   IsInputLocked() const { return m_lockInput; }
     void    Lock_ReenterBlend(_float blendInSec);
+    void    Lock_ReenterBlend(_float blendInSec, EaseType ease);
 
     void    ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease);
     _bool   ReturnPreset_Active() const { return m_returnPreset.active; }
@@ -58,12 +62,13 @@ public:
 
     void          Lock_BlendUpdate_External(_float dt) { Lock_BlendUpdate(dt); }
     OrbitLockEval Lock_Eval_External(_float dt, _float curYawDeg, _float curDist) { return EvalLock(dt, curYawDeg, curDist); }
+    OrbitLockEval EvalLock_PlayerPivot(_float dt, const Vector3& playerPivot, _float curYawDeg, _float curDist);
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
 public:
-    void  DialogueMode_Begin()   { m_dialogueMode = true; }
-    void  DialogueMode_End()     { m_dialogueMode = false; }
+    void  DialogueMode_Begin() { m_dialogueMode = true; }
+    void  DialogueMode_End() { m_dialogueMode = false; }
     _bool IsDialogueMode() const { return m_dialogueMode; }
 
     void  EvalOcclusion();
@@ -71,17 +76,13 @@ public:
     void  DialogueYaw_Set(_float yawGoalDeg, _float weight);
     void  DialogueYaw_Clear() { m_dialogueYaw = {}; }
 
-public:
-    void  SwitchMode_Begin() { m_switchMode = true; }
-    void  SwitchMode_End() { m_switchMode = false; }
-    _bool IsSwitchMode() const { return m_switchMode; }
-    void  SwitchMode_ResumeSync();
-    
-public:
-    void  ParryMode_Begin() { m_parryMode = true; }
-    void  ParryMode_End()   { m_parryMode = false; }
-    _bool IsParryMode() const { return m_parryMode; }
-    void  ParryMode_ResumeSync();
+    void  SwitchMode_Begin();
+    void  SwitchMode_End();
+
+    void  ParryMode_Begin();
+    void  ParryMode_End();
+
+    void  ResumeSync();
 
 private:
     void    ClampTargets();
@@ -93,6 +94,10 @@ private:
 
     Vector3 GetFoot() const;
     Vector3 GetBasePivotTargetPos(OBJECT_HANDLE h) const;
+
+private:
+    _bool   Freeze_On() const { return m_freezeMode != FreezeMode::None; }
+    _bool   Freeze_SkipUpdate(_float dt);
 
 private:
     void    AutoYaw_OnTarget();
@@ -113,24 +118,22 @@ private:
 private:
     void          Lock_Reset();
     _bool         Lock_Active() const { return m_lock.active; }
-    _bool         Lock_On()     const { return m_lock.active || m_lockBlend.active; } 
+    _bool         Lock_On()     const { return m_lock.active || m_lockBlend.active; }
     OBJECT_HANDLE Lock_Handle() const { return m_lock.handle; }
     _float        Lock_Weight() const { return m_lockBlend.weight; }
     void          Lock_Enter(OBJECT_HANDLE h, _float curDist);
     void          Lock_Switch(OBJECT_HANDLE h) { m_lock.handle = h; }
-    void          Lock_Exit();      
+    void          Lock_Exit();
     void          Lock_BlendStart(_bool entering);
     void          Lock_BlendUpdate(_float dt);
 
     OrbitLockEval EvalLock(_float dt, _float curYawDeg, _float curDist);
 
 private:
-    _bool         SkipUpdate(_float dt);
     void          UpdateSwitch(_float dt);
     void          ApplyInput(_float dt);
     OrbitLockEval ApplyLock(_float dt);
     void          ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes);
-    void          ApplyCollide(_float dt);
 
 private:
     void    SyncPivot();
@@ -140,6 +143,8 @@ private:
 
     void    PivotStab_Reset(const Vector3& pivot);
     Vector3 PivotStab_Eval(_float dt, const Vector3& rawPivot);
+
+    void    DrawDebugPivot();
 
 private:
     OrbitPose     m_pose{};
@@ -151,18 +156,18 @@ private:
     Vector3          m_lockFocus{};
     _bool            m_hasLockFocus = false;
     _bool            m_dialogueMode = false;
-    _bool            m_parryMode    = false;
-    _bool            m_switchMode   = false;
+
+    FreezeMode       m_freezeMode = FreezeMode::None;
 
     OrbitAutoYaw  m_autoYaw{};
     OrbitSwitch   m_switch{};
     OBJECT_HANDLE m_target{};
 
-    _float  m_yawDeltaCapDeg   = 720.f;
+    _float  m_yawDeltaCapDeg = 720.f;
     _float  m_pitchDeltaCapDeg = 540.f;
-    _float  m_freeze           = 0.f;
-    _bool   m_hitDist          = false;
-    _bool   m_lockInput        = false;
+    _float  m_freeze = 0.f;
+    _bool   m_hitDist = false;
+    _bool   m_lockInput = false;
 
     OrbitPivotStabilizer m_pivotStab{};
     CCamOcclusionTracker m_occlusion{};

@@ -12,6 +12,11 @@
 #include "EffectContainer.h"
 #include "AudioSource.h"
 
+#include "PostProcessCommand.h"
+#include "PostRenderer.h"
+#include "Texture.h"
+#include "UIDirector.h"
+
 CZeroPortal::CZeroPortal()
 	: CInteractable()
 {
@@ -41,13 +46,7 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-
-	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("zero_portal.json")
-		.Build("ZeroPortal");
-
-	pObjectContainer->Add_Child(pEffect);
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -65,6 +64,8 @@ void CZeroPortal::Awake()
 	m_vBaseScale	= m_pTransform->Get_Scale();
 	m_vExtendScale	= m_vBaseScale * 3.f;
 	m_fDuration		= 0.7f;
+
+	PortalEffectFlowSetting();
 }
 
 void CZeroPortal::Priority_Update(_float dt)
@@ -77,8 +78,19 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
-
 	Focus(dt);
+
+	m_PortalFlow.Tick(dt);
+
+	//if (m_OnActive)
+	//{
+	//	m_fActiveElapsedTime += dt;
+	//	if (m_fActiveElapsedTime >= m_fActiveDuration)
+	//	{
+	//		NoiseSequence();
+	//		m_OnActive = false;
+	//	}
+	//}
 }
 
 void CZeroPortal::Late_Update(_float dt)
@@ -88,6 +100,12 @@ void CZeroPortal::Late_Update(_float dt)
 void CZeroPortal::Render_GUI()
 {
 	__super::Render_GUI();
+
+	if (ImGui::Button("Extend"))
+		On_InPlayer();
+
+	if (ImGui::Button("Active Portal"))
+		Active_Portal();
 }
 
 void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
@@ -140,6 +158,28 @@ void CZeroPortal::SetChoiceIndex(CStage* pOwener, int idx)
 	m_choiceIndex = idx;
 }
 
+void CZeroPortal::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("zero_portal.json")
+			.Build("ZeroPortal");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("zero_portal_active.json")
+			.Build("ZeroPortal_Active");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+}
+
 void CZeroPortal::Focus(_float dt)
 {
 	if (m_bInPlayer)
@@ -185,6 +225,82 @@ void CZeroPortal::Contract(_float dt)
 		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vBaseScale), Math::ApplyEase(EaseType::OutExpo, t));
 		m_pTransform->Scale(vCurrScale);
 	}
+}
+
+void CZeroPortal::NoiseSequence()
+{
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CNoiseCommand>()
+		->SetTexture(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_09.png"))
+		->SetDuration(0.15f)
+		->SetNum(4)
+		->SetEnable(true);
+}
+
+void CZeroPortal::Active_Portal()
+{
+	m_PortalFlow.Start();
+	/*auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
+	if (pEffect)
+	{
+		static_cast<CEffectContainer*>(pEffect)->Play();
+	}
+
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CFlareCommand>()
+		->SetIntensity(1.f)
+		->SetDuration(0.7f)
+		->SetColor(_float3(0.3f, 0.3f, 0.3f))
+		->SetCenter(_float2(0.5, 0.5))
+		->SetEnable(true);
+
+	m_fActiveElapsedTime = {};
+	m_OnActive = true;*/
+}
+
+void CZeroPortal::PortalEffectFlowSetting()
+{
+	size_t sequenceId = m_PortalFlow.BeginSequence();
+	auto pPost = RenderSystem()->GetPostRenderer();
+
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
+		if (pEffect)
+		{
+			static_cast<CEffectContainer*>(pEffect)->Play();
+		}
+
+		auto pPost = RenderSystem()->GetPostRenderer();
+		pPost->GetCommand<CFlareCommand>()
+			->SetIntensity(1.f)
+			->SetDuration(0.7f)
+			->SetColor(_float3(0.3f, 0.3f, 0.3f))
+			->SetCenter(_float2(0.5, 0.5))
+			->SetEnable(true);
+
+		m_fActiveElapsedTime = {};
+		m_OnActive = true;
+		});
+
+	m_PortalFlow.AddWait(sequenceId, 0.5);
+	
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeOut_Screen(0.2f);
+		});
+	m_PortalFlow.AddWait(sequenceId, 0.2);
+
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeIn_Screen(0.05f);
+		NoiseSequence();
+		});
+
+	m_PortalFlow.AddWait(sequenceId, 0.1);
+
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeOut_Screen(0.05f);
+		});
+
+	m_PortalFlow.EndSequence(sequenceId);
 }
 
 CZeroPortal* CZeroPortal::Create()

@@ -67,11 +67,11 @@ struct CamZoomInstance
 
 enum class CamShakeAxis : uint8_t
 {
-    None = 0,
+    None  = 0,
     Pitch = 0x1,
-    Yaw = 0x2,
-    Roll = 0x4,
-    All = 0x7,
+    Yaw   = 0x2,
+    Roll  = 0x4,
+    All   = 0x7,
 };
 
 constexpr CamShakeAxis operator|(CamShakeAxis a, CamShakeAxis b)

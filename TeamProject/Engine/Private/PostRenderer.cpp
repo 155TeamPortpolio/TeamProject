@@ -43,6 +43,8 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_pGuassianBlurCommand = CGuassianBlurCommand::Create();
 	m_pSaturationCommand = CSaturationCommand::Create();
 	m_pDistortionCommand = CDistortionCommand::Create();
+	m_pFlareCommand = CFlareCommand::Create();
+	m_pNoiseCommand = CNoiseCommand::Create();
 
 	m_CommandMap[typeid(CHDRBloomCommand)] = m_pHDRBloomCommand;
 	m_CommandMap[typeid(CGlitchCommand)] = m_pGlitchCommand;
@@ -52,6 +54,8 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	m_CommandMap[typeid(CAddictiveColorCommand)] = m_pAddictiveColorCommand;
 	m_CommandMap[typeid(CDistortionCommand)] = m_pDistortionCommand;
 	m_CommandMap[typeid(CSaturationCommand)] = m_pSaturationCommand;
+	m_CommandMap[typeid(CFlareCommand)] = m_pFlareCommand;
+	m_CommandMap[typeid(CNoiseCommand)] = m_pNoiseCommand;
 
 	return S_OK;
 }
@@ -66,7 +70,9 @@ HRESULT CPostRenderer::Render_PostProcessCommand()
 		 m_pGuassianBlurCommand,
 		 m_pDistortionCommand,
 		 m_pAddictiveColorCommand,
-		 m_pSaturationCommand
+		 m_pSaturationCommand,
+		 m_pFlareCommand,
+		 m_pNoiseCommand
 	};
 
 	commands.erase(
@@ -359,14 +365,26 @@ HRESULT CPostRenderer::Render_Saturation_Internal()
 
 	Bind_WorldMatrix();
 
-	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION", &pLayout);
-	m_pContext->IASetInputLayout(pLayout);
+	if (bSaturateEffectUse && bSaturateSkinnedUse && bSaturateStaticUse)
+	{
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION_FULL", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
-	m_pShader->Apply("SATURATION", m_pContext);
-	m_pVIBuffer->Bind_Buffer(m_pContext);
-	m_pVIBuffer->Render(m_pContext);
+		m_pShader->Apply("SATURATION_FULL", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+	}
+	else
+	{
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SATURATION", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
+		m_pShader->Apply("SATURATION", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+	}
 	m_pTargetManager->End_MRT();
 
 	return S_OK;
@@ -387,6 +405,70 @@ HRESULT CPostRenderer::Render_Distortion_Internal()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pShader->Apply("DISTORTION", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_Flare_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Flare", 0xFF, nullptr, false))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+	m_pTargetManager->Bind_Target(m_strLastTargetName, m_pShader, "FinalTexture");
+
+	Bind_WorldMatrix();
+
+	m_pShader->Bind_Value("ScreenWidth", { &m_fScreenWidth, "float", sizeof(_float) });
+	m_pShader->Bind_Value("ScreenHeight", { &m_fScreenHeight, "float", sizeof(_float) });
+
+	_float fTime = m_pFlareCommand->GetAccTime();
+	m_pShader->Bind_Value("g_Time", { &fTime, "float", sizeof(_float) });
+
+	_float fIntensity = m_pFlareCommand->GetIntensity();
+	m_pShader->Bind_Value("FlareIntensity", { &fIntensity, "float", sizeof(_float) });
+	
+	_float2 vCenter = m_pFlareCommand->GetCenter();
+	m_pShader->Bind_Value("FlareCenter", { &vCenter, "float2", sizeof(_float2) });
+	
+	_float3 vColor = m_pFlareCommand->GetColor();
+	m_pShader->Bind_Value("FlareTintColor", { &vColor, "float3", sizeof(_float3) });
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "FLARE", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("FLARE", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_Noise_Internal()
+{
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Noise", 0xFF, nullptr, false))) return E_FAIL;
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+	m_pShader->Bind_Value("PostNoiseTexture", { m_pNoiseCommand->GetTextureSRV(), "Texture2D", 0});
+	_int Index = m_pNoiseCommand->GetCurrentIndex();
+	m_pShader->Bind_Value("PostNoiseIndex", { &Index, "int", sizeof(_int)});
+
+	Bind_WorldMatrix();
+	m_pShader->Bind_Value("ScreenWidth", { &m_fScreenWidth, "float", sizeof(_float) });
+	m_pShader->Bind_Value("ScreenHeight", { &m_fScreenHeight, "float", sizeof(_float) });
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "NOISE", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("NOISE", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 
@@ -464,6 +546,12 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc DistortionDesc = { "Target_Distortion", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DistortionDesc);
 
+	RenderTargetDesc FlareDesc = { "Target_Flare", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(FlareDesc);
+
+	RenderTargetDesc NoiseDesc = { "Target_Noise", DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width ,ViewportDesc.Height };
+	m_pTargetManager->Create_Target(NoiseDesc);
+
 	return S_OK;
 }
 
@@ -486,6 +574,12 @@ HRESULT CPostRenderer::Ready_MRT()
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_Distortion"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Flare", "Target_Flare"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Noise", "Target_Noise"))) return E_FAIL;
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Bright", "Target_HDR_Bright"))) return E_FAIL;

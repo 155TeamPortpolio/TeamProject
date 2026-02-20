@@ -15,6 +15,9 @@ public:
     {
         IVideoDecoderBackend* pDecoder =    { nullptr };
         atomic<_bool> cancelRequested  =    { false   };
+        atomic_bool decodeRunning = false;
+        atomic_bool decodeRequested = false;
+        atomic_bool pendingDestroy = false;
     };
 
 public:
