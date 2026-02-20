@@ -60,32 +60,122 @@ CVideoPlayer* CVideoService::GetPlayer(_uint playerId)
         return nullptr;
     return iterator->second;
 }
-
 void CVideoService::DestroyPlayer(_uint playerId)
+{
+    CVideoPlayer* playerToRelease = nullptr;
+    IVideoDecoderBackend* decoderToClose = nullptr;
+
+    {
+        std::lock_guard<std::mutex> lockGuard(m_mutex);
+
+        auto contextIterator = m_VideoContexts.find(playerId);
+        if (contextIterator == m_VideoContexts.end())
+            return;
+
+        VIDEO_PLAYER_CONTEXT& context = contextIterator->second;
+
+        context.cancelRequested.store(true, std::memory_order_release);
+        context.pendingDestroy.store(true, std::memory_order_release);
+
+        if (context.pDecoder)
+            context.pDecoder->RequestStopDecode(); // stop=true + flush 로 구현되어 있어야 함
+
+        // ? “이미 돌고 있거나”, “enqueue만 된 상태”면 여기서 해제 금지
+        if (context.decodeRunning.load(std::memory_order_acquire) ||
+            context.decodeRequested.load(std::memory_order_acquire))
+            return;
+
+        // 여기 도달 = 루프도 없고 예정도 없음 -> 지금 바로 정리 가능
+        decoderToClose = context.pDecoder;
+
+        auto playerIterator = m_VideoPlayers.find(playerId);
+        if (playerIterator != m_VideoPlayers.end())
+            playerToRelease = playerIterator->second;
+
+        m_VideoPlayers.erase(playerId);
+        m_VideoContexts.erase(playerId);
+    }
+
+    if (decoderToClose) decoderToClose->Close();
+    if (playerToRelease) Safe_Release(playerToRelease);
+}
+void CVideoService::StartDecode(_uint playerId)
+{
+    CVideoPlayer* playerInstance = nullptr;
+    IVideoDecoderBackend* decoderBackend = nullptr;
+    CVideoPlayer::VIDEO_PLAYER_DESC descCopy{};
+
+    {
+        std::lock_guard<std::mutex> lockGuard(m_mutex);
+
+        auto playerIterator = m_VideoPlayers.find(playerId);
+        auto contextIterator = m_VideoContexts.find(playerId);
+        if (playerIterator == m_VideoPlayers.end() || contextIterator == m_VideoContexts.end())
+            return;
+
+        VIDEO_PLAYER_CONTEXT& context = contextIterator->second;
+
+        // 플래그 중복 방지
+        if (context.decodeRunning.load(std::memory_order_acquire) ||
+            context.decodeRequested.exchange(true, std::memory_order_acq_rel))
+            return;
+
+        context.cancelRequested.store(false, std::memory_order_release);
+
+        playerInstance = playerIterator->second;
+        decoderBackend = context.pDecoder;
+
+        // ★ 여기서 null이면 “contextPtr->...”에서 바로 터지는 원인
+        if (!playerInstance || !decoderBackend)
+        {
+            context.decodeRequested.store(false, std::memory_order_release);
+            return;
+        }
+
+        // 락 안에서 desc를 값으로 복사 (GetDesc()가 ref 리턴이라서)
+        descCopy = playerInstance->GetDesc();
+
+        // CBase 계열이면 안전하게 수명 확보 (Safe_AddRef 지원 가정)
+        Safe_AddRef(playerInstance);
+    }
+
+    // --- 락 밖에서 작업 ---
+    // stop 플래그 관련 함수 이름/의미는 네 구현에 맞게 하나만 호출
+    // decoderBackend->ResetStopDecode();  // (네가 유지하겠다면)
+    // decoderBackend->RequestStopDecode(); // 이런 식은 여기서 호출하면 안 맞음
+
+    if (!decoderBackend->Open(descCopy.filePath))
+    {
+        playerInstance->Stop();
+
+        std::lock_guard<std::mutex> lockGuard(m_mutex);
+        auto contextIterator = m_VideoContexts.find(playerId);
+        if (contextIterator != m_VideoContexts.end())
+            contextIterator->second.decodeRequested.store(false, std::memory_order_release);
+
+        Safe_Release(playerInstance);
+        return;
+    }
+
+    decoderBackend->SetLoop(descCopy.loop);
+    m_threadPool->enqueue([this, playerId] { DecodeLoop(playerId); });
+
+    Safe_Release(playerInstance);
+}
+IVideoDecoderBackend* CVideoService::Get_OwnDecoder(_uint playerId)
 {
     lock_guard<mutex> lockGuard(m_mutex);
 
     auto contextIterator = m_VideoContexts.find(playerId);
-    if (contextIterator != m_VideoContexts.end())
-    {
-        contextIterator->second.cancelRequested.store(true, std::memory_order_release);
-        if (contextIterator->second.pDecoder)
-            contextIterator->second.pDecoder->Close(); 
-    }
+    if (contextIterator == m_VideoContexts.end())
+        return nullptr;
 
-    auto iter = m_VideoPlayers.find(playerId);
-    if (iter != m_VideoPlayers.end())
-        Safe_Release(iter->second);
-
-    m_VideoPlayers.erase(playerId);
-    m_VideoContexts.erase(playerId);
+    return contextIterator->second.pDecoder;
 }
-
-void CVideoService::StartDecode(_uint playerId)
+void CVideoService::DecodeLoop(_uint playerId)
 {
-
-    VIDEO_PLAYER_CONTEXT* contextPtr = nullptr;
     CVideoPlayer* playerPtr = nullptr;
+    VIDEO_PLAYER_CONTEXT* contextPtr = nullptr;
 
     {
         lock_guard<mutex> lockGuard(m_mutex);
@@ -98,50 +188,74 @@ void CVideoService::StartDecode(_uint playerId)
         playerPtr = playerIterator->second;
         contextPtr = &contextIterator->second;
 
-        contextPtr->cancelRequested.store(false, memory_order_release);
-    }
-    const auto& desc = playerPtr->GetDesc();
-
-    if (!contextPtr->pDecoder->Open(desc.filePath))
-    {
-        playerPtr->Stop(); // 혹은 Error 상태로
-        return;
+        contextPtr->decodeRunning.store(true, std::memory_order_release);
     }
 
-    contextPtr->pDecoder->SetLoop(desc.loop);
-    m_threadPool->enqueue([this, playerId] { DecodeLoop(playerId); });
-}
+    auto FinishFlags = [&]()
+        {
+            CVideoPlayer* playerToRelease = nullptr;
+            IVideoDecoderBackend* decoderToClose = nullptr;
 
-IVideoDecoderBackend* CVideoService::Get_OwnDecoder(_uint playerId)
-{
-    auto contextIterator = m_VideoContexts.find(playerId);
-    if (contextIterator == m_VideoContexts.end())
-        return nullptr;
+            {
+                std::lock_guard<std::mutex> lockGuard(m_mutex);
+                auto contextIterator = m_VideoContexts.find(playerId);
+                if (contextIterator == m_VideoContexts.end())
+                    return;
 
-    return contextIterator->second.pDecoder;
-}
+                VIDEO_PLAYER_CONTEXT& context = contextIterator->second;
+                context.decodeRunning.store(false, std::memory_order_release);
+                context.decodeRequested.store(false, std::memory_order_release);
 
-void CVideoService::DecodeLoop(_uint playerId)
-{
+                if (!context.pendingDestroy.load(std::memory_order_acquire))
+                    return;
+
+                decoderToClose = context.pDecoder;
+
+                auto playerIterator = m_VideoPlayers.find(playerId);
+                if (playerIterator != m_VideoPlayers.end())
+                    playerToRelease = playerIterator->second;
+
+                m_VideoPlayers.erase(playerId);
+                m_VideoContexts.erase(playerId);
+            }
+
+            if (decoderToClose) decoderToClose->Close();
+            if (playerToRelease) Safe_Release(playerToRelease);
+        };
     while (true)
     {
-        CVideoPlayer* playerPtr = nullptr;
-        VIDEO_PLAYER_CONTEXT* contextPtr = nullptr;
+        // ====== (1) 컨텍스트 유효/취소 확인 ======
         {
-            lock_guard<mutex> lockGuard(m_mutex);
+            bool shouldExit = false;
 
-            auto playerIterator = m_VideoPlayers.find(playerId);
-            auto contextIterator = m_VideoContexts.find(playerId);
-            if (playerIterator == m_VideoPlayers.end() || contextIterator == m_VideoContexts.end())
+            {
+                lock_guard<mutex> lockGuard(m_mutex);
+
+                auto playerIterator = m_VideoPlayers.find(playerId);
+                auto contextIterator = m_VideoContexts.find(playerId);
+
+                if (playerIterator == m_VideoPlayers.end() || contextIterator == m_VideoContexts.end())
+                {
+                    shouldExit = true;
+                }
+                else
+                {
+                    playerPtr = playerIterator->second;
+                    contextPtr = &contextIterator->second;
+
+                    if (contextPtr->cancelRequested.load(std::memory_order_acquire))
+                        shouldExit = true;
+                }
+            }
+
+            if (shouldExit)
+            {
+                FinishFlags();
                 return;
-
-            playerPtr  =     playerIterator->second;
-            contextPtr =    &contextIterator->second;
+            }
         }
 
-        if (contextPtr->cancelRequested.load(memory_order_acquire))
-            return;
-
+        // ====== (2) 재생 상태/큐 상태 ======
         if (!playerPtr->IsPlaying())
         {
             this_thread::sleep_for(chrono::milliseconds(2));
@@ -154,6 +268,7 @@ void CVideoService::DecodeLoop(_uint playerId)
             continue;
         }
 
+        // ====== (3) 디코드 ======
         _bool ended = false;
         _uint decodedWidth = 0;
         _uint decodedHeight = 0;
@@ -166,16 +281,17 @@ void CVideoService::DecodeLoop(_uint playerId)
         if (ended)
         {
             playerPtr->Stop();
+            FinishFlags();
             return;
         }
 
         if (!decoded)
         {
-            // 일시적으로 못 뽑는 상황이면 살짝 쉬고 재시도
             this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;
         }
 
+        // ====== (4) 프레임 푸시 ======
         VIDEO_FRAME_CPU frame;
         frame.PresentTime = decodedPts;
         frame.width = decodedWidth;
@@ -185,7 +301,6 @@ void CVideoService::DecodeLoop(_uint playerId)
         playerPtr->PushDecodedFrame(std::move(frame));
     }
 }
-
 void CVideoService::Tick(_float dt)
 {
     vector<pair<_uint, CVideoPlayer*>> players;

@@ -13,6 +13,7 @@ private:
 
 public:
     void Set_CloudInfo(CLOUD_DESC Desc);
+    CLOUD_DESC Get_CloudInfo();
 
 public:
     virtual HRESULT Initialize_Prototype()      override;

@@ -6,6 +6,10 @@
 #include "StageRouter.h"
 #include "ZeroPortal.h"
 
+/*PostRenderer*/
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 CZeroStage_Start::CZeroStage_Start()
 {
 	m_eType = StageType::Start;
@@ -17,6 +21,7 @@ HRESULT CZeroStage_Start::Initialize(CZero_Level* pOwnerLevel)
 		return E_FAIL;
 
 	m_pOwnerLevel = pOwnerLevel;
+
 	return S_OK;
 }
 
@@ -56,6 +61,11 @@ HRESULT CZeroStage_Start::Enter_Stage(StageContext& context)
 	m_PlayerHandle = context.hPlayer;
 	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
+
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetColor(_float4(0.577f, 0.615f, 0.641f, 1.0f))
+		->SetDensity(0.001f)
+		->SetEnable(true);
 
 	return S_OK;
 }
