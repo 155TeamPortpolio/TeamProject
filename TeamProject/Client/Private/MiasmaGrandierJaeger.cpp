@@ -22,6 +22,8 @@
 #include "Character.h"
 #include "AudioSource.h"
 
+#include "JaegerLaser.h"
+
 CMiasmaGrandierJaeger::CMiasmaGrandierJaeger()
 	: CEnemy()
 {
@@ -368,6 +370,11 @@ HRESULT CMiasmaGrandierJaeger::Initialize_Transitions()
 HRESULT CMiasmaGrandierJaeger::Initialize_Effects()
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
+
 	Create_AttackSign("Bip001_Head");
+
+	auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_JaegerLaser" })
+		.Build("Laser");
+
 	return S_OK;
 }
