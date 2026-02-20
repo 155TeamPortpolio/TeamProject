@@ -73,6 +73,16 @@ void CUI_TutorialInfo::UI_Active(void* pArg)
 {
     m_isCheck = false; 
     Set_Animation(0);
+    auto pContainer = Get_Component<CObjectContainer>();
+    for (auto& pChild : pContainer->Get_Children())
+    {
+        if (!pChild)
+            continue;
+
+        if (auto pUI = dynamic_cast<CUI_Object*>(pChild))
+            pUI->Set_Animation(0);
+    }
+
     Set_Alive(true);
     
     UIDirector()->Show_Mouse();

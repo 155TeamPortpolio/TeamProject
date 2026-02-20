@@ -35,8 +35,8 @@ private:
 
 	_bool m_isFadeout = {};
 	_float m_fTimer = {};
-	const _float m_fDurationWipeout = { 5.f };// { 4.7f };
-	const _float m_fDurationFadeout = { 4.5f };
+	const _float m_fDurationWipeout = { 1.f };// { 4.7f };
+	const _float m_fDurationFadeout = { 0.6f };	// 0.6f
 
 private:
 	HRESULT Create_GuideStart();
