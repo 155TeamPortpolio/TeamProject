@@ -123,13 +123,13 @@ void CMiyabiState_Charge_Start::Enter(CMiyabi* pOwner)
     else
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start")
         .Apply();
-
-  
 }
 void CMiyabiState_Charge_Start::Update(CMiyabi* pOwner, _float dt)
 {
     if(IsCrossAnimProgress(0.16f))
+    {
         pOwner->Play_Effect("Miyabi_Charge_Start", _vector3(0.f, 0.1f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
 
 }
 
@@ -152,8 +152,12 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeStart02_Voice")
         .Attribute3D(true)
         .Play();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeStart02_SFX")
+        .Attribute3D(true)
+        .Play();
     pOwner->Set_WeaponEffectMesh(true);
     pOwner->Play_Effect("Miyabi_Charge_StackUp0", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
 }
 
 void CMiyabiState_Charge_Start_02::Update(CMiyabi* pOwner, _float dt)
@@ -176,7 +180,9 @@ void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
 {
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_03")
+        .BlendDuration(0.05f)
         .Speed(1.5f)
+        .EndAt(0.1f)
         .Apply();
 
     pOwner->Play_Effect("Miyabi_Charge_StackUp1", _vector3(0.f, 1.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
@@ -203,11 +209,24 @@ void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
     _uint iLevel = m_pOwnerStateMachine->Get_Int("ChargeLevel");
 
     if (iLevel >= 3)
+    {
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack03_End")
-        .Apply();
+            .Apply();
+    }
     else
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack01_End")
         .Apply();
+}
+
+void CMiyabiState_Charge_End::Update(CMiyabi* pOwner, _float dt)
+{
+    _uint iLevel = m_pOwnerStateMachine->Get_Int("ChargeLevel");
+    if (IsCrossAnimProgress(0.32f) && iLevel >= 3)
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_End_SFX")
+            .Attribute3D(true)
+            .Play();
+    }
 }
 
 // Charge_Attack01 (1~2´Ü °ø°Ý)
@@ -256,6 +275,9 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
         .ReserveSpeed(0.9f, 1.f, 1.5f, EaseType::OutQuart)
         .Apply();
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_Voice")
+        .Attribute3D(true)
+        .Play();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_SFX_01")
         .Attribute3D(true)
         .Play();
 
@@ -317,10 +339,19 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.88f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_SFX_02")
+            .Attribute3D(true)
+            .Play();
+    }
+
     if (IsCrossAnimProgress(0.9f))
+    {
         pOwner->Get_Component<CAudioSource>()->Sequence("ChargeAttack03")
-        .Attribute3D(true)
-        .PlayNext();
+            .Attribute3D(true)
+            .PlayNext();
+    }
 
     Update_Effects(pOwner);
 }

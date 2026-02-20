@@ -52,6 +52,7 @@ public:
     string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
     OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
     OBJECT_HANDLE GetCurTarget()             const;
+    OBJECT_HANDLE GetCurParry()              const;
     _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
     const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
     SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
@@ -94,6 +95,9 @@ private:
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
     _uint         RequestSequence(const string& key, const CamSeqReqDesc& req);
+
+    _bool         IsFreeCamActive() const { return CameraManager()->Get_ActiveCam() == GetFreeCamComp(); }
+    void          AbortSequence_NoCam(_bool resetTime);
 
 private:
     CMonitorGate           m_gate;

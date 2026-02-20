@@ -155,7 +155,7 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->Draw_Begin(&color);
 	m_pGameInstance->Draw();
 	m_pGameInstance->Draw_End();
-	return S_OK;
+	return S_OK;	
 }
 
 void CMainApp::Set_Levels() 
@@ -171,7 +171,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
