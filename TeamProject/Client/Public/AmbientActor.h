@@ -8,7 +8,7 @@ class CAmbientActor abstract :
 public:
     typedef struct tagAmbientActorDesc : public Engine::GAMEOBJECT_DESC {
         string  strAnimName{};
-        _bool   bLoop = { false };
+        _float  fDelay{};
     }AMBIENTACTOR_DESC;
 
 protected:
@@ -26,8 +26,9 @@ public:
 
 protected:
     string  m_AnimName = {};
-    _bool   m_bLoop = { false };
-
+    _float  m_fDelayElapsed = {};
+    _float  m_fDelayTime = {};
+    _bool   m_bActive = {};
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;
