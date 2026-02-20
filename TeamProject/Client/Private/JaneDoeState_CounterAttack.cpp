@@ -53,13 +53,6 @@ void CJaneDoeState_CounterAttack::Enter(CJaneDoe* pOwner)
 
 	pOwner->Rush_Target();
 
-	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
-	{
-		TUTORIAL_ACTION_DESC desc;
-		desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
-		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-	}
-
 	__super::Enter(pOwner);
 }
 
@@ -153,6 +146,16 @@ void CJaneDoeState_Counter_01::Update(CJaneDoe* pOwner, _float dt)
 		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
 		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+	if (IsCrossAnimProgress(0.52f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
+
 	Update_Effects(pOwner);
 }
 
@@ -180,6 +183,16 @@ void CJaneDoeState_Counter_02::Update(CJaneDoe* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
 		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+	if (IsCrossAnimProgress(0.64f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 }
 
 void CJaneDoeState_Counter_03::Enter(CJaneDoe* pOwner)
@@ -194,6 +207,16 @@ void CJaneDoeState_Counter_03::Update(CJaneDoe* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
 		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+	if (IsCrossAnimProgress(0.48f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 }
 
 void CJaneDoeState_Counter_End::Enter(CJaneDoe* pOwner)
