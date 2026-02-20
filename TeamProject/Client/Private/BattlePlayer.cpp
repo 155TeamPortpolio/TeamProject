@@ -22,6 +22,8 @@
 #include "Camera.h"
 #include "DisplayGate.h"
 
+#include "Layer.h"
+
 CBattlePlayer::CBattlePlayer()
 {
 }
@@ -128,6 +130,40 @@ void CBattlePlayer::Render_GUI()
 {
     if (nullptr == m_pCurrentCharacter)
         return;
+
+    ImGui::Separator();
+    if (ImGui::Button("OnlyModel"))
+    {
+        string nowLevel = LevelManager()->Get_NowLevelKey();
+        auto Layers = ObjectManager()->Get_LevelLayer(nowLevel);
+        for (auto iter : Layers)
+        {
+            iter.second->Set_RenderState(false);
+        }
+        Layers = ObjectManager()->Get_LevelLayer(G_GlobalLevelKey);
+        for (auto iter : Layers)
+        {
+            iter.second->Set_RenderState(false);
+        }
+        CLayer* pModelLayer = ObjectManager()->Get_Layer({ G_GlobalLevelKey, "Model_Layer" });
+        if (pModelLayer)
+            pModelLayer->Set_RenderState(true);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Restore"))
+    {
+        string nowLevel = LevelManager()->Get_NowLevelKey();
+        auto Layers = ObjectManager()->Get_LevelLayer(nowLevel);
+        for (auto iter : Layers)
+        {
+            iter.second->Set_RenderState(true);
+        }
+        Layers = ObjectManager()->Get_LevelLayer(G_GlobalLevelKey);
+        for (auto iter : Layers)
+        {
+            iter.second->Set_RenderState(true);
+        }
+    }
 
     ImGui::Separator();
     if (ImGui::Button("RecoverHP"))
