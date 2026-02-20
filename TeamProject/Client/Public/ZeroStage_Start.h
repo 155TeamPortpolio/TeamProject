@@ -1,5 +1,6 @@
 #pragma once
 #include "Stage.h"
+
 class CZeroStage_Start :
 	public CStage
 {
@@ -27,4 +28,3 @@ public:
 	static CZeroStage_Start* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
 };
-
