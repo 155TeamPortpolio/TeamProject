@@ -55,15 +55,6 @@ void CBattleStarter::Late_Update(_float dt)
 
 void CBattleStarter::OnTriggerEnter(CGameObject* pOther)
 {
-}
-
-void CBattleStarter::OnTriggerStay(CGameObject* pOher)
-{
-	
-}
-
-void CBattleStarter::OnTriggerExit(CGameObject* pOther)
-{
 	if (m_bIsInteractable) {
 		auto pCollidable = pOther->Get_Component<ICollidable>();
 		if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
@@ -74,6 +65,15 @@ void CBattleStarter::OnTriggerExit(CGameObject* pOther)
 		CZero_Level* pZero_Level = dynamic_cast<CZero_Level*>(CGameInstance::GetInstance()->Get_CurrentLevel());
 		pZero_Level->Get_StageContext().pNowStage->Change_StageState(CStage::StageState::BattleStart);
 	}
+}
+
+void CBattleStarter::OnTriggerStay(CGameObject* pOher)
+{
+	
+}
+
+void CBattleStarter::OnTriggerExit(CGameObject* pOther)
+{
 }
 
 CBattleStarter* CBattleStarter::Create()

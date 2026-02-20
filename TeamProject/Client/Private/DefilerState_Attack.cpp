@@ -8,6 +8,7 @@
 
 #include "DefilerLaser.h"
 #include "DisplayGate.h"
+#include "CameraMgr.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -23,7 +24,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 9;
+	Type = 13;
 	switch (Type)
 	{
 	case 0 :
@@ -116,6 +117,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 13 :
 	{
+		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});
 		break;
 	}
 	default:
@@ -587,6 +589,7 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
 	blackBoard.TraceType_IgnoreRotation();
+	blackBoard.TractType_IgnoreAnim();
 
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_07")
@@ -601,8 +604,6 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
-
-
 }
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)

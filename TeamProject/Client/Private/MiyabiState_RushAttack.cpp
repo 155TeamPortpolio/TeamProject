@@ -101,23 +101,23 @@ void CMiyabiState_Rush_Start::Update_Effects(CMiyabi* pOwner)
 void CMiyabiState_Rush_End::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_End")
-        .Speed(1.1f)
+        .Speed(0.8f)
         .Apply();
-    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_RushAttack_End_SFX.wav")
-        .Attribute3D(true)
-        .Play();
+    //pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_RushAttack_End_SFX.wav")
+    //    .Attribute3D(true)
+    //    .Play();
     pOwner->End_AttackCollider("KatanaWeapon");
     pOwner->Unlock_Move();
 }
 
 void CMiyabiState_Rush_End::Update(CMiyabi* pOwner, _float dt)
 {
-    //if(IsCrossAnimProgress(0.1f))
-    //{
-    //    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_RushAttack_End_SFX.wav")
-    //        .Attribute3D(true)
-    //        .Play();
-    //}
+    if(IsCrossAnimProgress(0.01f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_RushAttack_End_SFX.wav")
+            .Attribute3D(true)
+            .Play();
+    }
 }
 
 void CMiyabiState_Rush_End::Exit(CMiyabi* pOwner)

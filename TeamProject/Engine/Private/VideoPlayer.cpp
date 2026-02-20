@@ -25,6 +25,7 @@ bool CVideoPlayer::Open(const VIDEO_PLAYER_DESC& desc)
     m_playPtsMs = 0;
     m_state.store(VIDEO_PLAY_STATE::Ready, std::memory_order_release);
     m_frameQueue.Clear();
+    m_waitFirstZeroFrame = true;
     return true;
 }
 
@@ -42,29 +43,38 @@ void CVideoPlayer::Close()
     m_width = 0;
     m_height = 0;
 }
-
 void CVideoPlayer::Play()
 {
-    const VIDEO_PLAY_STATE prev = m_state.load(std::memory_order_acquire);
+    // 0) 먼저 재생을 잠깐 멈춰서(중요) 디코드 루프가 더 이상 프레임을 밀어넣지 못하게 함
+    m_state.store(VIDEO_PLAY_STATE::Paused, std::memory_order_release);
 
-    if (prev == VIDEO_PLAY_STATE::Ended)
+    // 1) 플레이어 상태/큐 완전 초기화
     {
-        auto decoder = VideoService()->Get_OwnDecoder(m_ID);
-        {
-            lock_guard<mutex> lock(m_mutex);
-            m_playPtsMs = 0;
-            m_frameQueue.Clear();
-        }
+        std::lock_guard<std::mutex> lockGuard(m_mutex);
 
-        if (decoder)
-        {
-            decoder->ReOpen();  
-        }
+        m_playPtsMs = 0;
+        m_hasPtsBase = false;
+        m_ptsBaseMs = 0;
+        m_lastPushedPtsMs = 0;
+
+        m_presentCount.store(0, std::memory_order_relaxed);
+        m_pushCount.store(0, std::memory_order_relaxed);
+
+        m_frameQueue.Clear();
     }
 
+    // 2) 디코더 0초로 되감기 + Flush (디코더가 아직 Open 전이면 실패해도 괜찮음)
+    if (IVideoDecoderBackend* decoderBackend = VideoService()->Get_OwnDecoder(m_ID))
+    {
+        decoderBackend->SeekSeconds(0.0f);
+    }
+
+    // 3) 디코드 루프가 없으면 시작(있으면 내부에서 알아서 무시)
+    VideoService()->StartDecode(m_ID);
+
+    // 4) 재생 시작
     m_state.store(VIDEO_PLAY_STATE::Playing, std::memory_order_release);
 }
-
 void CVideoPlayer::Pause()
 {
     m_state.store(VIDEO_PLAY_STATE::Paused, std::memory_order_release);
@@ -79,14 +89,28 @@ void CVideoPlayer::Stop()
 
 void CVideoPlayer::PushDecodedFrame(VIDEO_FRAME_CPU&& frame)
 {
+    if (m_state.load(std::memory_order_acquire) != VIDEO_PLAY_STATE::Playing)
+        return;
+
     if (frame.width == 0 || frame.height == 0)
         return;
 
     m_pushCount.fetch_add(1, std::memory_order_relaxed);
 
-    const uint64_t framePtsMs = (uint64_t)frame.PresentTime; // 단위가 ms가 맞는지 아래 3) 참고
+    const uint64_t framePtsMs = (uint64_t)frame.PresentTime;
 
     std::lock_guard<std::mutex> lock(m_mutex);
+
+    // ? 리셋(Play) 직후: 0초 프레임이 올 때까지 이전 프레임은 버림
+    if (m_waitFirstZeroFrame)
+    {
+        // 실전에서 0이 안 오고 1~16ms 같은 값이 올 수 있으면 아래 조건을 완화해도 됨.
+        // if (framePtsMs > 16) return;  // 이런 식으로
+        if (framePtsMs != 0)
+            return;
+
+        m_waitFirstZeroFrame = false;
+    }
 
     if (!m_hasPtsBase)
     {
@@ -96,8 +120,7 @@ void CVideoPlayer::PushDecodedFrame(VIDEO_FRAME_CPU&& frame)
     }
     else
     {
-        // 루프/리오픈 감지: PTS가 의미있게 감소하면 새 세션으로 취급
-        const uint64_t ptsDecreaseThresholdMs = 200; // 0.2s 이상 떨어지면 루프라고 봄
+        const uint64_t ptsDecreaseThresholdMs = 200;
         if (framePtsMs + ptsDecreaseThresholdMs < m_lastPushedPtsMs)
         {
             m_ptsBaseMs = framePtsMs;
@@ -111,6 +134,7 @@ void CVideoPlayer::PushDecodedFrame(VIDEO_FRAME_CPU&& frame)
 
     m_frameQueue.PushDropOldest(std::move(frame));
 }
+
 void CVideoPlayer::PumpPresent(_uint64 /*nowPts*/)
 {
     if (m_state.load(std::memory_order_acquire) != VIDEO_PLAY_STATE::Playing)

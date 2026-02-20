@@ -79,7 +79,7 @@ struct OrbitInput
 struct OrbitProfile
 {
     _float distMin = 0.7f;
-    _float distMax = 6.f;
+    _float distMax = 5.f;
 
     _float pitchLimitMinDeg = -40.f;
     _float pitchLimitMaxDeg = 50.f;

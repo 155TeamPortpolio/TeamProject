@@ -89,7 +89,7 @@ private:
     uint64_t m_ptsBaseMs = 0;
     _bool    m_hasPtsBase = false;
     uint64_t m_lastPushedPtsMs = 0;
-
+    _bool m_waitFirstZeroFrame = false;
 public:
     static CVideoPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual void Free() override;
