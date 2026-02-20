@@ -23,19 +23,25 @@ HRESULT CUI_TutorialGuideSlot::Initialize(INIT_DESC* pArg)
         return E_FAIL;
 
     SLOT_DESC* pDesc = static_cast<SLOT_DESC*>(pArg);
-    m_iTargetCount = pDesc->desc.iCount;
+    m_eAction = pDesc->desc.eAction;
+    m_iTargetCount = pDesc->desc.iCount; 
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath(Get_PrefabPath(pDesc->desc.eAction))));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath(Get_PrefabPath(m_eAction))));
 
     Cache();
 
     if(pDesc->desc.eAction != TUTORIAL_ACTION::END)
         Set_CountText();
 
-    //// 이벤트 : TUTORIAL_DESC
-    //Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
-    //    {
-    //    });
+    // 이벤트 : TUTORIAL_DESC
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_ACTION_DESC>([&](const TUTORIAL_ACTION_DESC& desc)
+        {
+            if (desc.eAction != m_eAction)
+                return;
+
+            m_iCurrentCount++;
+            Set_CountText();
+        });
 
     return S_OK;
 }

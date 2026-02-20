@@ -240,9 +240,4 @@ namespace Client {
 		_float3 vPosition = {};
 		_float4 vColor = {};
 	}PARTY_DESC;
-
-	typedef struct tagTutorialActionDesc {
-		TUTORIAL_ACTION eAction = {};
-		_uint iCount = {};
-	}TUTORIAL_ACTION_DESC;
 }

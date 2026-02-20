@@ -58,6 +58,13 @@ void CUI_TutorialGuide::Awake()
 
 void CUI_TutorialGuide::Update(_float dt)
 {
+    if (InputDevice()->Key_Tap('N'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::DODGE;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
     switch (m_eState)
     {
     case STATE::READY:

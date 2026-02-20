@@ -31,6 +31,7 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
+	TUTORIAL_ACTION m_eAction = {};
 	class CTextSlot* m_pCountText = {};
 
 	_uint m_iCurrentCount = {};
