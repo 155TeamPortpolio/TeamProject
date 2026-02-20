@@ -1,5 +1,8 @@
 #pragma once
 #include "Stage.h"
+
+NS_BEGIN(Client)
+
 class CZeroStage_Normal :
     public CStage
 {
@@ -23,10 +26,9 @@ private:
 	void Outro();
 	void End();
 
-private:
-
 public:
 	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
 };
 
+NS_END

@@ -76,8 +76,8 @@ void CAnimToolPanel::Update_Panel(_float dt)
 				}
 			}
 		}
-		m_fPrevTrackPos = m_fTrackPos;
 	}
+	m_fPrevTrackPos = m_fTrackPos;
 	return;
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
@@ -410,8 +410,9 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 		float hoverTime = local01 * endT;
 
 		ImGui::BeginTooltip();
-		if(m_pSelectAnimator)
+		if (m_pSelectAnimator) {
 			ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
+		}
 		ImGui::EndTooltip();
 
 		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);
@@ -421,6 +422,7 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 	{
 		float mx = ImGui::GetIO().MousePos.x;
 		float local01 = clamp((mx - barPos.x) / barSize.x, 0.f, 1.f);
+		m_fPrevTrackPos = m_fTrackPos = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
 		ioTime = local01 * endT;
 	}
 }

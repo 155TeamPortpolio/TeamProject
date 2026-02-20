@@ -8,6 +8,7 @@
 
 #include "DefilerLaser.h"
 #include "DisplayGate.h"
+#include "CameraMgr.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -23,7 +24,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 11;
+	Type = 5;
 	switch (Type)
 	{
 	case 0 :
@@ -34,41 +35,41 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 1 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//³»¸®Âï
 		break;
 	}
 	case 2 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });//ë ˆì´ì €
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });//·¹ÀÌÀú
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//³»¸®Âï
 		break;
 	}
 	case 3 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack02",0.f,1.f });//íšŒì „
-		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack02",0.f,1.f });//È¸Àü
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//³»¸®Âï
 		break;
 	}
 	case 4 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack05",0.f,1.f });//ëŒì§„
-		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//ë³µê·€
+		blackBoard.patternTransition.push_back({ "Attack05",0.f,1.f });//µ¹Áø
+		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//º¹±Í
 		break;
 	}
 	case 5 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });//ì´ìž½ì´
-		blackBoard.patternTransition.push_back({ "Attack_Grab",0.f,1.f });//ëŒì§„
-		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//ë³µê·€
+		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });//ÃÑÀìÀÌ
+		blackBoard.patternTransition.push_back({ "Attack_Grab",0.f,1.f });//µ¹Áø
+		blackBoard.patternTransition.push_back({ "RePos_Target",0.f,1.f });//º¹±Í
 		break;
 	}
 	case 6 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack01_03",0.f,1.f });//ê¼¬ë¦¬
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//ë‚´ë¦¬ì°2
+		blackBoard.patternTransition.push_back({ "Attack01_03",0.f,1.f });//²¿¸®
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//³»¸®Âï2
 		break;
 	}
 	case 7 :
@@ -80,13 +81,13 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	{
 		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,0.41f });
 		blackBoard.patternTransition.push_back({ "Attack01_02",0.19f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//ë‚´ë¦¬ì°2
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//³»¸®Âï2
 		break;
 	}
 	case 9 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); //ë°©íŒ¨ë³‘
+		blackBoard.patternTransition.push_back({ "Attack08_01_Start",0.f,1.f }); //¹æÆÐº´
 		blackBoard.patternTransition.push_back({ "Attack08_01_Loop",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_01_End",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f });
@@ -105,17 +106,19 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	case 11 :
 	{
 		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
-		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });//ì´ì•¼ì¦ˆë§ˆ
-		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });//¹Ì¾ßÁî¸¶
+		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//³»¸®Âï
 		break;
 	}
 	case 12 :
 	{
-		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); //ì°½ ë‚´ë¦¬ì°
+		blackBoard.patternTransition.push_back({ "Attack08_02",0.f,1.f }); //Ã¢ ³»¸®Âï
 		break;
 	}
 	case 13 :
 	{
+		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});//¹Ì¾ßÁî¸¶
+		//blackBoard.patternTransition.push_back({"Attack01_01_P2", 0.f, 1.f});
 		break;
 	}
 	default:
@@ -587,6 +590,7 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
 	blackBoard.TraceType_IgnoreRotation();
+	blackBoard.TractType_IgnoreAnim();
 
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_07")
@@ -601,8 +605,6 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
-
-
 }
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
@@ -612,6 +614,10 @@ void CDefilerState_Attack_07::Exit(CDefiler* pOwner)
 
 void CDefilerState_Attack_07::Update_Effects(CDefiler* pOwner)
 {
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Defiler_Smoke_Trail", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.5f))
+		pOwner->Stop_Effect("Defiler_Smoke_Trail");
 	if (IsCrossAnimProgress(0.25f))
 		pOwner->Play_Effect("Defiler_Slash0_0", _vector3(0.f, 5.8f, 0.f), _quaternion(0.76f, 0.17f, -0.5f, 0.38f));
 	if(IsCrossAnimProgress(0.31f))
@@ -641,10 +647,26 @@ void CDefilerState_Attack_08_01_Start::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_Start::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_01_Start::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_08_01_Start::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.25f))
+	{
+		pOwner->Play_Effect("Defiler_Axe_Light3", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Play_Effect("Defiler_Smoke_Trail", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
+	if (IsCrossAnimProgress(0.79f))
+	{
+		pOwner->Play_Effect("Defiler_Axe_Charge1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Stop_Effect("Defiler_Axe_Light3");
+		pOwner->Stop_Effect("Defiler_Smoke_Trail");
+	}
 }
 
 void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
@@ -695,11 +717,23 @@ void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_01_End::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_01_End::Exit(CDefiler* pOwner)
 {
 	pOwner->Control_TargetEnable(true);
+}
+
+void CDefilerState_Attack_08_01_End::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.07f))
+		pOwner->Stop_Effect("Defiler_Axe_Charge1");
+	if (IsCrossAnimProgress(0.14f))
+	{
+		pOwner->Play_Effect("Defiler_Sting0_0", _vector3(0.4f, 9.f, 0.8f), _quaternion(0.71f, 0.f, 0.f, 0.71f), false);
+		pOwner->Play_Effect("Defiler_HitGround1", _vector3(0.1f, 0.f, 0.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
@@ -719,10 +753,17 @@ void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_02::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_08_02::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Defiler_HitGround2", _vector3(0.1f, 0.1f, 0.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
@@ -865,10 +906,22 @@ void CDefilerState_Attack_Summon::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_Summon::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_Summon::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_Summon::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.13f))
+		pOwner->Play_Effect("Defiler_Hand_Charge0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.63f))
+	{
+		pOwner->Stop_Effect("Defiler_Hand_Charge0");
+		pOwner->Play_Effect("Defiler_Hand_Explode0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_RePos_Front::Enter(CDefiler* pOwner)

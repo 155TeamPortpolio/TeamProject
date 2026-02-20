@@ -99,7 +99,8 @@ void CUI_Dialogue::Show_Choices()
 
 HRESULT CUI_Dialogue::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -114,7 +115,8 @@ HRESULT CUI_Dialogue::Initialize_Prototype()
 
 HRESULT CUI_Dialogue::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
      
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueMessage", CHILD::MESSAGE);
     Add_Children(G_GlobalLevelKey, "Proto_GameObject_DialogueChoice", CHILD::CHOICE);
@@ -141,7 +143,7 @@ void CUI_Dialogue::Update(_float dt)
         Set_Alive(false);
 
         // choice 결과가 room 이 true 면 언락, 필드 hud 띄우기 아무것도 하지 않기
-        if (Is_RoomChoiceTrue())
+        if (Is_ChoiceValueTrue("Room"))// (Is_RoomChoiceTrue())
             return;
 
         // 플레이어 입력 언락
@@ -171,19 +173,12 @@ void CUI_Dialogue::Bind_EventListener()
         { 
             // 대화 UI 시작
             Open_Dialogue(desc.strDialogueID, desc.iSequenceID);
-            // 대화용 카메라 연출 시작
-            CamDirector()->StartDialog();
-            CUIDirector::GetInstance()->Hide_HUD(CUIDirector::HUD::FIELD);
-            CUIDirector::GetInstance()->Hide_HUD(CUIDirector::HUD::BATTLE); 
-            // 플레이어 입력 잠금
-            if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
-                pPlayer->Lock_Input();
         });
 }
 
-_bool CUI_Dialogue::Is_RoomChoiceTrue() const
+_bool CUI_Dialogue::Is_ChoiceValueTrue(const string& strValueName) const
 {
-    if (m_tChoiceDesc.ValueName != "Room")
+    if (m_tChoiceDesc.ValueName != strValueName)
         return false;
 
     if (auto pValue = get_if<_bool>(&m_tChoiceDesc.Value))
@@ -223,19 +218,34 @@ void CUI_Dialogue::Change_State(STATE eState)
 {
     if (m_eState == eState)
         return;
-    
+     
     m_eState = eState;
+    auto pUIDirector = UIDirector();
     switch (eState)
     {
     case STATE::INVISIBLE:
-        // 메시지 UI 비활성화 + 카메라 연출 종료
+        // 메시지 UI 비활성화
         Set_ChildUIDeActive(CHILD::MESSAGE);
+        // 대화용 카메라 연출 종료
         CamDirector()->EndDialog();
+        pUIDirector->Hide_Mouse();
+        // 만약에 Choice CSV에 Level이 True 면 playerInput Unlock
+        if (Is_ChoiceValueTrue("Level"))// (Is_RoomChoiceTrue())
+            if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+                pPlayer->Unlock_Input();
         break;
     case STATE::VISIBLE:
         // UI 활성화
         Set_ChildUIActive(CHILD::MESSAGE);
-        Set_Alive(true);
+        Set_Alive(true); 
+        // 대화용 카메라 연출 시작
+        CamDirector()->StartDialog(); 
+        pUIDirector->Hide_HUD(CUIDirector::HUD::FIELD);
+        pUIDirector->Hide_HUD(CUIDirector::HUD::BATTLE);
+        pUIDirector->Show_Mouse();
+        // 플레이어 입력 잠금
+        if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
+            pPlayer->Lock_Input();
         break;
     }
 }

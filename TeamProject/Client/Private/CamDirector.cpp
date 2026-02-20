@@ -12,6 +12,7 @@
 #include "OrbitCam.h"
 #include "FreeCam.h"
 #include "CamDebugInput.h"
+#include "CamObject.h"
 // Component
 #include "CharacterController.h"
 #include "CamSequencePlayer.h"
@@ -46,6 +47,11 @@ CGameObject* CCamDirector::GetCamObj(CamType type) const
 OBJECT_HANDLE CCamDirector::GetCurTarget() const
 {
     return BattleSystem()->GetBattlePlayer()->GetTargetHandle();
+}
+
+OBJECT_HANDLE CCamDirector::GetCurParry() const
+{
+    return BattleSystem()->GetBattlePlayer()->GetParryHandle();
 }
 
 _bool CCamDirector::Register(const string& key, const fs::path& path)
@@ -122,6 +128,9 @@ void CCamDirector::Update(_float dt)
     m_events.BeginFrame();
 
     UpdatePlayer();
+
+    if (IsFreeCamActive() && m_playing.active)
+        AbortSequence_NoCam(true);
 
     if (m_playing.active)
     {
@@ -300,6 +309,8 @@ _bool CCamDirector::IsFinished(CamEventType type) const
 
 _uint CCamDirector::RequestSequence(const string& key, const CamSeqReqDesc& req)
 {
+    if (IsFreeCamActive()) return 0u;
+
     auto it = m_seqs.find(key);
     if (it == m_seqs.end()) return 0u;
 
@@ -388,8 +399,31 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSeqReqDesc& req)
     }
 }
 
+void CCamDirector::AbortSequence_NoCam(_bool resetTime)
+{
+    m_lastEndedValid = m_playing.active;
+    m_lastEndedKey = m_playing.key;
+
+    auto seqPlayer = GetSeqPlayer();
+    seqPlayer->SetApplyEnabled(false);
+    seqPlayer->Stop(false);
+
+    if (resetTime) seqPlayer->SetTime(0.f);
+
+    m_playing = {};
+}
+
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
+    if (!m_playing.active) return false;
+    if (handle != m_playing.handle) return false;
+
+    if (IsFreeCamActive())
+    {
+        AbortSequence_NoCam(resetTime);
+        return true;
+    }
+
     m_lastEndedValid = m_playing.active;
     m_lastEndedKey = m_playing.key;
 

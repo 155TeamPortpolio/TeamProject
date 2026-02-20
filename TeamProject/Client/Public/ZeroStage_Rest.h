@@ -1,5 +1,8 @@
 #pragma once
 #include "Stage.h"
+
+NS_BEGIN(Client)
+
 class CZeroStage_Rest :
 	public CStage
 {
@@ -28,3 +31,4 @@ public:
 	virtual void Free();
 };
 
+NS_END

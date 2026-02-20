@@ -97,9 +97,6 @@ void CJaneDoeState_SwitchIn::Update(CJaneDoe* pOwner, _float dt)
             break;
         }
     }
-
-    //if (pOwner->Is_Passion())
-    //    pOwner->Add_MotionBlur();
 }
 
 void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
@@ -113,6 +110,8 @@ void CJaneDoeState_SwitchIn::Exit(CJaneDoe* pOwner)
 _bool CJaneDoeState_SwitchIn::Handle_Transition(CJaneDoe* pOwner, const string& strState)
 {
     if (pOwner->Get_StateMachine()->Get_Int("IdleEntryMode") == 2)
+        return true;
+    if (strState == "SwitchOut")
         return true;
     if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInParryAid")
     {

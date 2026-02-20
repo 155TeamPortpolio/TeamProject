@@ -8,7 +8,8 @@
 
 HRESULT CUI_UltimateAction::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -18,7 +19,8 @@ HRESULT CUI_UltimateAction::Initialize_Prototype()
 
 HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     Load_Json("hud_battle_ultimateAction.json");
     Cache_Children();

@@ -39,6 +39,9 @@ private:
 	function<void()> m_onVideoFinished = {};
 	_bool m_isFinished = {};
 
+private:
+	string Get_VideoPath(GachaGrade eGrade);
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

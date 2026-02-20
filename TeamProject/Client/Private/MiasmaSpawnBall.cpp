@@ -11,6 +11,8 @@
 #include "ObjectContainer.h"
 
 #include "Helper_Func.h"
+#include "EffectContainer.h"
+
 CMiasmaSpawnBall::CMiasmaSpawnBall()
 	: CGameObject()
 {
@@ -26,8 +28,9 @@ HRESULT CMiasmaSpawnBall::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
-	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
+	//Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
+	//Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
+	Add_Component<CObjectContainer>();
 	Add_Component<CCollider>();
 
 	return S_OK;
@@ -51,6 +54,7 @@ HRESULT CMiasmaSpawnBall::Initialize(INIT_DESC* initDesc)
 	if (transform)
 		transform->Set_Pos(m_startPos);
 
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -92,12 +96,37 @@ void CMiasmaSpawnBall::Update(_float dt)
 		}
 	}
 
+	/* Direction */
+	_vector3 currPosition = m_pTransform->Get_WorldPos();
+	_vector3 nextPosition = position;
+	_vector3 dir = nextPosition - currPosition;
+
+	if (dir.Length() < 0.01f)
+		dir = _vector3(0.f, 0.f, 1.f);
+	else
+		dir.Normalize();
+
+	m_pTransform->Set_Look(dir);
 	m_pTransform->Set_Pos(position);
 	Get_Component<CCollider>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	if (timeRatio >= 1.f)
 	{
 		SpawnJaeger();
+
+		/* Effect */
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("deifler_spawnball_explode.json")
+			.Build("Defiler_SpawnBall_Explode");
+
+		if (pEffect)
+		{
+			auto pEffectTransform = pEffect->Get_Component<CTransform>();
+			pEffectTransform->Set_WorldPos(m_pTransform->Get_WorldPos());
+
+			ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
+		}
 	}
 }
 void CMiasmaSpawnBall::Late_Update(_float dt)
@@ -137,6 +166,17 @@ void CMiasmaSpawnBall::OnTriggerEnter(CGameObject* pOther)
 {
 }
 
+void CMiasmaSpawnBall::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_spawnball.json")
+		.Build("Defiler_SpawnBall");
+
+	pObjectContainer->Add_Child(pEffect);
+}
+
 void CMiasmaSpawnBall::SpawnJaeger()
 {
 	const string levelKey = LevelManager()->Get_NowLevelKey();
@@ -147,7 +187,7 @@ void CMiasmaSpawnBall::SpawnJaeger()
 	ColDesc.bTrigger = false;
 	ColDesc.bAutoFit = false;
 	ColDesc.eType = COLLIDER_TYPE::BOX;
-	ColDesc.vSize = { 5.f, 2.f, 3.f };
+	ColDesc.vSize = { 5.f,3.5f, 3.f };
 	auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaHeavy" })
 		.Position(m_targetPos)
 		.Collider(ColDesc)

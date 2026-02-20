@@ -105,7 +105,7 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation(pOwner->Get_Name() + "ParryAid_L")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L")
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
 
@@ -117,22 +117,15 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
         static_cast<CEffectContainer*>(pParryEffect)->Play();
     }
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
-
-    //OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
-    //if (handle.isValid())
-    //{
-    //    TARGET_LOCK_DESC desc;
-    //    desc.bLock = false;
-    //    desc.tHandle = handle;
-    //    EventSystem()->Broadcast<TARGET_LOCK_DESC>({desc});
-    //}
 }
 
 void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt,
-        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
-        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
+    desc.fMoveWeight = 5.f;
+    pOwner->Process_RootMotion(dt, desc);
 }
 
 void CMiyabiState_SwitchInParryAid_L_End::Enter(CMiyabi* pOwner)

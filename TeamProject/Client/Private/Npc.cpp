@@ -112,7 +112,12 @@ HRESULT CNpc::Add_SpeechBubble()
 {
     CUI_SpeechBubble::SPEECHBUBBLE_DESC* pDesc = new  CUI_SpeechBubble::SPEECHBUBBLE_DESC;
     pDesc->strSpeech = m_strSpeech;// L"155기";
-    pDesc->pCCT = Get_Component<CCharacterController>();
+    _vector3 BasePos = Get_Component<CTransform>()->Get_WorldPos(); /*기본 포지션*/
+    if (auto pModel = Get_Component<CModel>()) {
+        BasePos.y+=pModel->Get_LocalBoundingBox().GetRadius().y*2;
+    }
+    XMStoreFloat3(&pDesc->vPosition, BasePos);
+
     auto pSpeechBubble = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_SpeechBubble" })
         .Add_UIDesc(pDesc)
         .Build("speechBubble");

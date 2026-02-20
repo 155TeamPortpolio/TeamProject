@@ -7,13 +7,16 @@
 
 #include "DataBase.h"
 #include "FieldSystem.h"
-#include "UI_BackButton.h"
+#include "UIDirector.h"
 
+#include "UI_BackButton.h" 
+
+#include "UI_GachaCharacterIntro.h"
 #include "UI_GachaChannel.h"
 #include "UI_GachaCurrency.h"
 #include "UI_GachaConversion.h"
 
-void CUI_GachaPage::Select_Channel(CUI_Object* pSelected)
+void CUI_GachaPage::Select_Channel(class CUI_GachaChannel* pSelected)
 {
     if (m_pSelectedChannel == pSelected || !pSelected)
         return;
@@ -23,16 +26,23 @@ void CUI_GachaPage::Select_Channel(CUI_Object* pSelected)
 
     m_pSelectedChannel = pSelected;
     m_pSelectedChannel->UI_Active();
+
+    if (m_pIntro) {
+        m_pIntro->Play_Video(m_pSelectedChannel->Get_Channel());
+        m_pIntro->UI_Active();// Play_Video(m_pSelectedChannel->Get_Channel());// m_pIntro->UI_Active();
+    }
 }
 
 HRESULT CUI_GachaPage::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCharacterIntro", CUI_GachaCharacterIntro::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaChannel", CUI_GachaChannel::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCurrency", CUI_GachaCurrency::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaConversion", CUI_GachaConversion::Create());
@@ -42,7 +52,10 @@ HRESULT CUI_GachaPage::Initialize_Prototype()
 
 HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
+    //Create_CharacterIntro();
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha.json")));
 
@@ -51,13 +64,12 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
     Create_Channels();
     Create_Conversions();
 
-    Set_Alive(false);
-
 	return S_OK;
 }
 
 void CUI_GachaPage::Awake()
 {
+    Set_Alive(false);
 }
 
 void CUI_GachaPage::Update(_float dt)
@@ -69,13 +81,31 @@ void CUI_GachaPage::Update(_float dt)
 
 void CUI_GachaPage::UI_Active(void* pArg)
 {
+    Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
     Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
+    UIDirector()->Show_Mouse();
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)
 {
+    Deactive_SelectedChannel();
     Set_Alive(false);
+    if (m_pIntro)
+        m_pIntro->UI_DeActive();
+    UIDirector()->Hide_Mouse();
+}
+
+void CUI_GachaPage::Create_CharacterIntro()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaCharacterIntro" })
+        .Build("characterIntro");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pIntro = dynamic_cast<CUI_GachaCharacterIntro*>(pObj);
 }
 
 void CUI_GachaPage::Create_BackButton()
@@ -86,6 +116,7 @@ void CUI_GachaPage::Create_BackButton()
     if (!pObj)
         return;
 
+    pObj->Set_OnClick([this]() { UI_DeActive(); FieldSystem()->RequestExitTop(); });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 
@@ -109,9 +140,10 @@ void CUI_GachaPage::Create_Channels()
     for (_int i = 0; i < iChannelsCount; ++i)
     {
         CUI_GachaChannel::CHANNEL_DESC* pDesc = new CUI_GachaChannel::CHANNEL_DESC;
+        pDesc->eChannel = static_cast<CHANNEL>(i);
         pDesc->strLabel = channels[i].strLabel;
         pDesc->strTextureKey = channels[i].strTextureKey; 
-        pDesc->onSelect = [this](CUI_Object* pObj) { Select_Channel(pObj); };
+        pDesc->onSelect = [this](CUI_GachaChannel* pChannel) { Select_Channel(pChannel); };
         auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaChannel" })
             .Add_UIDesc(pDesc)
             .Build("channel");
@@ -120,7 +152,9 @@ void CUI_GachaPage::Create_Channels()
             continue;
         
         if (i == 0)
-            Select_Channel(pObj);
+            m_pFirstChannel = dynamic_cast<CUI_GachaChannel*>(pObj);
+        //if (i == 0)
+        //    Select_Channel(dynamic_cast<CUI_GachaChannel*>(pObj));
 
         pObj->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
         pObj->Set_AnchorOffset({ 57.f, 118.f + 88.f  * i });
@@ -155,6 +189,14 @@ void CUI_GachaPage::Create_Conversions()
         pObj->Set_AnchorOffset({ fStartX + fSpacing * i, -68.f });
         Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
+}
+
+void CUI_GachaPage::Deactive_SelectedChannel()
+{
+    if (m_pSelectedChannel)
+        m_pSelectedChannel->UI_DeActive();
+
+    m_pSelectedChannel = nullptr;
 }
 
 void CUI_GachaPage::OnClick_Conversion()

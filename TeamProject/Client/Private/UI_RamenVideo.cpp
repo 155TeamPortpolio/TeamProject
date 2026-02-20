@@ -11,7 +11,8 @@
 
 HRESULT CUI_RamenVideo::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CAudioSource>();
@@ -22,10 +23,11 @@ HRESULT CUI_RamenVideo::Initialize_Prototype()
 
 HRESULT CUI_RamenVideo::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     VIDEO_DESC* pDesc = static_cast<VIDEO_DESC*>(pArg);
     m_OnClick = pDesc->onVideoFinished;
-
-	__super::Initialize(pArg);
 
     /*비디오를 읽는 디코더를 우선 생성*/
     m_pDecoder = CMFVideoDecoderBackend::Create();
@@ -73,8 +75,8 @@ void CUI_RamenVideo::Update(_float dt)
 void CUI_RamenVideo::UI_Active(void* pArg)
 {
     Set_Alive(true);
-    VideoService()->StartDecode(m_PlayerID);
     m_pPlayer->Play();
+    VideoService()->StartDecode(m_PlayerID);
     Get_Component<CAudioSource>()->Slot("UI_CoinPay.wav").Play();
     Get_Component<CAudioSource>()->Slot("SirChopCook.wav").Play();
     RenderSystem()->SetOn(false);
@@ -83,6 +85,7 @@ void CUI_RamenVideo::UI_Active(void* pArg)
 void CUI_RamenVideo::UI_DeActive(void* pArg)
 {
     Set_Alive(false);
+    m_pDecoder->RequestStopDecode();                 // <- 안전망
     m_pPlayer->Stop();
     if (m_OnClick)
         m_OnClick();

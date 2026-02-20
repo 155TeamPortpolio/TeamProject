@@ -51,8 +51,6 @@ private:
 	inline static constexpr CHILD  ULTIMATEICON_CHILD[] = { ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3 };
 	inline static constexpr CHILD  ANOMALY_CHILD[]		= { ANOMALY1, ANOMALY2, ANOMALY3 };
 
-	inline static const string ICONTEXTURES[ENUM(CHARACTER::END)] = { "IconRoleGeneral24.png", "IconRoleGeneral09.png", "IconRoleGeneral13.png" };
-
 private:
 	CUI_BattleHUD() {}
 	CUI_BattleHUD(const CUI_BattleHUD& rhs) : CUI_HUD(rhs) {}
@@ -108,6 +106,8 @@ private:
 	void Change_ChildTexture(CHILD child, const string& strTextureKey);
 	void Set_GaugeFill(CHILD child, _float fFillAmount);
 	void Set_NumberText(CHILD child, _int iNum, _int iWidth);
+
+	string Get_IconPath(CHARACTER eCharacter);
 
 public:
 	static  CGameObject* Create();

@@ -35,6 +35,7 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
     pOwner->Lock_Move();
+
     __super::Enter(pOwner);
 
     //Jehyun
@@ -121,6 +122,16 @@ void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (IsCrossAnimProgress(0.75f))
+    {
+        if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::DECIBEL_ULTIMATE)
+        {
+            TUTORIAL_ACTION_DESC desc;
+            desc.eAction = TUTORIAL_ACTION::ULTIMATE;
+            EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+        }
+    }
 
     Update_Effects(pOwner);
 }

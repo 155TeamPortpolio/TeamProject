@@ -160,8 +160,10 @@ namespace Engine
 		RADIAL_BLUR = 400,
 		GAUSSIAN_BLUR = 500,
 		DISTORTION = 600,
-		ADDICTIVE_COLOR = 700,
-		SATURATION = 800,
+		FLARE = 700,
+		NOISE = 800,
+		ADDICTIVE_COLOR = 900,
+		SATURATION = 1000,
 	};
 }
 #endif // Engine_Enum_h__

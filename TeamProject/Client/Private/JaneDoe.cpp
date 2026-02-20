@@ -30,6 +30,7 @@
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Hit.h"
 #include "JaneDoeState_Evade.h"
+#include <AudioSource.h>
 
 CJaneDoe::CJaneDoe()
 {
@@ -64,6 +65,8 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 
     if (FAILED(Initialize_Effects()))
         return E_FAIL;
+
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/JaneDoe/Sound");
 
     return S_OK;
 }
@@ -124,6 +127,23 @@ void CJaneDoe::Update(_float dt)
         Update_States();
         m_pStateMachine->Update(dt);
     }
+
+    auto pAnimator = Get_Component<CAnimator3D>();
+    auto bus = pAnimator->Get_EventBus();
+
+    for (EVENT_INST& instance : bus)
+    {
+        switch (instance.Type)
+        {
+        case CLIP_EVENT_TYPE::NOTIFY:
+            break;
+
+        case CLIP_EVENT_TYPE::SOUND:
+            Get_Component<CAudioSource>()->Slot(instance.Tag).Volume(0.7f).Attribute3D(false).Loop(false).Play();
+            break;
+        }
+    }
+
     __super::Update(dt);
 }
 
@@ -197,6 +217,16 @@ void CJaneDoe::Decrease_Passion(_float fStream)
 
 void CJaneDoe::Reset_State()
 {
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Set_Trigger("ResetState");
 }
 
@@ -257,7 +287,7 @@ void CJaneDoe::On_ChainParry()
     }
 }
 
-void CJaneDoe::On_SwitchOut()
+void CJaneDoe::On_SwitchOut(_bool isParry)
 {
     __super::On_SwitchOut();
 
@@ -272,6 +302,12 @@ void CJaneDoe::On_SwitchOut()
     m_pStateMachine->Reset_Trigger("ToMove");
     m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Reset_Trigger("ResetState");
+
+    if (isParry)
+    {
+        m_pStateMachine->Set_Trigger("SwitchOut");
+        return;
+    }
 
     if (m_pStateMachine->Get_CurrentStateName() == "Attack")
     {

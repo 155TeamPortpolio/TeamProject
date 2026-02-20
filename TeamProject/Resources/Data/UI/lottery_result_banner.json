@@ -387,7 +387,8 @@
             "animClips": [],
             "children": [],
             "typeTag": "Mask",
-            "maskTextureKey": "empty.png"
+            "maskTextureKey": "empty.png",
+            "maskThreshold": 0.10000000149011612
         },
         {
             "alive": true,
@@ -689,7 +690,7 @@
             "children": [],
             "typeTag": "Text",
             "text": {
-                "content": "2888\n",
+                "content": "100,000\n",
                 "fontTag": "NanumSquareNeo.spritefont",
                 "fontScale": 0.3499998450279236,
                 "outlined": false,

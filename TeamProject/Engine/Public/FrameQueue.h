@@ -5,6 +5,7 @@ struct VIDEO_FRAME_CPU {
 	_uint width = { 0 };
 	_uint height = { 0 };
 	vector<uint8_t> rgba;
+	std::uint32_t generation = 0;
 };
 
 class CFrameQueue

@@ -609,6 +609,10 @@ void CBattleFXFlow::StartVfx_Clear()
 			->SetEnable(true);
 		});
 
+	AddCall([this]() { CameraManager()->SetFov(-30.f, 0.2f, EaseType::InOutQuad, 30.f, 1.3f, EaseType::InOutSine);});
+
+	AddWait(0.1f);
+
 	AddCall([this]() {
 		UIDirector()->Show_Clear();
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
@@ -703,7 +707,7 @@ void CBattleFXFlow::AddParallelTimeScaleAll(BATTLE_VFX_DATA& vfxData)
 void CBattleFXFlow::SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale)
 {
 	const string nowLevelKey = LevelManager()->Get_NowLevelKey();
-	if (type == BATTLE_OBJ_TYPE::CAMERA)
+	if (type == BATTLE_OBJ_TYPE::CAMERA || type == BATTLE_OBJ_TYPE::PLAYER)
 		ObjectManager()->Set_LayerTimeScale({ G_GlobalLevelKey, m_layerTag[ENUM(type)] }, scale);
 	else
 		ObjectManager()->Set_LayerTimeScale({ nowLevelKey, m_layerTag[ENUM(type)] }, scale);
@@ -713,7 +717,7 @@ void CBattleFXFlow::SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale)
 void CBattleFXFlow::ResetLayerTimeScale(BATTLE_OBJ_TYPE type)
 {
 	const string nowLevelKey = LevelManager()->Get_NowLevelKey();
-	if (type == BATTLE_OBJ_TYPE::CAMERA)
+	if (type == BATTLE_OBJ_TYPE::CAMERA|| type == BATTLE_OBJ_TYPE::PLAYER)
 		ObjectManager()->Reset_LayerTimeScale({ G_GlobalLevelKey, m_layerTag[ENUM(type)] });
 	else
 		ObjectManager()->Reset_LayerTimeScale({ nowLevelKey, m_layerTag[ENUM(type)] });

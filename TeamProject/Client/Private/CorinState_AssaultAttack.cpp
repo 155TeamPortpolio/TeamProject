@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "CorinState_AssaultAttack.h"
+
+#include "GameInstance.h"
+#include "EventSystem.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 #include "Corin.h"
@@ -29,6 +32,7 @@ void CCorinState_AssaultAttack::Enter(CCorin* pOwner)
 {
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
+
 	__super::Enter(pOwner);
 }
 
@@ -40,6 +44,7 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 			m_fAnimProgress > 0.2f)
 		{
 			m_pSubStateMachine->Set_Bool("ReserveNormal", false);
+			m_pParentState->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
 			m_pParentState->Get_SubStateMachine()->Set_Trigger("ToNormalAttack");
 			return;
 		}
@@ -111,6 +116,15 @@ void CCorinState_Assault_Start::Update(CCorin* pOwner, _float dt)
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
+	if (IsCrossAnimProgress(0.5f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 	Update_Effects(pOwner);
 }
 

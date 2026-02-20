@@ -70,6 +70,7 @@ HRESULT CGacha_Level::Awake()
 	//	.Build("Gacha_Light");
 	//
 	//ObjectManager()->Add_Object(pEffect, { "Gacha_Level","Effect_Layer" });
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "MainCity_Level", 2);
 
 	auto pPost = RenderSystem()->GetPostRenderer();
 	pPost->GetCommand<CFogCommand>()->

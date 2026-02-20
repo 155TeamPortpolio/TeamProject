@@ -1,5 +1,8 @@
 #pragma once
 #include "Stage.h"
+
+NS_BEGIN(Client)
+
 class CZeroStage_Elite :
     public CStage
 {
@@ -23,11 +26,9 @@ private:
 	void Outro();
 	void End();
 
-private:
-	_float3 baseColor= { 1.0f, 1.0f, 1.0f};
 public:
 	static CZeroStage_Elite* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
-
 };
 
+NS_END

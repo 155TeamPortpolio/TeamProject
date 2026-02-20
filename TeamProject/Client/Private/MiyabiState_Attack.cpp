@@ -40,6 +40,9 @@ CMiyabiState_Attack* CMiyabiState_Attack::Create()
     pSubStateMachine->Register_AnyStateTransition("UltimateAttack",
         CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToUltimate");
 
+    pSubStateMachine->Register_Transition("CounterAttack", "NormalAttack",
+        CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToNormalAttack");
+
     pSubStateMachine->Set_DefaultState("NormalAttack");
 
     return pInstance;

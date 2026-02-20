@@ -140,6 +140,16 @@ void CCorin::Render_GUI()
 
 void CCorin::Reset_State()
 {
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Set_Trigger("ResetState");
 }
 
@@ -200,7 +210,7 @@ void CCorin::On_ChainParry()
     }
 }
 
-void CCorin::On_SwitchOut()
+void CCorin::On_SwitchOut(_bool isParry)
 {
     __super::On_SwitchOut();
 
@@ -215,6 +225,12 @@ void CCorin::On_SwitchOut()
     m_pStateMachine->Reset_Trigger("ToMove");
     m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Reset_Trigger("ResetState");
+
+    if (isParry)
+    {
+        m_pStateMachine->Set_Trigger("SwitchOut");
+        return;
+    }
 
     if (m_pStateMachine->Get_CurrentStateName() == "Attack")
     {
@@ -430,7 +446,7 @@ HRESULT CCorin::Initialize_Weapon()
     desc.pOwnerAnimator = Get_Component<CAnimator3D>();
     desc.tagBone = "Weapon_saw";
     desc.tagName = "Saw";
-    desc.vSize = { 1.4f, 1.4f, 0.4f };
+    desc.vSize = { 1.4f, 1.4f, 0.8f };
 
     if (FAILED(Attach_AttackCollider(&desc)))
         return E_FAIL;

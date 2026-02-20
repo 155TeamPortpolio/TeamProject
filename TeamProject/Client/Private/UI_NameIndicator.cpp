@@ -11,7 +11,8 @@
 
 HRESULT CUI_NameIndicator::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -21,12 +22,13 @@ HRESULT CUI_NameIndicator::Initialize_Prototype()
 
 HRESULT CUI_NameIndicator::Initialize(INIT_DESC* pArg)
 {
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
     INDICATOR_DESC* pDesc = static_cast<INDICATOR_DESC*>(pArg);
     m_strName = pDesc->strName;
     m_pCCT = pDesc->pCCT;
     m_vPosition = pDesc->vPosition;
-
-    __super::Initialize(pArg);
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("name_indicator.json")));
     Cache_Children();
@@ -143,7 +145,7 @@ CUI_NameIndicator::STATE_VISIBLE CUI_NameIndicator::CalcState_ByDistance()
 
     Vector3 vDiff = (Vector3(m_vPosition) - Vector3(vPlayerPos));
 
-    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::HIDDEN;
+    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::INVISIBLE;
 }
 
 void CUI_NameIndicator::Set_ChildAlpha(CHILD child, _float fAlpha)

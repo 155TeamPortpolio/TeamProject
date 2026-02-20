@@ -33,6 +33,8 @@ const char* CBattleSystem_Panel::TypeName(BATTLE_OBJ_TYPE type) const
 
 void CBattleSystem_Panel::Render_GUI()
 {
+    if (!BattleSystem()->Debug_IsActive())
+        return;
     if (!ImGui::Begin("BattleSystem##DebugPanel"))
     {
         ImGui::End();
@@ -149,7 +151,14 @@ void CBattleSystem_Panel::DrawTab_Overview()
         }
         else
         {
+            layerPtr = ObjectManager()->Get_Layer({ G_GlobalLevelKey, layerKey });
+            if (layerPtr)
+            {
+                const _float timeScaleValue = layerPtr->Get_TimeScale();
+                ImGui::Text("%s : TimeScale: %.5f", layerKey.c_str(), (double)timeScaleValue);
+            }else{
             ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), "%s : (missing)", layerKey.c_str());
+        }
         }
     }
 }

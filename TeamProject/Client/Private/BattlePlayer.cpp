@@ -29,12 +29,8 @@ CBattlePlayer::CBattlePlayer()
 HRESULT CBattlePlayer::Initialize()
 {
     if (m_BattleCharacters.empty()) {
-        vector<CHARACTER> BattleCharacters = { CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe };
-        SetBattleCharacters(BattleCharacters);
-   }
-   
-   
-
+        SetBattleCharacters({ CHARACTER::Miyabi,CHARACTER::JaneDoe,CHARACTER::Corin });
+    }
     return S_OK;
 }
 
@@ -44,7 +40,7 @@ void CBattlePlayer::Awake()
     desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
-    //m_bChainParry = true;
+    m_bChainParry = true;
 
     m_bAwaked = true;
 }
@@ -149,7 +145,14 @@ void CBattlePlayer::Render_GUI()
         Recover_Decibel();
     }
 
+    ImGui::Separator();
+    if (ImGui::Button("ResetCharacter"))
+    {
+        Reset_Character();
+    }
+
     // Current Character Info
+    ImGui::Separator();
     if (ImGui::CollapsingHeader("Current Character", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::Text("Name : %s", Helper::EnumToString(m_pCurrentCharacter->Get_CharacterName()));
@@ -288,6 +291,8 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
         Initialize_CharacterPrototype();
         m_bInitialized = true;
     }
+    
+    ClearCharacters();
 
     for (auto& character : battleCharacters)
     {
@@ -304,6 +309,24 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
     m_pCurrentCharacter->Set_MainCharacter(true);
     m_pCurrentCharacter->Active_Character();
 
+    BattleSystem()->SetPlayer(m_CharacterHandles);
+}
+
+void CBattlePlayer::SetBattleCharacter(CHARACTER battleCharacter)
+{
+    /*개별 캐릭터 추가 로직*/
+    for (size_t i = 0; i < m_BattleCharacters.size(); i++)
+    {
+        auto character = m_BattleCharacters[i];
+        if (character && character->Get_CharacterName() == battleCharacter)
+            return;
+    }
+
+    auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(battleCharacter));
+    newCharacter->Set_MainCharacter(false);
+    newCharacter->DeActive_Character();
+    m_BattleCharacters.push_back(newCharacter);
+    m_CharacterHandles.push_back(newCharacter->Get_Handle());
     BattleSystem()->SetPlayer(m_CharacterHandles);
 }
 
@@ -344,10 +367,21 @@ HRESULT CBattlePlayer::SwitchCharacter(_int iTargetIndex)
 
 HRESULT CBattlePlayer::ClearCharacters()
 {
+    for (auto& character : m_BattleCharacters)
+    {
+        ObjectManager()->Remove_Object(character);
+    }
+
     m_BattleCharacters.clear();
     m_iCurrentIndex = 0;
     m_pCurrentCharacter = nullptr;
     return S_OK;
+
+}
+
+void CBattlePlayer::Reset_Character()
+{
+    m_pCurrentCharacter->Reset_State();
 }
 
 void CBattlePlayer::Set_Move(_vector3 vPos, _vector3 vRot)
@@ -773,7 +807,6 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
         - XMVectorScale(m_vSwitchLook, 1.5f)
         + XMVectorSet(0.f, 0.5f, 0.f, 0.f);
 
-    // 패링 가능 상태면 패링 위치로 전환
     if (m_pCurrentCharacter->Can_Parry())
     {
         m_bReserveParry = true;
@@ -784,38 +817,37 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
     else if (m_bComboSelect)
     {
         _vector3 vCharacterPos = m_pCurrentCharacter->Get_WorldPos();
-        if (!m_TargetHandle.isValid() || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
-            return;
+        if (m_TargetHandle.isValid() && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+        {
+            _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
 
-        _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
+            _vector3 vToCharacter = vCharacterPos - vTargetPos;
+            vToCharacter.y = 0.f;
+            vToCharacter.Normalize();
 
-        // 몬스터에서 현재 캐릭터를 향하는 방향
-        _vector3 vToCharacter = vCharacterPos - vTargetPos;
-        vToCharacter.y = 0.f;
-        vToCharacter.Normalize();
+            _float fAngle = XMConvertToRadians(bNext ? 45.f : -45.f);
+            _float fCos = cosf(fAngle);
+            _float fSin = sinf(fAngle);
 
-        // bNext(Left) : +60도, !bNext(Right) : -60도 회전
-        _float fAngle = XMConvertToRadians(bNext ? 45.f : -45.f);
-        _float fCos = cosf(fAngle);
-        _float fSin = sinf(fAngle);
+            _vector3 vSwitchDir;
+            vSwitchDir.x = vToCharacter.x * fCos + vToCharacter.z * fSin;
+            vSwitchDir.y = 0.f;
+            vSwitchDir.z = -vToCharacter.x * fSin + vToCharacter.z * fCos;
 
-        _vector3 vSwitchDir;
-        vSwitchDir.x = vToCharacter.x * fCos + vToCharacter.z * fSin;
-        vSwitchDir.y = 0.f;
-        vSwitchDir.z = -vToCharacter.x * fSin + vToCharacter.z * fCos;
+            _vector3 vSwitch = vTargetPos + vSwitchDir * 5.f;
+            m_vSwitchPosition = XMVectorSet(vSwitch.x, vCharacterPos.y + 1.f, vSwitch.z, 1.f);
 
-        _vector3 vSwitch = vTargetPos + vSwitchDir * 5.f;
-        m_vSwitchPosition = XMVectorSet(vSwitch.x, vCharacterPos.y + 1.f, vSwitch.z, 1.f);
-
-        // 스폰 지점에서 몬스터를 바라보는 방향
-        _vector3 vLookDir = vTargetPos - vSwitch;
-        vLookDir.y = 0.f;
-        vLookDir.Normalize();
-        m_vSwitchLook = XMVectorSet(vLookDir.x, 0.f, vLookDir.z, 0.f);
+            _vector3 vLookDir = vTargetPos - vSwitch;
+            vLookDir.y = 0.f;
+            vLookDir.Normalize();
+            m_vSwitchLook = XMVectorSet(vLookDir.x, 0.f, vLookDir.z, 0.f);
+        }
+        // 타겟 무효시 함수 상단에서 계산한 기본 위치(캐릭터 후방)를 그대로 사용
     }
 
+    // 비활성화는 항상 실행
     m_pCurrentCharacter->Set_MainCharacter(false);
-    m_pCurrentCharacter->On_SwitchOut();
+    m_pCurrentCharacter->On_SwitchOut(m_bReserveParry);
     m_input.ResetBuffer();
 
     if (!m_bChainParry)
@@ -987,7 +1019,8 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     characterCCT.fHeight = 1.13;
     characterCCT.fRadius = 0.3f;
     characterCCT.vPos = { 0.f, 1.5f, 0.f };
-
+    //characterCCT.fStepOffset = 0.001f;
+    string nowLevelKey = LevelManager()->Get_NowLevelKey();
     switch (character)
     {
     case CHARACTER::JaneDoe:
@@ -1035,4 +1068,8 @@ CBattlePlayer* CBattlePlayer::Create()
 void CBattlePlayer::Free()
 {
     __super::Free();
+    m_CharacterHandles.clear();
+    for (auto& character : m_BattleCharacters) {
+        Safe_Release(character);
+    }
 }

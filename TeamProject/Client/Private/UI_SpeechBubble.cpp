@@ -23,7 +23,7 @@ HRESULT CUI_SpeechBubble::Initialize_Prototype()
 HRESULT CUI_SpeechBubble::Initialize(INIT_DESC* pArg)
 {
     SPEECHBUBBLE_DESC* pDesc = static_cast<SPEECHBUBBLE_DESC*>(pArg);
-    m_pCCT = pDesc->pCCT;
+    m_vPosition = pDesc->vPosition + m_vOffset;
 
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
@@ -43,11 +43,8 @@ void CUI_SpeechBubble::Awake()
 
 void CUI_SpeechBubble::Update(_float dt)
 {
-    if (m_pCCT)
-        XMStoreFloat3(&m_vPosition, m_pCCT->Get_FootPosition() + XMVectorSet(0.f, m_pCCT->Get_HalfSize() * 2.f, 0.f, 0.f));
-
     Update_WorldToScreen(m_vPosition);
-
+   
     Update_Visible(CalcState_ByDistance());
 
     __super::Update(dt);
@@ -102,7 +99,7 @@ CUI_SpeechBubble::STATE_VISIBLE CUI_SpeechBubble::CalcState_ByDistance()
 
     Vector3 vDiff = (Vector3(m_vPosition) - Vector3(vPlayerPos));
 
-    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::HIDDEN;
+    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::INVISIBLE;
 }
 
 CGameObject* CUI_SpeechBubble::Create()

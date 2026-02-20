@@ -173,6 +173,9 @@ public: // 무적
     void  Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
     void  Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
+public: // 튜토리얼
+    TUTORIAL_TYPE Get_CurrentTutorial() const { return m_eTutorial; }
+
 public: // 행동 이벤트
     virtual void    Reset_State() {}
     virtual void    On_Start() {}
@@ -182,7 +185,7 @@ public: // 행동 이벤트
     virtual void    On_SwitchIn(SWITCH eType) {}
     virtual void    On_ParryImpact() {}
     virtual void    On_ChainParry() {}
-    virtual void    On_SwitchOut();
+    virtual void    On_SwitchOut(_bool isParry = false);
     virtual void    On_Ultimate();
     virtual void    On_Special() {}
     virtual void    On_Hit(DAMAGE_TYPE eType) {}
@@ -241,6 +244,8 @@ protected:
     // 컴포넌트
     CAnimator3D* m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
+    _int                  m_iDefaultMask = 0xFFFFFFFF -
+        (ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK));
     // 기본 정보
     string      m_strAnimName = "";
     string      m_strName = "";
@@ -299,6 +304,8 @@ protected:
     _float      m_fMotionBlurFade = { 0.f };
     // 테스트
     _bool       m_bTest = { false };
+    // 튜토리얼
+    TUTORIAL_TYPE   m_eTutorial = TUTORIAL_TYPE::END;
 
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
     static constexpr _float EVADE_COOLDOWN = 1.f;

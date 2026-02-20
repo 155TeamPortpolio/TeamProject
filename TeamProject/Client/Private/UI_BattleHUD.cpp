@@ -25,7 +25,8 @@
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
@@ -49,7 +50,8 @@ HRESULT CUI_BattleHUD::Initialize_Prototype()
 
 HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("hud_battle.json")));
 
@@ -169,7 +171,7 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     const _uint iIndex = ENUM(desc.eOwner);
 
     // Icon
-    Change_ChildTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
+    Change_ChildTexture(ICON_CHILD[iIndex], Get_IconPath(desc.eCharacter));
 
     // HP
     _float fRatio = desc.hp.fCurValue / desc.hp.fMaxValue;
@@ -345,6 +347,17 @@ void CUI_BattleHUD::Set_NumberText(CHILD child, _int iNum, _int iWidth)
     wchar_t buf[32];
     Helper::Format_FixedZeroPad(buf, _countof(buf), iNum, iWidth);
     pTextSlot->Set_Text(buf);
+}
+
+string CUI_BattleHUD::Get_IconPath(CHARACTER eCharacter)
+{
+    switch (eCharacter)
+    {
+    case CHARACTER::Corin:      return "IconRoleGeneral09.png";
+    case CHARACTER::JaneDoe:    return "IconRoleGeneral24.png";
+    case CHARACTER::Miyabi:     return "IconRoleGeneral13.png";
+    default:                    return "IconRoleGeneral09.png";
+    }
 }
 
 CGameObject* CUI_BattleHUD::Create()

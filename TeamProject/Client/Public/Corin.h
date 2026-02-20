@@ -18,20 +18,19 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-
 public: // 상태머신
     CStateMachine<CCorin>* Get_StateMachine() { return m_pStateMachine; }
 
 public: // 행동 이벤트
-    virtual void    Reset_State()              override;
-    virtual void    On_Start()                 override;
-    virtual void    On_SwitchIn(SWITCH eType)  override;
-    virtual void    On_ParryImpact()           override;
-    virtual void    On_ChainParry()            override;
-    virtual void    On_SwitchOut()             override;
-    virtual void    On_Ultimate()              override;
-    virtual void    On_Special()               override;
-    virtual void    On_Hit(DAMAGE_TYPE eType)  override;
+    virtual void    Reset_State()                   override;
+    virtual void    On_Start()                      override;
+    virtual void    On_SwitchIn(SWITCH eType)       override;
+    virtual void    On_ParryImpact()                override;
+    virtual void    On_ChainParry()                 override;
+    virtual void    On_SwitchOut(_bool isParry)     override;
+    virtual void    On_Ultimate()                   override;
+    virtual void    On_Special()                    override;
+    virtual void    On_Hit(DAMAGE_TYPE eType)       override;
 
 private: // 초기화
     HRESULT Initialize_StateMachine();

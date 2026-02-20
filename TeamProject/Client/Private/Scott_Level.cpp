@@ -37,7 +37,6 @@
 /* UI */
 #include "UIDirector.h"
 #include "UI_Party.h"
-#include "UI_Tutorial.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -91,6 +90,13 @@ HRESULT CScott_Level::Awake()
 	ObjectManager()->Add_Object(PaperEffect, { "Scott_Level", "MapParticle_Layer" });
 
 	CamDirector()->AutoField(CamStartDir::Back);
+
+	_uint Version{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Scott_Level", Version))
+	{
+		Version = 1;
+		RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Scott_Level", Version);
+	}
 
 	AudioDevice()->Set_Listener(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::FreeCam))->Get_Component<CTransform>());
 	return S_OK;
@@ -153,16 +159,6 @@ void CScott_Level::Ready_UI()
 	{
 		UIManager()->Add_UIObject(pParty, "Scott_Level");
 		UIDirector()->Register(pParty);
-	}
-
-	if (FAILED(PrototypeManager()->Add_ProtoType("Scott_Level", "Proto_GameObject_Tutorial", CUI_Tutorial::Create())))
-		return;
-
-	auto ptutorial = Builder::Create_UIObject({ "Scott_Level", "Proto_GameObject_Tutorial" }).Build("tutorial");
-	if (ptutorial)
-	{
-		UIManager()->Add_UIObject(ptutorial, "Scott_Level");
-		UIDirector()->Register(ptutorial);
 	}
 }
 

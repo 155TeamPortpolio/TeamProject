@@ -3,6 +3,19 @@
 
 NS_BEGIN(Engine)
 
+struct CascadeCullBounds
+{
+    _float minX = 0.f, maxX = 0.f;
+    _float minY = 0.f, maxY = 0.f;
+    _float minZ = 0.f, maxZ = 0.f;
+};
+
+struct BoundingSphereW
+{
+    _vector3 centerW = DirectX::XMVectorZero();
+    _float radiusW = 0.f;
+};
+
 class CCSMShadow :
     public CBase
 {
@@ -29,6 +42,7 @@ private:
     void CalculateCascadeSplits(_float fNear, _float fFar);
     void CalculateFrustumCornersInViewSpace(_float fovY, _float aspect, _float nearPlane, _float farPlane, _vector* corners);
     _matrix CreateLightViewProj(const _vector* frustumCorners, const _vector& lightDir, _uint cascadeIndex);
+    _bool IntersectsLightBounds_Sphere(const CascadeCullBounds& bounds, _vector3 centerLightSpace, _float radiusWorld);
 
 private:
     static const _uint MAX_CASCADES = 3;
@@ -48,6 +62,11 @@ private:
     ID3D11DeviceContext* m_pContext;
 
     D3D11_VIEWPORT m_viewPort = {};
+
+private:
+    _matrix m_lightView[MAX_CASCADES] = {};
+    CascadeCullBounds m_cullBounds[MAX_CASCADES] = {};
+    vector<void*> m_shadowCasterList[MAX_CASCADES];
 
 private:
     ID3D11RenderTargetView* m_pPrevRTV = nullptr;

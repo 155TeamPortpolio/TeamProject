@@ -14,6 +14,7 @@ bool CMonitorGate::Pass() const
 
     if (w < m_minWidth)  return false;
     if (h < m_minHeight) return false;
+
     return true;
 }
 
