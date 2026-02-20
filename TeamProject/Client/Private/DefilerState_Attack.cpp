@@ -24,7 +24,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 9;
+	Type = 5;
 	switch (Type)
 	{
 	case 0 :
@@ -905,10 +905,22 @@ void CDefilerState_Attack_Summon::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_Summon::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_Summon::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_Summon::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.13f))
+		pOwner->Play_Effect("Defiler_Hand_Charge0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.63f))
+	{
+		pOwner->Stop_Effect("Defiler_Hand_Charge0");
+		pOwner->Play_Effect("Defiler_Hand_Explode0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_RePos_Front::Enter(CDefiler* pOwner)
