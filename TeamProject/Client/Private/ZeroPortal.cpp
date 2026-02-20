@@ -12,6 +12,10 @@
 #include "EffectContainer.h"
 #include "AudioSource.h"
 
+#include "PostProcessCommand.h"
+#include "PostRenderer.h"
+
+
 CZeroPortal::CZeroPortal()
 	: CInteractable()
 {
@@ -216,6 +220,14 @@ void CZeroPortal::Active_Portal()
 	{
 		static_cast<CEffectContainer*>(pEffect)->Play();
 	}
+
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CFlareCommand>()
+		->SetIntensity(1.f)
+		->SetDuration(1.f)
+		->SetColor(_float3(0.3f, 0.3f, 0.3f))
+		->SetCenter(_float2(0.5, 0.5))
+		->SetEnable(true);
 }
 
 CZeroPortal* CZeroPortal::Create()

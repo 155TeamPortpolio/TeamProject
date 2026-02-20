@@ -34,6 +34,7 @@ public:
     HRESULT Render_Saturation_Internal();
     HRESULT Render_Distortion_Internal();
     HRESULT Render_Flare_Internal();
+    HRESULT Render_Noise_Internal();
     HRESULT Render_Final();
 
 public:
@@ -53,6 +54,7 @@ private:
     class CSaturationCommand*           m_pSaturationCommand;
     class CDistortionCommand*           m_pDistortionCommand;
     class CFlareCommand*                m_pFlareCommand;
+    class CNoiseCommand*                m_pNoiseCommand;
 
     map<type_index, class CPostProcessCommand*> m_CommandMap;
 

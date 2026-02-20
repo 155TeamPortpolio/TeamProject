@@ -262,6 +262,7 @@ public:
     _float GetIntensity() const { return m_fIntensity; }
     _float2 GetCenter() const { return m_vCenter; }
     _float3 GetColor() const { return m_vColor; }
+    _float GetAccTime() const { return m_fAccTime; }
     CFlareCommand* SetDuration(_float fDuration);
     CFlareCommand* SetIntensity(_float fIntensity);
     CFlareCommand* SetColor(_float3 vColor);
@@ -281,6 +282,36 @@ private:
 
 public:
     static CFlareCommand* Create();
+    virtual void Free() override;
+};
+
+
+class ENGINE_DLL CNoiseCommand :
+    public CPostProcessCommand
+{
+private:
+    CNoiseCommand();
+    virtual ~CNoiseCommand() = default;
+
+public:
+    CTexture* GetTexture() const { return m_Textures[m_iCurrentIdx]; }
+    CNoiseCommand* SetDuration(_float fDuration);
+    CNoiseCommand* SetNum(_int iNum);
+    CNoiseCommand* SetTextures(vector<class CTexture*> Textures);
+
+public:
+    virtual void Update(_float dt) override;
+    virtual void Execute(class CPostRenderer* pRenderer) override;
+
+private:
+    vector<class CTexture*> m_Textures;
+    _float      m_fDuration = 0.f;
+    _float      m_fAccTime = 0.f;
+    _int        m_iCount = 0;
+    _int        m_iCurrentIdx = 0;
+
+public:
+    static CNoiseCommand* Create();
     virtual void Free() override;
 };
 NS_END

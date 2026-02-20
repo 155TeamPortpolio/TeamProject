@@ -478,3 +478,60 @@ void CFlareCommand::Free()
 {
 	__super::Free();
 }
+
+CNoiseCommand::CNoiseCommand()
+{
+	m_strName = "Noise";
+	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::NOISE);
+	m_bEnabled = false;
+	m_eEffectType = EFFECT_TYPE::REPLACE;
+	m_strOutputTargetName = "Target_Noise";
+}
+
+CNoiseCommand* CNoiseCommand::SetDuration(_float fDuration)
+{
+	m_fAccTime = 0.f;
+	m_fDuration = fDuration;
+	return this;
+}
+
+CNoiseCommand* CNoiseCommand::SetNum(_int iNum)
+{
+	m_iCount = iNum;
+	return this;
+}
+
+CNoiseCommand* CNoiseCommand::SetTextures(vector<class CTexture*> Textures)
+{
+	m_Textures = Textures;
+	return this;
+}
+
+void CNoiseCommand::Update(_float dt)
+{
+	m_fAccTime += dt;
+
+	_float fRatio = m_fAccTime / m_fDuration;
+	m_iCurrentIdx = static_cast<_int>(fRatio * m_iCount);
+
+	if (m_iCurrentIdx >= m_iCount)
+		m_iCurrentIdx = m_iCount - 1;
+
+	if (m_fAccTime > m_fDuration)
+		m_bEnabled = false;
+}
+
+void CNoiseCommand::Execute(CPostRenderer* pRenderer)
+{
+	pRenderer->Render_Noise_Internal();
+}
+
+CNoiseCommand* CNoiseCommand::Create()
+{
+	return new CNoiseCommand();
+}
+
+void CNoiseCommand::Free()
+{
+	__super::Free();
+}
