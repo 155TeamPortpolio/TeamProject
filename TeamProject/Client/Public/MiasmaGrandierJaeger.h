@@ -23,6 +23,11 @@ public:
 public:
     virtual void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
     void RotateToTarget(_float dt, _float rotateSpeed);
+
+public:
+    void Active_Laser();
+    void Deactive_Laser();
+
 public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
     virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;		// 풀에서 꺼낼 때
@@ -36,6 +41,7 @@ private:
     void Update_Dissolve(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
     _float3 Get_FirePos();
+    void Set_LaserTarget();
 private:
     void Summon_Bullet();
 private:
@@ -43,6 +49,7 @@ private:
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Initialize_Effects();
+    void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
 
 private:
     _bool m_LockedOn = { false };

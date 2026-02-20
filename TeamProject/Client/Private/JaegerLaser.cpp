@@ -4,6 +4,8 @@
 
 // Component
 #include "ObjectContainer.h"
+#include "BoneFollower.h"
+#include "Child.h"
 
 CJaegerLaser::CJaegerLaser()
 	:CGameObject()
@@ -19,6 +21,7 @@ HRESULT CJaegerLaser::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
+	Add_Component<CBoneFollower>();
 	return S_OK;
 }
 
@@ -28,7 +31,11 @@ HRESULT CJaegerLaser::Initialize(INIT_DESC* pArg)
 
 	Initialize_Effects();
 
+	auto pBoneFollower = Get_Component<CBoneFollower>();
+	pBoneFollower->Initialize(nullptr);
+
 	m_isAlive = false;
+	m_fDuration = 0.06f;
 
 	return S_OK;
 }
@@ -43,16 +50,8 @@ void CJaegerLaser::Priority_Update(_float dt)
 
 void CJaegerLaser::Update(_float dt)
 {
-	m_fElaspedTime += dt;
-	if (m_fElaspedTime >= m_fDuration)
-	{
-		auto pLaser1 = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser1");
-		if (pLaser1)
-			static_cast<CEffectContainer*>(pLaser1)->Play();
-
-		m_fElaspedTime = 0.f;
-	}
-
+	Update_Laser(dt);
+	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -75,20 +74,29 @@ void CJaegerLaser::Active_Laser()
 	if (pLaser0)
 		static_cast<CEffectContainer*>(pLaser0)->Play();
 
+	auto pLaser1 = pObjectContainer->Find_ObjectByName("Laser1");
+	if (pLaser1)
+		static_cast<CEffectContainer*>(pLaser1)->Play();
+
 	m_fElaspedTime = 0.f;
 }
 
 void CJaegerLaser::Deactive_Laser()
 {
+	m_IsDeactive = true;
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
 	auto pLaser0 = pObjectContainer->Find_ObjectByName("Laser0");
 	if (pLaser0)
+	{
 		static_cast<CEffectContainer*>(pLaser0)->Stop();
+	}
 
 	auto pLaser1 = pObjectContainer->Find_ObjectByName("Laser1");
 	if (pLaser1)
-		static_cast<CEffectContainer*>(pLaser0)->Stop();
+	{
+		static_cast<CEffectContainer*>(pLaser1)->Stop();
+	}
 }
 
 void CJaegerLaser::Initialize_Effects()
@@ -117,6 +125,55 @@ void CJaegerLaser::Initialize_Effects()
 			pEffect->Stop();
 			pObjectContainer->Add_Child(pEffect);
 		}
+	}
+}
+
+void CJaegerLaser::Update_Laser(_float dt)
+{
+	if (m_IsDeactive)
+		return;
+
+	_vector3 vStartPosition{}, vTargetPosition{};
+	_vector3 vDir = _vector3(m_vTargetPos) - _vector3(m_pTransform->Get_WorldPos());
+	vDir.Normalize();
+
+	vStartPosition = m_pTransform->Get_WorldPos();
+	vTargetPosition = m_vTargetPos + 50.f * vDir;
+
+	auto pLaser0 = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser0");
+	auto pLaser1 = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser1");
+
+	if (pLaser0 && pLaser1)
+	{
+		auto& laser0Context = static_cast<CEffectContainer*>(pLaser0)->GetEffectContext();
+		auto& laser1Context = static_cast<CEffectContainer*>(pLaser1)->GetEffectContext();
+
+		laser0Context.vLinePoint0 = vStartPosition;
+		laser0Context.vLinePoint1 = vTargetPosition;
+
+		laser1Context.vLinePoint0 = vStartPosition;
+		laser1Context.vLinePoint1 = vTargetPosition;
+	}
+
+	m_fElaspedTime += dt;
+	if (m_fElaspedTime >= m_fDuration)
+	{
+		if (pLaser1)
+		{
+			if (m_IsFlikering)
+			{
+				static_cast<CEffectContainer*>(pLaser1)->Play();
+				m_IsFlikering = false;
+			}
+			else
+			{
+				static_cast<CEffectContainer*>(pLaser1)->Stop();
+				m_IsFlikering = true;
+			}
+			
+		}
+
+		m_fElaspedTime = 0.f;
 	}
 }
 

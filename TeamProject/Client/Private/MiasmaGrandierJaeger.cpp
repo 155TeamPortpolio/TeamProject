@@ -23,6 +23,8 @@
 #include "AudioSource.h"
 
 #include "JaegerLaser.h"
+#include "BoneFollower.h"
+#include "EffectContainer.h"
 
 CMiasmaGrandierJaeger::CMiasmaGrandierJaeger()
 	: CEnemy()
@@ -114,6 +116,7 @@ void CMiasmaGrandierJaeger::Update(_float dt)
 	pAnimator->Update_Animation(dt);
 	Route_AnimEvent(pAnimator);
 	RotateToTarget(dt, 6.f);
+	Set_LaserTarget();
 	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Update_Dissolve(dt);
@@ -239,6 +242,20 @@ void CMiasmaGrandierJaeger::RotateToTarget(_float dt, _float rotateSpeed)
 	m_pTransform->Set_Look(vCurrDir);
 }
 
+void CMiasmaGrandierJaeger::Active_Laser()
+{
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	if (pLaser)
+		static_cast<CJaegerLaser*>(pLaser)->Active_Laser();
+}
+
+void CMiasmaGrandierJaeger::Deactive_Laser()
+{
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	if (pLaser)
+		static_cast<CJaegerLaser*>(pLaser)->Deactive_Laser();
+}
+
 void CMiasmaGrandierJaeger::Route_AnimEvent(CAnimator3D* animator)
 {
 	auto Bus = animator->Get_EventBus();
@@ -276,8 +293,20 @@ _float3 CMiasmaGrandierJaeger::Get_FirePos()
 	return T;
 }
 
+void CMiasmaGrandierJaeger::Set_LaserTarget()
+{
+	_vector3 vTargetPos = m_tTargetingInfo.vTargetPos;
+	vTargetPos.y = Get_FirePos().y;
+
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	static_cast<CJaegerLaser*>(pLaser)->Set_Target(vTargetPos);
+}
+
 void CMiasmaGrandierJaeger::Summon_Bullet()
 {
+	Deactive_Laser();
+	Play_Effect("Defiler_Jaeger_Shot", _vector3(0.f, 1.6f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
 	string lvKey = LevelManager()->Get_NowLevelKey();
 	_float3 pos = Get_FirePos();
 	_float3 target = m_tTargetingInfo.vTargetPos;
@@ -373,8 +402,50 @@ HRESULT CMiasmaGrandierJaeger::Initialize_Effects()
 
 	Create_AttackSign("Bip001_Head");
 
-	auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_JaegerLaser" })
+	auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_JaegerLaser" })
 		.Build("Laser");
+	if (pLaser)
+	{
+		pLaser->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Bn_Weapon1");
+		pObjectContainer->Add_Child(pLaser,false);
+	}
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_jaeger_shot.json")
+			.Build("Defiler_Jaeger_Shot");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	return S_OK;
+}
+
+void CMiasmaGrandierJaeger::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+	if (!pEffect)
+		return;
+
+	auto pEffectTransform = pEffect->Get_Component<CTransform>();
+	if (syncTransform)
+	{
+		pEffectTransform->Set_Pos(_vector3(offsetPosition));
+		pEffectTransform->Set_Quaternion(offsetQuaternion);
+	}
+	else
+	{
+		_smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+		_quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+		_vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+		_quaternion localQuaternion(offsetQuaternion);
+		localQuaternion *= worldQuaternion;
+
+		pEffectTransform->Set_WorldPos(vWorldPosition);
+		pEffectTransform->Set_WorldQuaternion(localQuaternion);
+	}
+
+	static_cast<CEffectContainer*>(pEffect)->Play();
 }

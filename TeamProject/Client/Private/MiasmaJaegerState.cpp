@@ -56,18 +56,25 @@ void CMiasmaGrandierJaeger_Attack::Enter(CMiasmaGrandierJaeger* pOwner)
 		.Speed(1.f)
 		.Loop(true)
 		.Apply();
-
 }
 
 void CMiasmaGrandierJaeger_Attack::Update(CMiasmaGrandierJaeger* pOwner, _float dt)
 {
 	if (m_fAnimProgress >= 0.95f)
 		pOwner->Get_MainStateMachine()->Set_Trigger("Attack_To_DisAppear");
+
+	Update_Effects(pOwner);
 }
 
 void CMiasmaGrandierJaeger_Attack::Exit(CMiasmaGrandierJaeger* pOwner)
 {
 	pOwner->LockOn(false);
+}
+
+void CMiasmaGrandierJaeger_Attack::Update_Effects(CMiasmaGrandierJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Active_Laser();
 }
 
 CMiasmaGrandierJaeger_Hit* CMiasmaGrandierJaeger_Hit::Create()
@@ -109,6 +116,7 @@ void CMiasmaGrandierJaeger_DisAppear::Enter(CMiasmaGrandierJaeger* pOwner)
 {
 	pOwner->Get_Dissolve().DisAppear(0.5f);
 	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
+	Spawn_Effect(pOwner);
 }
 
 void CMiasmaGrandierJaeger_DisAppear::Update(CMiasmaGrandierJaeger* pOwner, _float dt)
@@ -123,7 +131,17 @@ void CMiasmaGrandierJaeger_DisAppear::Exit(CMiasmaGrandierJaeger* pOwner)
 {
 }
 
+void CMiasmaGrandierJaeger_DisAppear::Spawn_Effect(CMiasmaGrandierJaeger* pOwner)
+{
+	_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
 
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_jaeger_dead.json")
+		.Position(vWorldPosition)
+		.Build("Defiler_Jaeger_Dead");
+
+	ObjectManager()->Add_Object(pEffect, { G_GlobalLevelKey,"Effect_Layer" });
+}
 //===========================================================
 
 CMiasmaHeavyJaeger_Appear* CMiasmaHeavyJaeger_Appear::Create()

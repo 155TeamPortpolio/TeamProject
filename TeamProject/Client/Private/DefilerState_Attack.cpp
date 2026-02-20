@@ -883,10 +883,22 @@ void CDefilerState_Attack_Grab::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_Grab::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_Grab::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_Grab::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Defiler_Axe_Light3", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.6f))
+	{
+		pOwner->Stop_Effect("Defiler_Axe_Light3");
+		pOwner->Play_Effect("Defiler_Dash_Trail", _vector3(-0.2f, 2.5f, -4.7f), _quaternion(0.71f, 0.f, 0.f, 0.71f));
+	}
 }
 
 void CDefilerState_Attack_Summon::Enter(CDefiler* pOwner)
