@@ -446,7 +446,7 @@ HRESULT CCorin::Initialize_Weapon()
     desc.pOwnerAnimator = Get_Component<CAnimator3D>();
     desc.tagBone = "Weapon_saw";
     desc.tagName = "Saw";
-    desc.vSize = { 1.862f, 1.862f, 0.532f };
+    desc.vSize = { 1.4f, 1.4f, 0.8f };
 
     if (FAILED(Attach_AttackCollider(&desc)))
         return E_FAIL;
