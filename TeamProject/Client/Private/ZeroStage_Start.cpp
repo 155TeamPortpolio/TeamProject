@@ -9,6 +9,7 @@
 /*PostRenderer*/
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
+#include "AudioSource.h"
 
 CZeroStage_Start::CZeroStage_Start()
 {
@@ -62,10 +63,28 @@ HRESULT CZeroStage_Start::Enter_Stage(StageContext& context)
 	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
 
-	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
-		->SetColor(_float4(0.577f, 0.615f, 0.641f, 1.0f))
-		->SetDensity(0.001f)
-		->SetEnable(true);
+	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+		{ _float4(0.577f, 0.615f, 0.641f, 1.0f) , 0.001f });
+
+	_uint Boss_Process{};
+	RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process);
+
+	string BGMTag{};
+	if (Boss_Process == 1)
+	{
+		BGMTag = "Hollow_Zero_1.wav";
+	}
+	else if (Boss_Process == 2)
+	{
+		BGMTag = "Hollow_Zero_2.wav";
+	}
+
+	m_pOwnerLevel->Get_ZeroBGM()->Slot(BGMTag)
+		.Attribute3D(false)
+		.Group(SOUND_GROUP::BGM)
+		.Loop(true)
+		.Volume(0.2f)
+		.Play();
 
 	return S_OK;
 }

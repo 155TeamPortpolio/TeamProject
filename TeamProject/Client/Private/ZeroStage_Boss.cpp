@@ -80,13 +80,21 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey) 
 	{
-		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(true).Volume(0.2f).Play();
+		m_pOwnerLevel->Get_ZeroBGM()->
+			Slot("Sacrifice_BGM.wav")
+			.Attribute3D(false)
+			.Group(SOUND_GROUP::BGM)
+			.Loop(true)
+			.Volume(0.2f)
+			.Play();
 
 		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 			{
 				_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
 				0.02f
 			});
+
+		m_pOwnerLevel->Get_ZeroCloud()->Use_Cloud(false);
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
