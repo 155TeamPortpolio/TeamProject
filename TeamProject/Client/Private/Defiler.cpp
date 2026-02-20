@@ -1276,6 +1276,32 @@ HRESULT CDefiler::Initialize_Effects()
 		pEffect->AttachBone(pAnimator, "Bip001");
 		pObjectContainer->Add_Child(pEffect, false);
 	}
+
+	/* Hand Charge, Explode */
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.1f, 0.1f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_hand_light.json")
+			.Build("Defiler_Hand_Charge0");
+
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Bip001_L_Hand", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(0.1f, 0.1f, 0.f));
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_hand_explode.json")
+			.Build("Defiler_Hand_Explode0");
+
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "Bip001_L_Hand", offsetMatrix);
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 	return S_OK;
 }
 

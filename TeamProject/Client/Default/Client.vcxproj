@@ -395,6 +395,7 @@
     <ClInclude Include="..\public\DogFan.h" />
     <ClInclude Include="..\Public\Jaeger2.h" />
     <ClInclude Include="..\Public\Jaeger3.h" />
+    <ClInclude Include="..\Public\JaegerLaser.h" />
     <ClInclude Include="..\Public\KitObject.h" />
     <ClInclude Include="..\Public\Giant.h" />
     <ClInclude Include="..\Public\Giant_Attack.h" />
@@ -925,6 +926,7 @@
     <ClCompile Include="..\private\DogFan.cpp" />
     <ClCompile Include="..\Private\Jaeger2.cpp" />
     <ClCompile Include="..\Private\Jaeger3.cpp" />
+    <ClCompile Include="..\Private\JaegerLaser.cpp" />
     <ClCompile Include="..\Private\KitObject.cpp" />
     <ClCompile Include="..\Private\Giant.cpp" />
     <ClCompile Include="..\Private\Giant_Attack.cpp" />

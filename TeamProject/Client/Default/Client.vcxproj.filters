@@ -1539,6 +1539,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide\Start">
       <UniqueIdentifier>{a08a33c6-d308-4648-a198-b6b806751ee9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier\JaegerLaser">
+      <UniqueIdentifier>{54242797-b825-41da-a7bb-c9ee6afc0acc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2996,6 +2999,9 @@
     <ClInclude Include="..\Public\UI_TutorialGuideStart.h">
       <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\JaegerLaser.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier\JaegerLaser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4405,6 +4411,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp">
       <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaegerLaser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier\JaegerLaser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

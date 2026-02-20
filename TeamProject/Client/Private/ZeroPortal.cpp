@@ -71,8 +71,17 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
-
 	Focus(dt);
+
+	if (m_OnActive)
+	{
+		m_fActiveElapsedTime += dt;
+		if (m_fActiveElapsedTime >= m_fActiveDuration)
+		{
+			NoiseSequence();
+			m_OnActive = false;
+		}
+	}
 }
 
 void CZeroPortal::Late_Update(_float dt)
