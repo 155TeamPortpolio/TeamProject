@@ -6,9 +6,11 @@
 #include "EventListener.h"
 
 #include "BattleSystem.h"
-#include "DataBase.h"
+#include "UIDirector.h"
+#include "DataBase.h" 
 
 #include "UI_TutorialGuideSlot.h"
+#include "UI_TutorialGuideStart.h"
 
 HRESULT CUI_TutorialGuide::Initialize_Prototype()
 {
@@ -18,6 +20,7 @@ HRESULT CUI_TutorialGuide::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
 
+    PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideStart", CUI_TutorialGuideStart::Create());
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideSlot", CUI_TutorialGuideSlot::Create());
 
 	return S_OK;
@@ -28,23 +31,21 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    //Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_bubble.json")));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_guide.json")));
 
+    Create_GuideStart();
+  
     // 이벤트 : TUTORIAL_DESC
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
         {
             if (desc.eState != TUTORIAL_STATE::PLAY)
                 return;
 
-            Change_State(STATE::ACTIVE);
+            Change_State(STATE::READY);
             m_eType = desc.eType;
             Ready_Slots(desc.eType);
              
         });
-
-    m_vSize = m_WinSize;
-
-    //Create_Slot();
 
 	return S_OK;
 }
@@ -56,11 +57,21 @@ void CUI_TutorialGuide::Awake()
 
 void CUI_TutorialGuide::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('M'))
-        Change_State(STATE::DEACTIVATING);
-
-    if (m_eState == STATE::DEACTIVATING && !BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
-        Change_State(STATE::INACTIVE); 
+    switch (m_eState)
+    {
+    case STATE::READY:
+        if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+            Change_State(STATE::ACTIVE);
+        break;
+    case STATE::ACTIVE:
+        if (InputDevice()->Key_Tap('M'))
+            Change_State(STATE::DEACTIVATING);
+        break;
+    case STATE::DEACTIVATING:
+        if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
+            Change_State(STATE::INACTIVE);
+        break;
+    } 
 
 	__super::Update(dt);
 
@@ -75,14 +86,16 @@ void CUI_TutorialGuide::UI_DeActive(void* pArg)
 {
 }
 
-HRESULT CUI_TutorialGuide::Create_Slot()
+HRESULT CUI_TutorialGuide::Create_GuideStart()
 {
-    auto pSlot = Builder::Create_UIObject({"Tutorial_Level", "Proto_GameObject_TutorialGuideSlot"}).Build("slot");
-    if (!pSlot)
+    auto pObj = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialGuideStart"})
+        .Build("start");
+
+    if (!pObj)
         return E_FAIL;
 
-    Get_Component<CObjectContainer>()->Add_Child(pSlot);
-    m_pSlots.push_back(pSlot);
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pGuideStart = pObj;
 
     return S_OK;
 }
@@ -95,10 +108,21 @@ void CUI_TutorialGuide::Change_State(STATE eState)
     m_eState = eState;
     switch (eState)
     {
-    case STATE::ACTIVE:
+    case STATE::READY: 
         Set_Alive(true);
+        if (m_pGuideStart)
+            m_pGuideStart->UI_Active();
+        break;
+    case STATE::ACTIVE:
+        if (m_pGuideStart)
+            m_pGuideStart->UI_DeActive();
+        UIDirector()->Hide_Mouse();
+        GameInstance()->Set_EngineTimeScale(1.f); 
         break;
     case STATE::DEACTIVATING:
+        for (auto& pair : m_pSlots)
+            pair.second->UI_DeActive();
+        //GameInstance()->Set_EngineTimeScale(0.f);
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
         break;
     case STATE::INACTIVE:
@@ -112,25 +136,42 @@ void CUI_TutorialGuide::Ready_Slots(TUTORIAL_TYPE eType)
 {
     const auto& actions = CDataBase::GetInstance()->GetTutorialActions(eType);
 
-    // 그냥 벡터 말고 타입 별로 풀을 만들자
-    // 모자란 만큼 생성하고
-    while (m_pSlots.size() < actions.size())
-    {
-        Create_Slot();
-    }
+    for (auto& pair : m_pSlots)
+        pair.second->Set_Alive(false);
 
-    _int iCount = (m_pSlots.size() >= actions.size()) ? actions.size() : m_pSlots.size();
-    // 비활성화
-    for (_int i = iCount; i < m_pSlots.size(); ++i)
-    {
-        m_pSlots[i]->UI_DeActive();
-    }
+    for (auto& action : actions)
+        Activate_Slot(action);
+}
 
-    for (_int i = 0; i < iCount; ++i)
+void CUI_TutorialGuide::Activate_Slot(TUTORIAL_ACTION_DESC desc)
+{
+    auto iter = m_pSlots.find(desc.eAction);
+    if (iter != m_pSlots.end())
     {
-        m_pSlots[i]->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
-        m_pSlots[i]->Set_AnchorOffset(_float2( 500.f, 200.f * i));
-    }
+        iter->second->UI_Active();
+        return;
+    } 
+
+    Create_Slot(desc);
+}
+
+HRESULT CUI_TutorialGuide::Create_Slot(TUTORIAL_ACTION_DESC desc)
+{
+    CUI_TutorialGuideSlot::SLOT_DESC* pDesc = new CUI_TutorialGuideSlot::SLOT_DESC;
+    pDesc->desc = desc;
+
+    auto pSlot = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialGuideSlot" })
+        .Add_UIDesc(pDesc)
+        .Build("slot");
+
+    if (!pSlot)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pSlot);
+    m_pSlots.emplace(desc.eAction, pSlot);
+    pSlot->UI_Active();
+
+    return S_OK;
 }
 
 void CUI_TutorialGuide::AdvanceTutorial()
@@ -185,4 +226,6 @@ CGameObject* CUI_TutorialGuide::Clone(INIT_DESC* pArg)
 void CUI_TutorialGuide::Free()
 {
     __super::Free();
+
+    m_pSlots.clear();
 }

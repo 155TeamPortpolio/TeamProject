@@ -44,14 +44,9 @@ HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
         {
             if (desc.eState != TUTORIAL_STATE::INFO)
                 return;
-             
-            m_isCheck = false;
-            Set_Animation(0);
-            Set_Alive(true);
-            Change_Description(desc.eType);
 
-            UIDirector()->Show_Mouse();
-            GameInstance()->Set_EngineTimeScale(0.f);
+            UI_Active();
+            Change_Description(desc.eType);
         });
 
 	return S_OK;
@@ -59,7 +54,7 @@ HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
 
 void CUI_TutorialInfo::Awake()
 {
-    //Set_Alive(false);
+    UI_Active();
     Change_Description(TUTORIAL_TYPE::EXTREME_EVADE);
 }
 
@@ -74,16 +69,9 @@ void CUI_TutorialInfo::Update(_float dt)
 
 void CUI_TutorialInfo::UI_Active(void* pArg)
 {
-    if (!pArg)
-        return;
-     
-    TUTORIAL_INFO_DESC* pDesc = static_cast<TUTORIAL_INFO_DESC*>(pArg);
-    m_eType = pDesc->eType;
-
     m_isCheck = false; 
     Set_Animation(0);
     Set_Alive(true);
-    Change_Description(m_eType);
     
     UIDirector()->Show_Mouse();
     GameInstance()->Set_EngineTimeScale(0.f);
@@ -96,8 +84,8 @@ void CUI_TutorialInfo::UI_DeActive(void* pArg)
     if (m_pVideo)
         m_pVideo->UI_DeActive();
 
-    UIDirector()->Hide_Mouse();
-    GameInstance()->Set_EngineTimeScale(1.f);
+    //UIDirector()->Hide_Mouse();
+    //GameInstance()->Set_EngineTimeScale(1.f);
 
     TUTORIAL_DESC desc = {};
     desc.eType = m_eType;

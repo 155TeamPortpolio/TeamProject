@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CUI_TutorialGuide final : public CUI_Object
 {
 private:
-	enum class STATE { ACTIVE, DEACTIVATING, INACTIVE, END };
+	enum class STATE { READY, ACTIVE, DEACTIVATING, INACTIVE, END };
 
 private:
 	CUI_TutorialGuide() {}
@@ -28,13 +28,17 @@ private:
 	TUTORIAL_TYPE m_eType = {};
 	STATE m_eState = { STATE::END };
 
-	vector<CUI_Object*> m_pSlots;
+	CUI_Object* m_pGuideStart = {};
+	map<TUTORIAL_ACTION, CUI_Object*> m_pSlots;
 
 private:
-	HRESULT Create_Slot();
+	HRESULT Create_GuideStart();
 
 	void Change_State(STATE eState);
 	void Ready_Slots(TUTORIAL_TYPE eType);
+
+	void Activate_Slot(TUTORIAL_ACTION_DESC desc);
+	HRESULT Create_Slot(TUTORIAL_ACTION_DESC desc);
 
 	void AdvanceTutorial();
 

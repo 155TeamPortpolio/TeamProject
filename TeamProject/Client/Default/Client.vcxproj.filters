@@ -1536,6 +1536,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide\Slot">
       <UniqueIdentifier>{bfc9d486-7fe8-4669-9685-b3f8b8aff575}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide\Start">
+      <UniqueIdentifier>{a08a33c6-d308-4648-a198-b6b806751ee9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2990,6 +2993,9 @@
     <ClInclude Include="..\Public\UI_TutorialGuideSlot.h">
       <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Slot</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialGuideStart.h">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4396,6 +4402,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_TutorialGuideSlot.cpp">
       <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

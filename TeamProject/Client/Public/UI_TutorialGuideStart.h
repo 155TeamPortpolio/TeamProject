@@ -1,23 +1,14 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class CTextSlot;
-NS_END
-
 NS_BEGIN(Client)
 
-class CUI_TutorialGuideSlot final : public CUI_Object
+class CUI_TutorialGuideStart final : public CUI_Object
 {
-public:
-	typedef struct tagSlotDesc : public UI_DESC {
-		TUTORIAL_ACTION_DESC desc = {};
-	}SLOT_DESC;
-
 private:
-	CUI_TutorialGuideSlot() {}
-	CUI_TutorialGuideSlot(const CUI_TutorialGuideSlot& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_TutorialGuideSlot() DEFAULT;
+	CUI_TutorialGuideStart() {}
+	CUI_TutorialGuideStart(const CUI_TutorialGuideStart& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialGuideStart() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -30,20 +21,6 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr) override;
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
-private:
-	class CTextSlot* m_pCountText = {};
-
-	_uint m_iCurrentCount = {};
-	_uint m_iTargetCount = {};
-
-private:
-	void Cache();
-
-	void Set_CountText();
-	void Set_Animations(_int iIndex = 0);
-
-	string Get_PrefabPath(TUTORIAL_ACTION eAction);
-	
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

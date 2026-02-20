@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
+#include "TextSlot.h"
 
 HRESULT CUI_TutorialGuideSlot::Initialize_Prototype()
 {
@@ -21,7 +22,14 @@ HRESULT CUI_TutorialGuideSlot::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_bubble.json")));
+    SLOT_DESC* pDesc = static_cast<SLOT_DESC*>(pArg);
+    m_iTargetCount = pDesc->desc.iCount;
+
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath(Get_PrefabPath(pDesc->desc.eAction))));
+
+    Cache();
+
+    Set_CountText();
 
     //// 이벤트 : TUTORIAL_DESC
     //Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
@@ -44,28 +52,63 @@ void CUI_TutorialGuideSlot::Update(_float dt)
 
 void CUI_TutorialGuideSlot::UI_Active(void* pArg)
 {
-    SLOT_DESC* pDesc = static_cast<SLOT_DESC*>(pArg);
+    Set_Alive(true);
 
-    // 기존꺼 삭제하고 새로 로드 ??
-    Get_PrefabPath(pDesc->desc.eAction);
+    Set_Animations(0);
 }
 
 void CUI_TutorialGuideSlot::UI_DeActive(void* pArg)
 {
-    Set_Alive(false);
+    if (!Is_Alive())
+        return;
+
+    Set_Animations(1);
+}
+
+void CUI_TutorialGuideSlot::Cache()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    auto pCount = pContainer->Find_Descendant("count");
+    if (pCount)
+        m_pCountText = pCount->Get_Component<CTextSlot>();
+}
+
+void CUI_TutorialGuideSlot::Set_CountText()
+{
+    if (!m_pCountText)
+        return;
+
+    wstring strText = Helper::ConvertToWideString(to_string(m_iCurrentCount) + "/" + to_string(m_iTargetCount));
+    m_pCountText->Set_Text(strText);
+}
+
+void CUI_TutorialGuideSlot::Set_Animations(_int iIndex)
+{
+    Set_Animation(iIndex);
+    auto pContainer = Get_Component<CObjectContainer>();
+    for (auto& pChild : pContainer->Get_Children())
+    {
+        if (!pChild)
+            continue;
+
+        if (auto pUI = dynamic_cast<CUI_Object*>(pChild))
+            pUI->Set_Animation(iIndex);
+    }
 }
 
 string CUI_TutorialGuideSlot::Get_PrefabPath(TUTORIAL_ACTION eAction)
 {
     switch (eAction)
     {
-    case TUTORIAL_ACTION::DODGE: return "tutorial_slot_dodge.json";
-    case TUTORIAL_ACTION::DODGE_COUNTER: return "tutorial_slot_dodgeCounter.json";
-    case TUTORIAL_ACTION::ASSIST: return "tutorial_slot_assist.json";
-    case TUTORIAL_ACTION::ASSIST_CHARGE: return "tutorial_slot_assistCharge";
-    case TUTORIAL_ACTION::ULTIMATE: return "tutorial_slot_ultimate.json";
+    case TUTORIAL_ACTION::DODGE: return "tutorial_guide_slot_dodge.json";
+    case TUTORIAL_ACTION::DODGE_COUNTER: return "tutorial_guide_slot_dodgeCounter.json";
+    case TUTORIAL_ACTION::ASSIST: return "tutorial_guide_slot_assist.json";
+    case TUTORIAL_ACTION::ASSIST_CHARGE: return "tutorial_guide_slot_assistCharge.json";
+    case TUTORIAL_ACTION::ULTIMATE: return "tutorial_guide_slot_ultimate.json";
+    case TUTORIAL_ACTION::COMBO: return "tutorial_guide_slot_combo.json";
+    default: return"";
     }
-    return"tutorial_bubble.json";
 }
 
 CGameObject* CUI_TutorialGuideSlot::Create()
