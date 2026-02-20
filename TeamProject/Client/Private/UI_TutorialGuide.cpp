@@ -175,6 +175,7 @@ HRESULT CUI_TutorialGuide::Create_SlotComplete()
 
 HRESULT CUI_TutorialGuide::Show_ResultBanner()
 {
+    GameInstance()->Set_EngineTimeScale(0.f);
     UIDirector()->FadeIn_Screen(0.2f);
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner" })
@@ -185,13 +186,15 @@ HRESULT CUI_TutorialGuide::Show_ResultBanner()
  
     UIManager()->Add_UIObject(pObj, LevelManager()->Get_NowLevelKey());
 
-    pObj->Set_OnClick([]() { LevelManager()->Request_ChangeLevel("Scott_Level", true); });
+    pObj->Set_OnClick([]() { 
+        GameInstance()->Set_EngineTimeScale(1.f);
+        LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        });
 
     _uint iDenny = {};
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
     iDenny += 10000;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
-
     CUI_LotteryResultBanner::RESULT_DESC desc = {};
     desc.iDenny = 10000;
     pObj->UI_Active(&desc);

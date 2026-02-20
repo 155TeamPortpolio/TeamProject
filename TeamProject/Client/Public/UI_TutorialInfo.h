@@ -38,13 +38,15 @@ private:
 	class CTextSlot* m_pTitle = {};
 	map<TUTORIAL_TYPE, CUI_Object*> m_Descriptions;
 	class CUI_TutorialVideo* m_pVideo = {};
+	CUI_Object* m_pExitBanner = {};
 
 private:
-	void Cache();
-	HRESULT Create_ExitButton();
-	HRESULT Create_EnterButton();
+	void Cache(); 
 	HRESULT Create_TutorialDescriptions();
 	HRESULT Create_TutorialVideo();
+	HRESULT Create_ExitButton();
+	HRESULT Create_ExitBanner();
+	HRESULT Create_EnterButton();
 
 	void Change_Description(TUTORIAL_TYPE eType);
 	void Change_TitleText(TUTORIAL_TYPE eType);

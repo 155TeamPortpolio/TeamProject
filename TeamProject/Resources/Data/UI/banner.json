@@ -1,6 +1,6 @@
 {
     "alive": true,
-    "instanceName": "tutorial_exit_banner",
+    "instanceName": "banner",
     "transform": {
         "anchor": 0,
         "anchorOffset": [
@@ -569,7 +569,7 @@
         },
         {
             "alive": true,
-            "instanceName": "label",
+            "instanceName": "title",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [
@@ -640,7 +640,7 @@
         },
         {
             "alive": true,
-            "instanceName": "Text",
+            "instanceName": "subtitle",
             "transform": {
                 "anchor": 0,
                 "anchorOffset": [

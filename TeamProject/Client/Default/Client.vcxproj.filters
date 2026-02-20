@@ -1539,6 +1539,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide\Start">
       <UniqueIdentifier>{a08a33c6-d308-4648-a198-b6b806751ee9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Banner">
+      <UniqueIdentifier>{5e367493-ade2-46e7-8540-88f7fdf579a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -2996,6 +2999,9 @@
     <ClInclude Include="..\Public\UI_TutorialGuideStart.h">
       <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Banner.h">
+      <Filter>02. GameObject\UI\01. 2D\Banner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4405,6 +4411,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp">
       <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Banner.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Banner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
