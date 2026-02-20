@@ -217,6 +217,16 @@ void CJaneDoe::Decrease_Passion(_float fStream)
 
 void CJaneDoe::Reset_State()
 {
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Set_Trigger("ResetState");
 }
 

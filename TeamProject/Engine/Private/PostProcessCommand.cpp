@@ -421,3 +421,122 @@ void CDistortionCommand::Free()
 {
 	__super::Free();
 }
+
+CFlareCommand::CFlareCommand()
+{
+	m_strName = "Flare";
+	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::FLARE);
+	m_bEnabled = false;
+	m_eEffectType = EFFECT_TYPE::REPLACE;
+	m_strOutputTargetName = "Target_Flare";
+}
+
+CFlareCommand* CFlareCommand::SetDuration(_float fDuration)
+{
+	m_fAccTime = 0.f;
+	m_fDuration = fDuration;
+	return this;
+}
+
+CFlareCommand* CFlareCommand::SetIntensity(_float fIntensity)
+{
+	m_fIntensity = fIntensity;
+	return this;
+}
+
+CFlareCommand* CFlareCommand::SetColor(_float3 vColor)
+{
+	m_vColor = vColor;
+	return this;
+}
+
+CFlareCommand* CFlareCommand::SetCenter(_float2 vCenter)
+{
+	m_vCenter = vCenter;
+	return this;
+}
+
+void CFlareCommand::Update(_float dt)
+{
+	m_fAccTime += dt;
+
+	if (m_fAccTime > m_fDuration)
+		m_bEnabled = false;
+}
+
+void CFlareCommand::Execute(CPostRenderer* pRenderer)
+{
+	pRenderer->Render_Flare_Internal();
+}
+
+CFlareCommand* CFlareCommand::Create()
+{
+	return new CFlareCommand();
+}
+
+void CFlareCommand::Free()
+{
+	__super::Free();
+}
+
+CNoiseCommand::CNoiseCommand()
+{
+	m_strName = "Noise";
+	m_iPriority = static_cast<_uint>(POST_PROCESS_ORDER::NOISE);
+	m_bEnabled = false;
+	m_eEffectType = EFFECT_TYPE::REPLACE;
+	m_strOutputTargetName = "Target_Noise";
+}
+
+ID3D11ShaderResourceView* CNoiseCommand::GetTextureSRV()
+{
+	return m_Texture->Get_SRV();
+}
+
+CNoiseCommand* CNoiseCommand::SetDuration(_float fDuration)
+{
+	m_fAccTime = 0.f;
+	m_fDuration = fDuration;
+	return this;
+}
+
+CNoiseCommand* CNoiseCommand::SetNum(_int iNum)
+{
+	m_iCount = iNum;
+	return this;
+}
+
+CNoiseCommand* CNoiseCommand::SetTexture(CTexture* Texture)
+{
+	m_Texture = Texture;
+	return this;
+}
+
+void CNoiseCommand::Update(_float dt)
+{
+	m_fAccTime += dt;
+
+	_float fRatio = m_fAccTime / m_fDuration;
+	m_iCurrentIdx = static_cast<_int>(fRatio * m_iCount);
+
+	if (m_iCurrentIdx >= m_iCount)
+		m_iCurrentIdx = m_iCount - 1;
+
+	if (m_fAccTime > m_fDuration)
+		m_bEnabled = false;
+}
+
+void CNoiseCommand::Execute(CPostRenderer* pRenderer)
+{
+	pRenderer->Render_Noise_Internal();
+}
+
+CNoiseCommand* CNoiseCommand::Create()
+{
+	return new CNoiseCommand();
+}
+
+void CNoiseCommand::Free()
+{
+	__super::Free();
+}
