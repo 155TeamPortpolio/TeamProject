@@ -294,17 +294,18 @@ private:
     virtual ~CNoiseCommand() = default;
 
 public:
-    CTexture* GetTexture() const { return m_Textures[m_iCurrentIdx]; }
+    ID3D11ShaderResourceView* GetTextureSRV();
+    _int GetCurrentIndex() const { return m_iCurrentIdx; }
     CNoiseCommand* SetDuration(_float fDuration);
     CNoiseCommand* SetNum(_int iNum);
-    CNoiseCommand* SetTextures(vector<class CTexture*> Textures);
+    CNoiseCommand* SetTexture(class CTexture* Texture);
 
 public:
     virtual void Update(_float dt) override;
     virtual void Execute(class CPostRenderer* pRenderer) override;
 
 private:
-    vector<class CTexture*> m_Textures;
+    class CTexture* m_Texture;
     _float      m_fDuration = 0.f;
     _float      m_fAccTime = 0.f;
     _int        m_iCount = 0;

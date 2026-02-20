@@ -14,7 +14,8 @@
 
 #include "PostProcessCommand.h"
 #include "PostRenderer.h"
-
+#include "Texture.h"
+#include "UIDirector.h"
 
 CZeroPortal::CZeroPortal()
 	: CInteractable()
@@ -63,6 +64,8 @@ void CZeroPortal::Awake()
 	m_vBaseScale	= m_pTransform->Get_Scale();
 	m_vExtendScale	= m_vBaseScale * 3.f;
 	m_fDuration		= 0.7f;
+
+	PortalEffectFlowSetting();
 }
 
 void CZeroPortal::Priority_Update(_float dt)
@@ -77,15 +80,17 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
 	Focus(dt);
 
-	if (m_OnActive)
-	{
-		m_fActiveElapsedTime += dt;
-		if (m_fActiveElapsedTime >= m_fActiveDuration)
-		{
-			NoiseSequence();
-			m_OnActive = false;
-		}
-	}
+	m_PortalFlow.Tick(dt);
+
+	//if (m_OnActive)
+	//{
+	//	m_fActiveElapsedTime += dt;
+	//	if (m_fActiveElapsedTime >= m_fActiveDuration)
+	//	{
+	//		NoiseSequence();
+	//		m_OnActive = false;
+	//	}
+	//}
 }
 
 void CZeroPortal::Late_Update(_float dt)
@@ -224,23 +229,18 @@ void CZeroPortal::Contract(_float dt)
 
 void CZeroPortal::NoiseSequence()
 {
-	vector<CTexture*> NoiseTextures;
-	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_09.png"));
-	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_01.png"));
-	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_139.png"));
-	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_140_ZJ_01.png"));
-	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_167.png"));
-
-	//auto pPost = RenderSystem()->GetPostRenderer();
-	//pPost->GetCommand<CNoiseCommand>()
-	//->SetTexture(NoiseTextures)
-	//->SetDuration(0.5f)
-	//->SetEnable(true);
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CNoiseCommand>()
+		->SetTexture(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_09.png"))
+		->SetDuration(0.15f)
+		->SetNum(4)
+		->SetEnable(true);
 }
 
 void CZeroPortal::Active_Portal()
 {
-	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
+	m_PortalFlow.Start();
+	/*auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
 	if (pEffect)
 	{
 		static_cast<CEffectContainer*>(pEffect)->Play();
@@ -249,10 +249,62 @@ void CZeroPortal::Active_Portal()
 	auto pPost = RenderSystem()->GetPostRenderer();
 	pPost->GetCommand<CFlareCommand>()
 		->SetIntensity(1.f)
-		->SetDuration(1.f)
+		->SetDuration(0.7f)
 		->SetColor(_float3(0.3f, 0.3f, 0.3f))
 		->SetCenter(_float2(0.5, 0.5))
 		->SetEnable(true);
+
+	m_fActiveElapsedTime = {};
+	m_OnActive = true;*/
+}
+
+void CZeroPortal::PortalEffectFlowSetting()
+{
+	size_t sequenceId = m_PortalFlow.BeginSequence();
+	auto pPost = RenderSystem()->GetPostRenderer();
+
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
+		if (pEffect)
+		{
+			static_cast<CEffectContainer*>(pEffect)->Play();
+		}
+
+		auto pPost = RenderSystem()->GetPostRenderer();
+		pPost->GetCommand<CFlareCommand>()
+			->SetIntensity(1.f)
+			->SetDuration(0.7f)
+			->SetColor(_float3(0.3f, 0.3f, 0.3f))
+			->SetCenter(_float2(0.5, 0.5))
+			->SetEnable(true);
+
+		m_fActiveElapsedTime = {};
+		m_OnActive = true;
+		});
+
+	m_PortalFlow.AddWait(sequenceId, 0.4);
+	
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeOut_Screen(0.15f);
+		});
+	m_PortalFlow.AddWait(sequenceId, 0.15);
+
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		UIDirector()->FadeIn_Screen(0.15f);
+		});
+
+	m_PortalFlow.AddWait(sequenceId, 0.15);
+
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		NoiseSequence();
+		UIDirector()->FadeOut_Screen(0.45f);
+		});
+	m_PortalFlow.AddWait(sequenceId, 0.05);
+	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
+		NoiseSequence();
+		});
+
+	m_PortalFlow.EndSequence(sequenceId);
 }
 
 CZeroPortal* CZeroPortal::Create()

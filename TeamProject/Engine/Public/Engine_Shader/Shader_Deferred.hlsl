@@ -31,6 +31,8 @@ float2 FlareCenter = float2(0.5, 0.5);
 float FlareIntensity = 1.f;
 float3 FlareTintColor = float3(1.f, 1.f, 1.f);
 
+int PostNoiseIndex = 0;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -446,26 +448,14 @@ PS_OUT_RESULT PS_NOISE(PS_IN In)
 {
     PS_OUT_RESULT Out;
 
-    float fTexW, fTexH;
-    NoiseTexture.GetDimensions(fTexW, fTexH);
+    int iRow = PostNoiseIndex / 2;
+    int iCol = PostNoiseIndex % 2;
 
-    float fScreenAspect = ScreenWidth / ScreenHeight;
-    float fTexAspect = fTexW / fTexH;
+    float2 vCellSize = float2(1.f / 2, 1.f / 2);
+    float2 vUV = float2(iCol, iRow) * vCellSize + In.vTexcoord * vCellSize;
 
-    float2 vUV = In.vTexcoord;
-
-    if (fScreenAspect > fTexAspect)
-    {
-        float fScale = fScreenAspect / fTexAspect;
-        vUV.y = (vUV.y - 0.5f) / fScale + 0.5f;
-    }
-    else
-    {
-        float fScale = fTexAspect / fScreenAspect;
-        vUV.x = (vUV.x - 0.5f) / fScale + 0.5f;
-    }
-
-    Out.vResult = NoiseTexture.Sample(DefaultSampler, vUV);
+    Out.vResult = PostNoiseTexture.Sample(DefaultSampler, vUV);
+    
     return Out;
 }
 

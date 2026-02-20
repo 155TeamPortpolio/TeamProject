@@ -456,8 +456,10 @@ HRESULT CPostRenderer::Render_Noise_Internal()
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
-	CTexture* NoiseTexture = m_pNoiseCommand->GetTexture();
-	m_pShader->Bind_Value("NoiseTexture", { NoiseTexture->Get_SRV(), "Texture2D", 0});
+	m_pShader->Bind_Value("PostNoiseTexture", { m_pNoiseCommand->GetTextureSRV(), "Texture2D", 0});
+	_int Index = m_pNoiseCommand->GetCurrentIndex();
+	m_pShader->Bind_Value("PostNoiseIndex", { &Index, "int", sizeof(_int)});
+
 	Bind_WorldMatrix();
 	m_pShader->Bind_Value("ScreenWidth", { &m_fScreenWidth, "float", sizeof(_float) });
 	m_pShader->Bind_Value("ScreenHeight", { &m_fScreenHeight, "float", sizeof(_float) });

@@ -488,6 +488,11 @@ CNoiseCommand::CNoiseCommand()
 	m_strOutputTargetName = "Target_Noise";
 }
 
+ID3D11ShaderResourceView* CNoiseCommand::GetTextureSRV()
+{
+	return m_Texture->Get_SRV();
+}
+
 CNoiseCommand* CNoiseCommand::SetDuration(_float fDuration)
 {
 	m_fAccTime = 0.f;
@@ -501,9 +506,9 @@ CNoiseCommand* CNoiseCommand::SetNum(_int iNum)
 	return this;
 }
 
-CNoiseCommand* CNoiseCommand::SetTextures(vector<class CTexture*> Textures)
+CNoiseCommand* CNoiseCommand::SetTexture(CTexture* Texture)
 {
-	m_Textures = Textures;
+	m_Texture = Texture;
 	return this;
 }
 
