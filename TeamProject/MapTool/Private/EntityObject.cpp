@@ -205,6 +205,11 @@ void CEntityObject::Render_GUI()
 		}
 	}
 
+	_vector3 Pos = Get_Component<CTransform>()->Get_Pos();
+	_float fPos[3] = { Pos.x,Pos.y,Pos.z };
+	ImGui::DragFloat3("Pos", fPos, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CTransform>()->Set_Pos({ fPos[0], fPos[1] ,fPos[2] });
+
 	_vector3 Scale = Get_Component<CTransform>()->Get_Scale();
 	_float fScale[3] = { Scale.x,Scale.y,Scale.z };
 	ImGui::DragFloat3("Scale", fScale, 0.01f, -100.f, 100.f, "%.2f");
