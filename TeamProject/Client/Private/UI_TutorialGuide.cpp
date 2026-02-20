@@ -12,6 +12,7 @@
 
 #include "UI_TutorialGuideSlot.h"
 #include "UI_TutorialGuideStart.h"
+#include "UI_LotteryResultBanner.h"
 
 HRESULT CUI_TutorialGuide::Initialize_Prototype()
 {
@@ -172,6 +173,32 @@ HRESULT CUI_TutorialGuide::Create_SlotComplete()
     return S_OK;
 }
 
+HRESULT CUI_TutorialGuide::Show_ResultBanner()
+{
+    UIDirector()->FadeIn_Screen(0.2f);
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner" })
+        .Build("resultBanner");
+
+    if (!pObj)
+        return E_FAIL;
+ 
+    UIManager()->Add_UIObject(pObj, LevelManager()->Get_NowLevelKey());
+
+    pObj->Set_OnClick([]() { LevelManager()->Request_ChangeLevel("Scott_Level", true); });
+
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+    iDenny += 10000;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+
+    CUI_LotteryResultBanner::RESULT_DESC desc = {};
+    desc.iDenny = 10000;
+    pObj->UI_Active(&desc);
+
+    return S_OK;
+}
+
 void CUI_TutorialGuide::Change_State(STATE eState)
 {
     if (m_eState == eState)
@@ -260,7 +287,7 @@ void CUI_TutorialGuide::AdvanceTutorial()
     auto next = GetNextTutorialType(m_eType);
     
     if (next == TUTORIAL_TYPE::END)
-        LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        Show_ResultBanner();// LevelManager()->Request_ChangeLevel("Scott_Level", true);
     else
     {
         TUTORIAL_DESC desc = {};

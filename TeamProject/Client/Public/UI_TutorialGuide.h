@@ -41,6 +41,7 @@ private:
 private:
 	HRESULT Create_GuideStart();
 	HRESULT Create_SlotComplete();
+	HRESULT Show_ResultBanner();
 
 	void Change_State(STATE eState);
 	void Ready_Slots(TUTORIAL_TYPE eType);
