@@ -131,9 +131,11 @@ void CCorinState_SwitchInParryAid_L_Loop::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchInParryAid_L_Loop::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt,
-        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
+    desc.fMoveWeight = 5.f;
+    pOwner->Process_RootMotion(dt, desc);
 }
 
 void CCorinState_SwitchInParryAid_L_End::Enter(CCorin* pOwner)
