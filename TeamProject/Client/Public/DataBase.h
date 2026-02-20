@@ -24,6 +24,7 @@ public:
     const EncounterTable*               GetMonsterSpawnData(const string& tagArea, _uint iStageType);
     NpcIDDesc               GetNpcIDData(const wstring& strName);
     NpcDialogueDesc         GetNpcDialogueDesc(pair<string, _uint> dialogueID);
+    SpeechBubbleDesc         GetNpcSpeechBubble(pair<string, _uint> speechBubbleID);
     ChoiceDesc              GetNpcChoiceDesc(const string& strName);
     RAMEN_DESC                      GetRamenDesc(const string& strName);
     vector<const RAMEN_DESC*>       GetRamenTable();
@@ -50,6 +51,8 @@ public:
     HRESULT LoadGachaChannelData(const string& csvPath);
     HRESULT LoadPartyData(const string& csvPath);
     HRESULT LoadTutorialData(const string& csvPath);
+    vector<CHARACTER> Get_EnableCharacters();
+    HRESULT LoadSpeechBubble(const string& csvPath);
 
 public:
     const CASHED_OBJ_DATA* Get_CashedData(const string& AreaTag);
@@ -58,7 +61,6 @@ public:
 
 private:
     vector<string_view> SplitFileName(string_view s, _char delim);
-
 //enum 변환함수
 private:
     DayPhase        StringToDayPhase(const string& str);
@@ -85,6 +87,8 @@ private:
     //NpcData
     unordered_map<wstring, NpcIDDesc>                       m_NpcIDTables;
     map<pair<string, _uint>, NpcDialogueDesc>		        m_DialogueTables;
+    multimap<pair<string, _uint>, SpeechBubbleDesc>		        m_SpeechBubbleTables;
+    map<pair<string, _uint>, pair<vector<_uint>, _uint>> m_ShuffledSpeechBubbleIndices;
     unordered_map<string, ChoiceDesc>				        m_DialgoueChoiceTables;
     //FieldData
     unordered_map<_int, GACHA_RESULT_DESC>                  m_ResultTables;

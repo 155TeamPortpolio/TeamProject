@@ -25,24 +25,28 @@ void CObjectMgr::Pre_EngineUpdate(_float dt)
 	auto Releasesnap = m_ReleaseObjs;
 
 	m_ReleaseObjs.clear();
-	m_DeleteIDs.clear();
+	m_ReleaseIDs.clear();
 	for (auto pObject : Releasesnap)
 	{
 		if (!pObject) continue;
 		Release_Subtree_ToPool(pObject);
 	}
-	m_ReleaseObjs.clear();
-	m_DeleteIDs.clear();
 
 	auto snap = m_DeleteObjs;
 
 	m_DeleteObjs.clear();
 	m_DeleteIDs.clear();
-	for (auto pObject : snap)
+	for (auto& pObject : snap)
 	{
-		_uint ObjectID = pObject->Get_ObjectID();
-		if(auto pLayer= pObject->Get_Layer())
+		LAYER_DESC desc = pObject->Get_LayerDesc();
+		if (auto pLayer = Get_Layer(desc)) {
+			_uint ObjectID = pObject->Get_ObjectID();
 			pLayer->Remove_GameObject(ObjectID);
+			pObject = nullptr;
+		}
+		else {
+			Safe_Release(pObject);
+		}
 	}
 
 	for (auto& pair : m_Layers)
@@ -76,8 +80,6 @@ void CObjectMgr::Late_Update(_float dt)
 	for (auto& pair : m_Layers)
 		for (auto& layers : pair.second)
 			layers.second->Late_Update(dt);
-
-
 }
 
 void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)
@@ -188,14 +190,25 @@ void CObjectMgr::Clear(const string& LevelTag)
 		MSG_BOX("There is No Same Level Tag  : CObjectMgr");
 		return;
 	}
-
 	Prune_Queues_ByLevel(LevelTag);
+
+	auto releaseSnap = m_ReleaseObjs;
+	auto releaseIdSnap = m_ReleaseIDs;
+	auto deleteSnap = m_DeleteObjs;
+	auto deleteIdSnap = m_DeleteIDs;
 
 	for (auto& pair : m_Layers[LevelTag]) {
 		Safe_Release(pair.second);
 	}
-	m_DeleteObjs.clear();
-	m_DeleteIDs.clear();
+
+	m_ReleaseObjs.clear(); m_ReleaseIDs.clear();
+	m_DeleteObjs.clear();  m_DeleteIDs.clear();
+
+	m_ReleaseObjs = releaseSnap;
+	m_ReleaseIDs = releaseIdSnap;
+	m_DeleteObjs = deleteSnap;
+	m_DeleteIDs = deleteIdSnap;
+
 	m_pObjectPool->ClearAll();
 	m_Layers[LevelTag].clear();
 }
@@ -371,7 +384,6 @@ void CObjectMgr::Release_Subtree_ToPool(CGameObject* root)
 	m_pObjectPool->Return(poolKey, root);
 }
 
-
 void CObjectMgr::Set_LevelTimeScale(string LevelTag, _float scale)
 {
 	auto iter = m_Layers.find(LevelTag);
@@ -502,8 +514,6 @@ void CObjectMgr::Free()
 {
 	__super::Free();
 
-	m_ReleaseObjs.clear(); m_ReleaseIDs.clear();
-	m_DeleteObjs.clear();  m_DeleteIDs.clear();
 
 	for (auto& pair : m_Layers)
 		Clear(pair.first);
@@ -511,6 +521,14 @@ void CObjectMgr::Free()
 
 	if (m_pObjectPool)
 		m_pObjectPool->ClearAll();
+
+	for (auto& pObject : m_DeleteObjs)
+	{
+		Safe_Release(pObject);
+	}
+
+	m_ReleaseObjs.clear(); m_ReleaseIDs.clear();
+	m_DeleteObjs.clear();  m_DeleteIDs.clear();
 
 	Safe_Release(m_pObjectPool);
 	Safe_Release(m_pGameInstance);

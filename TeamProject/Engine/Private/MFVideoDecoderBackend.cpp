@@ -53,7 +53,47 @@ static inline std::uint8_t ClampByte(int intValue)
     if (intValue > 255) return 255;
     return (std::uint8_t)intValue;
 }
+static void ConvertNV12ToRGBA_WithStride(
+    const std::uint8_t* nv12Data,
+    std::uint32_t frameWidth,
+    std::uint32_t frameHeight,
+    std::uint32_t srcStrideBytes,
+    std::vector<std::uint8_t>& outRgba)
+{
+    const std::uint8_t* yPlane = nv12Data;
+    const std::uint8_t* uvPlane = nv12Data + (size_t)srcStrideBytes * (size_t)frameHeight;
 
+    outRgba.resize((size_t)frameWidth * (size_t)frameHeight * 4);
+
+    for (std::uint32_t rowIndex = 0; rowIndex < frameHeight; ++rowIndex)
+    {
+        const std::uint32_t yRowOffset = rowIndex * srcStrideBytes;
+        const std::uint32_t uvRowOffset = (rowIndex / 2) * srcStrideBytes;
+
+        for (std::uint32_t colIndex = 0; colIndex < frameWidth; ++colIndex)
+        {
+            const std::uint8_t yValue = yPlane[yRowOffset + colIndex];
+
+            const std::uint32_t uvIndex = uvRowOffset + (colIndex / 2) * 2;
+            const int uValue = (int)uvPlane[uvIndex + 0] - 128;
+            const int vValue = (int)uvPlane[uvIndex + 1] - 128;
+
+            const int cValue = (int)yValue - 16;
+            const int dValue = uValue;
+            const int eValue = vValue;
+
+            int redValue = (298 * cValue + 409 * eValue + 128) >> 8;
+            int greenValue = (298 * cValue - 100 * dValue - 208 * eValue + 128) >> 8;
+            int blueValue = (298 * cValue + 516 * dValue + 128) >> 8;
+
+            const size_t outIndex = ((size_t)rowIndex * (size_t)frameWidth + (size_t)colIndex) * 4;
+            outRgba[outIndex + 0] = ClampByte(redValue);
+            outRgba[outIndex + 1] = ClampByte(greenValue);
+            outRgba[outIndex + 2] = ClampByte(blueValue);
+            outRgba[outIndex + 3] = 255;
+        }
+    }
+}
 // NV12 -> RGBA (output order: R,G,B,A)
 static void ConvertNV12ToRGBA(
     const std::uint8_t* nv12Data,
@@ -130,42 +170,52 @@ void CMFVideoDecoderBackend::SetLoop(bool loop)
 {
     m_isLoop = loop;
 }
-
 bool CMFVideoDecoderBackend::Open(const std::string& filePath)
 {
-    Close();
+    //  기존 디코드가 돌고 있으면 먼저 깨워서 빠지게
+    RequestStopDecode();
+
+    //  Close/Open/DecodeNextRGBA가 절대 겹치지 않게
+    std::lock_guard<std::mutex> decodeGateLock(m_decodeGate);
+
+    // 내부 상태 정리
+    CloseInternal_NoDecodeGate();
+
+    //  새 오픈은 stop 해제부터
+    ResetStopDecode();
 
     std::wstring widePath = ConvertUtf8ToWide(filePath);
     if (widePath.empty())
         return false;
+
     m_lastFilePath = filePath;
+
     Microsoft::WRL::ComPtr<IMFAttributes> attributes;
     HRESULT result = MFCreateAttributes(attributes.GetAddressOf(), 8);
     if (FAILED(result))
         return false;
 
-    // 컨버터/비디오 프로세싱 활성화 (RGB32 성공률 ↑)
     attributes->SetUINT32(MF_READWRITE_DISABLE_CONVERTERS, FALSE);
     attributes->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
     attributes->SetUINT32(MF_SOURCE_READER_ENABLE_VIDEO_PROCESSING, TRUE);
 
-    result = MFCreateSourceReaderFromURL(widePath.c_str(), attributes.Get(), m_reader.GetAddressOf());
+    {
+        std::lock_guard<std::mutex> readerLock(m_readerMutex);
+        result = MFCreateSourceReaderFromURL(widePath.c_str(), attributes.Get(), m_reader.GetAddressOf());
+    }
     if (FAILED(result))
         return false;
 
-    // 스트림 선택
     result = m_reader->SetStreamSelection(MF_SOURCE_READER_FIRST_VIDEO_STREAM, TRUE);
     if (FAILED(result))
         return false;
 
-    // 출력 포맷 설정 (RGB32 시도 -> 실패 시 NV12)
     if (!ConfigureOutputToRGB32())
         return false;
 
     if (!QuerySizeFromCurrentType())
         return false;
 
-    // duration (선택)
     PROPVARIANT durationVar;
     PropVariantInit(&durationVar);
     result = m_reader->GetPresentationAttribute(MF_SOURCE_READER_MEDIASOURCE, MF_PD_DURATION, &durationVar);
@@ -186,24 +236,53 @@ bool CMFVideoDecoderBackend::ReOpen()
     Close();
     return Open(m_lastFilePath);
 }
-
 void CMFVideoDecoderBackend::Close()
 {
-    m_reader.Reset();
+    //  먼저 stop + flush로 ReadSample이 빨리 빠지게
+    RequestStopDecode();
+
+    //  DecodeNextRGBA가 진행 중이면 여기서 기다림
+    std::lock_guard<std::mutex> decodeGateLock(m_decodeGate);
+
+    CloseInternal_NoDecodeGate();
+}
+
+void CMFVideoDecoderBackend::CloseInternal_NoDecodeGate()
+{
+    {
+        std::lock_guard<std::mutex> readerLock(m_readerMutex);
+        m_reader.Reset();
+    }
 
     m_isOpened = false;
-
     m_firstPtsMs = UINT64_MAX;
     m_width = 0;
     m_height = 0;
     m_strideBytes = 0;
     m_outputSubtype = GUID_NULL;
     m_durationHns = -1;
-}
 
+    // stop flag는 Open에서 Reset 해주는 쪽이 안전
+}
 void CMFVideoDecoderBackend::Free()
 {
     Close();
+}
+
+void CMFVideoDecoderBackend::RequestStopDecode()
+{
+    m_stopRequested.store(true, std::memory_order_release);
+
+    std::lock_guard<std::mutex> lock(m_readerMutex);
+    if (m_reader)
+    {
+        m_reader->Flush(MF_SOURCE_READER_FIRST_VIDEO_STREAM);
+    }
+}
+
+void CMFVideoDecoderBackend::ResetStopDecode()
+{
+    m_stopRequested.store(false, std::memory_order_release);
 }
 
 bool CMFVideoDecoderBackend::ConfigureOutputToRGB32()
@@ -261,7 +340,6 @@ bool CMFVideoDecoderBackend::ConfigureOutputToNV12()
 
     return false;
 }
-
 bool CMFVideoDecoderBackend::QuerySizeFromCurrentType()
 {
     if (!m_reader)
@@ -272,6 +350,11 @@ bool CMFVideoDecoderBackend::QuerySizeFromCurrentType()
     if (FAILED(result))
         return false;
 
+    //  실제 subtype 갱신 (중요)
+    GUID actualSubtype = GUID_NULL;
+    if (SUCCEEDED(currentType->GetGUID(MF_MT_SUBTYPE, &actualSubtype)))
+        m_outputSubtype = actualSubtype;
+
     UINT32 frameWidth = 0;
     UINT32 frameHeight = 0;
     result = MFGetAttributeSize(currentType.Get(), MF_MT_FRAME_SIZE, &frameWidth, &frameHeight);
@@ -281,26 +364,24 @@ bool CMFVideoDecoderBackend::QuerySizeFromCurrentType()
     m_width = frameWidth;
     m_height = frameHeight;
 
+    //  stride 갱신: RGB32 / NV12 둘 다 시도
     m_strideBytes = 0;
 
-    if (m_outputSubtype == MFVideoFormat_RGB32)
+    UINT32 strideUnsigned = 0;
+    if (SUCCEEDED(currentType->GetUINT32(MF_MT_DEFAULT_STRIDE, &strideUnsigned)))
     {
-        // MF_MT_DEFAULT_STRIDE는 UINT32로 저장되지만 실제 의미는 signed stride(음수 가능)
-        UINT32 strideUnsigned = 0;
-        HRESULT strideResult = currentType->GetUINT32(MF_MT_DEFAULT_STRIDE, &strideUnsigned);
+        const INT32 strideSigned = (INT32)strideUnsigned;
+        m_strideBytes = (LONG)strideSigned;
+    }
 
-        if (SUCCEEDED(strideResult))
-        {
-            // signed로 재해석
-            const INT32 strideSigned = (INT32)strideUnsigned;
-            m_strideBytes = (LONG)strideSigned;
-        }
-
-        if (m_strideBytes == 0)
-        {
-            // fallback: 보통은 -width*4 또는 width*4 중 하나
+    if (m_strideBytes == 0)
+    {
+        if (m_outputSubtype == MFVideoFormat_RGB32)
             m_strideBytes = (LONG)m_width * 4;
-        }
+        else if (m_outputSubtype == MFVideoFormat_NV12)
+            m_strideBytes = (LONG)m_width; // fallback (정렬 스트라이드는 위에서 잡히는 경우가 많음)
+        else
+            m_strideBytes = 0; // 알 수 없는 포맷은 나중에 처리
     }
 
     return (m_width > 0 && m_height > 0);
@@ -308,11 +389,14 @@ bool CMFVideoDecoderBackend::QuerySizeFromCurrentType()
 
 bool CMFVideoDecoderBackend::SeekSeconds(float seconds)
 {
-    if (!m_isOpened || !m_reader)
-        return false;
-
     if (seconds < 0.0f)
         seconds = 0.0f;
+
+    //  디코드 스레드와 동기화
+    std::lock_guard<std::mutex> lock(m_readerMutex);
+
+    if (!m_isOpened || !m_reader)
+        return false;
 
     m_firstPtsMs = UINT64_MAX;
 
@@ -339,35 +423,59 @@ bool CMFVideoDecoderBackend::DecodeNextRGBA(
     std::uint64_t& outPtsMs,
     bool& outEnded)
 {
+    std::lock_guard<std::mutex> decodeGateLock(m_decodeGate); //  핵심
     outEnded = false;
     outWidth = 0;
     outHeight = 0;
     outPtsMs = 0;
 
-    if (!m_isOpened || !m_reader)
+    if (IsStopRequested())
     {
         outEnded = true;
         return false;
     }
 
-    // 일부 파일은 ReadSample에서 STREAMTICK / MEDIATYPECHANGED 등을 내고 sample이 없을 수 있음
-    // 그래서 몇 번은 “계속 읽기”를 허용
+    Microsoft::WRL::ComPtr<IMFSourceReader> readerLocal;
+    {
+        std::lock_guard<std::mutex> lock(m_readerMutex);
+        readerLocal = m_reader; // 로컬로 잡아두면 Close 중이라도 최소한 포인터 경쟁이 줄어듦
+    }
+
+    if (!m_isOpened || !readerLocal)
+    {
+        outEnded = true;
+        return false;
+    }
+
     const int maxReadAttempts = 8;
 
     for (int attemptIndex = 0; attemptIndex < maxReadAttempts; ++attemptIndex)
     {
+        if (IsStopRequested())
+        {
+            outEnded = true;
+            return false;
+        }
+
         DWORD streamIndex = 0;
         DWORD flags = 0;
         LONGLONG timeStampHns = 0;
 
         Microsoft::WRL::ComPtr<IMFSample> sample;
-        HRESULT readResult = m_reader->ReadSample(
+
+        HRESULT readResult = readerLocal->ReadSample(
             MF_SOURCE_READER_FIRST_VIDEO_STREAM,
             0,
             &streamIndex,
             &flags,
             &timeStampHns,
             sample.GetAddressOf());
+
+        if (IsStopRequested())
+        {
+            outEnded = true;
+            return false;
+        }
 
         if (FAILED(readResult))
             return false;
@@ -421,10 +529,22 @@ bool CMFVideoDecoderBackend::DecodeNextRGBA(
 
         if (m_outputSubtype == MFVideoFormat_NV12)
         {
-            const size_t neededBytes = (size_t)m_width * (size_t)m_height * 3 / 2;
+            const LONG strideBytesSigned = (m_strideBytes != 0) ? m_strideBytes : (LONG)m_width;
+            const size_t absStrideBytes = (size_t)std::abs(strideBytesSigned);
+
+            const size_t neededBytes =
+                absStrideBytes * (size_t)m_height +
+                absStrideBytes * (size_t)(m_height / 2);
+
             if ((size_t)lock.curLen >= neededBytes)
             {
-                ConvertNV12ToRGBA((const std::uint8_t*)lock.dataPtr, m_width, m_height, outRgba);
+                ConvertNV12ToRGBA_WithStride(
+                    (const std::uint8_t*)lock.dataPtr,
+                    m_width,
+                    m_height,
+                    (std::uint32_t)absStrideBytes,
+                    outRgba);
+
                 decodeSuccess = true;
             }
         }

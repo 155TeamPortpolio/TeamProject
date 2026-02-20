@@ -49,7 +49,7 @@ HRESULT CLevelMgr::Request_ChangeLevel(string levelID, LEVEL_TRANS_DESC desc)
     else
         m_eState = LEVEL_STATE::LOADED;
 
-    return E_NOTIMPL;
+    return S_OK;
 }
 
 void CLevelMgr::Update(_float dt)
@@ -124,11 +124,10 @@ void CLevelMgr::Register_Level(const string& levelID, LEVEL_CREATOR creator)
 void CLevelMgr::ClearResource()
 {
     if (!m_pCurrentLevel) return;
-    const string& levelTag = m_pCurrentLevel->Get_Key();
+    string levelTag = m_pCurrentLevel->Get_Key();
     if(levelTag == G_GlobalLevelKey)return;
-
-    CGameInstance::GetInstance()->Clear_LevelResource(levelTag);
     Safe_Release(m_pCurrentLevel);
+    CGameInstance::GetInstance()->Clear_LevelResource(levelTag);
 }
 
 #pragma region For_OtherManager

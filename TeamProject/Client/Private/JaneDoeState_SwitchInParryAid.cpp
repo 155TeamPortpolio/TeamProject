@@ -117,7 +117,7 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
     }
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
 
-    OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
+    //OBJECT_HANDLE handle = pOwner->Get_ParryHandle();
     //if (handle.isValid())
     //{
     //    TARGET_LOCK_DESC desc;

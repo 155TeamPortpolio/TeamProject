@@ -5,40 +5,44 @@
 #include "Sprite2D.h"
 #include "MFVideoDecoderBackend.h"
 
-void CUI_GachaCharacterIntro::Play_Video(CUI_GachaPage::CHANNEL eChannel)
+void CUI_GachaCharacterIntro::Play_Video(CUI_GachaPage::CHANNEL channel)
 {
-    //if (!m_pPlayer)
-    //    return;
-    //
-    //OutputDebugString(L"들어옴");
-    //
-    //m_pPlayer->Stop();
-    //m_pPlayer->Close();
-    //VideoService()->DestroyPlayer(m_PlayerID);
-    //
-    //string strFilePath = "";
-    //switch (eChannel)
-    //{
-    //case CUI_GachaPage::CHANNEL::MIYABI:
-    //    strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_Miyabi.mp4";
-    //    break;
-    //case CUI_GachaPage::CHANNEL::JANEDOE:
-    //    strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
-    //    break;
-    //default:
-    //    strFilePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
-    //    break;
-    //}
-    //
-    //CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    //desc.filePath = strFilePath;
-    //desc.loop = false;
-    //m_pPlayer->Open(desc);
-    //
-    //VideoService()->StartDecode(m_PlayerID);
-    //m_pPlayer->Play();
-    //
-    //Set_Alive(true);
+    if (!m_pPlayer || !m_pDecoder)
+        return;
+
+    // 0) 렌더가 이전 SRV 잡고 있을 수 있으니 끊기
+    if (auto sprite = Get_Component<CSprite2D>())
+        sprite->Set_Param("SpriteTexture", { nullptr, "Texture2D", 0 });
+
+    // ? 1) 디코드 스레드를 먼저 멈추고 기다리기
+  //  VideoService()->StopDecode(m_PlayerID);          // <- join까지 보장되게
+    m_pDecoder->RequestStopDecode();                 // <- 안전망
+    // 2) 플레이어 정리
+    m_pPlayer->Stop();
+    m_pPlayer->Close();
+
+    // 3) 파일 경로 선택
+    std::string filePath = "../Bin/Resources/Video/GachaCharacterIntro_JaneDoe.mp4";
+    if (channel == CUI_GachaPage::CHANNEL::MIYABI)
+        filePath = "../Bin/Resources/Video/GachaCharacterIntro_Miyabi.mp4";
+
+    // 4) 디코더 재오픈
+    m_pDecoder->Close();
+    if (!m_pDecoder->Open(filePath))
+        return;
+    m_pDecoder->SetLoop(false);
+
+    // 5) 플레이어 오픈
+    CVideoPlayer::VIDEO_PLAYER_DESC desc;
+    desc.filePath = filePath;
+    desc.loop = false;
+    m_pPlayer->Open(desc);
+
+    // 6) 새 디코드 스레드 시작(반드시 새 세션으로)
+    VideoService()->StartDecode(m_PlayerID);
+
+    m_pPlayer->Play();
+    Set_Alive(true);
 }
 
 HRESULT CUI_GachaCharacterIntro::Initialize_Prototype()

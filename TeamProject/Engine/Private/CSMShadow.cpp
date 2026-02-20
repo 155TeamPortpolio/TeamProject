@@ -255,9 +255,34 @@ _matrix CCSMShadow::CreateLightViewProj(const _vector* frustumCorners, const _ve
 
     _matrix lightProj = XMMatrixOrthographicOffCenterLH(minX, maxX,  minY, maxY, minZ, maxZ);
 
+    m_lightView[cascadeIndex] = lightView;
+    CascadeCullBounds& bounds = m_cullBounds[cascadeIndex];
+    bounds.minX = minX; bounds.maxX = maxX;
+    bounds.minY = minY; bounds.maxY = maxY;
+    bounds.minZ = minZ; bounds.maxZ = maxZ;
+
     _matrix result = lightView * lightProj;
 
     return result;
+}
+
+_bool CCSMShadow::IntersectsLightBounds_Sphere(const CascadeCullBounds& bounds, 
+    _vector3 centerLightSpace, _float radiusWorld)
+{
+    const _float centerX = centerLightSpace.x;
+    const _float centerY = centerLightSpace.y;
+    const _float centerZ = centerLightSpace.z;
+
+    if (centerX + radiusWorld < bounds.minX) return false;
+    if (centerX - radiusWorld > bounds.maxX) return false;
+
+    if (centerY + radiusWorld < bounds.minY) return false;
+    if (centerY - radiusWorld > bounds.maxY) return false;
+
+    if (centerZ + radiusWorld < bounds.minZ) return false;
+    if (centerZ - radiusWorld > bounds.maxZ) return false;
+
+    return true;
 }
 
 CCSMShadow* CCSMShadow::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint shadowSize)
@@ -289,4 +314,5 @@ void CCSMShadow::Free()
     {
         Safe_Release(m_pDSV[i]);
     }
+
 }

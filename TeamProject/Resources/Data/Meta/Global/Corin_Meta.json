@@ -135,7 +135,7 @@
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Branch_02_Explode",
       "Events": [
         {
-          "EventTime": 0.2619883120059967,
+          "EventTime": 0.0619883120059967,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -183,7 +183,7 @@
       "ClipTag": "Avatar_Female_Size01_Corin_Ani_Attack_Counter_Explode",
       "Events": [
         {
-          "EventTime": 0.20064978301525116,
+          "EventTime": 0.00064978301525116,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -696,7 +696,7 @@
           "EventTag": "SawEnd"
         },
         {
-          "EventTime": 1.1910916662216187,
+          "EventTime": 1.010916662216187,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }

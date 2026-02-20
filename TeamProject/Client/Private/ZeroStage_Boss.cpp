@@ -10,6 +10,11 @@
 //component
 #include "AudioSource.h"
 
+/*PostRenderer*/
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+#include <ProceduralSky.h>
+
 CZeroStage_Boss::CZeroStage_Boss()
 {
 	m_eType = StageType::Boss;
@@ -21,9 +26,6 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 		return E_FAIL;
 
 	m_pOwnerLevel = pOwnerLevel;
-
-	m_pBGM = CAudioSource::Create();
-	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/BGM");
 
 	return S_OK;
 }
@@ -68,13 +70,6 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 {
-	//auto fog = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//	.Asset("defiler_stage_fog.json")
-	//	.Position(_vector3(-1.f, -3.5f, 1.8f))
-	//	.Build("Stage_Fog");
-	//
-	//ObjectManager()->Add_Object(fog, { "Zero_Level","Effect_Layer" });
-
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
 	m_eStageState = StageState::Entrance;
@@ -83,8 +78,33 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	Active_Player(CStage::PlayerPoint::Typical);
 	BossIntro(context);
 
-	if ("Zero_Boss1" == context.mapKey)
-		m_pBGM->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(true).Volume(0.2f).Play();
+	if ("Zero_Boss1" == context.mapKey) 
+	{
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(true).Volume(0.2f).Play();
+
+		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+			{
+				_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
+				0.02f
+			});
+	}
+	else if ("Zero_Boss2" == context.mapKey)
+	{
+		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({
+			_float3{0.f, 0.f ,0.f},
+			_float3{0.f, 0.f ,0.f},
+			_float3{0.f, 0.f ,0.f},
+			1.f,
+			_float3{0.322f, 0.357f, 0.463f},
+			_float3{0.f, 0.f, 0.f},
+			0.91 });
+
+		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+			{
+				_float4{0.026f, 0.045f, 0.054f, 1.0f},
+				0.00319f
+			});
+	}
 
 	return S_OK;
 }
@@ -94,7 +114,7 @@ HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
 	__super::Exit_Stage(context);
 
 	if ("Zero_Boss1" == context.mapKey)
-		m_pBGM->FadeOut_Volume("Sacrifice_BGM.wav", 0.9f);
+		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Sacrifice_BGM.wav", 0.9f);
 
 	return E_NOTIMPL;
 }
@@ -162,6 +182,4 @@ CZeroStage_Boss* CZeroStage_Boss::Create( CZero_Level* pOwnerLevel)
 void CZeroStage_Boss::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pBGM);
 }

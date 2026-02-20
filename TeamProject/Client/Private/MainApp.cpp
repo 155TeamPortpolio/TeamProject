@@ -170,8 +170,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -189,14 +188,15 @@ CMainApp* CMainApp::Create()
 void CMainApp::Free()
 {
 	__super::Free();
+	m_pGameInstance->Release_Engine();
+	m_pGameInstance->DestroyInstance();
+
 	CBattleSystem::GetInstance()->DestroyInstance();
 	CUIDirector::GetInstance()->DestroyInstance();
 	CCamDirector::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();
 	CFieldSystem::GetInstance()->DestroyInstance();
 
-	m_pGameInstance->Release_Engine();
-	m_pGameInstance->DestroyInstance();
 }
 
 void CMainApp::Initialize_GlobalPrototype()

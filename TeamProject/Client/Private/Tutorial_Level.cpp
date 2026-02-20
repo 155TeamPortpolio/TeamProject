@@ -60,6 +60,10 @@ HRESULT CTutorial_Level::Awake()
     auto pTransform = pShadowCam->Get_Component<CTransform>();
     pTransform->Set_Pos(_float4(0.f, 100.f, 0.f, 1.f));
 
+    CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
+
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Scott_Level", 2);
+    
     LIGHT_DESC lightDesc = {};
     lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
     lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
@@ -108,7 +112,7 @@ void CTutorial_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 
 void CTutorial_Level::Ready_UI()
 {
-    // ui °´Ã¼ »ý¼º
+    // ui ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
     auto uiDirector = CUIDirector::GetInstance();
     uiDirector->Load_LevelObjects("Tutorial_Level");
 
@@ -133,7 +137,7 @@ void CTutorial_Level::Ready_UI()
         UIDirector()->Register(ptutorialGuide);
     }
 
-    // ui ¼ÂÆÃ
+    // ui ï¿½ï¿½ï¿½ï¿½
     uiDirector->FadeIn_Screen(1.f); 
     uiDirector->Show_HUD(CUIDirector::HUD::BATTLE);
 }

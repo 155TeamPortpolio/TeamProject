@@ -91,6 +91,13 @@ HRESULT CScott_Level::Awake()
 
 	CamDirector()->AutoField(CamStartDir::Back);
 
+	_uint Version{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Scott_Level", Version))
+	{
+		Version = 1;
+		RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Scott_Level", Version);
+	}
+
 	AudioDevice()->Set_Listener(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::FreeCam))->Get_Component<CTransform>());
 	return S_OK;
 }

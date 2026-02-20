@@ -22,11 +22,11 @@ HRESULT CUI_SpeechBubble::Initialize_Prototype()
 
 HRESULT CUI_SpeechBubble::Initialize(INIT_DESC* pArg)
 {
+    SPEECHBUBBLE_DESC* pDesc = static_cast<SPEECHBUBBLE_DESC*>(pArg);
+    m_vPosition = pDesc->vPosition + m_vOffset;
+
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
-
-    SPEECHBUBBLE_DESC* pDesc = static_cast<SPEECHBUBBLE_DESC*>(pArg);
-    m_pCCT = pDesc->pCCT;
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("speechBubble.json")));
     Cache();
@@ -43,9 +43,6 @@ void CUI_SpeechBubble::Awake()
 
 void CUI_SpeechBubble::Update(_float dt)
 {
-    if (m_pCCT)
-        XMStoreFloat3(&m_vPosition, m_pCCT->Get_FootPosition() + XMVectorSet(0.f, m_pCCT->Get_HalfSize() * 2.f, 0.f, 0.f));
-
     Update_WorldToScreen(m_vPosition);
 
     Update_Visible(CalcState_ByDistance());
