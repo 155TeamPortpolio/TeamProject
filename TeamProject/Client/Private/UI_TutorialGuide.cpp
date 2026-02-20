@@ -37,15 +37,29 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
     Create_SlotComplete();
 
     // 이벤트 : TUTORIAL_DESC
-    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([this](const TUTORIAL_DESC& desc)
         {
             if (desc.eState != TUTORIAL_STATE::PLAY)
                 return;
 
             Change_State(STATE::READY);
-            m_eType = desc.eType;
             Ready_Slots(desc.eType);
-             
+        });
+
+    // 이벤트 : TUTORIAL_ACTION_COMPLETE
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_ACTION_COMPLETE>([this](const TUTORIAL_ACTION_COMPLETE& desc)
+        {
+            m_slotsProgress[desc.eAction] = true;
+
+            const auto& actions = CDataBase::GetInstance()->GetTutorialActions(m_eType);
+            for (auto& action : actions)
+            {
+                auto it = m_slotsProgress.find(action.eAction);
+                if (it == m_slotsProgress.end() || !it->second)
+                    return;
+            }
+
+            Change_State(STATE::DEACTIVATING);
         });
 
 	return S_OK;
@@ -58,10 +72,31 @@ void CUI_TutorialGuide::Awake()
 
 void CUI_TutorialGuide::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('N'))
+    if (InputDevice()->Key_Tap('Z'))
     {
         TUTORIAL_ACTION_DESC desc = {};
         desc.eAction = TUTORIAL_ACTION::DODGE;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('X'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('C'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::ASSIST;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('V'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
         EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
     }
 
@@ -72,12 +107,15 @@ void CUI_TutorialGuide::Update(_float dt)
             Change_State(STATE::ACTIVE);
         break;
     case STATE::ACTIVE:
-        if (InputDevice()->Key_Tap('M'))
+        if (InputDevice()->Key_Tap('T'))
             Change_State(STATE::DEACTIVATING);
         break;
     case STATE::DEACTIVATING:
-        if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
+        m_fTimer += dt;
+        if (m_fTimer >= m_fDuration)
             Change_State(STATE::INACTIVE);
+        //if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
+        //    Change_State(STATE::INACTIVE); 
         break;
     } 
 
@@ -138,6 +176,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         Set_Alive(true);
         if (m_pGuideStart)
             m_pGuideStart->UI_Active();
+        for (auto& pair : m_slotsProgress)
+            pair.second = false;
         break;
     case STATE::ACTIVE:
         if (m_pGuideStart)
@@ -150,6 +190,7 @@ void CUI_TutorialGuide::Change_State(STATE eState)
             pair.second->UI_DeActive();
         if (m_pSlotComplete)
             m_pSlotComplete->UI_Active();
+        m_fTimer = 0.f;
         //GameInstance()->Set_EngineTimeScale(0.f);
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
         break;
@@ -162,6 +203,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
 
 void CUI_TutorialGuide::Ready_Slots(TUTORIAL_TYPE eType)
 {
+    m_eType = eType;
+
     const auto& actions = CDataBase::GetInstance()->GetTutorialActions(eType);
 
     for (auto& pair : m_pSlots)

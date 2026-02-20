@@ -25,12 +25,16 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	TUTORIAL_TYPE m_eType = {};
 	STATE m_eState = { STATE::END };
+	TUTORIAL_TYPE m_eType = {}; 
 
 	CUI_Object* m_pGuideStart = {};
 	CUI_Object* m_pSlotComplete = {};
 	map<TUTORIAL_ACTION, CUI_Object*> m_pSlots;
+	map<TUTORIAL_ACTION, _bool> m_slotsProgress;
+
+	_float m_fTimer = {};
+	const _float m_fDuration = { 4.7f };
 
 private:
 	HRESULT Create_GuideStart();

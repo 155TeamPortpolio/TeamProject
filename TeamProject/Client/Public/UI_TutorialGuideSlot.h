@@ -18,7 +18,6 @@ private:
 	CUI_TutorialGuideSlot() {}
 	CUI_TutorialGuideSlot(const CUI_TutorialGuideSlot& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_TutorialGuideSlot() DEFAULT;
-
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
@@ -32,6 +31,7 @@ public:
 
 private:
 	TUTORIAL_ACTION m_eAction = {};
+
 	class CTextSlot* m_pCountText = {};
 
 	_uint m_iCurrentCount = {};
