@@ -2,21 +2,22 @@
 #include "UI_Object.h"
 
 NS_BEGIN(Engine)
-class CVideoPlayer;
-class CMFVideoDecoderBackend;
+class CTextSlot;
 NS_END
 
 NS_BEGIN(Client)
 
-class CUI_TutorialVideo final : public CUI_Object
+class CUI_TutorialInfo final : public CUI_Object
 {
-private:
-	CUI_TutorialVideo() {}
-	CUI_TutorialVideo(const CUI_TutorialVideo& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_TutorialVideo() DEFAULT;
-
 public:
-	void Play(TUTORIAL_TYPE eType);
+	typedef struct tagTutorialInfoDesc{
+		TUTORIAL_TYPE eType = {};
+	}TUTORIAL_INFO_DESC;
+
+private:
+	CUI_TutorialInfo() {}
+	CUI_TutorialInfo(const CUI_TutorialInfo& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialInfo() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -30,13 +31,25 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	CVideoPlayer* m_pPlayer = { nullptr };
-	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
-	_uint64 m_startTimeSec = 0.0;
-	_uint m_PlayerID = {};
+	TUTORIAL_TYPE m_eType = { TUTORIAL_TYPE::EXTREME_EVADE };
+
+	_bool m_isCheck = {};
+
+	class CTextSlot* m_pTitle = {};
+	map<TUTORIAL_TYPE, CUI_Object*> m_Descriptions;
+	class CUI_TutorialVideo* m_pVideo = {};
 
 private:
-	string Get_VideoPath(TUTORIAL_TYPE eType);
+	void Cache();
+	HRESULT Create_ExitButton();
+	HRESULT Create_EnterButton();
+	HRESULT Create_TutorialDescriptions();
+	HRESULT Create_TutorialVideo();
+
+	void Change_Description(TUTORIAL_TYPE eType);
+	void Change_TitleText(TUTORIAL_TYPE eType);
+
+	wstring Get_TitleText(TUTORIAL_TYPE eType);
 
 public:
 	static  CGameObject* Create();

@@ -487,6 +487,9 @@
     <ClInclude Include="..\public\Tutorial_Level.h" />
     <ClInclude Include="..\Public\UI_Mouse.h" />
     <ClInclude Include="..\Public\UI_SpeechBubble.h" />
+    <ClInclude Include="..\Public\UI_TutorialGuide.h" />
+    <ClInclude Include="..\Public\UI_TutorialGuideSlot.h" />
+    <ClInclude Include="..\Public\UI_TutorialGuideStart.h" />
     <ClInclude Include="..\public\ZeroStage_Rest.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
@@ -529,7 +532,7 @@
     <ClInclude Include="..\Public\UI_GachaTextGroup.h" />
     <ClInclude Include="..\Public\UI_GachaVideo.h" />
     <ClInclude Include="..\Public\UI_RenderTargetScreen.h" />
-    <ClInclude Include="..\Public\UI_Tutorial.h" />
+    <ClInclude Include="..\Public\UI_TutorialInfo.h" />
     <ClInclude Include="..\Public\UI_ButtonPanel.h" />
     <ClInclude Include="..\Public\UI_TutorialDescription.h" />
     <ClInclude Include="..\Public\UI_TutorialVideo.h" />
@@ -1011,6 +1014,9 @@
     <ClCompile Include="..\private\Tutorial_Level.cpp" />
     <ClCompile Include="..\Private\UI_Mouse.cpp" />
     <ClCompile Include="..\Private\UI_SpeechBubble.cpp" />
+    <ClCompile Include="..\Private\UI_TutorialGuide.cpp" />
+    <ClCompile Include="..\Private\UI_TutorialGuideSlot.cpp" />
+    <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp" />
     <ClCompile Include="..\private\ZeroStage_Rest.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
@@ -1053,7 +1059,7 @@
     <ClCompile Include="..\Private\UI_GachaTextGroup.cpp" />
     <ClCompile Include="..\Private\UI_GachaVideo.cpp" />
     <ClCompile Include="..\Private\UI_RenderTargetScreen.cpp" />
-    <ClCompile Include="..\Private\UI_Tutorial.cpp" />
+    <ClCompile Include="..\Private\UI_TutorialInfo.cpp" />
     <ClCompile Include="..\Private\UI_ButtonPanel.cpp" />
     <ClCompile Include="..\Private\UI_TutorialDescription.cpp" />
     <ClCompile Include="..\Private\UI_TutorialVideo.cpp" />

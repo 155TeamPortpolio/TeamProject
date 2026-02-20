@@ -1,22 +1,17 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class CVideoPlayer;
-class CMFVideoDecoderBackend;
-NS_END
-
 NS_BEGIN(Client)
 
-class CUI_TutorialVideo final : public CUI_Object
+class CUI_TutorialGuide final : public CUI_Object
 {
 private:
-	CUI_TutorialVideo() {}
-	CUI_TutorialVideo(const CUI_TutorialVideo& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_TutorialVideo() DEFAULT;
+	enum class STATE { READY, ACTIVE, DEACTIVATING, INACTIVE, END };
 
-public:
-	void Play(TUTORIAL_TYPE eType);
+private:
+	CUI_TutorialGuide() {}
+	CUI_TutorialGuide(const CUI_TutorialGuide& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_TutorialGuide() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -30,13 +25,26 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	CVideoPlayer* m_pPlayer = { nullptr };
-	CMFVideoDecoderBackend* m_pDecoder = { nullptr };
-	_uint64 m_startTimeSec = 0.0;
-	_uint m_PlayerID = {};
+	TUTORIAL_TYPE m_eType = {};
+	STATE m_eState = { STATE::END };
+
+	CUI_Object* m_pGuideStart = {};
+	CUI_Object* m_pSlotComplete = {};
+	map<TUTORIAL_ACTION, CUI_Object*> m_pSlots;
 
 private:
-	string Get_VideoPath(TUTORIAL_TYPE eType);
+	HRESULT Create_GuideStart();
+	HRESULT Create_SlotComplete();
+
+	void Change_State(STATE eState);
+	void Ready_Slots(TUTORIAL_TYPE eType);
+
+	void Activate_Slot(TUTORIAL_ACTION_DESC desc);
+	HRESULT Create_Slot(TUTORIAL_ACTION_DESC desc);
+
+	void AdvanceTutorial();
+
+	TUTORIAL_TYPE GetNextTutorialType(TUTORIAL_TYPE eType);
 
 public:
 	static  CGameObject* Create();
