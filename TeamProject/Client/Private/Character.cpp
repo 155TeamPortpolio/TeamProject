@@ -66,6 +66,14 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
             else
             {
                 m_eTutorial = desc.eType;
+                Reset_State();
+                _vector3 vInitPos = { 0.1f, 1.1f, -6.6f };
+                _vector3 vInitLook = { 0.f, 0.f, 1.f };
+                if(m_pTransform && m_pCCT)
+                {
+                    m_pTransform->Set_Look(vInitLook);
+                    m_pCCT->Set_Position(vInitPos);
+                }
             }
         });
 

@@ -47,7 +47,7 @@ HRESULT CTutorial_Level::Awake()
     m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
     m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
-    BattleSystem()->SetBattleCharacters({CHARACTER::Corin });
+    BattleSystem()->SetBattleCharacters({CHARACTER::Corin, CHARACTER::JaneDoe });
     BattleSystem()->SetActive(true);
 
     /* Environment */

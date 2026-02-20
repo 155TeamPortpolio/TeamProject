@@ -34,13 +34,6 @@ void CJaneDoeState_AssaultAttack::Enter(CJaneDoe* pOwner)
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
 
-	if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
-	{
-		TUTORIAL_ACTION_DESC desc;
-		desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
-		EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
-	}
-
 	__super::Enter(pOwner);
 }
 
@@ -135,6 +128,16 @@ void CJaneDoeState_Assault_Start::Update(CJaneDoe* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
 		ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+	if (IsCrossAnimProgress(0.32f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_SUPPORT)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 
 	Update_Effects(pOwner);
 }
