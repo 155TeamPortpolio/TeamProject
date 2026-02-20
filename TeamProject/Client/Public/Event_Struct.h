@@ -113,5 +113,9 @@ typedef struct tagTutorialActionDesc {
 	TUTORIAL_ACTION eAction = {};	// 요구되는 액션 종류
 	_uint iCount = {};				// 요구 횟수
 }TUTORIAL_ACTION_DESC;
+
+typedef struct tagTutorialActionComplete {
+	TUTORIAL_ACTION eAction = {};
+}TUTORIAL_ACTION_COMPLETE;
 #pragma endregion
 NS_END

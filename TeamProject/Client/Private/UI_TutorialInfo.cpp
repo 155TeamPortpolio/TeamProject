@@ -9,6 +9,7 @@
 #include "UI_ButtonPanel.h"
 #include "UI_TutorialDescription.h"
 #include "UI_TutorialVideo.h"
+#include "UI_Banner.h"
 
 #include "UIDirector.h"
 
@@ -33,11 +34,12 @@ HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_info.json")));
     Cache();
-
-    Create_ExitButton();
-    Create_EnterButton();
+     
     Create_TutorialDescriptions();
     //Create_TutorialVideo();
+    Create_ExitButton();
+    Create_ExitBanner();
+    Create_EnterButton();
 
     // 이벤트 : TUTORIAL_DESC
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
@@ -74,6 +76,7 @@ void CUI_TutorialInfo::UI_Active(void* pArg)
     Set_Alive(true);
     
     UIDirector()->Show_Mouse();
+    UIDirector()->FadeIn_Screen(0.2f);
     GameInstance()->Set_EngineTimeScale(0.f);
 }
 
@@ -98,42 +101,6 @@ void CUI_TutorialInfo::Cache()
     auto pTitle = Get_Component<CObjectContainer>()->Find_Descendant("title");
     if (pTitle)
         m_pTitle = pTitle->Get_Component<CTextSlot>();
-}
-
-HRESULT CUI_TutorialInfo::Create_ExitButton()
-{
-    CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
-    pDesc->strJsonKey = "tutorial_exitButton.json";
-
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel"})
-        .Add_UIDesc(pDesc)
-        .Build("buttonExit");
-
-    if (!pObj)
-        return E_FAIL;
-
-    pObj->Set_OnClick([]() { LevelManager()->Request_ChangeLevel("Scott_Level", true); });
-    Get_Component<CObjectContainer>()->Add_Child(pObj);
-
-    return S_OK;
-}
-
-HRESULT CUI_TutorialInfo::Create_EnterButton()
-{
-    CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
-    pDesc->strJsonKey = "tutorial_enterButton.json";
-
-    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel"})
-        .Add_UIDesc(pDesc)
-        .Build("buttonEnter");
-
-    if (!pObj)
-        return E_FAIL;
-
-    pObj->Set_OnClick([this]() { UI_DeActive(); });
-    Get_Component<CObjectContainer>()->Add_Child(pObj);
-
-    return S_OK;
 }
 
 HRESULT CUI_TutorialInfo::Create_TutorialDescriptions()
@@ -168,6 +135,66 @@ HRESULT CUI_TutorialInfo::Create_TutorialVideo()
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
     m_pVideo = dynamic_cast<CUI_TutorialVideo*>(pObj);
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_ExitButton()
+{
+    CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
+    pDesc->strJsonKey = "tutorial_exitButton.json";
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonExit");
+
+    if (!pObj)
+        return E_FAIL;
+
+    pObj->Set_OnClick([this]() { 
+        if (m_pExitBanner) 
+            m_pExitBanner->UI_Active(); });
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_ExitBanner()
+{
+    CUI_Banner::BANNER_DESC* pDesc = new CUI_Banner::BANNER_DESC;
+    pDesc->strTitle = L"튜토리얼을 나가시겠습니까?";
+    pDesc->strSubtitle = L"튜토리얼 진행도는 저장되지 않습니다.";
+    pDesc->onClickConfirm = []() { 
+        UIDirector()->FadeOut_Screen(0.2f);
+        LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        };
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Banner" })
+        .Add_UIDesc(pDesc)
+        .Build("bannerExit");
+
+    if (!pObj)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pExitBanner = pObj;
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_EnterButton()
+{
+    CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
+    pDesc->strJsonKey = "tutorial_enterButton.json";
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonEnter");
+
+    if (!pObj)
+        return E_FAIL;
+
+    pObj->Set_OnClick([this]() { UI_DeActive(); });
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
 
     return S_OK;
 }

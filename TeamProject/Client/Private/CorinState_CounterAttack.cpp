@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "CorinState_CounterAttack.h"
+
+#include "GameInstance.h"
+#include "EventSystem.h"
 #include "Corin.h"
 
 CCorinState_CounterAttack* CCorinState_CounterAttack::Create()
@@ -30,13 +33,16 @@ void CCorinState_CounterAttack::Enter(CCorin* pOwner)
 	pOwner->Lock_Move();
 	pOwner->Push_Invincible();
 	m_eType = DAMAGE_TYPE::NORMAL;
+
 	__super::Enter(pOwner);
 }
 
 void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 {
 	if (IsCrossAnimProgress(0.7f))
+	{
 		m_eType = DAMAGE_TYPE::HARD;
+	}
 
 	for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
 	{
@@ -101,6 +107,16 @@ void CCorinState_Counter_Start::Update(CCorin* pOwner, _float dt)
 	pOwner->Process_RootMotion(dt,
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+	if (IsCrossAnimProgress(0.7f))
+	{
+		if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+		{
+			TUTORIAL_ACTION_DESC desc;
+			desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+		}
+	}
 
 	Update_Effects(pOwner);
 }

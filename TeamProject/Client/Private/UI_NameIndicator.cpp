@@ -145,7 +145,7 @@ CUI_NameIndicator::STATE_VISIBLE CUI_NameIndicator::CalcState_ByDistance()
 
     Vector3 vDiff = (Vector3(m_vPosition) - Vector3(vPlayerPos));
 
-    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::HIDDEN;
+    return (max(1.f, m_fRadius) >= vDiff.Length()) ? STATE_VISIBLE::VISIBLE : STATE_VISIBLE::INVISIBLE;
 }
 
 void CUI_NameIndicator::Set_ChildAlpha(CHILD child, _float fAlpha)

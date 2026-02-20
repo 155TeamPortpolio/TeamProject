@@ -29,7 +29,7 @@ CBattlePlayer::CBattlePlayer()
 HRESULT CBattlePlayer::Initialize()
 {
     if (m_BattleCharacters.empty()) {
-        SetBattleCharacters({ CHARACTER::Corin,CHARACTER::JaneDoe,CHARACTER::Miyabi });
+        SetBattleCharacters({ CHARACTER::Miyabi,CHARACTER::JaneDoe,CHARACTER::Corin });
     }
     return S_OK;
 }
@@ -1009,6 +1009,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     characterCCT.fHeight = 1.13;
     characterCCT.fRadius = 0.3f;
     characterCCT.vPos = { 0.f, 1.5f, 0.f };
+    //characterCCT.fStepOffset = 0.001f;
     string nowLevelKey = LevelManager()->Get_NowLevelKey();
     switch (character)
     {

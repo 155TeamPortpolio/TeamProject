@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
+#include "AudioSource.h"
 
 #include "BattleSystem.h"
 #include "UIDirector.h"
@@ -11,6 +12,7 @@
 
 #include "UI_TutorialGuideSlot.h"
 #include "UI_TutorialGuideStart.h"
+#include "UI_LotteryResultBanner.h"
 
 HRESULT CUI_TutorialGuide::Initialize_Prototype()
 {
@@ -19,6 +21,8 @@ HRESULT CUI_TutorialGuide::Initialize_Prototype()
 
 	Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
 
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideStart", CUI_TutorialGuideStart::Create());
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuideSlot", CUI_TutorialGuideSlot::Create());
@@ -37,15 +41,29 @@ HRESULT CUI_TutorialGuide::Initialize(INIT_DESC* pArg)
     Create_SlotComplete();
 
     // 이벤트 : TUTORIAL_DESC
-    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([this](const TUTORIAL_DESC& desc)
         {
             if (desc.eState != TUTORIAL_STATE::PLAY)
                 return;
 
             Change_State(STATE::READY);
-            m_eType = desc.eType;
             Ready_Slots(desc.eType);
-             
+        });
+
+    // 이벤트 : TUTORIAL_ACTION_COMPLETE
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_ACTION_COMPLETE>([this](const TUTORIAL_ACTION_COMPLETE& desc)
+        {
+            m_slotsProgress[desc.eAction] = true;
+
+            const auto& actions = CDataBase::GetInstance()->GetTutorialActions(m_eType);
+            for (auto& action : actions)
+            {
+                auto it = m_slotsProgress.find(action.eAction);
+                if (it == m_slotsProgress.end() || !it->second)
+                    return;
+            }
+
+            Change_State(STATE::DEACTIVATING);
         });
 
 	return S_OK;
@@ -58,10 +76,31 @@ void CUI_TutorialGuide::Awake()
 
 void CUI_TutorialGuide::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('N'))
+    if (InputDevice()->Key_Tap('Z'))
     {
         TUTORIAL_ACTION_DESC desc = {};
         desc.eAction = TUTORIAL_ACTION::DODGE;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('X'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('C'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::ASSIST;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('V'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
         EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
     }
 
@@ -72,12 +111,20 @@ void CUI_TutorialGuide::Update(_float dt)
             Change_State(STATE::ACTIVE);
         break;
     case STATE::ACTIVE:
-        if (InputDevice()->Key_Tap('M'))
+        if (InputDevice()->Key_Tap('T'))
             Change_State(STATE::DEACTIVATING);
         break;
     case STATE::DEACTIVATING:
-        if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
+        m_fTimer += dt;
+        if (m_fTimer >= m_fDurationFadeout && !m_isFadeout)
+        {
+            UIDirector()->FadeOut_Screen(0.2f);
+            m_isFadeout = true;
+        } 
+        if (m_fTimer >= m_fDurationWipeout)
             Change_State(STATE::INACTIVE);
+        //if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
+        //    Change_State(STATE::INACTIVE); 
         break;
     } 
 
@@ -126,6 +173,35 @@ HRESULT CUI_TutorialGuide::Create_SlotComplete()
     return S_OK;
 }
 
+HRESULT CUI_TutorialGuide::Show_ResultBanner()
+{
+    GameInstance()->Set_EngineTimeScale(0.f);
+    UIDirector()->FadeIn_Screen(0.2f);
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner" })
+        .Build("resultBanner");
+
+    if (!pObj)
+        return E_FAIL;
+ 
+    UIManager()->Add_UIObject(pObj, LevelManager()->Get_NowLevelKey());
+
+    pObj->Set_OnClick([]() { 
+        GameInstance()->Set_EngineTimeScale(1.f);
+        LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        });
+
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+    iDenny += 10000;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+    CUI_LotteryResultBanner::RESULT_DESC desc = {};
+    desc.iDenny = 10000;
+    pObj->UI_Active(&desc);
+
+    return S_OK;
+}
+
 void CUI_TutorialGuide::Change_State(STATE eState)
 {
     if (m_eState == eState)
@@ -138,23 +214,28 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         Set_Alive(true);
         if (m_pGuideStart)
             m_pGuideStart->UI_Active();
+        for (auto& pair : m_slotsProgress)
+            pair.second = false;
         break;
     case STATE::ACTIVE:
         if (m_pGuideStart)
             m_pGuideStart->UI_DeActive();
         UIDirector()->Hide_Mouse();
-        GameInstance()->Set_EngineTimeScale(1.f); 
+        GameInstance()->Set_EngineTimeScale(1.f);
+        Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
         break;
     case STATE::DEACTIVATING:
         for (auto& pair : m_pSlots)
             pair.second->UI_DeActive();
         if (m_pSlotComplete)
             m_pSlotComplete->UI_Active();
+        m_fTimer = 0.f;
+        m_isFadeout = false;
         //GameInstance()->Set_EngineTimeScale(0.f);
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
         break;
     case STATE::INACTIVE:
-        AdvanceTutorial();
+        AdvanceTutorial(); 
         Set_Alive(false);
         break;
     }
@@ -162,6 +243,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
 
 void CUI_TutorialGuide::Ready_Slots(TUTORIAL_TYPE eType)
 {
+    m_eType = eType;
+
     const auto& actions = CDataBase::GetInstance()->GetTutorialActions(eType);
 
     for (auto& pair : m_pSlots)
@@ -207,7 +290,7 @@ void CUI_TutorialGuide::AdvanceTutorial()
     auto next = GetNextTutorialType(m_eType);
     
     if (next == TUTORIAL_TYPE::END)
-        LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        Show_ResultBanner();// LevelManager()->Request_ChangeLevel("Scott_Level", true);
     else
     {
         TUTORIAL_DESC desc = {};

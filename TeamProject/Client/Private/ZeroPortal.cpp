@@ -75,8 +75,17 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
-
 	Focus(dt);
+
+	if (m_OnActive)
+	{
+		m_fActiveElapsedTime += dt;
+		if (m_fActiveElapsedTime >= m_fActiveDuration)
+		{
+			NoiseSequence();
+			m_OnActive = false;
+		}
+	}
 }
 
 void CZeroPortal::Late_Update(_float dt)
@@ -211,6 +220,22 @@ void CZeroPortal::Contract(_float dt)
 		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vBaseScale), Math::ApplyEase(EaseType::OutExpo, t));
 		m_pTransform->Scale(vCurrScale);
 	}
+}
+
+void CZeroPortal::NoiseSequence()
+{
+	vector<CTexture*> NoiseTextures;
+	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_09.png"));
+	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_01.png"));
+	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_139.png"));
+	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_140_ZJ_01.png"));
+	NoiseTextures.push_back(ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_167.png"));
+
+	//auto pPost = RenderSystem()->GetPostRenderer();
+	//pPost->GetCommand<CNoiseCommand>()
+	//->SetTexture(NoiseTextures)
+	//->SetDuration(0.5f)
+	//->SetEnable(true);
 }
 
 void CZeroPortal::Active_Portal()

@@ -43,6 +43,7 @@ private:
     void Focus(_float dt);
     void Extend(_float dt);
     void Contract(_float dt);
+    void NoiseSequence() {};
 
     /* For Debug */
     void Active_Portal();
@@ -64,12 +65,17 @@ private:
 private:
     _bool m_OnExtend = false;
     _bool m_OnContract = false;
+    _bool m_OnActive = false;
 
     _float m_fDuration{};
     _float m_fElapsedTime{};
 
     _vector3 m_vBaseScale{};
     _vector3 m_vExtendScale{};
+
+    _float m_fActiveElapsedTime{};
+    _float m_fActiveDuration = 0.2f;
+
 public:
     static CZeroPortal* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;

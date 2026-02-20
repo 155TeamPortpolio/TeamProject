@@ -501,11 +501,11 @@ void CMiyabiState_ExAttack_End::Update(CMiyabi* pOwner, _float dt)
                 .Attribute3D(true)
                 .Play();
             break;
-        //case 2:
-        //    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
-        //        .Attribute3D(true)
-        //        .Play();
-        //    break;
+        case 2:
+            pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
+                .Attribute3D(true)
+                .Play();
+            break;
         }
     }
 }
