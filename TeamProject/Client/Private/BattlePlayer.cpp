@@ -807,7 +807,6 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
         - XMVectorScale(m_vSwitchLook, 1.5f)
         + XMVectorSet(0.f, 0.5f, 0.f, 0.f);
 
-    // 패링 가능 상태면 패링 위치로 전환
     if (m_pCurrentCharacter->Can_Parry())
     {
         m_bReserveParry = true;
@@ -818,36 +817,35 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
     else if (m_bComboSelect)
     {
         _vector3 vCharacterPos = m_pCurrentCharacter->Get_WorldPos();
-        if (!m_TargetHandle.isValid() || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
-            return;
+        if (m_TargetHandle.isValid() && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+        {
+            _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
 
-        _vector3 vTargetPos = m_TargetHandle.Get()->Get_WorldPos();
+            _vector3 vToCharacter = vCharacterPos - vTargetPos;
+            vToCharacter.y = 0.f;
+            vToCharacter.Normalize();
 
-        // 몬스터에서 현재 캐릭터를 향하는 방향
-        _vector3 vToCharacter = vCharacterPos - vTargetPos;
-        vToCharacter.y = 0.f;
-        vToCharacter.Normalize();
+            _float fAngle = XMConvertToRadians(bNext ? 45.f : -45.f);
+            _float fCos = cosf(fAngle);
+            _float fSin = sinf(fAngle);
 
-        // bNext(Left) : +60도, !bNext(Right) : -60도 회전
-        _float fAngle = XMConvertToRadians(bNext ? 45.f : -45.f);
-        _float fCos = cosf(fAngle);
-        _float fSin = sinf(fAngle);
+            _vector3 vSwitchDir;
+            vSwitchDir.x = vToCharacter.x * fCos + vToCharacter.z * fSin;
+            vSwitchDir.y = 0.f;
+            vSwitchDir.z = -vToCharacter.x * fSin + vToCharacter.z * fCos;
 
-        _vector3 vSwitchDir;
-        vSwitchDir.x = vToCharacter.x * fCos + vToCharacter.z * fSin;
-        vSwitchDir.y = 0.f;
-        vSwitchDir.z = -vToCharacter.x * fSin + vToCharacter.z * fCos;
+            _vector3 vSwitch = vTargetPos + vSwitchDir * 5.f;
+            m_vSwitchPosition = XMVectorSet(vSwitch.x, vCharacterPos.y + 1.f, vSwitch.z, 1.f);
 
-        _vector3 vSwitch = vTargetPos + vSwitchDir * 5.f;
-        m_vSwitchPosition = XMVectorSet(vSwitch.x, vCharacterPos.y + 1.f, vSwitch.z, 1.f);
-
-        // 스폰 지점에서 몬스터를 바라보는 방향
-        _vector3 vLookDir = vTargetPos - vSwitch;
-        vLookDir.y = 0.f;
-        vLookDir.Normalize();
-        m_vSwitchLook = XMVectorSet(vLookDir.x, 0.f, vLookDir.z, 0.f);
+            _vector3 vLookDir = vTargetPos - vSwitch;
+            vLookDir.y = 0.f;
+            vLookDir.Normalize();
+            m_vSwitchLook = XMVectorSet(vLookDir.x, 0.f, vLookDir.z, 0.f);
+        }
+        // 타겟 무효시 함수 상단에서 계산한 기본 위치(캐릭터 후방)를 그대로 사용
     }
 
+    // 비활성화는 항상 실행
     m_pCurrentCharacter->Set_MainCharacter(false);
     m_pCurrentCharacter->On_SwitchOut(m_bReserveParry);
     m_input.ResetBuffer();
