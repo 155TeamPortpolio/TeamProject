@@ -378,7 +378,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 
 	if (moveLenSigned > 0.f)
 	{
-		distScale = 1.f + distToTarget;
+		distScale = 1.f + distToTarget*0.4;
 	}
 
 	_vector3 velocityWorld = (moveWorld)*distScale;

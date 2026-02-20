@@ -14,6 +14,8 @@ bool CMonitorGate::Pass() const
 
     if (w < m_minWidth)  return false;
     if (h < m_minHeight) return false;
+
+    MSG_BOX("패딩 버려라");
     return true;
 }
 

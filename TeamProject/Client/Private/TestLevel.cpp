@@ -183,6 +183,7 @@ HRESULT CTestLevel::Awake()
 	//GameInstance()->Set_EngineTimeScale(0.05f);
 
 	CamDirector()->AutoBattle(CamStartDir::Back);
+	CameraManager()->SetFov(-10.f, 1.f, EaseType::InOutSine);
 
 	//CMonitorGate gate;
 	//if (!gate.Pass())
@@ -444,6 +445,9 @@ void CTestLevel::Free()
 	__super::Free();
 	//CBattleSystem::GetInstance()->DestroyInstance();
 	//CDataBase::GetInstance()->DestroyInstance();
+
+	CameraManager()->SetFov(10.f, 0.f, EaseType::InOutSine);
+
 	m_pPlayer->Clear_Characters();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
