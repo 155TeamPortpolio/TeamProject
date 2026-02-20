@@ -201,7 +201,8 @@ void CMiasmaHeavyJaeger::OnTriggerEnter(CGameObject* pOther)
 	if (nullptr != pEnemy)
 	{
 		m_pStateMachine->Set_Trigger("Parried");
-
+		m_isParryEnable = false;
+		m_isOnAttack = false;
 	}
 }
 
@@ -317,7 +318,7 @@ void CMiasmaHeavyJaeger::Route_AnimEvent(CAnimator3D* animator)
 				HitDesc		HitDesc = {};
 				HitDesc.eHitType = HIT_TYPE::ONCE;
 				HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
-				HitDesc.fDamage = 0.f;
+				HitDesc.fDamage = 10.f;
 				HitDesc.fInterval = 0.f;
 				HitDesc.iMaxCount = 1;
 				SetBattleColliderObject("Bip001", CEnemy::BATTLE_COLTYPE::ATTACK,
@@ -378,7 +379,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 
 	if (moveLenSigned > 0.f)
 	{
-		distScale = 1.f + distToTarget;
+		distScale = 1.f + distToTarget*0.4;
 	}
 
 	_vector3 velocityWorld = (moveWorld)*distScale;
