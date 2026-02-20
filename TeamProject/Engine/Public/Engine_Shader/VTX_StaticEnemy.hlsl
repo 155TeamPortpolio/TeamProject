@@ -6,11 +6,11 @@
 float fUseVanish;
 float3 vEmissiveColor;
 float fEmissiveStrength;
-float3 vRimLightColor;
+float3 vRimLightColor = float3(0.378, 0.029, 0.070);
 vector vOutLineColor;
 
 float fOutLineThickness;
-float fRimLightPower;
+float fRimLightPower = 4.f;
 
 float fTime;
 float fDissolveProgress;

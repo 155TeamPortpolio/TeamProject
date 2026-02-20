@@ -29,6 +29,7 @@
 #include "DefilerWall.h"
 #include "WaterWaves.h"
 
+#include "EventListener.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -36,7 +37,6 @@
 #include "CamDirector.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
-
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -105,14 +105,11 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
 	Create_MeshPyramid();
-
 	return S_OK;
 }
 
 void CDefiler::Awake()
 {
-	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
-	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	auto pMaterial = Get_Component<CMaterial>();
@@ -122,12 +119,10 @@ void CDefiler::Awake()
 	for (const auto& instance : materialInstances)
 	{
 		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
-
+	m_MatPreset.Initialize(pMaterial);
 }
 
 void CDefiler::Priority_Update(_float dt)
@@ -177,10 +172,10 @@ void CDefiler::Late_Update(_float dt)
 
 void CDefiler::Render_GUI()
 {
-	__super::Render_GUI();
 #ifdef _USING_GUI
 	Client::DefilerDebugGUI::Render(m_BlackBoard);
 #endif
+	__super::Render_GUI();
 }
 
 void CDefiler::Change_CollisionMask(_uint iMask)
@@ -286,6 +281,7 @@ void CDefiler::Parried()
 {
 	m_tStatus.iGroggyValue += 1.f;
 }
+
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
 	if (m_passDampTime > 0.f)
@@ -683,13 +679,13 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 	if (0 >= m_tStatus.iNowHP) {
 		m_tStatus.iNowHP = 0.f;
-		m_BlackBoard.BloodPhase++;
-		if (m_BlackBoard.BloodPhase > 2) {
-			m_pStateMachine->Set_Trigger("Death");
-		}
-		else {
+		if (m_BlackBoard.MiasmaPhase == false) {
 			m_isRecovering = true;
 			m_pendToRecover = m_tStatus.iMaxHP;
+			m_BlackBoard.MiasmaPhase = true;
+		}
+		else if (m_BlackBoard.MiasmaPhase) {
+			m_pStateMachine->Set_Trigger("Death");
 		}
 	}
 

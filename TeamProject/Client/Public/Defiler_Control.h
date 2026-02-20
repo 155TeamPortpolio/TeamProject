@@ -4,6 +4,11 @@
 #include "DefilerState_Idle.h"
 #include "DefilerState_Attack.h"
 #include "DefilerState_Other.h"
+
+#include "GameInstance.h"
+#include "Material.h"
+#include "Texture.h"
+
 NS_BEGIN(Client)
 /*실제 위치 계산*/
 enum class FOUR_DIR { FRONT, LEFT, RIGHT, BACK };
@@ -101,7 +106,7 @@ inline void RemoveFlag(TraceFlag& value, TraceFlag flag)
 
 typedef struct tagDefilerBlackBoard
 {
-    _uint BloodPhase = {};
+    _bool MiasmaPhase = {};
 	_vector3 vTargetPos = {};
 	_vector3 vTargetDir = {};
 	
@@ -116,7 +121,7 @@ typedef struct tagDefilerBlackBoard
 	_vector3 CurrentDir = _vector3(0.f, 0.f, 1.f);
 
 	/*패턴*/
-	_int patternIndex = { 00 };
+	_int patternIndex = { 0 };
     struct DefilerPattern { string nextPattern{}; _float animStartProgress{}; _float animEndProgress{}; };
 	deque<DefilerPattern> patternTransition;
 	DefilerPattern reservedPattern = {};
@@ -199,6 +204,31 @@ struct TsunamiWallDesc {
 struct TsunamiDesc {
     _bool isEndTsunami = { false };
     _bool isHitGround = { false };
+};
+
+
+struct DefilerMaterialParam {
+    _float3 vEmissiveColor= { 1.378, 0.039, 0.039 };
+    _float  fEmissiveStrength{};
+    _float  fRimLightPower={4.f};
+    _float3 vRimLightColor={ 0.378, 0.029, 0.070 };
+};
+
+struct DefilerMaterialPreset {
+    vector<DefilerMaterialParam> MaterialParams;
+    void Initialize(class CMaterial* pMaterial) {
+        auto& materialInstances = pMaterial->Get_MaterialInstances();
+        _uint size = materialInstances.size();
+        MaterialParams.resize(size);
+        auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
+        for (size_t i = 0; i < size; i++)
+        {
+            auto instance = materialInstances[i];
+            instance->Set_Param("vRimLightColor",       { &MaterialParams[i].vRimLightColor         ,"float3",sizeof(_float3) });
+            instance->Set_Param("fRimLightPower",       { &MaterialParams[i].fRimLightPower         ,"float",sizeof(_float) });
+          }
+    }
+  
 };
 
 
