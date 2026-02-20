@@ -217,7 +217,7 @@ void CSacrifice_Laser::Pre_EngineUpdate(_float dt)
 
 		auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
 		static_cast<CEffectContainer*>(pLaserHitPoint)->Play();
-		//이우석 바보바보 ㅠ  
+
 		return;
 	}
 
