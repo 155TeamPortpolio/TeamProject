@@ -25,11 +25,10 @@ CJaeger3::CJaeger3(const CJaeger3& rhs)
 
 void CJaeger3::Execute()
 {
-	//UI_DIALOGUE_REQUEST_DESC desc;
-	//desc.strDialogueID = m_DiagloueData.StartDialogueID;
-	//desc.iSequenceID = m_iNextSequceID;
-	//EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
-	Success(0);
+	UI_DIALOGUE_REQUEST_DESC desc;
+	desc.strDialogueID = m_DiagloueData.StartDialogueID;
+	desc.iSequenceID = m_iNextSequceID;
+	EventSystem()->Broadcast<UI_DIALOGUE_REQUEST_DESC>({ desc });
 }
 
 HRESULT CJaeger3::Initialize_Prototype()

@@ -5,7 +5,11 @@
 #include "MapData_Defines.h"
 
 NS_BEGIN(Engine)
+class CGameInstance;
 class CGameObject;
+class CUI_Object;
+class IProtoService;
+class IObjectService;
 NS_END
 
 NS_BEGIN(Client)

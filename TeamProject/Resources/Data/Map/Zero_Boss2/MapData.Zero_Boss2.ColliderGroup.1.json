@@ -10,6 +10,14 @@
         "type": "Bool",
         "value": true
       }
+    },
+    {
+      "iObjID": 3,
+      "TagName": "Ground",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
     }
   ]
 }

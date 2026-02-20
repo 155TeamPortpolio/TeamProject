@@ -36,7 +36,7 @@ private:
 
 private:
 	_bool m_isSequenceEnd = {};
-	CAudioSource* m_pBGM = nullptr;
+	
 
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);
