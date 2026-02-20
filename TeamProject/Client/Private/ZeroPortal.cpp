@@ -83,6 +83,9 @@ void CZeroPortal::Render_GUI()
 {
 	__super::Render_GUI();
 
+	if (ImGui::Button("Extend"))
+		On_InPlayer();
+
 	if (ImGui::Button("Active Portal"))
 		Active_Portal();
 }
