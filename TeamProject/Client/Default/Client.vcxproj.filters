@@ -1023,9 +1023,6 @@
     <Filter Include="03. Utility\03. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Interactable\BattleStarter">
-      <UniqueIdentifier>{9f98887b-a642-43c8-b771-ee800b464130}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\ScottCar">
       <UniqueIdentifier>{dcf1cf60-9fe9-4cb6-853c-35fd64cdb80f}</UniqueIdentifier>
     </Filter>
@@ -1529,6 +1526,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\RebelMeleeJaeger\State\Attack">
       <UniqueIdentifier>{29c85a9b-43cd-48b0-92e6-e7a440ec9b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\BattleStarter">
+      <UniqueIdentifier>{9f98887b-a642-43c8-b771-ee800b464130}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
