@@ -237,7 +237,7 @@ void CZeroPortal::NoiseSequence()
 		->SetEnable(true);
 }
 
-void CZeroPortal::Active_Portal()
+void CZeroPortal::Active_PortalEffect()
 {
 	m_PortalFlow.Start();
 	/*auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");
