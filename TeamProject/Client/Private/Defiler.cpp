@@ -1019,11 +1019,35 @@ HRESULT CDefiler::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect, false);
 	}
 
+	/* Sting */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_sting0.json")
+			.Build("Defiler_Sting0_0");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	/* Hit Ground */
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_hit_ground0.json")
 			.Build("Defiler_HitGround0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_hit_ground1.json")
+			.Build("Defiler_HitGround1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_hit_ground2.json")
+			.Build("Defiler_HitGround2");
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}

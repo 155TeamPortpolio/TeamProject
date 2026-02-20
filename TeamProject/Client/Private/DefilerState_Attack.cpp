@@ -727,6 +727,11 @@ void CDefilerState_Attack_08_01_End::Update_Effects(CDefiler* pOwner)
 {
 	if (IsCrossAnimProgress(0.07f))
 		pOwner->Stop_Effect("Defiler_Axe_Charge1");
+	if (IsCrossAnimProgress(0.14f))
+	{
+		pOwner->Play_Effect("Defiler_Sting0_0", _vector3(0.4f, 9.f, 0.8f), _quaternion(0.71f, 0.f, 0.f, 0.71f), false);
+		pOwner->Play_Effect("Defiler_HitGround1", _vector3(0.1f, 0.f, 0.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	}
 }
 
 void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
@@ -746,10 +751,17 @@ void CDefilerState_Attack_08_02::Enter(CDefiler* pOwner)
 void CDefilerState_Attack_08_02::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
+	Update_Effects(pOwner);
 }
 
 void CDefilerState_Attack_08_02::Exit(CDefiler* pOwner)
 {
+}
+
+void CDefilerState_Attack_08_02::Update_Effects(CDefiler* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Defiler_HitGround2", _vector3(0.1f, 0.1f, 0.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
