@@ -86,6 +86,16 @@
           "EventTime": 1.458298921585083,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 0.6981156468391418,
+          "EventType": "Sound",
+          "EventTag": "VO_Hut.wav"
+        },
+        {
+          "EventTime": 1.2300000190734863,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
@@ -281,6 +291,41 @@
           "EventTime": 6.432748317718506,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.9421702027320862,
+          "EventType": "Sound",
+          "EventTag": "VO_Hut.wav"
+        },
+        {
+          "EventTime": 1.3157893419265747,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
+        },
+        {
+          "EventTime": 2.0955164432525635,
+          "EventType": "Sound",
+          "EventTag": "VO_Hat.wav"
+        },
+        {
+          "EventTime": 2.777777671813965,
+          "EventType": "Sound",
+          "EventTag": "VO_Hat.wav"
+        },
+        {
+          "EventTime": 3.5899932384490967,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
+        },
+        {
+          "EventTime": 4.170000076293945,
+          "EventType": "Sound",
+          "EventTag": "VO_Huuua.wav"
+        },
+        {
+          "EventTime": 5.28000020980835,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
@@ -321,6 +366,11 @@
           "EventTime": 2.100714683532715,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.2400000095367432,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
@@ -476,6 +526,21 @@
           "EventTime": 4.823001861572266,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.46000000834465027,
+          "EventType": "Sound",
+          "EventTag": "VO_Hughhhh.wav"
+        },
+        {
+          "EventTime": 1.559999942779541,
+          "EventType": "Sound",
+          "EventTag": "VO_Hut.wav"
+        },
+        {
+          "EventTime": 3.240000009536743,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
@@ -641,6 +706,21 @@
           "EventTime": 4.055100917816162,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 0.10999999940395355,
+          "EventType": "Sound",
+          "EventTag": "VO_WellThen.wav"
+        },
+        {
+          "EventTime": 1.840000033378601,
+          "EventType": "Sound",
+          "EventTag": "VO_Hughhhh.wav"
+        },
+        {
+          "EventTime": 3.880000114440918,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
@@ -701,6 +781,11 @@
           "EventTime": 2.7431447505950928,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.12999999523162842,
+          "EventType": "Sound",
+          "EventTag": "VO_Blaster.wav"
         }
       ]
     },
@@ -751,6 +836,16 @@
           "EventTime": 2.7482781410217285,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "VO_WellThen.wav"
+        },
+        {
+          "EventTime": 1.75,
+          "EventType": "Sound",
+          "EventTag": "VO_Hyat.wav"
         }
       ]
     },
@@ -796,6 +891,11 @@
           "EventTime": 1.590000033378601,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.07000000029802322,
+          "EventType": "Sound",
+          "EventTag": "VO_Blaster.wav"
         }
       ]
     },
@@ -891,6 +991,11 @@
           "EventTime": 3.6548407077789307,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 0.8399999737739563,
+          "EventType": "Sound",
+          "EventTag": "VO_Destiny.wav"
         }
       ]
     },
@@ -996,6 +1101,26 @@
           "EventTime": 6.795321464538574,
           "EventType": "Notify",
           "EventTag": "A_Type_Off"
+        },
+        {
+          "EventTime": 2.4800000190734863,
+          "EventType": "Sound",
+          "EventTag": "VO_Hut.wav"
+        },
+        {
+          "EventTime": 3.140000104904175,
+          "EventType": "Sound",
+          "EventTag": "VO_Hut.wav"
+        },
+        {
+          "EventTime": 4.059999942779541,
+          "EventType": "Sound",
+          "EventTag": "VO_Hat.wav"
+        },
+        {
+          "EventTime": 6.53000020980835,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
@@ -1011,6 +1136,11 @@
           "EventTime": 0.550000011920929,
           "EventType": "Sound",
           "EventTag": "DefilerWeaponGround.wav"
+        },
+        {
+          "EventTime": 0.2199999988079071,
+          "EventType": "Sound",
+          "EventTag": "VO_Hut.wav"
         }
       ]
     },
@@ -1030,6 +1160,11 @@
           "EventTime": 1.9171810150146484,
           "EventType": "Sound",
           "EventTag": "Defiler_Change.wav"
+        },
+        {
+          "EventTime": 0.20000000298023224,
+          "EventType": "Sound",
+          "EventTag": "VO_Obsidian.wav"
         }
       ]
     },
@@ -1040,12 +1175,23 @@
           "EventTime": 0.8999999761581421,
           "EventType": "Sound",
           "EventTag": "DefilerHitGround.wav"
+        },
+        {
+          "EventTime": 0.8399999737739563,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
         }
       ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 1.159999966621399,
+          "EventType": "Sound",
+          "EventTag": "VO_Poison.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_Loop",
@@ -1123,6 +1269,16 @@
           "EventTime": 6.300000190734863,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
+        },
+        {
+          "EventTime": 1.840000033378601,
+          "EventType": "Sound",
+          "EventTag": "VO_GreatRain.wav"
+        },
+        {
+          "EventTime": 6.320000171661377,
+          "EventType": "Sound",
+          "EventTag": "VO_Sink.wav"
         }
       ]
     },
@@ -1168,6 +1324,11 @@
           "EventTime": 2.243274688720703,
           "EventType": "Notify",
           "EventTag": "Grandier"
+        },
+        {
+          "EventTime": 0.09000000357627869,
+          "EventType": "Sound",
+          "EventTag": "VO_Soldiers.wav"
         }
       ]
     },
@@ -1178,6 +1339,11 @@
           "EventTime": 0.6095516681671143,
           "EventType": "Sound",
           "EventTag": "Defiler_Entrance.wav"
+        },
+        {
+          "EventTime": 0.47999998927116394,
+          "EventType": "Sound",
+          "EventTag": "VO_Grant.wav"
         }
       ]
     },
@@ -1229,6 +1395,18 @@
         },
         {
           "EventTime": 2.390000104904175,
+ },{
+          "EventTime": 0.23000000417232513,
+          "EventType": "Sound",
+          "EventTag": "VO_Blaster.wav"
+        },
+        {
+          "EventTime": 1.940000057220459,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Change.wav"
+        },
+        {
+          "EventTime": 2.009999990463257,
           "EventType": "Sound",
           "EventTag": "Defiler_Crash01.wav"
         }
