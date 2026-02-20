@@ -57,10 +57,13 @@ _float3 CMiasmaSpawner::ComputeParabolarPos(const _float3& ownerPos, const _floa
     m_parabolLeft = !m_parabolLeft;
 
     const _float sideOffset = 3.0f;   
-    const _float forwardOffset = length * 0.4f;
+    const _float forwardOffset = length * 0.5f;
     _vector3 offset = right * (sideOffset * sideSign) + forward * forwardOffset;
 
     _vector3 pos = _vector3(ownerPos) + offset;
+    if (targetPos.y > -1.f)
+        __debugbreak();
+
     return _float3{ pos.x, targetPos.y, pos.z };
 }
 
@@ -162,17 +165,9 @@ void CMiasmaSpawner::SpawnHeavy(_float3 Target, _float3 Owner)
     desc->startPos = Owner;
     desc->targetPos = ComputeParabolarPos(Owner,Target);
 
-    COLLIDER_DESC ColDesc = {};
-    ColDesc.eGroup = COLLISION_GROUP::COMMON;
-    ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND);
-    ColDesc.bTrigger = false;
-    ColDesc.bAutoFit = true;
-    ColDesc.eType = COLLIDER_TYPE::SPHERE;
-
     auto Ball = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaSpawnBall" })
         .Position(Owner)
         .Add_ObjDesc(desc)
-        .Collider(ColDesc)
         .Build("MiasmaSpawn");
     ObjectManager()->Add_Object(Ball, { levelKey, "Enemy_Layer" });
 }

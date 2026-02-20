@@ -101,7 +101,7 @@ inline void RemoveFlag(TraceFlag& value, TraceFlag flag)
 
 typedef struct tagDefilerBlackBoard
 {
-    _uint BloodPhase = {};
+    _bool MiasmaPhase = {};
 	_vector3 vTargetPos = {};
 	_vector3 vTargetDir = {};
 	
@@ -116,7 +116,7 @@ typedef struct tagDefilerBlackBoard
 	_vector3 CurrentDir = _vector3(0.f, 0.f, 1.f);
 
 	/*∆–≈œ*/
-	_int patternIndex = { 00 };
+	_int patternIndex = { 0 };
     struct DefilerPattern { string nextPattern{}; _float animStartProgress{}; _float animEndProgress{}; };
 	deque<DefilerPattern> patternTransition;
 	DefilerPattern reservedPattern = {};

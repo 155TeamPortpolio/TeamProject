@@ -683,13 +683,13 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 	if (0 >= m_tStatus.iNowHP) {
 		m_tStatus.iNowHP = 0.f;
-		m_BlackBoard.BloodPhase++;
-		if (m_BlackBoard.BloodPhase > 2) {
-			m_pStateMachine->Set_Trigger("Death");
-		}
-		else {
+		if (m_BlackBoard.MiasmaPhase == false) {
 			m_isRecovering = true;
 			m_pendToRecover = m_tStatus.iMaxHP;
+			m_BlackBoard.MiasmaPhase = true;
+		}
+		else if (m_BlackBoard.MiasmaPhase) {
+			m_pStateMachine->Set_Trigger("Death");
 		}
 	}
 

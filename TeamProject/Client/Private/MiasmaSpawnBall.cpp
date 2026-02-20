@@ -143,11 +143,11 @@ void CMiasmaSpawnBall::SpawnJaeger()
 
 	COLLIDER_DESC ColDesc = {};
 	ColDesc.eGroup = COLLISION_GROUP::MONSTER;
-	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK) | ENUM(COLLISION_GROUP::PLAYER) ;
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND)| ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	ColDesc.bTrigger = false;
 	ColDesc.bAutoFit = false;
 	ColDesc.eType = COLLIDER_TYPE::BOX;
-	ColDesc.vSize = { 5.f, 1.5f, 3.f };
+	ColDesc.vSize = { 5.f, 3.5f, 3.f };
 	auto jaeger = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_MiasmaHeavy" })
 		.Position(m_targetPos)
 		.Collider(ColDesc)

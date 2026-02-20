@@ -67,7 +67,6 @@ HRESULT CMiasmaHeavyJaeger::Initialize(INIT_DESC* pArg)
 	(boneMat).Decompose(S, R, T);
 	Get_Component<CCollider>()->Set_Trigger(false);
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
-	Get_Component<CRigidBody>()->Set_Gravity(false);
 	Get_Component<CRigidBody>()->Set_CCD(true);
 
 	
@@ -139,7 +138,14 @@ void CMiasmaHeavyJaeger::Update(_float dt)
 	Route_AnimEvent(pAnimator);
 	m_pStateMachine->Update(dt);
 	RotateToTarget(dt, 6.f);
-	MoveByAnim(dt, 1.f);
+	if (!m_bParried) {
+		MoveByAnim(dt, 1.f);
+	}
+	else {
+		m_ElapseTime += dt;
+		_float t = Math::ApplyEase(EaseType::OutQuint, m_ElapseTime);
+		m_pTransform->Translate(Math::Lerp(m_vVelocity, { 0,0,0 }, t)*dt);
+	}
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), m_pTransform->Get_QuaternionRotate());
@@ -197,14 +203,18 @@ void CMiasmaHeavyJaeger::OnTriggerEnter(CGameObject* pOther)
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
 	{
+		if(m_bParried)
+			m_vVelocity = {0,0,0};
 		m_pStateMachine->Set_Trigger("Parried");
-
 	}
 }
 
 void CMiasmaHeavyJaeger::Parried()
 {
-	m_bStopMove = true;
+	m_bParried = true;
+	m_ElapseTime = 0;
+	m_vVelocity = m_pTransform->Dir(STATE::LOOK) * -20;
+	m_vVelocity = Math::NormalizeSafeXZ(m_vVelocity);
 	m_pStateMachine->Set_Trigger("Parried");
 	Get_Component<CCollider>()->Set_CompActive(false);
 	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
@@ -332,7 +342,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 	auto* animator = Get_Component<CAnimator3D>();
 	auto* transform = Get_Component<CTransform>();
 
-	if (m_bStopMove||!animator || !transform|| dt <= 0.f)
+	if (m_bParried || !animator || !transform|| dt <= 0.f)
 		return;
 
 	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();
@@ -379,7 +389,6 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 	_vector3 velocityWorld = (moveWorld)*distScale;
 	_vector3 worldPos = m_pTransform->Get_WorldPos();
 	m_pTransform->Translate(velocityWorld);
-	//Get_Component<CRigidBody>()->Set_Velocity(velocityWorld);
 }
 
 void CMiasmaHeavyJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
