@@ -37,7 +37,6 @@
 /* UI */
 #include "UIDirector.h"
 #include "UI_Party.h"
-#include "UI_Tutorial.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -160,16 +159,6 @@ void CScott_Level::Ready_UI()
 	{
 		UIManager()->Add_UIObject(pParty, "Scott_Level");
 		UIDirector()->Register(pParty);
-	}
-
-	if (FAILED(PrototypeManager()->Add_ProtoType("Scott_Level", "Proto_GameObject_Tutorial", CUI_Tutorial::Create())))
-		return;
-
-	auto ptutorial = Builder::Create_UIObject({ "Scott_Level", "Proto_GameObject_Tutorial" }).Build("tutorial");
-	if (ptutorial)
-	{
-		UIManager()->Add_UIObject(ptutorial, "Scott_Level");
-		UIDirector()->Register(ptutorial);
 	}
 }
 

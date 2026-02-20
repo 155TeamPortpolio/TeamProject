@@ -101,4 +101,17 @@ typedef struct tagNpcInteractDesc {
 }NPC_INTERACT_DESC;
 #pragma endregion
 
+#pragma region Tutorial
+// ---------- 튜토리얼 진행 단위 ----------
+typedef struct tagTutorialDesc {
+	TUTORIAL_TYPE eType = {};		// 튜토리얼 종류
+	TUTORIAL_STATE eState = {};		// 튜토리얼 진행 상태
+}TUTORIAL_DESC;
+
+// ---------- 튜토리얼에서 요구하는 액션 ----------
+typedef struct tagTutorialActionDesc {
+	TUTORIAL_ACTION eAction = {};	// 요구되는 액션 종류
+	_uint iCount = {};				// 요구 횟수
+}TUTORIAL_ACTION_DESC;
+#pragma endregion
 NS_END

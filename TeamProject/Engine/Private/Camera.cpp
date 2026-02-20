@@ -2,6 +2,8 @@
 #include "Camera.h"
 #include "GameObject.h"
 
+#include "GameInstance.h"
+
 HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 {
 	CAMERA_DESC* cam = static_cast<CAMERA_DESC*>(pArg);
@@ -54,15 +56,10 @@ void CCamera::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 8) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##CameraChild", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##CameraChild", ImVec2{0, childHeight}, true);
+
 	ImGui::Text("Field of View");
-	ImGui::InputFloat("##FoV", &m_lens.fov, 1.0f, 0.0f, "%.1f");
-
-	ImGui::Text("Near Plane");
-	ImGui::InputFloat("##Near", &m_lens.zNear, 1.0f, 0.0f, "%.1f");
-
-	ImGui::Text("Far Plane");
-	ImGui::InputFloat("##Far", &m_lens.zFar, 1.0f, 0.0f, "%.1f");
+	ImGui::Text("%.1f", CameraManager()->GetFov());
 
 	ImGui::EndChild();
 }

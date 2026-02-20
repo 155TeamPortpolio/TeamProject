@@ -6,12 +6,12 @@
 
 #include "MFVideoDecoderBackend.h"
 
-void CUI_TutorialVideo::Play(TUTORIAL eTutorial)
+void CUI_TutorialVideo::Play(TUTORIAL_TYPE eType)
 {
     m_pPlayer->Close();
 
     CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = Get_VideoPath(eTutorial);
+    desc.filePath = Get_VideoPath(eType);
     desc.loop = true;
     m_pPlayer->Open(desc);
 
@@ -77,14 +77,14 @@ void CUI_TutorialVideo::UI_DeActive(void* pArg)
     m_pPlayer->Stop();
 }
 
-string CUI_TutorialVideo::Get_VideoPath(TUTORIAL eTutorial)
+string CUI_TutorialVideo::Get_VideoPath(TUTORIAL_TYPE eType)
 {
-    switch (eTutorial)
+    switch (eType)
     {
-    case TUTORIAL::EXTREME_EVADE: return "../Bin/Resources/Video/Tutorial_ExtremeEvade.mp4";// "../Bin/Resources/Video/Tutorial_GroggyCombo.mp4";
-    case TUTORIAL::EXTREME_SUPPORT: return "../Bin/Resources/Video/Tutorial_ExtremeSupport.mp4";
-    case TUTORIAL::DECIBEL_ULTIMATE: return "../Bin/Resources/Video/Tutorial_DecibelUltimate.mp4";
-    case TUTORIAL::GROGGY_COMBO: return "../Bin/Resources/Video/Tutorial_GroggyCombo.mp4";
+    case TUTORIAL_TYPE::EXTREME_EVADE: return "../Bin/Resources/Video/Tutorial_ExtremeEvade.mp4";// "../Bin/Resources/Video/Tutorial_GroggyCombo.mp4";
+    case TUTORIAL_TYPE::EXTREME_SUPPORT: return "../Bin/Resources/Video/Tutorial_ExtremeSupport.mp4";
+    case TUTORIAL_TYPE::DECIBEL_ULTIMATE: return "../Bin/Resources/Video/Tutorial_DecibelUltimate.mp4";
+    case TUTORIAL_TYPE::GROGGY_COMBO: return "../Bin/Resources/Video/Tutorial_GroggyCombo.mp4";
     default: return "../Bin/Resources/Video/Tutorial_ExtremeEvade.mp4";
     }
 }

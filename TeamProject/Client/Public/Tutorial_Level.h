@@ -22,6 +22,7 @@ public:
 
 private:
 	void Ready_Map(const string& LevelTag, const string& AreaTag);
+	void Ready_UI();
 
 private:
 	CGameInstance* m_pGameInstance = { nullptr };

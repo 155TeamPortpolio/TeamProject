@@ -126,6 +126,16 @@
           "prefabPath" : ""
         }
       ]
+    },
+
+    "Tutorial_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_BattleHUD",
+          "instanceName": "hud_battle",
+          "prefabPath" : ""
+        }
+      ]
     }
   }
 }

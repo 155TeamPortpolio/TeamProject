@@ -52,6 +52,7 @@ public:
     string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
     OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
     OBJECT_HANDLE GetCurTarget()             const;
+    OBJECT_HANDLE GetCurParry()              const;
     _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
     const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
     SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
