@@ -105,7 +105,7 @@ void CZeroPortal::Render_GUI()
 		On_InPlayer();
 
 	if (ImGui::Button("Active Portal"))
-		Active_Portal();
+		Active_PortalEffect();
 }
 
 void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
@@ -193,38 +193,6 @@ void CZeroPortal::Focus(_float dt)
 	_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vBaseScale), _vector3(m_vExtendScale), Math::ApplyEase(EaseType::OutExpo, t));
 
 	m_pTransform->Scale(vCurrScale);
-}
-
-void CZeroPortal::Extend(_float dt)
-{
-	m_fElapsedTime += dt;
-	if (m_fElapsedTime >= m_fDuration)
-	{
-		m_OnExtend = false;
-	}
-	else
-	{
-		_float t = m_fElapsedTime / m_fDuration;
-
-		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vBaseScale), _vector3(m_vExtendScale), Math::ApplyEase(EaseType::OutExpo, t));
-		m_pTransform->Scale(vCurrScale);
-	}
-}
-
-void CZeroPortal::Contract(_float dt)
-{
-	m_fElapsedTime += dt;
-	if (m_fElapsedTime >= m_fDuration)
-	{
-		m_OnContract = false;
-	}
-	else
-	{
-		_float t = m_fElapsedTime / m_fDuration;
-
-		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vBaseScale), Math::ApplyEase(EaseType::OutExpo, t));
-		m_pTransform->Scale(vCurrScale);
-	}
 }
 
 void CZeroPortal::NoiseSequence()
