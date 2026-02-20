@@ -43,7 +43,7 @@ private:
     void Focus(_float dt);
     void Extend(_float dt);
     void Contract(_float dt);
-    void NoiseSequence() {};
+    void NoiseSequence();
 
     /* For Debug */
     void Active_Portal();
