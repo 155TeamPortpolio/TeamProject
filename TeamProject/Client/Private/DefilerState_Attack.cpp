@@ -8,6 +8,7 @@
 
 #include "DefilerLaser.h"
 #include "DisplayGate.h"
+#include "CameraMgr.h"
 
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
@@ -588,6 +589,7 @@ void CDefilerState_Attack_07::Enter(CDefiler* pOwner)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	blackBoard.TraceType_OnlyAnim();
 	blackBoard.TraceType_IgnoreRotation();
+	blackBoard.TractType_IgnoreAnim();
 
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_07")
@@ -602,8 +604,6 @@ void CDefilerState_Attack_07::Update(CDefiler* pOwner, _float dt)
 {
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
-
-
 }
 
 void CDefilerState_Attack_07::Exit(CDefiler* pOwner)

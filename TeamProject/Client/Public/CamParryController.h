@@ -203,6 +203,10 @@ private:
 
         _bool         savedLockWasOn = false;
         OBJECT_HANDLE savedLockHandle{};
+
+        _bool         lookInit = false;
+        _float        lookYawPrev = 0.f;
+        _float        lookPitchPrev = 0.f;
     };
 
 private:

@@ -780,6 +780,10 @@ void CamParryController::Reset()
 
     exit.savedLockWasOn = false;
     exit.savedLockHandle.Reset();
+
+    exit.lookInit = false;
+    exit.lookYawPrev = 0.f;
+    exit.lookPitchPrev = 0.f;
 }
 
 void CamParryController::Begin()
@@ -941,6 +945,8 @@ void CamParryController::End()
 
         orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
 
+        exit.lookInit = false;
+
         core.state = State::ExitBlend;
         core.elapsed = 0.f;
 
@@ -1049,10 +1055,26 @@ void CamParryController::Update(_float dt)
         const float lookDist = toLook.Length();
         if (lookDist > 0.f) toLook /= lookDist;
 
-        const _float yawWorldLook = XMConvertToDegrees(atan2f(toLook.x, toLook.z));
-        const _float pitchLook = XMConvertToDegrees(asinf(clamp(-toLook.y, -1.f, 1.f)));
+        const float flatLen = sqrtf(toLook.x * toLook.x + toLook.z * toLook.z);
 
-        const Quaternion qRot = YawPitchRollQuatDeg(yawWorldLook, pitchLook, g.rollDeg);
+        _float yawRaw = yawWorldPivot;
+        if (flatLen > 0.0005f) yawRaw = XMConvertToDegrees(atan2f(toLook.x, toLook.z));
+
+        const _float pitchRaw = XMConvertToDegrees(asinf(clamp(-toLook.y, -1.f, 1.f)));
+
+        if (!exit.lookInit)
+        {
+            exit.lookYawPrev = yawRaw;
+            exit.lookPitchPrev = pitchRaw;
+            exit.lookInit = true;
+        }
+
+        const _float yawCont = exit.lookYawPrev + Math::WrapDeg(yawRaw - exit.lookYawPrev);
+
+        exit.lookYawPrev = yawCont;
+        exit.lookPitchPrev = pitchRaw;
+
+        const Quaternion qRot = YawPitchRollQuatDeg(yawCont, pitchRaw, g.rollDeg);
 
         orbit->SnapFromOrbitPose(pivotWorld, camPosWorld, qRot, g.dist);
 
