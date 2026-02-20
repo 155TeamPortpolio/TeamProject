@@ -72,6 +72,12 @@ private:
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+    /* For.Debug.DamageLog */
+    deque<_float>       m_DamageLog;
+    _bool               m_isAccDamage = {false};
+    _float              m_fAccDamage = {};
+
+
 };
 
 NS_END

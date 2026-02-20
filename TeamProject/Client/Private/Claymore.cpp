@@ -166,7 +166,45 @@ void CClaymore::Render_GUI()
 		ImGui::TreePop();
 	}
 #pragma endregion
+	
+	{
+		ImGui::SeparatorText("Damage Log");
+		ImGui::BeginChild("TracePlayer##DamageLog", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
+		
+		_int iPushed = {};
+		if (true == m_isAccDamage)
+		{
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.20f, 0.50f, 0.90f, 1.00f)); 
+			iPushed++;
+		}
+		
+		if (ImGui::Button(u8"누적##DamageLogAcc"))
+			m_isAccDamage = !m_isAccDamage;
+		
+		if (iPushed)
+			ImGui::PopStyleColor();
+		
+		ImGui::SameLine(0.f, 10.f);
+		
+		if (ImGui::Button("Clear##DamageLogClear"))
+		{
+			m_DamageLog.clear();
+			m_fAccDamage = 0.f;
+		}
 
+		ImGui::Text(u8"누적 데미지 : %.2f", m_fAccDamage);
+
+		ImGui::Separator();
+		_int fShowLimit = {};
+		for (auto& fDamage : m_DamageLog)
+		{
+			if (fShowLimit > 15)
+				break;
+			ImGui::Text("%.2f", fDamage); ++fShowLimit;
+		}
+
+		ImGui::EndChild();
+	}
 
 #pragma region Status
 	ImGui::SeparatorText("Status");
@@ -347,6 +385,15 @@ void CClaymore::Free()
 void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
+	
+	// DamageLog
+	{
+		_float fResultDamage = m_tStatus.isGroggy == false ? fDamage : fDamage * 1.5f;
+		m_DamageLog.push_front(fResultDamage);
+
+		if (m_isAccDamage)
+			m_fAccDamage += fResultDamage;
+	}
 
 	if (m_isTutorial)
 	{
