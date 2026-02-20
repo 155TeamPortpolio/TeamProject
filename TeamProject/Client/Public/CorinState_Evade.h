@@ -18,6 +18,7 @@ public:
 
 private:
     _bool m_bEvade = false;
+    _int  m_iDodgeCount = 0;
 };
 
 NS_END

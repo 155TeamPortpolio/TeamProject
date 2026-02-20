@@ -13,8 +13,8 @@ namespace
 {
     constexpr _float kMinParryDist = 0.35f;
 
-    constexpr _float kPivotTeleportCutDist = 0.90f;
-    constexpr _float kLookTeleportCutDist = 1.20f;
+    constexpr _float kPivotTeleportCutDist = 0.2f;
+    constexpr _float kLookTeleportCutDist = 0.3f;
 
     constexpr _float kLookMaxYawDegPerSec = 720.f;
     constexpr _float kLookMaxPitchDegPerSec = 540.f;
@@ -519,16 +519,23 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     Vector3 fwd, right;
     BuildBasis(fwd, right);
 
-    _float punch = tune.impact.punchDistDelta;
+    const _float distStart = ClampParryDist(shot.impactBase.dist);
+
+    _float distEnd = distStart;
 
     if (core.beginWasChain)
     {
-        const _float alreadyCloser = max(0.f, core.chainRefDist - shot.impactBase.dist);
-        punch = max(0.f, punch - alreadyCloser);
+        distEnd = ClampParryDist(tune.impact.chainFinalDist);
+        if (distEnd > distStart) distEnd = distStart;
+    }
+    else
+    {
+        _float punch = tune.impact.punchDistDelta;
+
+        const _float distEndPunch = max(kMinParryDist, distStart - punch);
+        distEnd = ClampParryDist(distEndPunch);
     }
 
-    const _float distStart = ClampParryDist(shot.impactBase.dist);
-    const _float distEnd = max(kMinParryDist, distStart - punch);
     g.dist = Math::Lerp(distStart, distEnd, close01);
 
     auto attackerObj = ObjectManager()->Request_Object(core.attacker);
@@ -607,7 +614,6 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     return g;
 }
 
-
 void CamParryController::ComputeSideFromCam()
 {
     Vector3 fwd, right;
@@ -622,8 +628,6 @@ void CamParryController::ComputeSideFromCam()
 
 string CamParryController::BuildParryKey() const
 {
-    if (IsChainParry()) return "Parry/Chain";
-
     const CHARACTER charaName = CamDirector()->GetCharacterName();
     string key = "Parry/";
     key += Helper::EnumToString(charaName);
@@ -930,7 +934,6 @@ void CamParryController::Begin()
     orbit->ParryMode_Begin();
 }
 
-
 void CamParryController::End()
 {
     if (!core.active) return;
@@ -943,12 +946,16 @@ void CamParryController::End()
     orbit->CaptureSnapshot(snap);
 
     OBJECT_HANDLE lockHandle = snap.lock.handle;
-    _bool lockOn = lockHandle.isValid() && (snap.lock.active || snap.lockBlend.active || snap.lockBlend.weight > 0.f);
+    const _bool lockWasOn = lockHandle.isValid() && (snap.lock.active || snap.lockBlend.active || snap.lockBlend.weight > 0.f);
+
+    _bool lockOn = lockWasOn;
+    _bool restoringLock = false;
 
     if (!lockOn && exit.savedLockWasOn && exit.savedLockHandle.isValid())
     {
         lockHandle = exit.savedLockHandle;
         lockOn = true;
+        restoringLock = true;
     }
 
     exit.returnLockHandle = lockHandle;
@@ -971,9 +978,17 @@ void CamParryController::End()
 
         exit.exitSec = 1.f;
 
-        orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
+        if (restoringLock)
+            orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
 
-        exit.lookInit = false;
+        exit.lookInit = true;
+        exit.lookYawPrev = snap.pose.rotCurDeg.x;
+        exit.lookPitchPrev = snap.pose.rotCurDeg.y;
+
+        exit.lookHasPrevPos = false;
+        exit.lookPrevPivotWorld = Vector3::Zero;
+        exit.lookPrevCamPosWorld = Vector3::Zero;
+        exit.lookPrevLookAtWorld = Vector3::Zero;
 
         core.state = State::ExitBlend;
         core.elapsed = 0.f;
@@ -1000,7 +1015,7 @@ void CamParryController::Update(_float dt)
 
     core.elapsed += dt;
 
-    if (core.state == State::Enter || core.state == State::Impact)
+    if (core.state == State::Enter || core.state == State::Impact || core.state == State::ExitBlend)
         UpdatePivots(dt);
 
     if (core.state == State::Enter)
@@ -1071,7 +1086,7 @@ void CamParryController::Update(_float dt)
         right.y = 0.f;
         right.Normalize();
 
-        const Vector3 basePivot = exit.exitPivotWorld;
+        const Vector3 basePivot = BasePivotWorld();
         const Vector3 pivotWorld = basePivot + right * g.pivotExt.x + Vector3::Up * g.pivotExt.y + fwd * g.pivotExt.z;
 
         const _float attackerYaw = YawFromDirXZ(fwd);
@@ -1080,12 +1095,13 @@ void CamParryController::Update(_float dt)
         const Quaternion qPos = YawPitchRollQuatDeg(yawWorldPivot, g.pitchDeg, 0.f);
         const Vector3 camPosWorld = OrbitPos(pivotWorld, qPos, g.dist);
 
-        OrbitLockEval lockRes = orbit->Lock_Eval_FrozenPlayerPivot_External(dt, basePivot, yawWorldPivot, g.dist);
+        OrbitLockEval lockRes = orbit->EvalLock_PlayerPivot(dt, basePivot, yawWorldPivot, g.dist);
 
-        Vector3 lookAt = Vector3::Lerp(pivotWorld, lockRes.focusPos, t);
+        const _float lookW = clamp(lockRes.weight, 0.f, 1.f);
+        Vector3 lookAt = Vector3::Lerp(pivotWorld, lockRes.focusPos, lookW);
 
-        _bool cut = !exit.lookInit;
-        if (!cut && exit.lookHasPrevPos)
+        _bool cut = false;
+        if (exit.lookHasPrevPos)
         {
             if ((pivotWorld - exit.lookPrevPivotWorld).Length() > kLookTeleportCutDist) cut = true;
             if ((camPosWorld - exit.lookPrevCamPosWorld).Length() > kLookTeleportCutDist) cut = true;
@@ -1112,7 +1128,6 @@ void CamParryController::Update(_float dt)
             yawFinal = yawRaw;
             pitchFinal = pitchRaw;
 
-            exit.lookInit = true;
             exit.lookYawPrev = yawFinal;
             exit.lookPitchPrev = pitchFinal;
         }
@@ -1144,7 +1159,7 @@ void CamParryController::Update(_float dt)
 
         if (u >= 1.f)
         {
-            orbit->ParryMode_ResumeSync();
+            orbit->ResumeSync();
             orbit->ParryMode_End();
 
             core.state = State::WaitEnd;
@@ -1193,7 +1208,7 @@ void CamParryController::Update(_float dt)
         lens.fovAppliedOffset = 0.f;
 
         auto orbit = CamDirector()->GetOrbitCam();
-        orbit->ParryMode_ResumeSync();
+        orbit->ResumeSync();
         orbit->ParryMode_End();
 
         if (!core.beginWasChain) core.chainRefDist = 0.f;

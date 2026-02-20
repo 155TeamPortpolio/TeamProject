@@ -6,6 +6,8 @@
 #include "GameInstance.h"
 #include "BattleSystem.h"
 
+#include "EffectContainer.h"
+
 CMiasmaGrandierJaeger_Appear* CMiasmaGrandierJaeger_Appear::Create()
 {
 	CMiasmaGrandierJaeger_Appear* pInstance = new CMiasmaGrandierJaeger_Appear();
@@ -244,8 +246,28 @@ CMiasmaHeavyJaeger_DisAppear* CMiasmaHeavyJaeger_DisAppear::Create()
 
 void CMiasmaHeavyJaeger_DisAppear::Enter(CMiasmaHeavyJaeger* pOwner)
 {
-	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, pOwner->Get_Handle());
 	pOwner->Dissolve(false);
+
+	/* Effect */
+	auto pTransform = pOwner->Get_Component<CTransform>();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+	_smatrix worldMatrix = pTransform->Get_WorldMatrix();
+	_vector3 vLook = pTransform->Dir(STATE::LOOK);
+	vBonePosition = _vector3::Transform(vBonePosition, worldMatrix);
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_heavy_dead.json")
+		.Build("Defiler_Heavy_Dead");
+
+	if (pEffect)
+	{
+		auto pEffectTransform = pEffect->Get_Component<CTransform>();
+		pEffectTransform->Set_WorldPos(vBonePosition);
+		pEffectTransform->Set_Look(vLook);
+		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 void CMiasmaHeavyJaeger_DisAppear::Update(CMiasmaHeavyJaeger* pOwner, _float dt)

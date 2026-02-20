@@ -32,6 +32,7 @@
 #include "Defiler.h"
 #include "MiasmaBlade.h"
 #include "DefilerLaser.h"
+#include "JaegerLaser.h"
 
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
@@ -188,6 +189,7 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_JaegerLaser", CJaegerLaser::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
@@ -322,6 +324,7 @@ void CZero_Level::Zero_Fog::Update_Fog(_float dt)
 		->GetCommand<CFogCommand>()
 		->SetFogDesc(tCurFog)
 		->SetEnable(true);
+
 }
 
 void CZero_Level::Zero_Fog::Set_BaseFog(FOG_DESC FogDesc)

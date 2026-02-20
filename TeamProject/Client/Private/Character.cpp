@@ -26,6 +26,8 @@
 #include "AudioSource.h"
 #include "CamDirector.h"
 
+#include "EventListener.h"
+
 CCharacter::CCharacter(const CCharacter& rhs)
     : CGameObject(rhs)
     , m_fMaxHP(rhs.m_fMaxHP)
@@ -45,6 +47,7 @@ HRESULT CCharacter::Initialize_Prototype()
     Add_Component<CAnimator3D>();
     Add_Component<CCharacterController>();
     Add_Component<CAudioSource>();
+    Add_Component<CEventListener>();
     return S_OK;
 }
 
@@ -55,6 +58,24 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
     m_pCCT = Get_Component<CCharacterController>();
     Safe_AddRef(m_pAnimator);
     Safe_AddRef(m_pCCT);
+
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+        {
+            if (desc.eType == TUTORIAL_TYPE::END)
+                return;
+            else
+            {
+                m_eTutorial = desc.eType;
+                Reset_State();
+                _vector3 vInitPos = { 0.1f, 1.1f, -6.6f };
+                _vector3 vInitLook = { 0.f, 0.f, 1.f };
+                if(m_pTransform && m_pCCT)
+                {
+                    m_pTransform->Set_Look(vInitLook);
+                    m_pCCT->Set_Position(vInitPos);
+                }
+            }
+        });
 
     if (pArg == nullptr)
         return S_OK;
@@ -365,6 +386,9 @@ OBJECT_HANDLE CCharacter::Calculate_Parry()
 
     m_vParryLook = vAttackPos - m_vParryPos;
     m_vParryLook.y = 0.f;
+    // ·è¹æÇâ Æ¢´Â°Å ¹æÁö
+    if (m_vParryLook.LengthSquared() < 1e-6f)
+        m_vParryLook = -vAttackLook;
     m_vParryLook.Normalize();
 
     return targetHandle;
@@ -407,7 +431,6 @@ void CCharacter::On_SwitchOut(_bool isParry)
     Push_Invincible();
     Lock_Move();
     Stop_Rotation();
-    m_bReserveCombo = false;
     m_pCCT->Set_CollisionMask(m_iDefaultMask - ENUM(COLLISION_GROUP::MONSTER));
 }
 

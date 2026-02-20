@@ -1,6 +1,10 @@
 #include "pch.h"
-#include "BattleSystem.h"
 #include "JaneDoeState_Evade.h"
+
+#include "GameInstance.h"
+#include "BattleSystem.h"
+#include "EventSystem.h"
+
 #include "JaneDoe.h"
 
 #include "CharacterController.h"
@@ -53,6 +57,12 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
         if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+            {
+                TUTORIAL_ACTION_DESC desc;
+                desc.eAction = TUTORIAL_ACTION::DODGE;
+                EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+            }
             pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }

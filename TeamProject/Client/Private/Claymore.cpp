@@ -16,6 +16,7 @@
 #include "CharacterController.h"
 #include "BoneFollower.h"
 #include "AudioSource.h"
+#include "EventListener.h"
 
 /* States */
 #include "StateMachine.h"
@@ -49,6 +50,7 @@ HRESULT CClaymore::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
 	Add_Component<CAudioSource>();
+	Add_Component<CEventListener>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResourceMgr->Add_ResourcePath("Claymore.mat", "../Bin/Resources/Zero/Enemy/Claymore/Claymore.mat");
@@ -83,6 +85,16 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 	
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey() , "../Bin/Resources/Zero/Enemy/Claymore/Sound");
 	Get_Component<CAudioSource>()->Slot("claymore_Spawn.wav").Attribute3D(true).Loop(false).Play();
+
+	// 이벤트 : TUTORIAL_DESC
+	Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+		{ 
+			if (desc.eState != TUTORIAL_STATE::PLAY)
+				return;
+
+			SetTutorial(true);
+			SetTutorialMode(desc.eType);
+		});
 
 	return S_OK;
 }
@@ -137,7 +149,7 @@ void CClaymore::Render_GUI()
 		"Groggy Combo",
 	};
 
-	_int kCount = static_cast<_int>(TUTORIAL::END);
+	_int kCount = static_cast<_int>(TUTORIAL_TYPE::END);
 	_int cur = static_cast<_int>(m_eCurTutorial);
 	if (cur < 0 || cur >= kCount) cur = 0;
 
@@ -150,7 +162,7 @@ void CClaymore::Render_GUI()
 			if (ImGui::Selectable(charTutorialLabels[n], selected))
 			{
 				cur = n;
-				SetTutorialMode(static_cast<TUTORIAL>(cur));
+				SetTutorialMode(static_cast<TUTORIAL_TYPE>(cur));
 			}
 			if (selected)
 				ImGui::SetItemDefaultFocus();
@@ -399,7 +411,7 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 	{
 		m_tStatus.iNowHP = m_tStatus.iMaxHP;
 
-		if (m_eCurTutorial != TUTORIAL::GROGGY_COMBO)
+		if (m_eCurTutorial != TUTORIAL_TYPE::GROGGY_COMBO)
 			m_tStatus.iGroggyValue = 0.f;
 	}
 
@@ -428,14 +440,14 @@ void CClaymore::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER ch
 	}
 }
 
-void CClaymore::SetTutorialMode(TUTORIAL eMode)
+void CClaymore::SetTutorialMode(TUTORIAL_TYPE eMode)
 {
-	if (!m_isTutorial || eMode == TUTORIAL::END)
+	if (!m_isTutorial || eMode == TUTORIAL_TYPE::END)
 		return;
 
 	m_eCurTutorial = eMode;
 
-	if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
+	if (m_eCurTutorial == TUTORIAL_TYPE::GROGGY_COMBO)
 	{
 		m_eEnemyClass = ENEMY_CLASS::BOSS;
 		m_tStatus.iGroggyValue = 99.f;
@@ -445,6 +457,9 @@ void CClaymore::SetTutorialMode(TUTORIAL eMode)
 		m_eEnemyClass = ENEMY_CLASS::NORMAL;
 		m_tStatus.iGroggyValue = 0.f;
 	}
+
+	Get_Component<CCharacterController>()->Set_Position(XMVectorSet(-0.18f, 2.f, 1.59f, 1.f));
+	m_pTransform->Rotate(_float3(0.f, XMConvertToRadians(180.f), 0.f));
 }
 
 /* For.State Machine */
@@ -563,7 +578,7 @@ void CClaymore::ControlState(const _float dt)
 	{
 		// 튜토리얼 중 그로기와 궁극기할 땐 상태변경 X
 		if (m_isTutorial &&
-			(m_eCurTutorial == TUTORIAL::GROGGY_COMBO || m_eCurTutorial == TUTORIAL::DECIBEL_ULTIMATE))
+			(m_eCurTutorial == TUTORIAL_TYPE::GROGGY_COMBO || m_eCurTutorial == TUTORIAL_TYPE::DECIBEL_ULTIMATE))
 			return;
 
 		m_vIdleTime.y += dt;
@@ -601,7 +616,7 @@ void CClaymore::ManageTutorialMode(const _float dt)
 	if (!m_isTutorial)
 		return;
 
- 	if (m_eCurTutorial == TUTORIAL::GROGGY_COMBO)
+ 	if (m_eCurTutorial == TUTORIAL_TYPE::GROGGY_COMBO)
 	{
 		if (m_isPrevGroggy == true && m_tStatus.isGroggy == false)
 			m_isTutorialGroggyCool = true;

@@ -1491,17 +1491,8 @@
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt">
       <UniqueIdentifier>{dc6a89e3-072a-4cd3-bd13-da4d45acd8be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Tutorial">
-      <UniqueIdentifier>{201aeb3c-6fc8-4879-994a-f465e959c40f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\Button">
       <UniqueIdentifier>{a4d91da9-ec9d-4aad-bdde-23bc7ed45fbb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Tutorial\Description">
-      <UniqueIdentifier>{f4aeede2-7d4b-4aa3-a818-5c7a7000e2f8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\01. 2D\Tutorial\Video">
-      <UniqueIdentifier>{68f11833-e895-49ac-a315-afca6d826518}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\08. CamDirector\05. CamSwitchController">
       <UniqueIdentifier>{164c060e-5d58-4815-8ce6-9f9718c4b054}</UniqueIdentifier>
@@ -1517,7 +1508,7 @@
     </Filter>
     <Filter Include="01. Level\06. Tutorial">
       <UniqueIdentifier>{937f8cb6-d299-481d-8f88-01dfe42cc7ae}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\SpeechBubble">
       <UniqueIdentifier>{a3eec9a0-1ba0-4d0c-95de-cd036d0d0857}</UniqueIdentifier>
     </Filter>
@@ -1529,6 +1520,30 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClaymore\State\Chase">
       <UniqueIdentifier>{aca0e369-cacf-41e6-a0ee-16f83b25c4de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialInfo">
+      <UniqueIdentifier>{201aeb3c-6fc8-4879-994a-f465e959c40f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialInfo\Description">
+      <UniqueIdentifier>{f4aeede2-7d4b-4aa3-a818-5c7a7000e2f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialInfo\Video">
+      <UniqueIdentifier>{68f11833-e895-49ac-a315-afca6d826518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide">
+      <UniqueIdentifier>{18163600-78f6-4e09-884d-246f0fd9103a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide\Slot">
+      <UniqueIdentifier>{bfc9d486-7fe8-4669-9685-b3f8b8aff575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\TutorialGuide\Start">
+      <UniqueIdentifier>{a08a33c6-d308-4648-a198-b6b806751ee9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier\JaegerLaser">
+      <UniqueIdentifier>{54242797-b825-41da-a7bb-c9ee6afc0acc}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="02. GameObject\UI\01. 2D\Banner">
+      <UniqueIdentifier>{5e367493-ade2-46e7-8540-88f7fdf579a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -2936,17 +2951,17 @@
     <ClInclude Include="..\Public\UI_NotoriousHuntEntranceLogo.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Tutorial.h">
-      <Filter>02. GameObject\UI\01. 2D\Tutorial</Filter>
+    <ClInclude Include="..\Public\UI_TutorialInfo.h">
+      <Filter>02. GameObject\UI\01. 2D\TutorialInfo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_ButtonPanel.h">
       <Filter>02. GameObject\UI\01. 2D\Button</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_TutorialDescription.h">
-      <Filter>02. GameObject\UI\01. 2D\Tutorial\Description</Filter>
+      <Filter>02. GameObject\UI\01. 2D\TutorialInfo\Description</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_TutorialVideo.h">
-      <Filter>02. GameObject\UI\01. 2D\Tutorial\Video</Filter>
+      <Filter>02. GameObject\UI\01. 2D\TutorialInfo\Video</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\NPC_Preset.h">
       <Filter>02. GameObject\Object\Npc\Background</Filter>
@@ -2968,7 +2983,7 @@
     </ClInclude>
     <ClInclude Include="..\public\Tutorial_Level.h">
       <Filter>01. Level\06. Tutorial</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_SpeechBubble.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\SpeechBubble</Filter>
     </ClInclude>
@@ -2977,6 +2992,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_GachaCharacterIntro.h">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Page\CharacterIntro</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialGuide.h">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialGuideSlot.h">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_TutorialGuideStart.h">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\JaegerLaser.h">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier\JaegerLaser</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\Public\UI_Banner.h">
+      <Filter>02. GameObject\UI\01. 2D\Banner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4343,17 +4373,17 @@
     <ClCompile Include="..\Private\UI_NotoriousHuntEntranceLogo.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\EntranceLogo\NotoriousHunt</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Tutorial.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Tutorial</Filter>
+    <ClCompile Include="..\Private\UI_TutorialInfo.cpp">
+      <Filter>02. GameObject\UI\01. 2D\TutorialInfo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_ButtonPanel.cpp">
       <Filter>02. GameObject\UI\01. 2D\Button</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_TutorialDescription.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Tutorial\Description</Filter>
+      <Filter>02. GameObject\UI\01. 2D\TutorialInfo\Description</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_TutorialVideo.cpp">
-      <Filter>02. GameObject\UI\01. 2D\Tutorial\Video</Filter>
+      <Filter>02. GameObject\UI\01. 2D\TutorialInfo\Video</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamSwitchController.cpp">
       <Filter>03. Utility\08. CamDirector\05. CamSwitchController</Filter>
@@ -4369,7 +4399,7 @@
     </ClCompile>
     <ClCompile Include="..\private\Tutorial_Level.cpp">
       <Filter>01. Level\06. Tutorial</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_SpeechBubble.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\SpeechBubble</Filter>
     </ClCompile>
@@ -4378,6 +4408,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_GachaCharacterIntro.cpp">
       <Filter>02. GameObject\UI\01. 2D\Gacha\Page\CharacterIntro</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialGuide.cpp">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialGuideSlot.cpp">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp">
+      <Filter>02. GameObject\UI\01. 2D\TutorialGuide\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\JaegerLaser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Boss\Defiler\MiasmaUnit\Grandier\JaegerLaser</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\Private\UI_Banner.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Banner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

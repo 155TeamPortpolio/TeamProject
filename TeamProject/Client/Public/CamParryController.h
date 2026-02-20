@@ -58,6 +58,7 @@ public:
         struct Impact
         {
             _float punchDistDelta = 1.3f;
+            _float chainFinalDist = 2.5f;
 
             _float rollMaxDeg = 30.f;
             _float rollArcMul = 0.85f;
@@ -65,7 +66,7 @@ public:
             _float endCamAboveFootY = 0.5f;
             _float targetCamYMix = 0.80f;
 
-            _float chainEndCamAboveFootY = 0.35f;
+            _float chainEndCamAboveFootY = 0.6f;
             _float chainTargetCamYMix = 1.00f;
 
             _float pivotDropY = 0.12f;
@@ -82,7 +83,7 @@ public:
             _float fovBiasDeg = 4.f;
 
             _float impactStartYawExtraDeg = 30.f;
-            _float chainImpactStartYawExtraDeg = 0.f;
+            _float chainImpactStartYawExtraDeg = 30.f;
         } impact;
     } tune;
 

@@ -111,6 +111,8 @@ _bool CJaneDoeState_SwitchIn::Handle_Transition(CJaneDoe* pOwner, const string& 
 {
     if (pOwner->Get_StateMachine()->Get_Int("IdleEntryMode") == 2)
         return true;
+    if (strState == "SwitchOut")
+        return true;
     if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInParryAid")
     {
         IHState<CJaneDoe>* pState = dynamic_cast<IHState<CJaneDoe>*>(m_pSubStateMachine->Get_CurrentState());

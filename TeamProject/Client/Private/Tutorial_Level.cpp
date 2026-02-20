@@ -16,6 +16,13 @@
 #include "Player.h"
 #include "ProceduralSky.h"
 
+/* UI */
+#include "UI_TutorialInfo.h"
+#include "UI_TutorialGuide.h"
+
+#include "Claymore.h"
+#include "EnemyAttackCollider.h"
+
 CTutorial_Level::CTutorial_Level(const string& LevelKey)
     :CLevel(LevelKey),
     m_pGameInstance{ CGameInstance::GetInstance() }
@@ -30,14 +37,20 @@ HRESULT CTutorial_Level::Initialize()
 
 HRESULT CTutorial_Level::Awake()
 {
-    UIDirector()->FadeIn_Screen(1.f);
+    /* UI */
+    Ready_UI();
 
+    /* Map */
     Ready_Map("Tutorial_Level", "TrainingRoom");
+
+    /* Player */
     m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
     m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
-    BattleSystem()->SetBattleCharacters({CHARACTER::Corin });
+    BattleSystem()->SetBattleCharacters({CHARACTER::Corin, CHARACTER::JaneDoe });
+    BattleSystem()->SetActive(true);
 
+    /* Environment */
     auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
     pCloud->Set_Alive(true);
     dynamic_cast<CProceduralSky*>(pCloud)->Set_CloudInfo({ _float3(0.151,0.109,0.074),_float3(0.15,0.158, 0.032), _float3(0.0,0.0,0.0),1.f,
@@ -50,6 +63,7 @@ HRESULT CTutorial_Level::Awake()
     CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
 
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Scott_Level", 2);
+    
     LIGHT_DESC lightDesc = {};
     lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
     lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
@@ -62,13 +76,23 @@ HRESULT CTutorial_Level::Awake()
     pPost->GetCommand<CFogCommand>()->
         SetEnable(false);
 
+    /* Monster */
+    PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_Claymore", CClaymore::Create());
+    PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
+    BattleSystem()->SpawnMosnter("Proto_GameObject_Claymore", _float3(-0.18f, 2.f, 1.59f));
+
+    /**/
+    //TUTORIAL_DESC desc = {};
+    //desc.eType = TUTORIAL_TYPE::EXTREME_EVADE;
+    //desc.eState = TUTORIAL_STATE::INFO;
+    //EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
+
     return S_OK;
 }
 
 void CTutorial_Level::Update()
 {
     CBattleSystem::GetInstance()->Update();
-
 }
 
 HRESULT CTutorial_Level::Render()
@@ -84,6 +108,38 @@ void CTutorial_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
         MSG_BOX("Failed to Load MapData!");
 
     Safe_Release(pMapLoader);
+}
+
+void CTutorial_Level::Ready_UI()
+{
+    // ui ��ü ����
+    auto uiDirector = CUIDirector::GetInstance();
+    uiDirector->Load_LevelObjects("Tutorial_Level");
+
+    if (FAILED(PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialInfo", CUI_TutorialInfo::Create())))
+        return;
+    if (FAILED(PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialGuide", CUI_TutorialGuide::Create())))
+        return;
+
+    auto ptutorialInfo = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialInfo" })
+        .Build("tutorialInfo");
+    if (ptutorialInfo)
+    {
+        UIManager()->Add_UIObject(ptutorialInfo, "Tutorial_Level");
+        UIDirector()->Register(ptutorialInfo);
+    }
+
+    auto ptutorialGuide = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialGuide" })
+        .Build("tutorialGuide");
+    if (ptutorialGuide)
+    {
+        UIManager()->Add_UIObject(ptutorialGuide, "Tutorial_Level");
+        UIDirector()->Register(ptutorialGuide);
+    }
+
+    // ui ����
+    uiDirector->FadeIn_Screen(1.f); 
+    uiDirector->Show_HUD(CUIDirector::HUD::BATTLE);
 }
 
 CTutorial_Level* CTutorial_Level::Create(const string& LevelKey)
