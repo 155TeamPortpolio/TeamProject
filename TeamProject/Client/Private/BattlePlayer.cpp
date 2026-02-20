@@ -145,7 +145,14 @@ void CBattlePlayer::Render_GUI()
         Recover_Decibel();
     }
 
+    ImGui::Separator();
+    if (ImGui::Button("ResetCharacter"))
+    {
+        Reset_Character();
+    }
+
     // Current Character Info
+    ImGui::Separator();
     if (ImGui::CollapsingHeader("Current Character", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::Text("Name : %s", Helper::EnumToString(m_pCurrentCharacter->Get_CharacterName()));
@@ -370,6 +377,11 @@ HRESULT CBattlePlayer::ClearCharacters()
     m_pCurrentCharacter = nullptr;
     return S_OK;
 
+}
+
+void CBattlePlayer::Reset_Character()
+{
+    m_pCurrentCharacter->Reset_State();
 }
 
 void CBattlePlayer::Set_Move(_vector3 vPos, _vector3 vRot)
