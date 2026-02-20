@@ -27,8 +27,10 @@ void CUI_GachaPage::Select_Channel(class CUI_GachaChannel* pSelected)
     m_pSelectedChannel = pSelected;
     m_pSelectedChannel->UI_Active();
 
-    if (m_pIntro)
+    if (m_pIntro) {
+        m_pIntro->Play_Video(m_pSelectedChannel->Get_Channel());
         m_pIntro->UI_Active();// Play_Video(m_pSelectedChannel->Get_Channel());// m_pIntro->UI_Active();
+    }
 }
 
 HRESULT CUI_GachaPage::Initialize_Prototype()
