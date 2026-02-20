@@ -27,6 +27,12 @@ bool    bSaturateEffectUse;
 
 bool    bSkinned = false;
 
+float2 FlareCenter = float2(0.5, 0.5);
+float FlareIntensity = 1.f;
+float3 FlareTintColor = float3(1.f, 1.f, 1.f);
+
+int PostNoiseIndex = 0;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -380,6 +386,78 @@ PS_OUT_RESULT PS_DISTORTION(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_FLARE(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float2 uv = In.vTexcoord - FlareCenter.xy;
+    uv.x *= ScreenWidth / ScreenHeight;
+
+    float rot = g_Time * 0.5f;
+    float cs = cos(rot);
+    float sn = sin(rot);
+    uv = float2(uv.x * cs - uv.y * sn,
+                uv.x * sn + uv.y * cs);
+
+    float dist = length(uv);
+    float angle = atan2(uv.y, uv.x);
+
+    float coreGlow = exp(-dist * 12.f);
+    float softGlow = exp(-dist * 4.f);
+
+    float thickPulse = 40.f + 40.f * sin(g_Time * 2.f);
+    
+    float lengthGrow = lerp(8.f, 2.f, g_Time);
+    float rays = 0.f;
+    rays += pow(abs(cos(angle * 3.f)), thickPulse) * exp(-dist * lengthGrow);
+    rays += pow(abs(cos(angle * 1.f + 0.5f)), thickPulse * 1.5f) * exp(-dist * (lengthGrow * 0.6f)) * 0.5f;
+    rays += pow(abs(cos(angle * 1.f + 1.2f)), thickPulse * 2.5f) * exp(-dist * (lengthGrow * 0.4f)) * 0.3f;
+    
+    float cross1 = pow(abs(cos(angle)), 60.f);
+    float cross2 = pow(abs(sin(angle)), 60.f);
+    float starburst = (cross1 + cross2) * exp(-dist * 3.f) * 0.4f;
+
+    float3 skyBlue = float3(0.5f, 0.8f, 1.0f); 
+    float3 purple = float3(0.6f, 0.3f, 0.9f);
+
+    float blend = sin(g_Time * 1.5f) * 0.5f + 0.5f;
+    
+    float3 colorCore = float3(1.f, 1.f, 1.f);
+    float3 colorMid = lerp(skyBlue, purple, blend);
+    float3 colorOuter = lerp(purple, skyBlue, blend);
+
+    float3 flareColor = lerp(colorOuter, colorMid, exp(-dist * 5.f));
+    flareColor = lerp(flareColor, colorCore, exp(-dist * 15.f));
+    flareColor *= FlareTintColor.rgb;
+
+    float intensity = coreGlow * 2.f + softGlow * 0.5f + rays + starburst;
+    intensity *= FlareIntensity;
+
+    float innerMask = smoothstep(0.15f, 0.5f, dist);
+    intensity *= innerMask;
+
+    float3 finalColor = scene.rgb + flareColor * intensity;
+    Out.vResult = float4(finalColor, 1.f);
+
+    return Out;
+}
+
+PS_OUT_RESULT PS_NOISE(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    int iRow = PostNoiseIndex / 2;
+    int iCol = PostNoiseIndex % 2;
+
+    float2 vCellSize = float2(1.f / 2, 1.f / 2);
+    float2 vUV = float2(iCol, iRow) * vCellSize + In.vTexcoord * vCellSize;
+
+    Out.vResult = PostNoiseTexture.Sample(DefaultSampler, vUV);
+    
+    return Out;
+}
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
@@ -575,6 +653,26 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISTORTION();
+    }
+
+    pass FLARE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_FLARE();
+    }
+
+    pass NOISE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_NOISE();
     }
 
     pass GLITCH

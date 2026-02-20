@@ -17,7 +17,7 @@ public:
 	}SPEECHBUBBLE_DESC;
 
 private:
-	enum class STATE_VISIBLE { VISIBLE, HIDDEN, END };
+	enum class STATE_VISIBLE { VISIBLE, INVISIBLE, END };
 
 private:
 	CUI_SpeechBubble() {}
@@ -41,7 +41,7 @@ private:
 	_float3 m_vPosition = {};
 	_float3 m_vOffset = { 0.f, 0.2f, 0.f};
 
-	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::END };
+	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::INVISIBLE };
 
 	static constexpr _float	m_fRadius = { 3.f };// { 6.f };
 	static constexpr _float2 m_vPadding = { 48.f, 24.f };

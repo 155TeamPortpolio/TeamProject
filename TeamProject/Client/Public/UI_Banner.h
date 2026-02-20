@@ -7,17 +7,24 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CUI_TutorialGuideSlot final : public CUI_Object
+class CUI_Banner final : public CUI_Object
 {
 public:
-	typedef struct tagSlotDesc : public UI_DESC {
-		TUTORIAL_ACTION_DESC desc = {};
-	}SLOT_DESC;
+	typedef struct tagBannerDesc : public UI_DESC {
+		wstring strTitle = L"";
+		wstring strSubtitle = L"";
+		function<void()> onClickConfirm = {};
+		function<void()> onClickCancel = {};
+	}BANNER_DESC;
 
 private:
-	CUI_TutorialGuideSlot() {}
-	CUI_TutorialGuideSlot(const CUI_TutorialGuideSlot& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_TutorialGuideSlot() DEFAULT;
+	enum class STATE { INVISIBLE, VISIBLE, END };
+
+private:
+	CUI_Banner() {}
+	CUI_Banner(const CUI_Banner& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_Banner() DEFAULT;
+
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
@@ -30,25 +37,24 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 private:
-	TUTORIAL_ACTION m_eAction = {};
+	STATE m_eState = { STATE::END };
+	class CTextSlot* m_pTitleTextSlot = { };
+	class CTextSlot* m_pSubtitleTextSlot = { };
 
-	class CTextSlot* m_pCountText = {};
-
-	_uint m_iCurrentCount = {};
-	_uint m_iTargetCount = {};
+	function<void()> m_onClickConfirm = {};
+	function<void()> m_onClickCancel = {};
 
 private:
 	void Cache();
+	void Create_CancelButton();
+	void Create_ConfirmButton(); 
 
-	void Set_CountText();
-	void Set_Animations(_int iIndex = 0);
+	void Change_State(STATE eSate);
 
-	string Get_PrefabPath(TUTORIAL_ACTION eAction);
-	
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
-	virtual void Free() override;
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END

@@ -34,13 +34,23 @@ HRESULT CUI_TutorialGuideSlot::Initialize(INIT_DESC* pArg)
         Set_CountText();
 
     // ¿Ã∫•∆Æ : TUTORIAL_DESC
-    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_ACTION_DESC>([&](const TUTORIAL_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_ACTION_DESC>([this](const TUTORIAL_ACTION_DESC& desc)
         {
             if (desc.eAction != m_eAction)
                 return;
 
+            if (m_iCurrentCount >= m_iTargetCount)
+                return;
+
             m_iCurrentCount++;
             Set_CountText();
+
+            if (m_iCurrentCount >= m_iTargetCount)
+            {
+                TUTORIAL_ACTION_COMPLETE desc = {};
+                desc.eAction = m_eAction;
+                EventSystem()->Broadcast<TUTORIAL_ACTION_COMPLETE>({ desc });
+            }
         });
 
     return S_OK;
@@ -60,7 +70,6 @@ void CUI_TutorialGuideSlot::Update(_float dt)
 void CUI_TutorialGuideSlot::UI_Active(void* pArg)
 {
     Set_Alive(true);
-
     Set_Animations(0);
 }
 

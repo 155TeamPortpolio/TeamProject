@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "GameInstance.h"
 #include "BattleSystem.h"
 #include "CorinState_Evade.h"
 #include "Corin.h"
@@ -7,6 +8,9 @@
 #include "CorinState_Backstep.h"
 
 #include "AudioSource.h"
+
+#include "EventSystem.h"
+#include "EventListener.h"
 
 CCorinState_Evade* CCorinState_Evade::Create()
 {
@@ -60,6 +64,12 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
         if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+            {
+                TUTORIAL_ACTION_DESC desc;
+                desc.eAction = TUTORIAL_ACTION::DODGE;
+                EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+            }
             pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }
