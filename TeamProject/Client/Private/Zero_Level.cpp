@@ -444,8 +444,8 @@ void CZero_Level::Zero_Cloud::RollBack_Cloud(_float fTime, EaseType eEaseType)
 
 void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
 {
-	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
-	if (pCloud) pCloud->Set_CloudInfo(tBaseCloud);
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	if(pCloud) pCloud->Set_Alive(b);
 }
 
 #pragma endregion
