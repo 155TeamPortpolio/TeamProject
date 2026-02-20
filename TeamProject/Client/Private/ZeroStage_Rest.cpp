@@ -45,7 +45,6 @@ void CZeroStage_Rest::Update()
 	default:
 		break;
 	}
-
 }
 
 HRESULT CZeroStage_Rest::Enter_Stage(StageContext& context)

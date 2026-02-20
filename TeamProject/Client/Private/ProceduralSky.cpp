@@ -32,6 +32,19 @@ void CProceduralSky::Set_CloudInfo(CLOUD_DESC Desc)
 	m_fCloudCoverage = Desc.coverage;
 }
 
+CLOUD_DESC CProceduralSky::Get_CloudInfo()
+{
+	return CLOUD_DESC{
+		m_vTopColor,
+		m_vHorizonColor,
+		m_vHazeColor,
+		m_fSkyAtmosphereBlend,
+		m_vCloudBright,
+		m_vCloudDark,
+		m_fCloudCoverage,
+	};
+}
+
 HRESULT CProceduralSky::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
