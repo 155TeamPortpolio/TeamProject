@@ -42,12 +42,11 @@ public:
 private:
     void Initialize_Effects();
     void Focus(_float dt);
-    void Extend(_float dt);
-    void Contract(_float dt);
     void NoiseSequence();
+    void Update_ActivePortal(_float dt);
 
     /* For Debug */
-    void Active_Portal();
+    void Active_PortalEffect();
     void On_InPlayer() { m_bInPlayer = true; }
 
     void    PortalEffectFlowSetting();
@@ -63,6 +62,10 @@ private:
 private:
     _bool m_bInPlayer = { false };
 
+private:
+    _bool m_bUsingPortal = { false };
+    _float m_fElapsedPortal = { 0.f };
+    _float m_fEffectTiming = { 0.4f };
 
 private:
     _bool m_OnExtend = false;

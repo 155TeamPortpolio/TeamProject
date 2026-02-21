@@ -30,7 +30,7 @@ private:
 
 private:
     _vector3 m_vDegreePerSec = { 0.f, 30.f, 0.f };
-    _vector2 m_vWave = { 60.f, 0.08f };
+    _vector2 m_vWave = { 120.f, 0.08f };
     _float   m_fBaseY{};
     _float   m_fWaveTime = 0.f;
 public:

@@ -23,6 +23,11 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid",
       "Events": [
         {
+          "EventTime": 0.11231941729784012,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_1.wav"
+        },
+        {
           "EventTime": 0.12007797509431839,
           "EventType": "Notify",
           "EventTag": "RFootStart"
@@ -38,9 +43,24 @@
           "EventTag": "LFootStart"
         },
         {
+          "EventTime": 0.37133699655532837,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_2.wav"
+        },
+        {
+          "EventTime": 0.4399999976158142,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_5.wav"
+        },
+        {
           "EventTime": 0.4502924084663391,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.46000000834465027,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack10.wav"
         },
         {
           "EventTime": 0.5875243544578552,
@@ -71,7 +91,23 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_AssaultAid_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.25,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Laugh3.wav"
+        },
+        {
+          "EventTime": 0.3619462251663208,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_L_Step.wav"
+        },
+        {
+          "EventTime": 1.151576280593872,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01",
@@ -80,6 +116,11 @@
           "EventTime": 0.15000000596046448,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Attack_Spin_1.wav"
+        },
+        {
+          "EventTime": 0.1621832400560379,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Spin_Enter.wav"
         },
         {
           "EventTime": 0.2526315748691559,
@@ -102,6 +143,11 @@
           "EventTag": "JaneDoe_R_Step2.wav"
         },
         {
+          "EventTime": 0.550000011920929,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Sigh1.wav"
+        },
+        {
           "EventTime": 1.0299999713897705,
           "EventType": "Sound",
           "EventTag": "JaneDoe_L_Step2.wav"
@@ -112,7 +158,7 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_01_Release",
       "Events": [
         {
-          "EventTime": 0.009999999776482582,
+          "EventTime": 0.0,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Attack_Spin_2.wav"
         },
@@ -147,6 +193,11 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.47999998927116394,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Spin_End.wav"
+        },
+        {
           "EventTime": 0.5364522337913513,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -170,7 +221,23 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_02_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.29726433753967285,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
+          "EventTime": 1.4986178874969482,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_L_Step.wav"
+        },
+        {
+          "EventTime": 0.6499999761581421,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Laugh2.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Branch_02_Release",
@@ -188,6 +255,11 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_01",
       "Events": [
         {
+          "EventTime": 0.05000000074505806,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_2.wav"
+        },
+        {
           "EventTime": 0.05640025809407234,
           "EventType": "Notify",
           "EventTag": "LHandStart"
@@ -203,14 +275,29 @@
           "EventTag": "LFootStart"
         },
         {
+          "EventTime": 0.23999999463558197,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_4.wav"
+        },
+        {
           "EventTime": 0.2940870523452759,
           "EventType": "Notify",
           "EventTag": "LFootEnd"
         },
         {
+          "EventTime": 0.4000000059604645,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Stab_1.wav"
+        },
+        {
           "EventTime": 0.41091617941856384,
           "EventType": "Notify",
           "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.5046817064285278,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Ex_Attack2.wav"
         },
         {
           "EventTime": 0.5337881445884705,
@@ -226,7 +313,28 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_01_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6922071576118469,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Sigh1.wav"
+        },
+        {
+          "EventTime": 1.0169590711593628,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Knife.wav"
+        },
+        {
+          "EventTime": 1.0896096229553223,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_L_Step2.wav"
+        },
+        {
+          "EventTime": 1.9658246040344238,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step2.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Counter_02",
@@ -242,6 +350,11 @@
           "EventTag": "RFootEnd"
         },
         {
+          "EventTime": 0.3100000023841858,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_5.wav"
+        },
+        {
           "EventTime": 0.6339181661605835,
           "EventType": "Notify",
           "EventTag": "LFootStart"
@@ -255,6 +368,16 @@
           "EventTime": 0.7508772015571594,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
+        },
+        {
+          "EventTime": 0.029999999329447746,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_1.wav"
+        },
+        {
+          "EventTime": 0.20116959512233734,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_2.wav"
         }
       ]
     },
@@ -319,6 +442,26 @@
           "EventTime": 0.6495126485824585,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
+        },
+        {
+          "EventTime": 0.17475366592407227,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Ex_Attack_1.wav"
+        },
+        {
+          "EventTime": 0.6836697459220886,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Ex_Attack_2.wav"
+        },
+        {
+          "EventTime": 0.6227729320526123,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Land.wav"
+        },
+        {
+          "EventTime": 0.17000000178813934,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Jump.wav"
         }
       ]
     },
@@ -343,11 +486,6 @@
           "EventTime": 0.12373224645853043,
           "EventType": "Notify",
           "EventTag": "LFootStart"
-        },
-        {
-          "EventTime": 0.7400000095367432,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_Ex_Attack_2.wav"
         },
         {
           "EventTime": 0.19837555289268494,
@@ -380,6 +518,11 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.7400000095367432,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Ex_Attack_2.wav"
+        },
+        {
           "EventTime": 0.7432098388671875,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -395,9 +538,19 @@
           "EventTag": "RFootEnd"
         },
         {
+          "EventTime": 0.7757722735404968,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Ex_Attack1.wav"
+        },
+        {
           "EventTime": 0.8326185345649719,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
+        },
+        {
+          "EventTime": 0.8745288848876953,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 1.2293696403503418,
@@ -408,11 +561,6 @@
           "EventTime": 1.2293696403503418,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
-        },
-        {
-          "EventTime": 0.8745288848876953,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
         }
       ]
     },
@@ -430,7 +578,28 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_ExSpecial_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.5799999833106995,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_2_End.wav"
+        },
+        {
+          "EventTime": 1.004118800163269,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
+          "EventTime": 1.730649709701538,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_L_Step.wav"
+        },
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_GoHurry.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01",
@@ -441,35 +610,10 @@
           "EventTag": "MotionBlur"
         },
         {
-          "EventTime": 0.14000000059604645,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_Attack_2_End.wav"
-        },
-        {
-          "EventTime": 0.4584932029247284,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_L_Step.wav"
-        },
-        {
           "EventTime": 0.06959064304828644,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
         },
-        {
-          "EventTime": 1.190000057220459,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_Step_Silence.wav"
-        },
-        {
-          "EventTime": 1.799218773841858,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_Step_Silence.wav"
-        }
-      ]
-    },
-    {
-      "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01",
-      "Events": [
         {
           "EventTime": 0.10916179418563843,
           "EventType": "Notify",
@@ -479,6 +623,11 @@
           "EventTime": 0.11612622439861298,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Attack_1.wav"
+        },
+        {
+          "EventTime": 0.11788754165172577,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack1.wav"
         },
         {
           "EventTime": 0.16510720551013947,
@@ -495,7 +644,7 @@
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_01_End",
       "Events": [
-      {
+        {
           "EventTime": 0.27000001072883606,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Attack_1_End.wav"
@@ -514,6 +663,11 @@
           "EventTime": 0.0,
           "EventType": "Notify",
           "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.05999999865889549,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack2.wav"
         },
         {
           "EventTime": 0.07595811039209366,
@@ -584,12 +738,22 @@
           "EventTime": 1.2000000476837158,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Step_Silence.wav"
+        },
+        {
+          "EventTime": 1.1565486192703247,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Laugh3.wav"
         }
       ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_03",
       "Events": [
+        {
+          "EventTime": 0.07999999821186066,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack3.wav"
+        },
         {
           "EventTime": 0.09000000357627869,
           "EventType": "Sound",
@@ -716,6 +880,11 @@
           "EventTag": "RHandStart"
         },
         {
+          "EventTime": 0.6700000166893005,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack4.wav"
+        },
+        {
           "EventTime": 0.7095516324043274,
           "EventType": "Notify",
           "EventTag": "RHandEnd"
@@ -740,16 +909,6 @@
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_05",
       "Events": [
-        {
-          "EventTime": 0.3100000023841858,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_Attack_4_End.wav"
-        },
-        {
-          "EventTime": 1.442102074623108,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_R_Step.wav"
-        },
         {
           "EventTime": 0.054061081260442734,
           "EventType": "Notify",
@@ -784,7 +943,7 @@
           "EventTime": 0.14022092521190643,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
-        },        
+        },
         {
           "EventTime": 0.20779727399349213,
           "EventType": "Notify",
@@ -796,6 +955,11 @@
           "EventTag": "LFootEnd"
         },
         {
+          "EventTime": 0.25999999046325684,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack6.wav"
+        },
+        {
           "EventTime": 0.2939571142196655,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -804,6 +968,11 @@
           "EventTime": 0.3057829737663269,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.3100000023841858,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_4_End.wav"
         },
         {
           "EventTime": 0.4105263352394104,
@@ -824,12 +993,27 @@
           "EventTime": 1.590000033378601,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Step.wav"
+        },
+        {
+          "EventTime": 1.2583979368209839,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Laugh2.wav"
         }
       ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Normal_06",
       "Events": [
+        {
+          "EventTime": 0.03999999910593033,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_6_1.wav"
+        },
+        {
+          "EventTime": 0.05999999865889549,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack5.wav"
+        },
         {
           "EventTime": 0.13567252457141876,
           "EventType": "Notify",
@@ -891,6 +1075,16 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack6.wav"
+        },
+        {
+          "EventTime": 0.8399999737739563,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Attack_6_2.wav"
+        },
+        {
           "EventTime": 0.8584795594215393,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -929,6 +1123,11 @@
           "EventTime": 0.8199999928474426,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Roll_Knife2.wav"
+        },
+        {
+          "EventTime": 1.2300000190734863,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Sigh3.wav"
         },
         {
           "EventTime": 1.2599999904632568,
@@ -986,6 +1185,11 @@
           "EventTag": "RFootStart"
         },
         {
+          "EventTime": 0.8931666016578674,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Laugh1.wav"
+        },
+        {
           "EventTime": 0.9000000357627869,
           "EventType": "Notify",
           "EventTag": "RFootEnd"
@@ -1004,6 +1208,11 @@
           "EventTime": 0.20999999344348907,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Evade_L_Attack_End_2.wav"
+        },
+        {
+          "EventTime": 0.6980052590370178,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Sigh1.wav"
         },
         {
           "EventTime": 1.5299999713897705,
@@ -1031,6 +1240,11 @@
           "EventTag": "RHandStart"
         },
         {
+          "EventTime": 0.4300000071525574,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack2.wav"
+        },
+        {
           "EventTime": 0.43515270948410034,
           "EventType": "Notify",
           "EventTag": "LHandEnd"
@@ -1051,6 +1265,11 @@
           "EventTag": "JaneDoe_Evade_R_Attack_End_1.wav"
         },
         {
+          "EventTime": 0.6299999952316284,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Laugh2.wav"
+        },
+        {
           "EventTime": 1.9700000286102295,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Step.wav"
@@ -1060,6 +1279,16 @@
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Attack_Rush_03",
       "Events": [
+        {
+          "EventTime": 0.004288499243557453,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.030019493773579597,
+          "EventType": "Notify",
+          "EventTag": "MotionBlur"
+        },
         {
           "EventTime": 0.03999999910593033,
           "EventType": "Sound",
@@ -1074,56 +1303,6 @@
           "EventTime": 0.10125473141670227,
           "EventType": "Notify",
           "EventTag": "RFootStart"
-        },
-        {
-          "EventTime": 0.3966861665248871,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.3966861665248871,
-          "EventType": "Notify",
-          "EventTag": "RFootEnd"
-        },
-        {
-          "EventTime": 0.40097469091415405,
-          "EventType": "Notify",
-          "EventTag": "RHandStart"
-        },
-        {
-          "EventTime": 0.4524366557598114,
-          "EventType": "Notify",
-          "EventTag": "RHandEnd"
-        },
-        {
-          "EventTime": 0.4524366557598114,
-          "EventType": "Notify",
-          "EventTag": "LHandStart"
-        },
-        {
-          "EventTime": 0.4524366557598114,
-          "EventType": "Notify",
-          "EventTag": "LFootStart"
-        },
-        {
-          "EventTime": 0.6239765882492065,
-          "EventType": "Notify",
-          "EventTag": "LHandEnd"
-        },
-        {
-          "EventTime": 0.6239765882492065,
-          "EventType": "Notify",
-          "EventTag": "LFootEnd"
-        },
-        {
-          "EventTime": 0.004288499243557453,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 0.030019493773579597,
-          "EventType": "Notify",
-          "EventTag": "MotionBlur"
         },
         {
           "EventTime": 0.1350877285003662,
@@ -1156,6 +1335,41 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 0.3966861665248871,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
+        },
+        {
+          "EventTime": 0.3966861665248871,
+          "EventType": "Notify",
+          "EventTag": "RFootEnd"
+        },
+        {
+          "EventTime": 0.40097469091415405,
+          "EventType": "Notify",
+          "EventTag": "RHandStart"
+        },
+        {
+          "EventTime": 0.4099999964237213,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack7.wav"
+        },
+        {
+          "EventTime": 0.4524366557598114,
+          "EventType": "Notify",
+          "EventTag": "RHandEnd"
+        },
+        {
+          "EventTime": 0.4524366557598114,
+          "EventType": "Notify",
+          "EventTag": "LHandStart"
+        },
+        {
+          "EventTime": 0.4524366557598114,
+          "EventType": "Notify",
+          "EventTag": "LFootStart"
+        },
+        {
           "EventTime": 0.46744638681411743,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -1169,6 +1383,16 @@
           "EventTime": 0.5617933869361877,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 0.6239765882492065,
+          "EventType": "Notify",
+          "EventTag": "LHandEnd"
+        },
+        {
+          "EventTime": 0.6239765882492065,
+          "EventType": "Notify",
+          "EventTag": "LFootEnd"
         }
       ]
     },
@@ -1184,6 +1408,11 @@
           "EventTime": 1.1115093231201172,
           "EventType": "Sound",
           "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
+          "EventTime": 1.149999976158142,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Sigh3.wav"
         },
         {
           "EventTime": 1.850000023841858,
@@ -1207,6 +1436,11 @@
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Back_01",
       "Events": [
+        {
+          "EventTime": 0.00878165289759636,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Evade2.wav"
+        },
         {
           "EventTime": 0.029999999329447746,
           "EventType": "Sound",
@@ -1238,6 +1472,11 @@
           "EventTag": "JaneDoe_Evade_RB_1.wav"
         },
         {
+          "EventTime": 0.044834308326244354,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Evade4.wav"
+        },
+        {
           "EventTime": 1.3300000429153442,
           "EventType": "Sound",
           "EventTag": "JaneDoe_R_Step.wav"
@@ -1252,6 +1491,11 @@
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Evade_Back_03",
       "Events": [
+        {
+          "EventTime": 0.019363222643733025,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Evade1.wav"
+        },
         {
           "EventTime": 0.029999999329447746,
           "EventType": "Sound",
@@ -1288,11 +1532,6 @@
           "EventTag": "MotionBlur"
         },
         {
-          "EventTime": 1.3300000429153442,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_R_Step.wav"
-        },
-        {
           "EventTime": 0.16458739340305328,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -1313,6 +1552,11 @@
           "EventTag": "MotionBlur"
         },
         {
+          "EventTime": 1.3300000429153442,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
           "EventTime": 2.569999933242798,
           "EventType": "Sound",
           "EventTag": "JaneDoe_L_Step.wav"
@@ -1326,6 +1570,11 @@
           "EventTime": 0.019999999552965164,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Dash_R.wav"
+        },
+        {
+          "EventTime": 0.05503573641180992,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Evade2.wav"
         },
         {
           "EventTime": 1.2470691204071045,
@@ -1348,6 +1597,11 @@
           "EventTag": "JaneDoe_Dash_L.wav"
         },
         {
+          "EventTime": 0.06289798766374588,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Evade1.wav"
+        },
+        {
           "EventTime": 1.3610321283340454,
           "EventType": "Sound",
           "EventTag": "JaneDoe_L_Step2.wav"
@@ -1368,6 +1622,11 @@
           "EventTag": "JaneDoe_Rage_Dash.wav"
         },
         {
+          "EventTime": 0.0393112413585186,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Evade3.wav"
+        },
+        {
           "EventTime": 0.07076023519039154,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
@@ -1381,11 +1640,6 @@
           "EventTime": 0.12579597532749176,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
-        },
-        {
-          "EventTime": 1.2899999618530273,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_R_Step.wav"
         },
         {
           "EventTime": 0.14000000059604645,
@@ -1418,14 +1672,19 @@
           "EventTag": "MotionBlur"
         },
         {
-          "EventTime": 1.9800000190734863,
-          "EventType": "Sound",
-          "EventTag": "JaneDoe_L_Step.wav"
-        },
-        {
           "EventTime": 0.26731643080711365,
           "EventType": "Notify",
           "EventTag": "MotionBlur"
+        },
+        {
+          "EventTime": 1.2899999618530273,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
+          "EventTime": 1.9800000190734863,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_L_Step.wav"
         }
       ]
     },
@@ -1518,6 +1777,11 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack",
       "Events": [
         {
+          "EventTime": 0.29531967639923096,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack3.wav"
+        },
+        {
           "EventTime": 0.39298245310783386,
           "EventType": "Notify",
           "EventTag": "AreaAttack"
@@ -1588,6 +1852,31 @@
           "EventTag": "AreaAttackHard"
         },
         {
+          "EventTime": 1.2400000095367432,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Attack6.wav"
+        },
+        {
+          "EventTime": 0.36000001430511475,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_4.wav"
+        },
+        {
+          "EventTime": 0.6100000143051147,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_5.wav"
+        },
+        {
+          "EventTime": 0.8799999952316284,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_6.wav"
+        },
+        {
+          "EventTime": 1.1105958223342896,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Slash_5.wav"
+        },
+        {
           "EventTime": 1.1743924713134766,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
@@ -1596,7 +1885,33 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.3199999928474426,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Evade_R_Attack_End_3.wav"
+        },
+        {
+          "EventTime": 1.0399999618530273,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Roll_Knife.wav"
+        },
+        {
+          "EventTime": 0.6000000238418579,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
+          "EventTime": 1.2000000476837158,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_L_Step.wav"
+        },
+        {
+          "EventTime": 0.75,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Sigh3.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Attack_Ex",
@@ -1613,12 +1928,22 @@
           "EventTime": 0.18000000715255737,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Ult.wav"
+        },
+        {
+          "EventTime": 0.18000000715255737,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Ult_Enter.wav"
         }
       ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_SwitchIn_Normal",
       "Events": [
+        {
+          "EventTime": 0.01572449691593647,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Vo_Change.wav"
+        },
         {
           "EventTime": 0.12999999523162842,
           "EventType": "Sound",
@@ -1669,7 +1994,28 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_TurnBack",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.03999999910593033,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Evade_LB_End.wav"
+        },
+        {
+          "EventTime": 0.14000000059604645,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Step.wav"
+        },
+        {
+          "EventTime": 0.8199999928474426,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Run_L.wav"
+        },
+        {
+          "EventTime": 1.0798455476760864,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Run_R.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk",
@@ -1688,7 +2034,23 @@
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.12999999523162842,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Walk_End.wav"
+        },
+        {
+          "EventTime": 1.590000033378601,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_R_Step.wav"
+        },
+        {
+          "EventTime": 2.25,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Step_Silence.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_End_Interact",
@@ -1698,14 +2060,24 @@
       "ClipTag": "Avatar_Female_Size03_JaneDoe_Ani_Walk_Start",
       "Events": [
         {
-          "EventTime": 1.0661286115646362,
+          "EventTime": 0.4099999964237213,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Walk_R.wav"
         },
         {
-          "EventTime": 1.3443902730941772,
+          "EventTime": 0.7699999809265137,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Walk_L.wav"
+        },
+        {
+          "EventTime": 1.1399999856948853,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Walk_R.wav"
+        },
+        {
+          "EventTime": 0.09000000357627869,
+          "EventType": "Sound",
+          "EventTag": "JaneDoe_Step_Silence.wav"
         }
       ]
     },

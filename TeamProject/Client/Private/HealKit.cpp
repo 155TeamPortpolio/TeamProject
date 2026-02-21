@@ -9,7 +9,7 @@
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 #include "AudioSource.h"
-
+#include "EffectContainer.h"
 #include "KitObject.h"
 
 CHealKit::CHealKit()
@@ -52,6 +52,7 @@ HRESULT CHealKit::Initialize(INIT_DESC* pArg)
 	
 	Get_Component<CStaticModel>()->Link_Model("Zero_Level", "Device_Prop_ItemStand_02.model");
 	Get_Component<CMaterial>()->Link_Material("Zero_Level", "Device_Prop_ItemStand_02.mat");
+
 	Setting_Child();
 
 	return S_OK;
@@ -73,8 +74,14 @@ void CHealKit::Priority_Update(_float dt)
 		m_bActiveItem = true;
 		m_fElapsedTime = 0.f;
 
-		for (auto& Child : Get_Children())
-			Child->SetRenderLayer(RENDER_LAYER::Default);
+		for (auto& Child : Get_Children()) {
+			string ChildTag = Child->Get_InstanceName();
+
+			if (ChildTag == "Kit_Child")
+				Child->SetRenderLayer(RENDER_LAYER::Default);
+			else if (ChildTag == "Kit_Effect")
+				dynamic_cast<CEffectContainer*>(Child)->Play();
+		}
 	}
 
 }
@@ -100,8 +107,14 @@ void CHealKit::OnTriggerEnter(CGameObject* pOther)
 	m_bActiveItem = false;
 	m_fElapsedTime = 0.f;
 
-	for (auto& Child : Get_Children())
-		Child->SetRenderLayer(RENDER_LAYER::None);
+	for (auto& Child : Get_Children()) {
+		string ChildTag = Child->Get_InstanceName();
+
+		if (ChildTag == "Kit_Child")
+			Child->SetRenderLayer(RENDER_LAYER::None);
+		else if (ChildTag == "Kit_Effect")
+			dynamic_cast<CEffectContainer*>(Child)->Stop();
+	}
 
 	switch (m_eItemType)
 	{
@@ -141,8 +154,13 @@ void CHealKit::Setting_Child()
 		.Add_ObjDesc(KitDesc)
 		.Position(_vector3{ 0.f, 0.25f, 0.f })
 		.Build("Kit_Child");
-
 	Add_Component<CObjectContainer>()->Add_Child(Object, true);
+
+	auto Effect = Builder::Create_EffectContainer({ G_GlobalLevelKey, "Proto_GameObject_EffectContainer" })
+		.Asset("heal_pack_light.json")
+		.Position(_vector3{ 0.f, 0.1f, 0.f })
+		.Build("Kit_Effect");
+	Add_Component<CObjectContainer>()->Add_Child(Effect, true);
 }
 
 CHealKit* CHealKit::Create()
