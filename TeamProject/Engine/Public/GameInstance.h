@@ -21,7 +21,7 @@ public:
 
 public:
 	void Notify_LevelSet();
-	void Clear_LevelResource(const string& levelKey);
+	void Clear_LevelResource(const string& levelKey, _bool ResourceKeep = false);
 	_bool HandleMessage(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	HRESULT Draw_Begin(_float4* pColor);
 	HRESULT Draw();

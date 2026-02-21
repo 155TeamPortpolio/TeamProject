@@ -213,7 +213,8 @@ void CUI_GachaPage::OnClick_Conversion()
     iDenny = (iDenny - 10000 <= 0) ? 0 : iDenny - 10000;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
 
-    LevelManager()->Request_ChangeLevel("Gacha_Level", false);
+    //LevelManager()->Request_ChangeLevel("Gacha_Level", false);
+    LevelManager()->Request_ChangeLevel("Gacha_Level", LEVEL_TRANS_DESC{ "Gacha_Level", false ,true});
 
     if (m_pIntro)
         m_pIntro->UI_DeActive();
