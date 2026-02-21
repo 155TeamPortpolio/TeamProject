@@ -569,7 +569,7 @@ HRESULT CClaymore::Initialize_Transitions()
 HRESULT CClaymore::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 2.5f;

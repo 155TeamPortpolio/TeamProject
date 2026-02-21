@@ -18,6 +18,8 @@ void CThugPoacher_Attack::Enter(CThugPoacher* pOwner)
 		__super::Enter(pOwner);
 	}
 
+	m_isShoot = false;
+
 	auto pStateMachine = pOwner->GetStateMachine();
 	if (nullptr == pStateMachine)
 		return;
@@ -45,8 +47,6 @@ void CThugPoacher_Attack::Enter(CThugPoacher* pOwner)
 		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
-
 }
 
 void CThugPoacher_Attack::Update(CThugPoacher* pOwner, _float dt)
@@ -60,6 +60,8 @@ void CThugPoacher_Attack::Update(CThugPoacher* pOwner, _float dt)
 
 	__super::Update(pOwner, dt);
 
+	if (false == m_isShoot)
+		pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
 	{
@@ -69,8 +71,11 @@ void CThugPoacher_Attack::Update(CThugPoacher* pOwner, _float dt)
 		{
 			if (Event.Tag == "UnleashAttack")
 				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+			else if (Event.Tag == "UnleashAttack_WithoutSound")
+				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false, false);
 			else if (Event.Tag == "Shoot")
 			{
+				m_isShoot = true;
 				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 				pOwner->ShootArrow();
 			}

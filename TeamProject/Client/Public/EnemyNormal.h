@@ -23,12 +23,14 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+
 public:
     void            CaptureRotateToDir(_float3 vTargetDir, _float fSpeed = 0.5f);
 
 protected:
     void            RotateToDir(_float dt);
     void            GUI_DebugButton();
+    virtual void    PlaySoundFromMeta();
 
 protected:
     ROT_DIR         m_tRotDir = {};
