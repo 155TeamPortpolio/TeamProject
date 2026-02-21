@@ -16,6 +16,7 @@
 #include "DataBase.h"
 #include "BattleSystem.h"
 #include "Player.h"
+#include "CamDirector.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -129,6 +130,7 @@ void CUI_Party::UI_Active(void* pArg)
     m_isCardSequence = true;
 
     UIDirector()->Show_Mouse();
+    CamDirector()->GetOrbitCam()->Lock_Input();
 }
 
 void CUI_Party::UI_DeActive(void* pArg)
@@ -262,7 +264,10 @@ void CUI_Party::Create_EnterButton()
             BattleSystem()->SetBattleCharacters(m_characters);
             });
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
-            pPlayer->Unlock_Input(); 
+        {
+            pPlayer->Unlock_Input();
+            CamDirector()->GetOrbitCam()->Unlock_Input();
+        }
         });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
