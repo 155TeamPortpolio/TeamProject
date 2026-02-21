@@ -106,9 +106,9 @@ wstring CUI_Loading::Get_RandomText(const string& strNextLevelKey)
         switch (index)
         {
         case 0:
-            return L"공동 내부에서는 에테르 농도가 지속적으로 상승하며\n장시간 체류 시 침식 위험이 증가합니다.";
+            return L"공동 내부에서는 에테르 농도가 지속적으로\n상승하며 장시간 체류 시 침식 위험이 증가합니다.";
         case 1:
-            return L"적의 공격 직전 금빛 알림이 나타나면 극한 지원을\n발동할 수 있으며 붉은빛 알림 시 극한 회피만\n가능합니다.";
+            return L"적의 공격 직전 금빛 알림이 나타나면 극한\n지원을 발동할 수 있으며 붉은빛 알림 시 극한\n회피만 가능합니다.";
         case 2:
             return L"공동 내부의 이벤트는 선택에 따라 다른 결과를\n초래할 수 있으니 신중하게 판단하세요.";
         case 3:
@@ -135,7 +135,7 @@ wstring CUI_Loading::Get_RandomText(const string& strNextLevelKey)
         case 2:
             return L"라면 가게에서 식사를 하면 일정 시간 동안\n전투에 유리한 버프 효과를 받을 수 있습니다.";
         case 3:
-            return L"모집을 통해 새로운 에이전트를 영입할 수\n있으며 높은 등급일수록 강력한 능력을 보유합니다.";
+            return L"모집을 통해 새로운 에이전트를 영입할 수\n있으며 높은 등급일수록 강력한 능력을\n보유합니다.";
         case 4:
             return L"기간 한정 모집은 특정 에이전트의 등장 확률이\n상승하며 일정 횟수 이상 진행 시 확정 보상이\n있습니다.";
         }
