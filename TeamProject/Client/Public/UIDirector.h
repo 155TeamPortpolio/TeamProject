@@ -27,9 +27,9 @@ public:
 public:
 	//==================== Common ===============
 	/* 화면 페이드인 실행 (검정 화면 -> 화면) */
-	void FadeIn_Screen(_float fDuration = 0.5f);
+	void FadeIn_Screen(_float fDuration = 0.5f, function<void()> onFinished = nullptr );
 	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
-	void FadeOut_Screen(_float fDuration = 0.5f);
+	void FadeOut_Screen(_float fDuration = 0.5f, function<void()> onFinished = nullptr);
 
 	/* 씬 프레임을 화면에 표시 (화면 위, 아래에 프레임) */
 	void Show_SceneFrame();

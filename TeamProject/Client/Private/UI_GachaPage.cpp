@@ -81,10 +81,11 @@ void CUI_GachaPage::Update(_float dt)
 
 void CUI_GachaPage::UI_Active(void* pArg)
 {
+    UIDirector()->FadeIn_Screen(0.2f);
+    UIDirector()->Show_Mouse();
     Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
-    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
-    UIDirector()->Show_Mouse();
+    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play(); 
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)
@@ -201,6 +202,11 @@ void CUI_GachaPage::Deactive_SelectedChannel()
 
 void CUI_GachaPage::OnClick_Conversion()
 {
+    UIDirector()->Hide_Mouse();
+    UIDirector()->FadeOut_Screen(0.2f, [this]() {
+        LevelManager()->Request_ChangeLevel("Gacha_Level", LEVEL_TRANS_DESC{ "Gacha_Level", false ,true });
+        });
+
     _uint iDenny = {};
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
 
@@ -214,7 +220,6 @@ void CUI_GachaPage::OnClick_Conversion()
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
 
     //LevelManager()->Request_ChangeLevel("Gacha_Level", false);
-    LevelManager()->Request_ChangeLevel("Gacha_Level", LEVEL_TRANS_DESC{ "Gacha_Level", false ,true});
 
     if (m_pIntro)
         m_pIntro->UI_DeActive();

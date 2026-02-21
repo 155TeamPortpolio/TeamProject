@@ -1128,6 +1128,11 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_01_End",
       "Events": [
         {
+          "EventTime": 0.11695906519889832,
+          "EventType": "Notify",
+          "EventTag": "EvadeSign"
+        },
+        {
           "EventTime": 0.1899999976158142,
           "EventType": "Sound",
           "EventTag": "DefilerFalling.wav"
@@ -1138,19 +1143,14 @@
           "EventTag": "VO_Hut.wav"
         },
         {
-          "EventTime": 0.550000011920929,
-          "EventType": "Sound",
-          "EventTag": "DefilerWeaponGround.wav"
-        },
-        {
-          "EventTime": 0.11695906519889832,
-          "EventType": "Notify",
-          "EventTag": "EvadeSign"
-        },
-        {
           "EventTime": 0.5400000214576721,
           "EventType": "Notify",
           "EventTag": "M_Type_On"
+        },
+        {
+          "EventTime": 0.550000011920929,
+          "EventType": "Sound",
+          "EventTag": "DefilerWeaponGround.wav"
         },
         {
           "EventTime": 1.0214425325393677,
@@ -1183,14 +1183,14 @@
           "EventTag": "Defiler_Entrance.wav"
         },
         {
-          "EventTime": 1.9171810150146484,
-          "EventType": "Sound",
-          "EventTag": "Defiler_Change.wav"
-        },
-        {
           "EventTime": 0.5099999904632568,
           "EventType": "Sound",
           "EventTag": "DefilerSubCast.wav"
+        },
+        {
+          "EventTime": 1.9171810150146484,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Change.wav"
         }
       ]
     },
@@ -1198,24 +1198,24 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_08_02",
       "Events": [
         {
-          "EventTime": 0.8399999737739563,
-          "EventType": "Sound",
-          "EventTag": "VO_Hya.wav"
-        },
-        {
-          "EventTime": 0.8999999761581421,
-          "EventType": "Sound",
-          "EventTag": "DefilerHitGround.wav"
-        },
-        {
           "EventTime": 0.32807016372680664,
           "EventType": "Notify",
           "EventTag": "EvadeSign"
         },
         {
+          "EventTime": 0.8399999737739563,
+          "EventType": "Sound",
+          "EventTag": "VO_Hya.wav"
+        },
+        {
           "EventTime": 0.8500000238418579,
           "EventType": "Notify",
           "EventTag": "M_Type_On"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Sound",
+          "EventTag": "DefilerHitGround.wav"
         },
         {
           "EventTime": 1.8200000524520874,
@@ -1312,6 +1312,11 @@
           "EventTag": "Weapon"
         },
         {
+          "EventTime": 6.230000019073486,
+          "EventType": "Sound",
+          "EventTag": "DefilerSubCast.wav"
+        },
+        {
           "EventTime": 6.300000190734863,
           "EventType": "Notify",
           "EventTag": "WeaponShow"
@@ -1320,11 +1325,6 @@
           "EventTime": 6.320000171661377,
           "EventType": "Sound",
           "EventTag": "VO_Sink.wav"
-        },
-        {
-          "EventTime": 6.230000019073486,
-          "EventType": "Sound",
-          "EventTag": "DefilerSubCast.wav"
         }
       ]
     },
@@ -1453,6 +1453,11 @@
           "EventTime": 2.077777862548828,
           "EventType": "Notify",
           "EventTag": "ShowMesh_Pro"
+        },
+        {
+          "EventTime": 1.5199999809265137,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Change (2).wav"
         }
       ]
     },

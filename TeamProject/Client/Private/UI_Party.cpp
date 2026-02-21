@@ -76,8 +76,10 @@ void CUI_Party::UI_Active(void* pArg)
     UI_PARTY_DESC* pDesc = static_cast<UI_PARTY_DESC*>(pArg);
     if (!pDesc)
         return;
-
+     
+    UIDirector()->FadeIn_Screen();
     Set_Alive(true);
+    Set_Animation(0);
 
     // 캐릭터 벡터 복사
     m_characters = pDesc->characters;
@@ -123,7 +125,7 @@ void CUI_Party::UI_Active(void* pArg)
     m_pendingAttribute = (iPartySynergyCount >= 2) ? eMaxAttribute : ATTRIBUTE::END;
 
     m_iCardIndex = 0;
-    m_fCardTimer = m_fCardDelay;
+    m_fCardTimer = 0.f;// m_fCardDelay;
     m_isCardSequence = true;
 
     UIDirector()->Show_Mouse();
@@ -132,6 +134,7 @@ void CUI_Party::UI_Active(void* pArg)
 void CUI_Party::UI_DeActive(void* pArg)
 {
     Set_Alive(false);
+    Set_Alpha(0.f);
     UIDirector()->Hide_Mouse();
 }
 
@@ -254,10 +257,12 @@ void CUI_Party::Create_EnterButton()
         return;
 
     pObj->Set_OnClick([this]() {  
+        UIDirector()->FadeOut_Screen(0.5f, [this]() {
+            LevelManager()->Request_ChangeLevel("Zero_Level", true);
+            BattleSystem()->SetBattleCharacters(m_characters);
+            });
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
-            pPlayer->Unlock_Input();
-        LevelManager()->Request_ChangeLevel("Zero_Level", true);
-        BattleSystem()->SetBattleCharacters(m_characters);
+            pPlayer->Unlock_Input(); 
         });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
