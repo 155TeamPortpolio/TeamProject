@@ -69,6 +69,30 @@ void CThugPoacher_Arrow::Update(_float dt)
 {
 	__super::Update(dt);
 
+	if (m_isSound)
+	{
+		m_vSoundTime.y += dt;
+
+		if (m_vSoundTime.x <= m_vSoundTime.y)
+		{
+			m_vSoundTime.y = 0.f;
+			m_isAlive = false;
+			m_isSound = false;
+		}
+	}
+
+	// 贸澜 津 锭, 面倒 公利
+	if (m_isCollisionCooltime)
+	{
+		m_vCollisionCooltime.y += dt;
+		if (m_vCollisionCooltime.x <= m_vCollisionCooltime.y)
+		{
+			m_isCollisionCooltime = false;
+			m_vCollisionCooltime.y = 0.f;
+			Get_Component<CCollider>()->Set_CompActive(true);
+		}
+	}
+
 	m_pTransform->Translate(m_vDir * m_fSpeed * dt);
 }
 
@@ -90,7 +114,7 @@ void CThugPoacher_Arrow::OnTriggerEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 
-	if (nullptr == pCollidable)
+	if (nullptr == pCollidable || true == m_isCollisionCooltime)
 		return;
 
 	_bool isCollision = false;
@@ -154,15 +178,19 @@ void CThugPoacher_Arrow::ShootArrow()
 
 	Get_Component<CRigidBody>()->Late_Update(0);
 
-	Get_Component<CCollider>()->Set_CompActive(true);
 	m_isAlive = true;
+	SetRenderLayer(RENDER_LAYER::Default);
+	m_isCollisionCooltime = true;
+	m_isSound = false;
 }
 
 void CThugPoacher_Arrow::FinishArrow()
 {
-	m_isAlive = false;
+	//m_isAlive = false;
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_vDir = {};
+	SetRenderLayer(RENDER_LAYER::None);
+	m_isSound = true;
 }
 
 CThugPoacher_Arrow* CThugPoacher_Arrow::Create()

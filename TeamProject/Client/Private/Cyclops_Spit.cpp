@@ -81,8 +81,6 @@ void CCyclops_Spit::Update(_float dt)
 			m_isAlive = false;
 			m_isSound = false;
 		}
-
-
 	}
 	
 	// 贸澜 津 锭, 面倒 公利
@@ -93,6 +91,7 @@ void CCyclops_Spit::Update(_float dt)
 		{
 			m_isCollisionCooltime = false;
 			m_vCollisionCooltime.y = 0.f;
+			Get_Component<CCollider>()->Set_CompActive(true);
 		}
 	}
 
@@ -251,7 +250,7 @@ void CCyclops_Spit::ShootSpit(SPIT eSpitType)
 	}
 	}
 
-	Get_Component<CCollider>()->Set_CompActive(true);
+	//Get_Component<CCollider>()->Set_CompActive(true);
 	Get_Component<CRigidBody>()->Late_Update(0);
 
 	m_isCollisionCooltime = true;

@@ -443,8 +443,8 @@ HRESULT CThugPoacher::Ready_Rules()
 	m_tHysteriesis.fEvadeEnter = 3.f;
 	m_tHysteriesis.fComboEnter = 3.5f;
 	m_tHysteriesis.fComboExit = 4.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 5.f;
+	m_tHysteriesis.fChaseEnter = 10.f;
+	m_tHysteriesis.fChaseExit = 7.f;
 
 	return S_OK;
 }

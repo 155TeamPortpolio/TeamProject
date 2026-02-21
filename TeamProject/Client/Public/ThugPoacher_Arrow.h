@@ -41,6 +41,12 @@ private:
     _float3             m_vDir = {};
     _float              m_fSpeed = {20.f};
 
+    _bool               m_isCollisionCooltime = { false };
+    _float2             m_vCollisionCooltime = { 0.05f, 0.f };
+
+    _bool               m_isSound = { false };
+    _float2             m_vSoundTime = { 2.f, 0.f };
+
 public:
     static CThugPoacher_Arrow* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
