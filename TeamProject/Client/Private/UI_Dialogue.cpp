@@ -28,8 +28,9 @@ void CUI_Dialogue::Change_Dialogue()
     {   
         // UI를 닫고
         Change_State(STATE::INVISIBLE);
-        // NPC 상호작용 결과를 외부 시스템에 알림
-        BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, m_tDialogueDesc.NextSequenceID, m_tDialogueDesc.Result);
+        m_tPendingBroadcast = m_tDialogueDesc;
+        //// NPC 상호작용 결과를 외부 시스템에 알림
+        //BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, m_tDialogueDesc.NextSequenceID, m_tDialogueDesc.Result);
     }
     break;
 
@@ -53,8 +54,12 @@ void CUI_Dialogue::Change_Dialogue(ChoiceDesc desc)
     {
         // UI를 닫고
         Change_State(STATE::INVISIBLE);
+        m_tPendingBroadcast.Name = m_tDialogueDesc.Name;
+        m_tPendingBroadcast.SequenceID = m_tDialogueDesc.SequenceID;
+        m_tPendingBroadcast.NextSequenceID = desc.Next_SequeceID;
+        m_tPendingBroadcast.Result = desc.Result;
         // NPC 상호작용 결과를 외부 시스템에 알림
-        BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, desc.Next_SequeceID, desc.Result);
+        //BroadCast_NPCInteractDesc(m_tDialogueDesc.Name, m_tDialogueDesc.SequenceID, desc.Next_SequeceID, desc.Result);
        
         return;
     } 
@@ -141,6 +146,8 @@ void CUI_Dialogue::Update(_float dt)
         Is_ChildAnimFinished(CHILD::CHOICE))
     {
         Set_Alive(false);
+        BroadCast_NPCInteractDesc(m_tPendingBroadcast.Name, m_tPendingBroadcast.SequenceID, m_tPendingBroadcast.NextSequenceID, m_tPendingBroadcast.Result);
+        CamDirector()->EndDialog();
 
         // choice 결과가 room 이 true 면 언락, 필드 hud 띄우기 아무것도 하지 않기
         if (Is_ChoiceValueTrue("Room"))// (Is_RoomChoiceTrue())
@@ -227,12 +234,14 @@ void CUI_Dialogue::Change_State(STATE eState)
         // 메시지 UI 비활성화
         Set_ChildUIDeActive(CHILD::MESSAGE);
         // 대화용 카메라 연출 종료
-        CamDirector()->EndDialog();
         pUIDirector->Hide_Mouse();
         // 만약에 Choice CSV에 Level이 True 면 playerInput Unlock
         if (Is_ChoiceValueTrue("Level"))// (Is_RoomChoiceTrue())
+        {
             if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
                 pPlayer->Unlock_Input();
+            UIDirector()->FadeOut_Screen(0.2f);
+        }             
         break;
     case STATE::VISIBLE:
         // UI 활성화
