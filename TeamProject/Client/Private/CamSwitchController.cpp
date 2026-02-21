@@ -32,6 +32,8 @@ namespace
     Vector3 LockPivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
+        if (!obj)
+            return { 0,0,0 };
         auto anim = obj->Get_Component<CAnimator3D>();
         _float4x4 m{};
         anim->Get_BipWorld(&m);

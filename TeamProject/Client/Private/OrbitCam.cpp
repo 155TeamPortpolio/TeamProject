@@ -40,6 +40,8 @@ namespace
     Vector3 FootPos(OBJECT_HANDLE h)
     {
         auto obj = ObjectManager()->Request_Object(h);
+        if (!obj)
+            return Vector3{};
         auto cc = obj->Get_Component<CCharacterController>();
         return cc->Get_FootPosition();
     }
@@ -47,6 +49,8 @@ namespace
     Vector3 BasePivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
+        if (!obj)
+            return Vector3{};
         auto cc = obj->Get_Component<CCharacterController>();
         const Vector3 foot = cc->Get_FootPosition();
         return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
@@ -63,7 +67,8 @@ namespace
     Vector3 LockPivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
-
+        if (!obj)
+            return Vector3{};
         CEnemy::ENEMY_CLASS enemyClass = static_cast<CEnemy*>(obj)->GetEnemyClass();
 
         auto GetBipPivot = [&]() -> Vector3

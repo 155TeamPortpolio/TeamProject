@@ -899,6 +899,17 @@ _bool CBattleFXFlow::IsValidTimeScale(const TIME_SCALE_DATA& timeScale)
 	return true;
 }
 
+void CBattleFXFlow::LockBattleTime(_bool Lock)
+{
+	if (Lock) {
+		for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+			SetLayerTimeScale(BATTLE_OBJ_TYPE(typeIndex), 0.f);
+	}
+	else {
+		for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+			ResetLayerTimeScale(BATTLE_OBJ_TYPE(typeIndex));
+	}
+}
 CBattleFXFlow* CBattleFXFlow::Create()
 {
 	CBattleFXFlow* instance = new CBattleFXFlow();
