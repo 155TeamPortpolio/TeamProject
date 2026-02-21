@@ -1343,6 +1343,10 @@ void COrbitCam::Render_GUI()
         ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
 
         ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Fov");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("%.1f", CameraManager()->GetFov());
+
+        ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("ChainParry");
         ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(isChainParry ? "O" : "X");
 

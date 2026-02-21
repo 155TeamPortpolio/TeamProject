@@ -663,40 +663,40 @@ void CBattleFXFlow::StartVfx_Clear()
 
 void CBattleFXFlow::NormalHitLack()
 {
-	Clear(false);
+	//Clear(false);
 
-	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
-	AddParallelTimeScaleAll(preset);
-	AddWait(preset.fVFXDuration);
-	AddCall([this, preset]() {
-		m_BattleVFX.fCurPos = 0.f;
-		m_BattleVFX.vNowColor = {};
-		m_BattleVFX.isRunning = false;
-		});
-	Start(nullptr);
+	//auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_NORMAL)];
+	//AddParallelTimeScaleAll(preset);
+	//AddWait(preset.fVFXDuration);
+	//AddCall([this, preset]() {
+	//	m_BattleVFX.fCurPos = 0.f;
+	//	m_BattleVFX.vNowColor = {};
+	//	m_BattleVFX.isRunning = false;
+	//	});
+	//Start(nullptr);
 }
 
 void CBattleFXFlow::HardHitLack()
 {
-	Clear(false);
+	//Clear(false);
 
-	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_HARD)];
-	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
-	AddParallelTimeScaleAll(preset);
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CRadialBlurCommand>()
-			->SetDuration(preset.fBlurDuration)
-			->SetEaseType(EaseType::OutExpo)
-			->SetIntensity(0.03)
-			->SetEnable(true);
-		});
-	AddWait(preset.fVFXDuration);
-	AddCall([this, preset]() {
-		m_BattleVFX.fCurPos = 0.f;
-		m_BattleVFX.vNowColor = {};
-		m_BattleVFX.isRunning = false;
-		});
-	Start(nullptr);
+	//auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::HIT_HARD)];
+	//CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
+	//AddParallelTimeScaleAll(preset);
+	//AddCall([this, preset, pPost]() {
+	//	pPost->GetCommand<CRadialBlurCommand>()
+	//		->SetDuration(preset.fBlurDuration)
+	//		->SetEaseType(EaseType::OutExpo)
+	//		->SetIntensity(0.03)
+	//		->SetEnable(true);
+	//	});
+	//AddWait(preset.fVFXDuration);
+	//AddCall([this, preset]() {
+	//	m_BattleVFX.fCurPos = 0.f;
+	//	m_BattleVFX.vNowColor = {};
+	//	m_BattleVFX.isRunning = false;
+	//	});
+	//Start(nullptr);
 }
 
 void CBattleFXFlow::AddParallelTimeScale(BATTLE_OBJ_TYPE type, TIME_SCALING& timeScale)
