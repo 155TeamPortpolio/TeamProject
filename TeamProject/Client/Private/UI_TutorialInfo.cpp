@@ -12,6 +12,7 @@
 #include "UI_Banner.h"
 
 #include "UIDirector.h"
+#include "BattleSystem.h"
 
 HRESULT CUI_TutorialInfo::Initialize_Prototype()
 {
@@ -56,8 +57,8 @@ HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
 
 void CUI_TutorialInfo::Awake()
 {
-    UI_Active();
-    Change_Description(TUTORIAL_TYPE::EXTREME_EVADE);
+    //UI_Active();
+    //Change_Description(TUTORIAL_TYPE::EXTREME_EVADE);
 }
 
 void CUI_TutorialInfo::Update(_float dt)
@@ -65,8 +66,14 @@ void CUI_TutorialInfo::Update(_float dt)
     __super::Update(dt);
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
+    BattleSystem()->LockBattleTime(true);//////////////////////////////////////////////////////////////
+    BattleSystem()->LockPlayer(true);//////////////////////////////////////////////////////////////
+
     if (m_isCheck && Is_AnimFinished())
+    {
         Set_Alive(false);
+        return;
+    } 
 }
 
 void CUI_TutorialInfo::UI_Active(void* pArg)
@@ -87,23 +94,10 @@ void CUI_TutorialInfo::UI_Active(void* pArg)
     
     UIDirector()->Show_Mouse();
     UIDirector()->FadeIn_Screen(0.2f);
-    GameInstance()->Set_EngineTimeScale(0.f);////////////////////////////////////////////////////////////////
 }
 
 void CUI_TutorialInfo::UI_DeActive(void* pArg)
 {
-    m_isCheck = true;
-    Set_Animation(1);
-    if (m_pVideo)
-        m_pVideo->UI_DeActive();
-
-    //UIDirector()->Hide_Mouse();
-    //GameInstance()->Set_EngineTimeScale(1.f);
-
-    TUTORIAL_DESC desc = {};
-    desc.eType = m_eType;
-    desc.eState = TUTORIAL_STATE::PLAY;
-    EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
 }
 
 void CUI_TutorialInfo::Cache()
@@ -174,9 +168,10 @@ HRESULT CUI_TutorialInfo::Create_ExitBanner()
     CUI_Banner::BANNER_DESC* pDesc = new CUI_Banner::BANNER_DESC;
     pDesc->strTitle = L"튜토리얼을 나가시겠습니까?";
     pDesc->strSubtitle = L"튜토리얼 진행도는 저장되지 않습니다.";
-    pDesc->onClickConfirm = []() { 
+    pDesc->onClickConfirm = [this]() {  
         UIDirector()->FadeOut_Screen(0.2f);
-        GameInstance()->Set_EngineTimeScale(1.f);
+        BattleSystem()->LockBattleTime(false);  ///////////////////////////////////////////////////
+        BattleSystem()->LockPlayer(false);  ///////////////////////////////////////////////////
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
         };
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Banner" })
@@ -204,10 +199,23 @@ HRESULT CUI_TutorialInfo::Create_EnterButton()
     if (!pObj)
         return E_FAIL;
 
-    pObj->Set_OnClick([this]() { UI_DeActive(); });
+    pObj->Set_OnClick([this]() { OnClickEnter(); });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 
     return S_OK;
+}
+
+void CUI_TutorialInfo::OnClickEnter()
+{
+    m_isCheck = true;
+    Set_Animation(1);
+    if (m_pVideo)
+        m_pVideo->UI_DeActive();
+
+    TUTORIAL_DESC desc = {};
+    desc.eType = m_eType;
+    desc.eState = TUTORIAL_STATE::PLAY;
+    EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
 }
 
 void CUI_TutorialInfo::Change_Description(TUTORIAL_TYPE eType)

@@ -42,9 +42,6 @@ HRESULT CTutorial_Level::Initialize()
 
 HRESULT CTutorial_Level::Awake()
 {
-    /* UI */
-    Ready_UI();
-
     /* Map */
     Ready_Map("Tutorial_Level", "TrainingRoom");
 
@@ -87,14 +84,17 @@ HRESULT CTutorial_Level::Awake()
     BattleSystem()->SpawnMosnter("Proto_GameObject_Claymore", _float3(-0.18f, 2.f, 1.59f));
 
     CamDirector()->AutoBattle(CamStartDir::Back);
+     
+    /* UI */
+    Ready_UI();
+
+    m_pBGM->Slot("TutorialBGM.wav").Group(SOUND_GROUP::BGM).Attribute3D(false).Volume(0.2f).Loop(true).Play();
 
     /**/
-    //TUTORIAL_DESC desc = {};
-    //desc.eType = TUTORIAL_TYPE::EXTREME_EVADE;
-    //desc.eState = TUTORIAL_STATE::INFO;
-    //EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
-     
-    m_pBGM->Slot("TutorialBGM.wav").Group(SOUND_GROUP::BGM).Attribute3D(false).Volume(0.2f).Loop(true).Play();
+    TUTORIAL_DESC desc = {};
+    desc.eType = TUTORIAL_TYPE::EXTREME_EVADE;
+    desc.eState = TUTORIAL_STATE::INFO;
+    EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
 
     return S_OK;
 }
