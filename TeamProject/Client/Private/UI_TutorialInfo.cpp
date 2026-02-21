@@ -71,6 +71,8 @@ void CUI_TutorialInfo::Update(_float dt)
 
     if (m_isCheck && Is_AnimFinished())
     {
+        BattleSystem()->LockBattleTime(false);//////////////////////////////////////////////////////////////
+        BattleSystem()->LockPlayer(false);//////////////////////////////////////////////////////////////
         Set_Alive(false);
         return;
     } 
@@ -169,9 +171,9 @@ HRESULT CUI_TutorialInfo::Create_ExitBanner()
     pDesc->strTitle = L"튜토리얼을 나가시겠습니까?";
     pDesc->strSubtitle = L"튜토리얼 진행도는 저장되지 않습니다.";
     pDesc->onClickConfirm = [this]() {  
-        UIDirector()->FadeOut_Screen(0.2f);
-        BattleSystem()->LockBattleTime(false);  ///////////////////////////////////////////////////
-        BattleSystem()->LockPlayer(false);  ///////////////////////////////////////////////////
+        UIDirector()->FadeOut_Screen();
+        //BattleSystem()->LockBattleTime(false);  ///////////////////////////////////////////////////
+        //BattleSystem()->LockPlayer(false);  ///////////////////////////////////////////////////
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
         };
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Banner" })

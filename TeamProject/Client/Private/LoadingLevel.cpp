@@ -39,6 +39,10 @@ HRESULT CLoadingLevel::Awake()
 		PreLoadForTestLevel();
 		m_bGlobal = true;
 	}
+
+	// 페이드인
+	UIDirector()->FadeIn_Screen();
+
 	return S_OK;
 }
 void CLoadingLevel::Update()
