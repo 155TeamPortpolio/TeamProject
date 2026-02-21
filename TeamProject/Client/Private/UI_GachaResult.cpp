@@ -83,6 +83,7 @@ void CUI_GachaResult::UI_Active(void* pArg)
 
 void CUI_GachaResult::UI_DeActive(void* pArg)
 {
+    UIDirector()->FadeOut_Screen();
     Set_Alive(false);
     LevelManager()->Request_ChangeLevel("MainCity_Level", false);
     UIDirector()->Hide_Mouse();

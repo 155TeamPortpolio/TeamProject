@@ -81,6 +81,7 @@ void CUI_GachaPage::Update(_float dt)
 
 void CUI_GachaPage::UI_Active(void* pArg)
 {
+    UIDirector()->FadeIn_Screen(0.2f);
     Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
     Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
@@ -201,6 +202,8 @@ void CUI_GachaPage::Deactive_SelectedChannel()
 
 void CUI_GachaPage::OnClick_Conversion()
 {
+    UIDirector()->FadeOut_Screen();
+
     _uint iDenny = {};
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
 
