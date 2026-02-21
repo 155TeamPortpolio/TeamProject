@@ -9,6 +9,7 @@
 #include "BattleSystem.h"
 #include "UIDirector.h"
 #include "DataBase.h" 
+#include "CamDirector.h"
 
 #include "UI_TutorialGuideSlot.h"
 #include "UI_TutorialGuideStart.h"
@@ -76,33 +77,7 @@ void CUI_TutorialGuide::Awake()
 
 void CUI_TutorialGuide::Update(_float dt)
 {
-    if (InputDevice()->Key_Tap('Z'))
-    {
-        TUTORIAL_ACTION_DESC desc = {};
-        desc.eAction = TUTORIAL_ACTION::DODGE;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
-    }
-
-    if (InputDevice()->Key_Tap('X'))
-    {
-        TUTORIAL_ACTION_DESC desc = {};
-        desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
-    }
-
-    if (InputDevice()->Key_Tap('C'))
-    {
-        TUTORIAL_ACTION_DESC desc = {};
-        desc.eAction = TUTORIAL_ACTION::ASSIST;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
-    }
-
-    if (InputDevice()->Key_Tap('V'))
-    {
-        TUTORIAL_ACTION_DESC desc = {};
-        desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
-        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
-    }
+    InputTest();
 
     switch (m_eState)
     {
@@ -111,8 +86,8 @@ void CUI_TutorialGuide::Update(_float dt)
             Change_State(STATE::ACTIVE);
         break;
     case STATE::ACTIVE:
-        if (InputDevice()->Key_Tap('T'))
-            Change_State(STATE::DEACTIVATING);
+        //if (InputDevice()->Key_Tap('T'))
+        //    Change_State(STATE::DEACTIVATING);
         break;
     case STATE::DEACTIVATING:
         m_fTimer += dt;
@@ -202,6 +177,37 @@ HRESULT CUI_TutorialGuide::Show_ResultBanner()
     return S_OK;
 }
 
+void CUI_TutorialGuide::InputTest()
+{
+    if (InputDevice()->Key_Tap('Z'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::DODGE;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('X'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::DODGE_COUNTER;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('C'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::ASSIST;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+
+    if (InputDevice()->Key_Tap('V'))
+    {
+        TUTORIAL_ACTION_DESC desc = {};
+        desc.eAction = TUTORIAL_ACTION::ASSIST_CHARGE;
+        EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>({ desc });
+    }
+}
+
 void CUI_TutorialGuide::Change_State(STATE eState)
 {
     if (m_eState == eState)
@@ -216,6 +222,7 @@ void CUI_TutorialGuide::Change_State(STATE eState)
             m_pGuideStart->UI_Active();
         for (auto& pair : m_slotsProgress)
             pair.second = false;
+        CamDirector()->AutoBattle(CamStartDir::Back);
         break;
     case STATE::ACTIVE:
         if (m_pGuideStart)
