@@ -73,17 +73,17 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
     if (IsCrossAnimProgress(0.42f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
     if (IsCrossAnimProgress(0.69f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
     if (IsCrossAnimProgress(0.96f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
 }
 
@@ -103,12 +103,12 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
     if (IsCrossAnimProgress(0.39f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
     if (IsCrossAnimProgress(0.87f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
 }
 
