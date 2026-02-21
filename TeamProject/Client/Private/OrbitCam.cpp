@@ -252,15 +252,21 @@ void COrbitCam::Lock_ReenterBlend(_float blendInSec)
 
 void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
 {
+    if (!m_lock.active) return;
+    if (!m_lock.handle.isValid()) return;
+
+    m_lock.savedDist = m_pose.distCur;
+
     m_lockBlend.active = true;
     m_lockBlend.entering = true;
     m_lockBlend.elapsed = 0.f;
     m_lockBlend.duration = max(blendInSec, 0.0001f);
     m_lockBlend.ease = ease;
     m_lockBlend.weight = 0.f;
+    m_lockBlend.holdFirstFrame = true;
 
-    m_lockFocus = {};
-    m_hasLockFocus = false;
+    m_lockFocus = m_pose.pivotCurWorld;
+    m_hasLockFocus = true;
 }
 
 void COrbitCam::ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease)
@@ -1046,6 +1052,12 @@ void COrbitCam::Lock_BlendUpdate(_float dt)
         return;
     }
 
+    if (m_lockBlend.holdFirstFrame)
+    {
+        m_lockBlend.holdFirstFrame = false;
+        return;
+    }
+
     m_lockBlend.elapsed += dt;
 
     _float ratio = m_lockBlend.elapsed / m_lockBlend.duration;
@@ -1079,7 +1091,12 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
 
     if (!m_target.isValid()) return out;
 
-    const Vector3 playerPivot = GetBasePivotTargetPos(m_target);
+    const Vector3 basePlayerPivot = GetBasePivotTargetPos(m_target);
+
+    Vector3 playerPivot = basePlayerPivot;
+    if (m_lockBlend.active && m_lockBlend.entering)
+        playerPivot = Vector3::Lerp(m_pose.pivotCurWorld, basePlayerPivot, w);
+
     return EvalLock_PlayerPivot(dt, playerPivot, curYawDeg, curDist);
 }
 

@@ -221,9 +221,10 @@ void CamSwitchController::End()
     lens.hasFovCommanded = true;
 
     auto orbit = CamDirector()->GetOrbitCam();
-    orbit->SyncFromCurTransform();
-    orbit->ResumeSync();
     orbit->SwitchMode_End();
+    orbit->ResumeSync();
+    orbit->Lock_ReenterBlend(1.f, EaseType::InOutSine);
+    orbit->FreezeFor(0.016f);
 
     core.active = false;
     core.state = State::None;
