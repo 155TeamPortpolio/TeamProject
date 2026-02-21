@@ -100,10 +100,10 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_NonLight(m_pNonLightPass);
 
 	m_pUI->Render_3D(m_pUI3DPass);
-	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
-	m_pEffect->Render_Effect_Bloom();
-	m_pEffect->Render_EffectCombined();
-
+//	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
+//	m_pEffect->Render_Effect_Bloom();
+//	m_pEffect->Render_EffectCombined();
+//
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
 	m_pForward->Render_MotionBlur();
