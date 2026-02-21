@@ -105,11 +105,11 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         .Attribute3D(true)
         .Volume(0.3f)
         .Play();
-    if (IsCrossAnimProgress(0.87f))
-        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
-        .Attribute3D(true)
-        .Volume(0.3f)
-        .Play();
+    //if (IsCrossAnimProgress(0.87f))
+    //    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
+    //    .Attribute3D(true)
+    //    .Volume(0.3f)
+    //    .Play();
 }
 
 void CMiyabiState_Walk_End::Enter(CMiyabi* pOwner)

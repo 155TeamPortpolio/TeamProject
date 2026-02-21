@@ -84,6 +84,10 @@ void CMiyabiState_Assault_Start::Enter(CMiyabi* pOwner)
 		.ReserveSpeed(0.8f, 1.f, 0.7f, EaseType::OutQuart)
 		.Apply();
 
+	pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_AssaultAttack_SFX")
+		.Attribute3D(true)
+		.Play();
+
 	pOwner->Get_Component<CAudioSource>()->Sequence("AssaultAttack")
 		.Attribute3D(true)
 		.PlayNext();

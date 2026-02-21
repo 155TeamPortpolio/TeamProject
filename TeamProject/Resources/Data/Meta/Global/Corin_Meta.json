@@ -739,6 +739,11 @@
           "EventTime": 1.3918129205703735,
           "EventType": "Notify",
           "EventTag": "SawStart"
+        },
+        {
+          "EventTime": 1.85,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },
