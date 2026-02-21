@@ -429,6 +429,13 @@ void CMiyabi::OnDefensiveAssist()
 {
 }
 
+void CMiyabi::OnComboSound()
+{
+	Get_Component<CAudioSource>()->Sequence("ComboSound")
+		.Attribute3D(true)
+		.PlayNext();
+}
+
 void CMiyabi::Add_MotionBlur()
 {
 	m_fMotionBlurFade = 1.f;
@@ -1057,6 +1064,38 @@ HRESULT CMiyabi::Initialize_Sound()
 	AudioSrc->Add_Sequence("Evade_Dash"
 		, "Miyabi_Evade_Dash_Voice_01"
 		, "Miyabi_Evade_Dash_Voice_02"
+	);
+	AudioSrc->Add_Sequence("CounterAttack"
+		, "Miyabi_CounterAttack_Voice_01"
+		, "Miyabi_CounterAttack_Voice_02"
+		, "Miyabi_CounterAttack_Voice_03"
+		, "Miyabi_CounterAttack_Voice_04"
+	);
+	AudioSrc->Add_Sequence("ComboSound"
+		, "Miyabi_ComboSound_Voice_01"
+		, "Miyabi_ComboSound_Voice_02"
+		, "Miyabi_ComboSound_Voice_03"
+	);
+	AudioSrc->Add_Sequence("HitNormal"
+		, "Miyabi_HitNormal_Voice_01"
+		, "Miyabi_HitNormal_Voice_02"
+		, "Miyabi_HitNormal_Voice_03"
+		, "Miyabi_HitNormal_Voice_04"
+	);
+	AudioSrc->Add_Sequence("HitHard"
+		, "Miyabi_HitHard_Voice_01"
+		, "Miyabi_HitHard_Voice_02"
+		, "Miyabi_HitHard_Voice_03"
+	);
+	AudioSrc->Add_Sequence("ParryAid"
+		, "Miyabi_ParryAid_Voice_01"
+		, "Miyabi_ParryAid_Voice_02"
+		, "Miyabi_ParryAid_Voice_03"
+	);
+	AudioSrc->Add_Sequence("AssaultAttack"
+		, "Miyabi_AssaultAttack_Voice_01"
+		, "Miyabi_AssaultAttack_Voice_02"
+		, "Miyabi_AssaultAttack_Voice_03"
 	);
 
 
