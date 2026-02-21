@@ -43,6 +43,7 @@
 #include "BasicHitEffect.h"
 #include "ProceduralSky.h"
 #include "AttackRange.h"
+#include "JaegerLaser.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -224,6 +225,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BasicHitEffect", CBasicHitEffect::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackRange", CAttackRange::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaegerLaser", CJaegerLaser::Create());
 
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());

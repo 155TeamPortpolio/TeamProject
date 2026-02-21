@@ -402,7 +402,7 @@ HRESULT CMiasmaGrandierJaeger::Initialize_Effects()
 
 	Create_AttackSign("Bip001_Head");
 
-	auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_JaegerLaser" })
+	auto pLaser = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_JaegerLaser" })
 		.Build("Laser");
 	if (pLaser)
 	{

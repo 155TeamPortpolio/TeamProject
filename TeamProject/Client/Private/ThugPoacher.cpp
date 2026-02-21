@@ -491,7 +491,7 @@ HRESULT CThugPoacher::Initialize_Effects()
 
 	/* Laser */
 	{
-		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_JaegerLaser" })
+		auto pLaser = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_JaegerLaser" })
 			.Build("Laser");
 		if (pLaser)
 		{
