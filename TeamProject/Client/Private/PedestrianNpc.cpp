@@ -5,6 +5,7 @@
 #include "Helper_Func.h"
 #include "Animator3D.h"
 #include "PipeLine.h"
+#include "Collider.h"
 
 CPedestrianNpc::CPedestrianNpc()
 {
@@ -22,22 +23,28 @@ HRESULT CPedestrianNpc::Initialize_Prototype()
     Add_Component<CSkeletalModel>();
     Add_Component<CMaterial>();
     Add_Component<CAnimator3D>();
+    Add_Component<CCollider>();
+    Add_Component<CRigidBody>();
 
     return S_OK;
 }
 
 HRESULT CPedestrianNpc::Initialize(INIT_DESC* pArg)
 {
+    modelPreset.RandomizeModel(true, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
     __super::Initialize(pArg);
 
+    Get_Component<CCollider>()->Set_Size({ 1,1,1 });
+    Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::INTERACTABLE);
+    Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::CAMERA));
     return S_OK;
 }
 
 void CPedestrianNpc::Awake()
 {
-    modelPreset.RandomizeModel(true, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
     colorPreset.Randomize_Natural(m_ObjectID);
     colorPreset.LinkMaterial(Get_Component<CMaterial>());
+    CNpc::Awake();
 }
 
 void CPedestrianNpc::Priority_Update(_float dt)
@@ -58,11 +65,17 @@ void CPedestrianNpc::Priority_Update(_float dt)
 void CPedestrianNpc::Update(_float dt)
 {
     Get_Component<CAnimator3D>()->Update_Animation(dt);
+    Get_Component<CCollider>()->Update(dt);
     Calc_Destination(dt);
+    _float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
+    _vector scale, position, rotation;
+    XMMatrixDecompose(&scale, &rotation, &position, XMLoadFloat4x4(&worldMatrix));
+    Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), rotation);
 }
 
 void CPedestrianNpc::Late_Update(_float dt)
 {
+    Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 _vector3 CPedestrianNpc::Rotate90ByCw(const _vector3& v, bool cw)
