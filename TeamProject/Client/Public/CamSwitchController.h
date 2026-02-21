@@ -154,9 +154,6 @@ public:
     void End();
     void Switch();
 
-    _bool IsActive() const { return core.active; }
-    CamSwitchController::State GetState() const { return core.state; }
-
 private:
     void EnsureAutoSwitch();
     void BeginSwitchTo(OBJECT_HANDLE newTarget);

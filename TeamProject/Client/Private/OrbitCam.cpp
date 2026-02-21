@@ -1335,10 +1335,6 @@ void COrbitCam::Render_GUI()
 
     const _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
 
-    auto swCtrl = CamDirector()->GetSwitch();
-    const _bool swActive = swCtrl.IsActive();
-    const string swStateStr = Helper::EnumToString(swCtrl.GetState());
-
     ImGui::BeginChild("##OrbitCamChild", ImVec2{0, childHeight}, true);
 
     if (ImGui::BeginTable("##OrbitCamInfo", 2, ImGuiTableFlags_RowBg | ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_SizingFixedFit))
@@ -1349,14 +1345,6 @@ void COrbitCam::Render_GUI()
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("ChainParry");
         ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(isChainParry ? "O" : "X");
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Switch Active");
-        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(swActive ? "O" : "X");
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Switch State");
-        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(swStateStr.c_str());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Distance");
