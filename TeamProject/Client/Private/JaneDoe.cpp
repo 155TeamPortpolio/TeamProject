@@ -63,8 +63,8 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
     if (FAILED(Initialize_Weapon()))
         return E_FAIL;
 
-    if (FAILED(Initialize_Effects()))
-        return E_FAIL;
+    //if (FAILED(Initialize_Effects()))
+    //    return E_FAIL;
 
     Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/JaneDoe/Sound");
 

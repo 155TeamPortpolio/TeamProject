@@ -147,7 +147,7 @@ void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
 {
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_02")
-        .Speed(1.3f)
+        .Speed(1.f)
         .Apply();
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeStart02_Voice")
         .Attribute3D(true)
@@ -181,7 +181,7 @@ void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
     pOwner->Decrease_Frost(2);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Start_03")
         .BlendDuration(0.05f)
-        .Speed(1.5f)
+        .Speed(1.f)
         .EndAt(0.1f)
         .Apply();
 
@@ -268,7 +268,6 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
 {
     m_bAreaAttack = false;
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ChargeAttack_Attack03")
-        .Speed(2.5f)
         .ReserveSpeed(0.f, 0.33f, 1.5f, EaseType::InExpo)
         .ReserveSpeed(0.33f, 0.88f, 1.f, EaseType::InOutBack)
         .ReserveSpeed(0.88f, 0.9f, 0.5f, EaseType::OutExpo)
@@ -339,7 +338,7 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
         }
     }
 
-    if (IsCrossAnimProgress(0.88f))
+    if (IsCrossAnimProgress(0.8f))
     {
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ChargeAttack03_SFX_02")
             .Attribute3D(true)

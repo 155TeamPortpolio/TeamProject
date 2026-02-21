@@ -63,8 +63,8 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
     if (FAILED(Initialize_Weapon()))
         return E_FAIL;
 
-    if (FAILED(Initialize_Effects()))
-        return E_FAIL;
+    //if (FAILED(Initialize_Effects()))
+    //    return E_FAIL;
 
     if (FAILED(Initialize_Sounds()))
         return E_FAIL;
