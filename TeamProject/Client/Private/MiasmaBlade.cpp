@@ -44,13 +44,6 @@ HRESULT CMiasmaBlade::Initialize(INIT_DESC* pArg)
 	m_isOnAttack = true;
 	m_isParryEnable = true;
 	isParried = false;
-
-	Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER) |ENUM(COLLISION_GROUP::PLAYER_ATTACK));
-	Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::MONSTER);
-
-	Get_Component<CCollider>()->Set_Trigger(false);
-	Get_Component<CRigidBody>()->Set_Kinematic(false);
-	Get_Component<CRigidBody>()->Set_Gravity(false);
 	Get_Component<CRigidBody>()->Set_CCD(true);
 
 	m_pTransform->LookAt(_vector3(desc->vTargetPos));
