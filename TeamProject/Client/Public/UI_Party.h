@@ -41,7 +41,7 @@ private:
 	_bool  m_isCardSequence = {};
 	_int   m_iCardIndex = { 0 };
 	_float m_fCardTimer = { 0.f };
-	const _float m_fCardDelay = { 0.1f };
+	const _float m_fCardDelay = { 0.2f };
 
 private:
 	void Update_CardSequence(_float dt);

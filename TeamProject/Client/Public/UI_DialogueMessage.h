@@ -14,6 +14,7 @@ public:
 		wstring strName = {};
 		wstring strMessage = {};
 		_bool hasChoice = {};
+		_uint SequenceID = {};
 	}MESSAGE_DESC;
 
 private:
