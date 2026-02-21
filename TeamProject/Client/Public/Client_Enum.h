@@ -18,7 +18,7 @@ namespace Client {
 	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT, END };
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
-	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE, KNOCKOUT};
+	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE, KNOCKOUT, SWITCH};
 
 	//------------------- Field -------------------
 	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight,Any};
@@ -30,7 +30,7 @@ namespace Client {
 
 	//------------------- Battle -------------------
 	enum class StageType { Start, Rest, Normal, Elite, Boss, End };
-	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH,ULTIMATE, CLEAR, WIPEOUT,END };
+	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH, CANCLESWITCH,ULTIMATE, CLEAR, WIPEOUT,END };
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, CAMERA,EFFECT, ENVOBJECT, END };
 
 	//------------------- Gacha --------------------

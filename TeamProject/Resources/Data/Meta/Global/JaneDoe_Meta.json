@@ -1586,6 +1586,11 @@
           "EventTime": 1.1643924713134766,
           "EventType": "Notify",
           "EventTag": "AreaAttackHard"
+        },
+        {
+          "EventTime": 1.1743924713134766,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },

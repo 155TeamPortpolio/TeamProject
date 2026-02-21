@@ -37,14 +37,11 @@ void CamDebugInput::UpdateInput(_float dt)
     if (cam.IsFinished(CamEventType::UltimateFinished))
         cam.RequestSequence("Battle/Back");
 
-    if (cam.IsFinished(CamEventType::IntroFinished))
-        
 
-
-    JehyunInput(dt);
+    DebugInput(dt);
 }
 
-void CamDebugInput::JehyunInput(_float dt)
+void CamDebugInput::DebugInput(_float dt)
 {
     //CMonitorGate gate;
     //if (!gate.Pass()) return;
@@ -54,7 +51,7 @@ void CamDebugInput::JehyunInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-
+        cam.EndSwitch();
     }
 
     if (InputDevice()->Key_Tap(VK_F4))

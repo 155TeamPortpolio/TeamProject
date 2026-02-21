@@ -25,6 +25,7 @@ private:
 
 private:
 	_int m_maxPattern = {12};
+	_bool isMiasma = {};
 };
 
 class CDefilerState_Attack_01_01 : public CDefilerState_Attack

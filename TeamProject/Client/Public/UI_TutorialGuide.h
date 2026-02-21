@@ -43,6 +43,8 @@ private:
 	HRESULT Create_SlotComplete();
 	HRESULT Show_ResultBanner();
 
+	void InputTest();
+
 	void Change_State(STATE eState);
 	void Ready_Slots(TUTORIAL_TYPE eType);
 

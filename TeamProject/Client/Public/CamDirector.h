@@ -33,6 +33,8 @@ public:
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
 
+    Vector3       GetBipPos(OBJECT_HANDLE h, _float offsetY = 0.f);
+
     CGameObject*  GetSpaceRef()              const { return m_spaceRefHandle.Get(); }
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj()); }
@@ -86,7 +88,9 @@ public:
     void          EndParry() { m_parry.End(); }
     // Switch
     void          EnterSwitch() { m_switch.Begin(); }
-    void          EndSwitch() { m_switch.End(); }
+    void          EndSwitch() { m_switch.Switch(); }
+    auto          GetSwitch() const { return m_switch; }
+
     // Portal
     void          EnterPortal(OBJECT_HANDLE portalHandle) { m_portal.Begin(portalHandle); }
     void          ExitPortal() { m_portal.End(); }

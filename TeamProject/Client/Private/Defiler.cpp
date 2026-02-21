@@ -30,6 +30,7 @@
 #include "WaterWaves.h"
 #include "AttackRange.h"
 
+#include "EventListener.h"
 #include "AudioSource.h"
 
 #include "UI_DamageText.h"
@@ -37,7 +38,6 @@
 #include "CamDirector.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
-
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -106,14 +106,11 @@ HRESULT CDefiler::Initialize(INIT_DESC* pArg)
 	Create_UIEnemyStatus("Bip001_Spine2");
 	Create_UIBossHUD();
 	Create_MeshPyramid();
-
 	return S_OK;
 }
 
 void CDefiler::Awake()
 {
-	m_vRimLightColor = _float3(0.378, 0.029, 0.070);
-	m_fRimLightPower = 4.f;
 	m_fDissolveTilling = 6.f;
 	m_eEnemyClass = ENEMY_CLASS::BOSS;
 	auto pMaterial = Get_Component<CMaterial>();
@@ -123,12 +120,10 @@ void CDefiler::Awake()
 	for (const auto& instance : materialInstances)
 	{
 		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
-
+	m_MatPreset.Initialize(pMaterial);
 }
 
 void CDefiler::Priority_Update(_float dt)
@@ -179,10 +174,10 @@ void CDefiler::Late_Update(_float dt)
 
 void CDefiler::Render_GUI()
 {
-	__super::Render_GUI();
 #ifdef _USING_GUI
 	Client::DefilerDebugGUI::Render(m_BlackBoard);
 #endif
+	__super::Render_GUI();
 }
 
 void CDefiler::Change_CollisionMask(_uint iMask)
@@ -286,8 +281,10 @@ FOUR_DIR CDefiler::Get_FourDirection()
 }
 void CDefiler::Parried()
 {
-	m_tStatus.iGroggyValue += 1.f;
+	m_tStatus.iGroggyValue += 1.5f;
+	Get_Component<CAudioSource>()->Slot("DefilerParried.wav").Volume(0.7f).Play();
 }
+
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
 {
 	if (m_passDampTime > 0.f)
@@ -610,7 +607,12 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 }
 void CDefiler::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
+	if (event.find("VO") != string::npos) {
+		Get_Component<CAudioSource>()->Slot(event).Volume(0.5f).Play();
+	}
+	else {
+		Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.4f).Play();
+	}
 }
 void CDefiler::Controll_Attack(const string& event)
 {
@@ -674,6 +676,9 @@ void CDefiler::Control_Summon(const string& event)
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	BattleSystem()->HitVFX(eDamageType);
+	Get_Component<CAudioSource>()->Slot(
+		eDamageType==DAMAGE_TYPE::NORMAL? 
+		"DefilerHitLight.wav" : "DefilerHitHeavy.wav").Volume(0.5f).Play();
 
 	_float fTakeDamage = fDamage;
 	if (m_tStatus.isGroggy)
@@ -685,13 +690,13 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 	if (0 >= m_tStatus.iNowHP) {
 		m_tStatus.iNowHP = 0.f;
-		m_BlackBoard.BloodPhase++;
-		if (m_BlackBoard.BloodPhase > 2) {
-			m_pStateMachine->Set_Trigger("Death");
-		}
-		else {
+		if (m_BlackBoard.MiasmaPhase == false) {
 			m_isRecovering = true;
 			m_pendToRecover = m_tStatus.iMaxHP;
+			m_BlackBoard.MiasmaPhase = true;
+		}
+		else if (m_BlackBoard.MiasmaPhase) {
+			m_pStateMachine->Set_Trigger("Death");
 		}
 	}
 
@@ -705,6 +710,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 			.LayerBlend(.8f, 0.1f, .1f, EaseType::InOutQuint)
 			.Loop(false)
 			.Apply();
+		Get_Component<CAudioSource>()->Slot("VO_Bbya.wav").Volume(0.5f).PlayUnique();
 	}
 	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Groggy"){
 		FOUR_DIR dir = Get_FourDirection();
@@ -717,6 +723,8 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 			.LayerBlend(.8f, 0.1f, .1f, EaseType::InOutQuint)
 			.Loop(false)
 			.Apply();
+
+		Get_Component<CAudioSource>()->Slot("VO_Hyat.wav").Volume(0.5f).PlayUnique();
 	}
 
 	_vector3 vWorldPosition = Get_BipedPos("Bip001");
@@ -1358,6 +1366,20 @@ HRESULT CDefiler::Create_Colliders()
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
 		WeaponDesc.vAttackSize = _float3{ 4.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
+	}
+	/* Ground */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Ground";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Root";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		WeaponDesc.vAttackSize = _float3{ 5.f,3.f,5.f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
