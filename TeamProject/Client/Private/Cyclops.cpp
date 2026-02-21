@@ -83,6 +83,7 @@ HRESULT CCyclops::Initialize(INIT_DESC* pArg)
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/Cyclops/Sound");
 	Get_Component<CAudioSource>()->Slot("cyclops_Spawn.wav").Attribute3D(true).Play();
 
+	m_isUseGroggyRimLight = true;
 
 	return S_OK;
 }
