@@ -24,7 +24,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 9;
+	Type = 10;
 	switch (Type)
 	{
 	case 0 :
@@ -799,7 +799,12 @@ void CDefilerState_Attack_09_Start::Exit(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Update_Effects(CDefiler* pOwner)
 {
 	if (IsCrossAnimProgress(0.56f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_Component<CTransform>()->Get_WorldPos();
+
 		pOwner->Play_Effect("Defiler_Wave_Axe_Charge", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Play_AttackRange(_float3(0.f, vWorldPosition.y, 3.f), 4.f);
+	}
 	if (IsCrossAnimProgress(0.65f))
 		pOwner->Stop_Effect("Defiler_Wave_Axe_Charge");
 

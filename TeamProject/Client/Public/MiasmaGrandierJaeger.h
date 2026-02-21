@@ -41,6 +41,7 @@ private:
     void Update_Dissolve(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
     _float3 Get_FirePos();
+
     void Set_LaserTarget();
 private:
     void Summon_Bullet();

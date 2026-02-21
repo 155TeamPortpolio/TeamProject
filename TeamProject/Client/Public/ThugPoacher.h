@@ -26,6 +26,12 @@ public:
     virtual void Parried() override;
 
 public:
+    _float3 Get_FirePos();
+    void Set_LaserTarget();
+    void Active_Laser();
+    void Deactive_Laser();
+
+public:
     static CThugPoacher* Create(); 
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
@@ -51,6 +57,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     HRESULT Ready_Rules();
     void Update_States(const _float dt);
     void ControlState(const _float dt);

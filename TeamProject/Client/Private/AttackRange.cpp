@@ -29,12 +29,16 @@ HRESULT CAttackRange::Initialize(INIT_DESC* arg)
 	__super::Initialize(arg);
 
 	auto pObjectContainer = Get_Component<CObjectContainer>();
+
 	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("attack_range.json")
 		.Build("Attack_Range");
-
-	if(pEffect)
+	if (pEffect)
+	{
+		//pEffect->Set_Alive(false);
+		//pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
+	}
 
 	return S_OK;
 }
@@ -64,6 +68,8 @@ void CAttackRange::Play_AttackRange(_float3 position, _float range)
 
 	m_pTransform->Set_WorldPos(_vector3(position));
 	m_pTransform->Scale(_float3(range, range, range));
+
+	pEffect->Set_Alive(true);
 	static_cast<CEffectContainer*>(pEffect)->Play();
 }
 

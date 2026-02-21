@@ -28,6 +28,8 @@
 #include "ThugPoacher_Move.h"
 #include "ThugPoacher_Chase.h"
 
+#include "JaegerLaser.h"
+
 CThugPoacher::CThugPoacher()
 	: CEnemyNormal()
 {
@@ -79,6 +81,9 @@ HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -94,6 +99,8 @@ void CThugPoacher::Priority_Update(_float dt)
 
 void CThugPoacher::Update(_float dt)
 {
+	Set_LaserTarget();
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 
@@ -296,6 +303,41 @@ HRESULT CThugPoacher::Ready_Arrows(_uint iNum)
 	return S_OK;
 }
 
+_float3 CThugPoacher::Get_FirePos()
+{
+	Matrix Bone = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "CrossBowD_01");
+	Matrix World = m_pTransform->Get_WorldMatrix();
+
+	_vector3  T, S;
+	_quaternion R;
+	(Bone * World).Decompose(S, R, T);
+
+	return T;
+}
+
+void CThugPoacher::Set_LaserTarget()
+{
+	_vector3 vTargetPos = m_tTargetingInfo.vTargetPos;
+	vTargetPos.y = Get_FirePos().y;
+
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	static_cast<CJaegerLaser*>(pLaser)->Set_Target(vTargetPos);
+}
+
+void CThugPoacher::Active_Laser()
+{
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	if (pLaser)
+		static_cast<CJaegerLaser*>(pLaser)->Active_Laser();
+}
+
+void CThugPoacher::Deactive_Laser()
+{
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	if (pLaser)
+		static_cast<CJaegerLaser*>(pLaser)->Deactive_Laser();
+}
+
 CThugPoacher* CThugPoacher::Create()
 {
 	CThugPoacher* instance = new CThugPoacher();
@@ -431,6 +473,25 @@ HRESULT CThugPoacher::Initialize_Transitions()
 		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CThugPoacher>::CONDITION_TRIGGER, "Idle_To_Hit");
+
+	return S_OK;
+}
+
+HRESULT CThugPoacher::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Laser */
+	{
+		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_JaegerLaser" })
+			.Build("Laser");
+		if (pLaser)
+		{
+			pLaser->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "CrossbowD_01");
+			pObjectContainer->Add_Child(pLaser, false);
+		}
+	}
+
 
 	return S_OK;
 }
