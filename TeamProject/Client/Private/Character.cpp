@@ -59,6 +59,8 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
     Safe_AddRef(m_pAnimator);
     Safe_AddRef(m_pCCT);
 
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/Sound/Character");
+
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
         {
             if (desc.eType == TUTORIAL_TYPE::END)
@@ -763,7 +765,9 @@ void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 
             //BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
             m_ParryHandle.GetAs<CEnemy>()->Parried();
-
+            Get_Component<CAudioSource>()->Slot("Parry")
+                .Attribute3D(true)
+                .Play();
             On_ParryImpact();
         }
         return;
