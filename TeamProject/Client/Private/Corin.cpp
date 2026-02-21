@@ -184,6 +184,7 @@ void CCorin::On_SwitchIn(SWITCH eType)
     m_fDissolveProgress = 0.f;
     SetRenderLayer(RENDER_LAYER::Default);
 
+    m_bReserveCombo = false;
     Set_Switch(eType);
     m_pStateMachine->Set_Trigger("SwitchIn");
 }
@@ -327,6 +328,19 @@ void CCorin::On_Hit(DAMAGE_TYPE eType)
 
     m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
     m_pStateMachine->Set_Trigger("ToHit");
+}
+
+void CCorin::Take_Explode(DAMAGE_TYPE eType)
+{
+    _vector3 vLook = m_pTransform->Dir(STATE::LOOK);
+    _quaternion qRotation = m_pTransform->Get_QuaternionRotate();
+    _vector3 vPos = Get_WorldPos();
+    BattleSystem()->TakeBoxDamage(vPos + vLook * 1.f, _vector3(4.f, 4.f, 2.f), qRotation, HitDesc()
+        .Name(Get_CharacterName())
+        .Type(HIT_TYPE::ONCE)
+        .Damage(0.f
+            , eType)
+    );
 }
 
 HRESULT CCorin::Initialize_StateMachine()
