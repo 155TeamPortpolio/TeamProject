@@ -5,6 +5,9 @@
 #include "BattleFXFlow.h"
 #include "Engine_Math.h"
 #include "Layer.h"
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 #ifdef _USING_GUI
 
 NS_BEGIN(Client)
@@ -63,6 +66,11 @@ void CBattleSystem_Panel::Render_GUI()
         if (ImGui::BeginTabItem("Tools"))
         {
             DrawTab_Tools();
+            ImGui::EndTabItem();
+        }
+        if (ImGui::BeginTabItem("VFX"))
+        {
+            DrawTab_VFX();
             ImGui::EndTabItem();
         }
 
@@ -396,6 +404,12 @@ void CBattleSystem_Panel::DrawTab_Tools()
             _float3(m_boxHalf[0], m_boxHalf[1], m_boxHalf[2]),
             qRot,
             hit);
+}
+
+void CBattleSystem_Panel::DrawTab_VFX()
+{
+    CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
+
 }
 
 CBattleSystem_Panel* CBattleSystem_Panel::Create(GUI_CONTEXT* context)

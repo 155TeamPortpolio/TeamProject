@@ -176,6 +176,7 @@ HRESULT CUI_TutorialInfo::Create_ExitBanner()
     pDesc->strSubtitle = L"튜토리얼 진행도는 저장되지 않습니다.";
     pDesc->onClickConfirm = []() { 
         UIDirector()->FadeOut_Screen(0.2f);
+        GameInstance()->Set_EngineTimeScale(1.f);
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
         };
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Banner" })

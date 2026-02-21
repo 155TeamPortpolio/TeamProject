@@ -105,12 +105,12 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
     if (IsCrossAnimProgress(0.05f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_L.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
     if (IsCrossAnimProgress(0.55f))
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_Walk_R.wav")
         .Attribute3D(true)
-        .Volume(0.6f)
+        .Volume(0.3f)
         .Play();
 
     pOwner->Process_RootMotion(dt);
@@ -137,6 +137,7 @@ void CMiyabiState_Run_Turnback::Enter(CMiyabi* pOwner)
         .Apply();
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_TurnBack_SFX.wav")
         .Attribute3D(true)
+        .Volume(0.5f)
         .Play();
     pOwner->Reset_InputBuffer();
     pOwner->Set_ResetMove(true);

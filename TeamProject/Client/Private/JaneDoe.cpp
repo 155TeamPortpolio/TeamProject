@@ -377,6 +377,18 @@ void CJaneDoe::On_Special()
 
 void CJaneDoe::On_Hit(DAMAGE_TYPE eType)
 {
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
+    m_pStateMachine->Reset_Trigger("ResetState");
+
     m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
     m_pStateMachine->Set_Trigger("ToHit");
 }
@@ -607,7 +619,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
     BootsL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
     BootsL_WeaponDesc.tagBone = "Ctr_L_BootsWpn_01";
     BootsL_WeaponDesc.tagName = "FootWeapon_L";
-    BootsL_WeaponDesc.vSize   = { 1.f, 0.0f, 0.0f };
+    BootsL_WeaponDesc.vSize   = { 1.8f, 0.0f, 0.0f };
     BootsL_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
     if (FAILED(Attach_AttackCollider(&BootsL_WeaponDesc)))
         return E_FAIL;
@@ -617,7 +629,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
     BootsR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
     BootsR_WeaponDesc.tagBone = "Ctr_R_BootsWpn_01";
     BootsR_WeaponDesc.tagName = "FootWeapon_R";
-    BootsR_WeaponDesc.vSize   = { 1.f, 0.f, 0.f };
+    BootsR_WeaponDesc.vSize   = { 1.8f, 0.f, 0.f };
     BootsR_WeaponDesc.vCenter = { 0.f, 0.f, 0.f };
     if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
         return E_FAIL;

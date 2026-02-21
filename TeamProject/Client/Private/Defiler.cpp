@@ -28,6 +28,7 @@
 #include "DefilerAxe.h"
 #include "DefilerWall.h"
 #include "WaterWaves.h"
+#include "AttackRange.h"
 
 #include "EventListener.h"
 #include "AudioSource.h"
@@ -37,6 +38,8 @@
 #include "CamDirector.h"
 #include "UI_EnemyStatus.h"
 #include "UI_BossHUD.h"
+#include "Zero_Level.h"
+
 CDefiler::CDefiler()
 	:CEnemy()
 {
@@ -134,9 +137,6 @@ void CDefiler::Priority_Update(_float dt)
 	ManageGroggy(dt);
 	Update_States(dt);
 
-	if (InputDevice()->Key_Tap('H')) {
-		SummonWave();
-	}
 }
 
 void CDefiler::Update(_float dt)
@@ -163,6 +163,7 @@ void CDefiler::Update(_float dt)
 
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
+
 }
 
 void CDefiler::Late_Update(_float dt)
@@ -173,6 +174,7 @@ void CDefiler::Late_Update(_float dt)
 void CDefiler::Render_GUI()
 {
 #ifdef _USING_GUI
+	ImGui::Text("ComboCount : %d", m_tStatus.iPlayerComboCount);
 	Client::DefilerDebugGUI::Render(m_BlackBoard);
 #endif
 	__super::Render_GUI();
@@ -776,6 +778,31 @@ void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
 	UIDirector()->Request_DamageText(desc);
 }
 
+void CDefiler::ControlEnv(ENVTYPE type, _bool set)
+{
+	auto level = LevelManager()->Get_CurrentLevel();
+	auto zero = dynamic_cast<CZero_Level*>(level);
+	if (nullptr == zero) return;
+	if (type == ENVTYPE::REDSKY) {
+		if (set) {
+			FOG_DESC desc;
+			desc.fogColor = { 0.135f, 0.f, 0.f,1.f };
+			desc.fogDensity = 0.078;
+			zero->Get_ZeroFog()->Change_FogState(desc, .2f, EaseType::InExpo);
+		}
+		else {
+			zero->Get_ZeroFog()->RollBack_Fog(1.f, EaseType::InOutCirc);
+		}
+	}
+}
+
+void CDefiler::ControlBGM()
+{
+	auto level = LevelManager()->Get_CurrentLevel();
+	if (auto zero = dynamic_cast<CZero_Level*>(level)) {
+		zero->Get_ZeroBGM()->Slot("TheDefilerBossTheme.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
+	}
+}
 
 void CDefiler::ResetAllFlags()
 {
@@ -852,6 +879,13 @@ void CDefiler::Update_Dissolve(_float deltaTime)
 	default:
 		break;
 	}
+}
+
+void CDefiler::Play_AttackRange(_float3 position, _float scale)
+{
+	auto pAttackRange = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackRange");
+	if (pAttackRange)
+		static_cast<CAttackRange*>(pAttackRange)->Play_AttackRange(position, scale);
 }
 
 void CDefiler::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
@@ -988,13 +1022,23 @@ HRESULT CDefiler::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
 
-	/* Default Particle */
-	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("defiler_default_particle.json")
-		.Build("Defiler_Default_Particle");
+	/* Attack Range */
+	{
+		auto pAttackRange = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackRange" })
+			.Build("AttackRange");
 
-	pEffect->AttachBone(pAnimator, "Bip001_Head");
-	pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pAttackRange, false);
+	}
+
+	/* Default Particle */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_default_particle.json")
+			.Build("Defiler_Default_Particle");
+
+		pEffect->AttachBone(pAnimator, "Bip001_Head");
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	/* Laser */
 	for (_uint i = 0; i < 3; ++i)
@@ -1222,17 +1266,6 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_axe_light3.json")
 			.Build("Defiler_Axe_Light3");
-		pEffect->Stop();
-		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-	{
-		_smatrix offsetMatrix = _smatrix::Identity;
-		offsetMatrix.Translation(_vector3(2.f, 0.f, 0.f));
-
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("defiler_wave_axe_charge.json")
-			.Build("Defiler_Wave_Axe_Charge");
 		pEffect->Stop();
 		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);
