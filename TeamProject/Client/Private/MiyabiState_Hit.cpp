@@ -2,6 +2,8 @@
 #include "MiyabiState_Hit.h"
 #include "Miyabi.h"
 
+#include "AudioSource.h"
+
 CMiyabiState_Hit* CMiyabiState_Hit::Create()
 {
 	auto pInstance = new CMiyabiState_Hit();
@@ -99,6 +101,9 @@ void CMiyabi_HitNormal::Enter(CMiyabi* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.4f)
 		.Apply();
+	pOwner->Get_Component<CAudioSource>()->Sequence("HitNormal")
+		.Attribute3D(true)
+		.PlayNext();
 }
 
 void CMiyabi_HitHard::Enter(CMiyabi* pOwner)
@@ -109,6 +114,9 @@ void CMiyabi_HitHard::Enter(CMiyabi* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.6f)
 		.Apply();
+	pOwner->Get_Component<CAudioSource>()->Sequence("HitHard")
+		.Attribute3D(true)
+		.PlayNext();
 }
 
 void CMiyabi_HitKnockOut::Enter(CMiyabi* pOwner)
@@ -119,4 +127,7 @@ void CMiyabi_HitKnockOut::Enter(CMiyabi* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.7f)
 		.Apply();
+	pOwner->Get_Component<CAudioSource>()->Sequence("HitHard")
+		.Attribute3D(true)
+		.PlayNext();
 }
