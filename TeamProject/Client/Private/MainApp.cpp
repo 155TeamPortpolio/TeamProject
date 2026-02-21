@@ -121,8 +121,6 @@ HRESULT CMainApp::Initialize()
 	CDataBase::GetInstance()->CreateTable();
 	CBattleSystem::GetInstance();
 	CDataBase::GetInstance();
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize();
 
 	CFieldSystem::GetInstance();
 
@@ -131,6 +129,8 @@ HRESULT CMainApp::Initialize()
 	Create_GlobalCamObjs();
 	Create_GlobalEnviroment();
 
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Initialize();
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 		//GUISystem()->Register_Panel(CVideoPanel::Create(GUISystem()->Get_Context()));
