@@ -48,9 +48,10 @@ private:
 
 private:
     _bool m_LockedOn = { false };
-    _bool m_bStopMove = { false };
+    _bool m_bParried = { false };
     _vector3 m_vCurrentDir = {};
     _vector3 m_vVelocity = {};
+    _float m_ElapseTime = 0;
     DefilerDissolve m_Dissolve;
     CStateMachine<CMiasmaHeavyJaeger>* m_pStateMachine = { nullptr };
   

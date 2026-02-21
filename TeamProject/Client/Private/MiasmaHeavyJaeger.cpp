@@ -208,12 +208,12 @@ void CMiasmaHeavyJaeger::OnTriggerEnter(CGameObject* pOther)
 
 void CMiasmaHeavyJaeger::Parried()
 {
-	m_bStopMove = true;
+	m_bParried = true;
 	m_pStateMachine->Set_Trigger("Parried");
 	Get_Component<CCollider>()->Set_CompActive(false);
 	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
-
-
+	m_isParryEnable = false;
+	m_isOnAttack = false;
 }
 
 void CMiasmaHeavyJaeger::SpawnChild()
@@ -338,7 +338,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 	auto* animator = Get_Component<CAnimator3D>();
 	auto* transform = Get_Component<CTransform>();
 
-	if (m_bStopMove||!animator || !transform|| dt <= 0.f)
+	if (m_bParried ||!animator || !transform|| dt <= 0.f)
 		return;
 
 	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();

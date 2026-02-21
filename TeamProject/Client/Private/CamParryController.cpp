@@ -822,6 +822,8 @@ void CamParryController::Begin()
 {
     if (core.active && core.state != State::WaitEnd) return;
 
+    if (IsChainParry()) return;
+
     const _bool continuingChain = core.active && core.state == State::WaitEnd && IsChainReentryOpen() && core.beginWasChain;
     const _float prevChainRefDist = core.chainRefDist;
         

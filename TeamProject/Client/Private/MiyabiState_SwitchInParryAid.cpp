@@ -124,12 +124,13 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)
     CCharacter::ROOTMOTION_DESC desc;
     desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
-    desc.fMoveWeight = 5.f;
+    desc.fMoveWeight = 2.f;
     pOwner->Process_RootMotion(dt, desc);
 }
 
 void CMiyabiState_SwitchInParryAid_L_End::Enter(CMiyabi* pOwner)
 {
+    pOwner->Pop_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L_End")
         .Loop(false)
         .Speed(1.2f)
@@ -145,7 +146,8 @@ void CMiyabiState_SwitchInParryAid_L_End::Update(CMiyabi* pOwner, _float dt)
         m_pOwnerStateMachine->Set_Bool("ReserveAssaultAid", false);
     }
 
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt, ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
 
     IHState<CMiyabi>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;

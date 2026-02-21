@@ -50,7 +50,7 @@ void CJaneDoeState_ExAttack::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_ExAttack::Update(CJaneDoe* pOwner, _float dt)
 {
-    if (IsCrossAnimProgress(0.52f))
+    if (IsCrossAnimProgress(0.51f))
         m_eType = DAMAGE_TYPE::HARD;
 
     for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())

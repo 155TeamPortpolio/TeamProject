@@ -46,6 +46,26 @@ void CUI_PartyCardRTDraw::Awake()
 void CUI_PartyCardRTDraw::Update(_float dt)
 {
     __super::Update(dt);
+
+    if (!m_isFadeIn)
+        return;
+
+    m_fFadeTimer += dt;
+
+    _float t = m_fFadeTimer / m_fFadeDuration;
+    t = (t >= 1.f) ? 1.f : t;
+
+    m_vColor.w = Math::ApplyEase(EaseType::InOutCubic, t);
+
+    if (t >= 1.f)
+        m_isFadeIn = false;
+}
+
+void CUI_PartyCardRTDraw::UI_Active(void* pArg)
+{
+    m_vColor.w = 0.f;
+    m_fFadeTimer = 0.f;
+    m_isFadeIn = true;
 }
 
 CGameObject* CUI_PartyCardRTDraw::Create()

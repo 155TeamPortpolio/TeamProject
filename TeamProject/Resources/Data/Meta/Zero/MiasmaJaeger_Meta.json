@@ -46,7 +46,13 @@
     },
     {
       "ClipTag": "GrenadierJaeger_Ani_Idle",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.07329434156417847,
+          "EventType": "Sound",
+          "EventTag": "Summon.wav"
+        }
+      ]
     },
     {
       "ClipTag": "GrenadierJaeger_Ani_Hit_Stay ",
@@ -60,14 +66,14 @@
       "ClipTag": "HeavyJaeger_Ani_Attack_01_Start",
       "Events": [
         {
-          "EventTime": 0.4148148000240326,
-          "EventType": "Notify",
-          "EventTag": "ParrySign"
-        },
-        {
           "EventTime": 0.28999999165534973,
           "EventType": "Sound",
           "EventTag": "MiasmaHeavyStart.wav"
+        },
+        {
+          "EventTime": 0.4148148000240326,
+          "EventType": "Notify",
+          "EventTag": "ParrySign"
         },
         {
           "EventTime": 0.6700000166893005,
@@ -82,7 +88,13 @@
     },
     {
       "ClipTag": "HeavyJaeger_Ani_Idle",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.05000000074505806,
+          "EventType": "Sound",
+          "EventTag": "Summon.wav"
+        }
+      ]
     }
   ]
 }

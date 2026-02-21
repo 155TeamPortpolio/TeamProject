@@ -89,7 +89,8 @@ void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
     pOwner->Set_WeaponEffectMesh(true);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
         .ReserveSpeed(0.34f, 0.48f, 0.7f, EaseType::InExpo)
-        .ReserveSpeed(0.48f, 1.f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.48f, 0.8f, 1.5f, EaseType::OutExpo)
+        .ReserveSpeed(0.8f, 1.f, 0.8f, EaseType::OutQuint)
         .Apply();
 
     pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_SFX_01")
@@ -106,9 +107,7 @@ void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
     m_fStingRepeatProgress = 0.54f;
 
     pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
-    auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
-    if (effect)
-        effect->Set_Alive(false);
+    pOwner->Set_WeaponFire(false);
 }
 
 void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
@@ -155,9 +154,7 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
         {
             pOwner->Clear_MotionBlur();
             pOwner->SetRenderLayer(RENDER_LAYER::Default);
-            auto effect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
-            if (effect)
-                effect->Set_Alive(true);
+            pOwner->Set_WeaponFire(true);
         }
     }
 
@@ -188,7 +185,16 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
         pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateEnd_Voice.wav")
             .Attribute3D(true)
             .Play();
+        pOwner->Set_WeaponEffectMesh(false);
     }
+
+    if (IsCrossAnimProgress(0.9f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_End_SFX")
+            .Attribute3D(true)
+            .Play();
+    }
+
     Update_Effects(pOwner);
 }
 
@@ -318,11 +324,8 @@ void CMiyabiState_UltimateAttack_Loop::Update_Effects(CMiyabi* pOwner)
 void CMiyabiState_UltimateAttack_End::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
-        .EndAt(0.3f)
+        .EndAt(0.1f)
         .Apply();
-    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_End_SFX")
-        .Attribute3D(true)
-        .Play();
 
     pOwner->Unlock_Move();
 }

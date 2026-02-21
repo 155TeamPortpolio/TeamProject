@@ -17,6 +17,8 @@
 #include "Texture.h"
 #include "UIDirector.h"
 
+#include "CamDirector.h"
+
 CZeroPortal::CZeroPortal()
 	: CInteractable()
 {
@@ -232,7 +234,7 @@ void CZeroPortal::NoiseSequence()
 	auto pPost = RenderSystem()->GetPostRenderer();
 	pPost->GetCommand<CNoiseCommand>()
 		->SetTexture(ResourceManager()->Load_Texture(G_GlobalLevelKey, "VX_Noise_XL_09.png"))
-		->SetDuration(0.15f)
+		->SetDuration(0.25f)
 		->SetNum(4)
 		->SetEnable(true);
 }
@@ -297,7 +299,7 @@ void CZeroPortal::PortalEffectFlowSetting()
 	m_PortalFlow.AddWait(sequenceId, 0.1);
 
 	m_PortalFlow.AddOnce(sequenceId, [this, pPost]() {
-		UIDirector()->FadeOut_Screen(0.05f);
+		UIDirector()->FadeOut_Screen(0.15f);
 		});
 
 	m_PortalFlow.EndSequence(sequenceId);

@@ -62,7 +62,6 @@ public:
 
 public:
     void Parried() override;
-
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);
@@ -90,7 +89,7 @@ private:
     DEFILER_BLACK_BOARD m_BlackBoard = {};
     DefilerDissolve m_Dissolve = {};
     CMiasmaSpawner m_MiasmaSpawner = {};
-
+    DefilerMaterialPreset m_MatPreset = {};
     _uint m_BaseMask = 
         ENUM(COLLISION_GROUP::COMMON) | 
         ENUM(COLLISION_GROUP::PLAYER) | 

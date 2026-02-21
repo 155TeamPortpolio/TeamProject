@@ -70,6 +70,9 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	if (FAILED(Initialize_Sound()))
 		return E_FAIL;
 
@@ -182,14 +185,14 @@ void CMiyabi::Render_GUI()
 
 void CMiyabi::Show_Ghost()
 {
-	if (m_pGhost)
-		m_pGhost->Set_Show(true);
+	//if (m_pGhost)
+	//	m_pGhost->Set_Show(true);
 }
 
 void CMiyabi::Hide_Ghost()
 {
-	if (m_pGhost)
-		m_pGhost->Set_Show(false);
+	//if (m_pGhost)
+	//	m_pGhost->Set_Show(false);
 }
 
 _bool CMiyabi::Can_Evade()
@@ -398,6 +401,18 @@ void CMiyabi::On_Special()
 
 void CMiyabi::On_Hit(DAMAGE_TYPE eType)
 {
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+	m_bReserveCombo = false;
+
+	m_pStateMachine->Set_Bool("IsMove", false);
+	m_pStateMachine->Reset_Trigger("Attack");
+	m_pStateMachine->Reset_Trigger("ToEvade");
+	m_pStateMachine->Reset_Trigger("ToMove");
+	m_pStateMachine->Reset_Trigger("ToIdle");
+	m_pStateMachine->Reset_Trigger("ResetState");
+
 	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
 	m_pStateMachine->Set_Trigger("ToHit");
 }
@@ -448,10 +463,30 @@ void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
 	if (bOn)
 	{
 		pModel->Show_MehsByName("0015_Unagi_Weapon03_mesh0015");
+		if (m_pGhost)
+			m_pGhost->Set_Show(false);
 	}
 	else
 	{
 		pModel->Hide_MehsByName("0015_Unagi_Weapon03_mesh0015");
+		if (m_pGhost)
+			m_pGhost->Set_Show(true);
+	}
+}
+
+void CMiyabi::Set_WeaponFire(_bool bOn)
+{
+	auto MiyabiFire = Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+	if (MiyabiFire != nullptr)
+	{
+		if (bOn)
+		{
+			MiyabiFire->Set_Alive(true);
+		}
+		else
+		{
+			MiyabiFire->Set_Alive(false);
+		}
 	}
 }
 
@@ -465,9 +500,6 @@ HRESULT CMiyabi::Initialize_StateMachine()
 		return E_FAIL;
 
 	if (FAILED(Initialize_Transitions()))
-		return E_FAIL;
-
-	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	m_pStateMachine->Set_DefaultState("Idle");

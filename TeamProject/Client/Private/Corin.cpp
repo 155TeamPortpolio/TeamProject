@@ -56,9 +56,14 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
+
     if (FAILED(Initialize_StateMachine()))
         return E_FAIL;
+
     if (FAILED(Initialize_Weapon()))
+        return E_FAIL;
+
+    if (FAILED(Initialize_Effects()))
         return E_FAIL;
 
     if (FAILED(Initialize_Sounds()))
@@ -113,6 +118,22 @@ void CCorin::Update(_float dt)
         Update_States();
         m_pStateMachine->Update(dt);
     }
+
+    auto bus = Get_Component<CAnimator3D>()->Get_EventBus();
+
+    for (EVENT_INST& instance : bus)
+    {
+        switch (instance.Type)
+        {
+        case CLIP_EVENT_TYPE::NOTIFY:
+            break;
+
+        case CLIP_EVENT_TYPE::SOUND:
+            Get_Component<CAudioSource>()->Slot(instance.Tag).Volume(0.7f).Attribute3D(true).Loop(false).Play();
+            break;
+        }
+    }
+
     __super::Update(dt);
 }
 
@@ -292,6 +313,18 @@ void CCorin::On_Special()
 
 void CCorin::On_Hit(DAMAGE_TYPE eType)
 {
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
+    m_pStateMachine->Reset_Trigger("ResetState");
+
     m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
     m_pStateMachine->Set_Trigger("ToHit");
 }
@@ -306,9 +339,6 @@ HRESULT CCorin::Initialize_StateMachine()
         return E_FAIL;
 
     if (FAILED(Initialize_Transitions()))
-        return E_FAIL;
-
-    if (FAILED(Initialize_Effects()))
         return E_FAIL;
 
     m_pStateMachine->Set_DefaultState("Idle");

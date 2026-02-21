@@ -8,6 +8,7 @@
 #include "CamParryController.h"
 #include "CamWipeOutController.h"
 #include "CamSwitchController.h"
+#include "CamPortalController.h"
 
 NS_BEGIN(Client)
 
@@ -31,6 +32,8 @@ public:
     void          AutoTarget();
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
+
+    Vector3       GetBipPos(OBJECT_HANDLE h, _float offsetY = 0.f);
 
     CGameObject*  GetSpaceRef()              const { return m_spaceRefHandle.Get(); }
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
@@ -69,7 +72,6 @@ public:
     _bool         IsPlaying(CamSeqType type)         const;
     _bool         IsFinished(CamEventType eventType) const;
 
-    // ³¿»õ³ª
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
@@ -86,7 +88,12 @@ public:
     void          EndParry() { m_parry.End(); }
     // Switch
     void          EnterSwitch() { m_switch.Begin(); }
-    void          EndSwitch() { m_switch.End(); }
+    void          EndSwitch() { m_switch.Switch(); }
+    auto          GetSwitch() const { return m_switch; }
+
+    // Portal
+    void          EnterPortal(OBJECT_HANDLE portalHandle) { m_portal.Begin(portalHandle); }
+    void          ExitPortal() { m_portal.End(); }
 
     void          AbortSequenceToOrbit(_bool resetTime);
 
@@ -110,6 +117,7 @@ private:
     CamParryController     m_parry{};
     CamWipeOutController   m_wipeOut{};
     CamSwitchController    m_switch{};
+    CamPortalController    m_portal{};
 
     OBJECT_HANDLE          m_spaceRefHandle{};
     CamType                m_returnCamType = CamType::None;
