@@ -730,7 +730,6 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	_vector3 vWorldPosition = Get_BipedPos("Bip001");
 	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
 		.Position(vWorldPosition)
-		.FromPool()
 		.Build("BasicHit");
 
 	if (eDamageType == DAMAGE_TYPE::NORMAL) {
