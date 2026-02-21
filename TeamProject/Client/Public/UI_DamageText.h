@@ -16,6 +16,7 @@ struct DAMAGE_DESC : public UI_DESC
 
     _bool         useColorMix = true;
     _float        colorMix = 1.f;
+    _bool         isSpecial = { false };
 };
 
 class CUI_DamageText final : public CUI_WorldToScreen

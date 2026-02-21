@@ -6,6 +6,7 @@
 #include "StageRouter.h"
 #include "EffectContainer.h"
 #include "CamDirector.h"
+#include "BattlePlayer.h"
 
 //component
 #include "AudioSource.h"
@@ -88,6 +89,8 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 				_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
 				0.02f
 			});
+
+		m_pOwnerLevel->Get_ZeroCloud()->Use_Cloud(false);
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
@@ -123,6 +126,7 @@ void CZeroStage_Boss::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
 		if (!HasBattleStarter())
 			m_eStageState = StageState::BattleStart;
 	}

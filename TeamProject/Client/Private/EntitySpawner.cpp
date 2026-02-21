@@ -293,6 +293,11 @@ OBJECT_HANDLE Client::Spawner::Create_AmbientActor(const SPAWNER_DESC& Desc)
 			{
 				pAmbientActorDesc->strAnimName = *GetSlotValue<string>(tFieldData.defaultvalue);
 			}
+
+			if (tFieldData.TagName == "Delay")
+			{
+				pAmbientActorDesc->fDelay = *GetSlotValue<_float>(tFieldData.defaultvalue);
+			}
 		}
 	}
 	

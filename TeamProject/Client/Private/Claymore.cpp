@@ -99,6 +99,14 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 			SetTutorialMode(desc.eType);
 		});
 
+	Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+		{
+			if (desc.eState != TUTORIAL_STATE::COMPLETED)
+				m_isAutoPatternPlay = true;
+		});
+
+	m_isUseGroggyRimLight = true;
+
 	return S_OK;
 }
 
@@ -140,6 +148,38 @@ void CClaymore::Render_GUI()
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	GUI_DebugButton();
+
+	if (ImGui::TreeNode("RimRight##RimRight")) 
+	{
+		if (ImGui::DragFloat("RimRight intensity##RimRightIntensity", &m_fRimLightPower, 0.1f))
+		{
+			if (m_fRimLightPower < 0.f)
+				m_fRimLightPower = 0.f;
+			//m_fRimLightPower = clamp(m_fRimLightPower, 0.f, 10.f);
+		}
+
+		_float startColor[3]= { m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z};
+
+		if (ImGui::ColorEdit3("Start Color", startColor))
+		{
+			m_vRimLightColor = _float3(startColor[0], startColor[1], startColor[2]);
+		}
+
+		_float fPowerMinMax[2] = { m_tGroggyRimLight.vPower.x, m_tGroggyRimLight.vPower.y };
+		if (ImGui::DragFloat2("RimRight Power MinMax##RimRightMinMax", fPowerMinMax, 0.1f))
+		{
+			if (fPowerMinMax[0] < 0.f)
+				fPowerMinMax[0] = 0.f;
+			if (fPowerMinMax[1] < fPowerMinMax[0])
+				fPowerMinMax[1] = fPowerMinMax[0];
+			
+			m_tGroggyRimLight.vPower= { fPowerMinMax[0] , fPowerMinMax[1] };
+			//m_fRimLightPower = clamp(m_fRimLightPower, 0.f, 10.f);
+		}
+
+
+		ImGui::TreePop();
+	}
 
 #pragma region Tutorial
 	ImGui::SeparatorText("Tutorial");
@@ -227,6 +267,8 @@ void CClaymore::Render_GUI()
 	if (nullptr != pCharacter) {
 		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
 
+		ImGui::Text(u8"속성 이상 가중치 : %.2f", m_tStatus.fPropertiesValue);
+		ImGui::Text("RimLightPower : %.2f", m_fRimLightPower);
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
