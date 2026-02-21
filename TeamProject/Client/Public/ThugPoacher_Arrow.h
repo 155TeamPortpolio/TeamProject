@@ -36,6 +36,9 @@ private:
     void    FinishArrow();
 
 private:
+    void Initialize_Effects();
+
+private:
     const _float4x4*    m_pWeaponBone = { nullptr };
     _bool               m_isShoot = { false };
     _float3             m_vDir = {};

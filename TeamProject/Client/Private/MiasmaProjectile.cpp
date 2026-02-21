@@ -3,6 +3,7 @@
 
 #include "BattleSystem.h"
 #include "GameInstance.h"
+#include "EffectContainer.h"
 
 #include "SkeletalModel.h"
 #include "Material.h"
@@ -70,6 +71,8 @@ HRESULT CMiasmaProjectile::Initialize(INIT_DESC* pArg)
 	HitDesc.iMaxCount = 1;
 	SetBattleColliderObject("HEl", CEnemy::BATTLE_COLTYPE::ATTACK, true, HitDesc);
 
+	Initialize_Effects();
+
 	return S_OK;
 }
 
@@ -91,7 +94,16 @@ void CMiasmaProjectile::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	if (m_ElapsedTime > 5.f)
+	{
 		ObjectManager()->Remove_Object(this);
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_jaeger_bullet_explode.json")
+			.Position(_vector3(m_pTransform->Get_WorldPos()))
+			.Build("Defiler_Jaeger_Bullet_Explode");
+
+		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 void CMiasmaProjectile::Late_Update(_float dt)
@@ -138,4 +150,15 @@ void CMiasmaProjectile::Free()
 void CMiasmaProjectile::OnTriggerEnter(CGameObject* pOther)
 {
 
+}
+
+void CMiasmaProjectile::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_jaeger_bullet_trail.json")
+		.Position(_float3(0.f,0.f,-1.f))
+		.Build("Defiler_Jaeger_Bullet_Trail");
+	pObjectContainer->Add_Child(pEffect);
 }

@@ -95,6 +95,7 @@ public: // HP
     void    Set_CurrentHP(_float fHp) { m_fCurrentHP = fHp; }
     void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     void    Set_FullHP() { m_fCurrentHP = m_fMaxHP; }
+    void    Set_AttackPower(_float fAttack) { m_fAttackPower = fAttack; }
     _float  Get_AttackPower() const { return m_fAttackPower; }
 
 public: // 에너지

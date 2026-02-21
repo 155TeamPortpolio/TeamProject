@@ -50,8 +50,7 @@ void CMiyabiState_SwitchIn::Enter(CMiyabi* pOwner)
     m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Int("ExitMode", 0);
 
-    pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire")
-        ->Set_Alive(true);
+    pOwner->Set_WeaponFire(true);
 
     __super::Enter(pOwner);
 }

@@ -99,7 +99,7 @@ void CBattleFXFlow::Initialize_Preset()
 		const _float duration = 1.2f;
 		Clear.bCanIntersect = false;
 		Clear.fVFXDuration = duration;
-		Clear.fBlurDuration = 0.1;
+		Clear.fBlurDuration = 0.2;
 		Clear.SetTimeData({ duration, 0.0f, 0.1f, .7f , EaseType::OutQuint });
 		Clear.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] =
 			TIME_SCALE_DATA{duration, 1.f, 0.8f, 0.1f, EaseType::OutQuint};
@@ -444,11 +444,10 @@ void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 			->SetEnable(true);
 	});
 
-	AddCall([this]() { CamDirector()->EnterSwitch(); });
-
 	AddCall([this, eLeft, eRight](){
 		UIDirector()->Show_Switch(eLeft,eRight);
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
+		CamDirector()->EnterSwitch();
 		});
 	AddWait(0.3f);
 	AddCall([postRenderer, blurDuration]()
@@ -640,14 +639,14 @@ void CBattleFXFlow::StartVfx_Clear()
 				->SetEnable(true);
 
 			pPost->GetCommand<CRadialBlurCommand>()
-				->SetDuration(preset.fBlurDuration)
-				->SetEaseType(EaseType::OutSine)
+				->SetDuration(preset.fBlurDuration + 0.1f)
+				->SetEaseType(EaseType::InOutQuad)
 				->SetIntensity(.6f)
 				->SetEnable(true);
 		});
 
-	AddCall([this, preset]() { CameraManager()->SetFov(-15.f, 0.1, EaseType::InOutQuad, 15.f, preset.fVFXDuration- 0.05, EaseType::InOutSine);});
-	AddWait(0.08);
+	AddCall([this, preset]() { CameraManager()->SetFov(-15.f, 0.3f, EaseType::InOutQuad, 15.f, preset.fVFXDuration- 0.3f, EaseType::InOutSine);});
+	AddWait(0.2f);
 	AddCall([this]() {
 		UIDirector()->Show_Clear();
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);

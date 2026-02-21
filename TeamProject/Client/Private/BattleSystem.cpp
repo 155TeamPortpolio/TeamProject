@@ -182,7 +182,8 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
 			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
 			pCharacter->OnDamage();
-			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
+				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
 				if (!pCharacter->Is_ReserveCombo())
 				{
@@ -230,7 +231,8 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
 			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
 			pCharacter->OnDamage();
-			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
+				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
 				if (!pCharacter->Is_ReserveCombo())
 				{
@@ -267,7 +269,8 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
 			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
 			pCharacter->OnDamage();
-			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
+				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
 				if (!pCharacter->Is_ReserveCombo())
 				{
@@ -296,7 +299,8 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc, BATTLE_OBJ_TYPE type)
 			m_pBattlePlayer->Add_Gauge(hitDesc.fEnergyCharge, hitDesc.fDecibelCharge);
 			auto pCharacter = m_pBattlePlayer->GetCurCharacterHandle().GetAs<CCharacter>();
 			pCharacter->OnDamage();
-			if (hitDesc.eDamageType == DAMAGE_TYPE::HARD && pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
+				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
 				if (!pCharacter->Is_ReserveCombo())
 				{

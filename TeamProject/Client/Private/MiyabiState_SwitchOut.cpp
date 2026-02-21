@@ -11,8 +11,7 @@ void CMiyabiState_SwitchOut::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Speed(1.5f)
         .Apply();
-    pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire")
-        ->Set_Alive(false);
+    pOwner->Set_WeaponFire(false);
 }
 
 void CMiyabiState_SwitchOut::Update(CMiyabi* pOwner, _float dt)

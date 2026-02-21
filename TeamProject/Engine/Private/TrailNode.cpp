@@ -77,7 +77,11 @@ void CTrailNode::Update(_float dt)
 {
 	auto pTrail = Get_Component<CTrailModel>();
 
-	auto pEffectContainer = Get_Component<CChild>()->Get_Parent();
+	auto pChild = Get_Component<CChild>();
+	if (!pChild)
+		return;
+
+	auto pEffectContainer = pChild->Get_Parent();
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
 
 	switch (m_eMode)
