@@ -326,16 +326,24 @@ void CBattleSystem::CleanUp_Data()
 	for (size_t i = 0; i < ENUM(BATTLE_OBJ_TYPE::END); i++)
 	{
 		BATTLE_OBJ_TYPE eType = BATTLE_OBJ_TYPE(i);
+		auto vector = m_BattleObjInfos[eType];
+		for (size_t j = 0; j < vector.size(); j++)
+		{
+			if (!vector[j].hObject.isValid()) {
+				ExitBattleObject(eType, vector[j].hObject);
+			};
+		}
+	}
+	for (size_t i = 0; i < ENUM(BATTLE_OBJ_TYPE::END); i++)
+	{
+		BATTLE_OBJ_TYPE eType = BATTLE_OBJ_TYPE(i);
 		auto& vector = m_BattleObjInfos[eType];
 		auto& snapVector = m_BattleSnapShots[eType];
 
-		for (size_t i = 0; i < vector.size(); i++)
+		for (size_t j = 0; j < vector.size(); j++)
 		{
-			if (!vector[i].isOnField) continue;
-			if (!vector[i].hObject.isValid()) {
-				ExitBattleObject(eType, vector[i].hObject);
-			};
-			snapVector.push_back(vector[i]);
+			if (!vector[j].isOnField) continue;
+			snapVector.push_back(vector[j]);
 		}
 	}
 }
