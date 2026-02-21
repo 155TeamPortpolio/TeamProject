@@ -36,7 +36,7 @@ void CamDebugInput::UpdateInput(_float dt)
 
     if (cam.IsFinished(CamEventType::UltimateFinished))
         cam.RequestSequence("Battle/Back");
-
+    
 
     DebugInput(dt);
 }

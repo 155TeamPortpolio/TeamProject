@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CAudioSource;
 NS_END
 
 NS_BEGIN(Client)
@@ -27,6 +28,7 @@ private:
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	class CPlayer* m_pPlayer = { nullptr };
+	CAudioSource* m_pBGM = {};
 
 public:
 	static CTutorial_Level* Create(const string& LevelKey);
