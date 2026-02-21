@@ -47,6 +47,10 @@ private:
 private:
 	CUI_Object* m_children[ENUM(CHILD::END)]{};
 
+	OBJECT_HANDLE m_followHandle{};
+	Vector3       m_followOffset{};
+	_float3       m_worldPos{};
+
 public:
 	static CUI_Seoriyeol* Create();
 	CGameObject* Clone(INIT_DESC* pArg = {}) override;

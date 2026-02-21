@@ -104,7 +104,7 @@ void CJaneDoeState_SwitchInParryAid_Start::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.5f)  
+    if (m_fStateTime > 1.f)
     {
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }

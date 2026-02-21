@@ -13,12 +13,13 @@ struct OrbitLockState
 };
 struct OrbitBlendState
 {
-    _bool    active   = false;
+    _bool    active = false;
     _bool    entering = true;
-    _float   elapsed  = 0.f;
+    _float   elapsed = 0.f;
     _float   duration = 0.f;
-    EaseType ease     = EaseType::InOutSine;
-    _float   weight   = 0.f;
+    EaseType ease = EaseType::InOutSine;
+    _float   weight = 0.f;
+    _bool    holdFirstFrame = false;
 };
 struct OrbitLockEval
 {
