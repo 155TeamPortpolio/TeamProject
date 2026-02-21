@@ -52,8 +52,8 @@ public:
             _float   fovSwitchRecoverTarget = 40.f;
 
             _float   recoverPoseSec = 1.f;
-            EaseType recoverPoseEase = EaseType::InOutCubic;
-            _float   recoverCamPosAddY = 1.75f;
+            EaseType recoverPoseEase = EaseType::InOutSine;
+            _float   recoverCamPosAddY = 2.f;
 
             _float   recoverFovSec = 1.f;
             EaseType recoverFovEase = EaseType::InOutSine;

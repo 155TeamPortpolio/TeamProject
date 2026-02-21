@@ -116,6 +116,53 @@ namespace
         const Quaternion q = YawPitchQuatDeg(p.yawWorldDeg, p.pitchDeg);
         return OrbitPos(p.pivotWorld, q, p.dist);
     }
+
+    struct SwitchGoalPresetOffsets
+    {
+        _float lookOffset = 0.f;
+        _float rightOffset = 0.f;
+        _float upOffset = 0.f;
+    };
+
+    struct CharacterSwitchPresetRow
+    {
+        CHARACTER character = CHARACTER::END;
+        SwitchGoalPresetOffsets offsets{};
+    };
+
+    SwitchGoalPresetOffsets MakeDefaultSwitchGoalPreset(const CamSwitchController::SwitchTuning::SwitchGoal& goal)
+    {
+        SwitchGoalPresetOffsets out{};
+        out.lookOffset = goal.lookOffset;
+        out.rightOffset = goal.rightOffset;
+        out.upOffset = goal.upOffset;
+        return out;
+    }
+
+    SwitchGoalPresetOffsets ResolveSwitchGoalPresetByCharacter(CHARACTER character, const CamSwitchController::SwitchTuning::SwitchGoal& goal)
+    {
+        // look / Right / Up
+        const CharacterSwitchPresetRow presetTable[] =
+        {
+            {CHARACTER::Corin,   {-2.60f, 0.35f, -0.45f}},
+            {CHARACTER::Miyabi,  {-3.50f, 0.65f, -0.55f}},
+            {CHARACTER::JaneDoe, {-2.60f, 0.20f, -0.40f}},
+        };
+
+        SwitchGoalPresetOffsets out = MakeDefaultSwitchGoalPreset(goal);
+
+        for (const auto& row : presetTable)
+            if (row.character == character)
+                return row.offsets;
+
+        return out;
+    }
+
+    SwitchGoalPresetOffsets ResolveSwitchGoalPresetByHandle(OBJECT_HANDLE handle, const CamSwitchController::SwitchTuning::SwitchGoal& goal)
+    {
+        auto character = static_cast<CCharacter*>(handle.Get());
+        return ResolveSwitchGoalPresetByCharacter(character->Get_CharacterName(), goal);
+    }
 }
 
 void CamSwitchController::Begin()
@@ -566,6 +613,8 @@ Vector3 CamSwitchController::BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) c
     auto obj = ObjectManager()->Request_Object(pair.attacker);
     auto tf = obj->Get_Component<CTransform>();
 
+    const SwitchGoalPresetOffsets preset = ResolveSwitchGoalPresetByHandle(pair.attacker, tune.goal);
+
     Vector3 forward = SafeFlatDirOrDefault(tf->Dir(STATE::LOOK), Vector3(0.f, 0.f, 1.f));
     Vector3 right(forward.z, 0.f, -forward.x);
     if (right.Length() > 0.f) right.Normalize();
@@ -573,26 +622,26 @@ Vector3 CamSwitchController::BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) c
     const _float sign = sideSign < 0 ? -1.f : 1.f;
 
     Vector3 camPos = pair.aCenter;
-    camPos += forward * tune.goal.lookOffset;
-    camPos += right * (tune.goal.rightOffset * sign);
-    camPos += Vector3(0.f, tune.goal.upOffset, 0.f);
+    camPos += forward * preset.lookOffset;
+    camPos += right * (preset.rightOffset * sign);
+    camPos += Vector3(0.f, preset.upOffset, 0.f);
 
     if (pair.vValid)
     {
-        Vector3 d = pair.vCenter - pair.aCenter;
-        d.y = 0.f;
-        const _float pairDist = d.Length();
+        Vector3 delta = pair.vCenter - pair.aCenter;
+        delta.y = 0.f;
+        const _float pairDist = delta.Length();
 
-        _float add = tune.goal.distBaseAdd;
-        add += clamp(pairDist * max(tune.goal.distRatio, 0.f), 0.f, max(tune.goal.distMaxAdd, 0.f));
+        _float distAdd = tune.goal.distBaseAdd;
+        distAdd += clamp(pairDist * max(tune.goal.distRatio, 0.f), 0.f, max(tune.goal.distMaxAdd, 0.f));
 
-        if (add != 0.f)
+        if (distAdd != 0.f)
         {
             Vector3 toCam = camPos - pair.aCenter;
             if (toCam.Length() > 0.0001f)
             {
                 toCam.Normalize();
-                camPos += toCam * add;
+                camPos += toCam * distAdd;
             }
         }
     }
