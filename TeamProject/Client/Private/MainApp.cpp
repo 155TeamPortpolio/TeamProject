@@ -42,6 +42,8 @@
 #include "TestCloud.h"
 #include "BasicHitEffect.h"
 #include "ProceduralSky.h"
+#include "AttackRange.h"
+#include "JaegerLaser.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -171,7 +173,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -222,6 +224,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BasicHitEffect", CBasicHitEffect::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackRange", CAttackRange::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaegerLaser", CJaegerLaser::Create());
 
 	/*Player*/
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());

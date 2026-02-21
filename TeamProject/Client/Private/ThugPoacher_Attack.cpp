@@ -46,6 +46,7 @@ void CThugPoacher_Attack::Enter(CThugPoacher* pOwner)
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
 }
 
 void CThugPoacher_Attack::Update(CThugPoacher* pOwner, _float dt)
@@ -93,6 +94,7 @@ void CThugPoacher_Attack::Update(CThugPoacher* pOwner, _float dt)
 
 void CThugPoacher_Attack::Exit(CThugPoacher* pOwner)
 {
+	pOwner->Deactive_Laser();
 }
 
 void CThugPoacher_Attack::Register_States()
@@ -131,6 +133,8 @@ void CThugPoacher_Attack1::Enter(CThugPoacher* pOwner)
 
 void CThugPoacher_Attack1::Update(CThugPoacher* pOwner, _float dt)
 {
+	if (IsCrossAnimProgress(0.14f))
+		pOwner->Active_Laser();
 }
 
 void CThugPoacher_Attack1::Exit(CThugPoacher* pOwner)
@@ -146,6 +150,8 @@ void CThugPoacher_Attack2::Enter(CThugPoacher* pOwner)
 
 void CThugPoacher_Attack2::Update(CThugPoacher* pOwner, _float dt)
 {
+	if (IsCrossAnimProgress(0.23f))
+		pOwner->Active_Laser();
 }
 
 void CThugPoacher_Attack2::Exit(CThugPoacher* pOwner)
@@ -161,6 +167,8 @@ void CThugPoacher_Attack3::Enter(CThugPoacher* pOwner)
 
 void CThugPoacher_Attack3::Update(CThugPoacher* pOwner, _float dt)
 {
+	if (IsCrossAnimProgress(0.03f))
+		pOwner->Active_Laser();
 }
 
 void CThugPoacher_Attack3::Exit(CThugPoacher* pOwner)

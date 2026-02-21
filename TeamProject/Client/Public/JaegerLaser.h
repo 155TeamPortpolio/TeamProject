@@ -22,9 +22,11 @@ public:
 public:
     void Active_Laser();
     void Deactive_Laser();
+    void Set_Target(_float3 targetPos) { m_vTargetPos = targetPos; }
 
 private:
     void Initialize_Effects();
+    void Update_Laser(_float dt);
 
 public:
     static CJaegerLaser* Create();
@@ -32,6 +34,9 @@ public:
     virtual void Free() override;
 
 private:
+    _float3 m_vTargetPos{};
+    _bool m_IsDeactive = false;
+    _bool m_IsFlikering = false;
     _float m_fDuration{};
     _float m_fElaspedTime{};
 };
