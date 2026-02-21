@@ -134,6 +134,8 @@ void CCorinState_Counter_Explode::Enter(CCorin* pOwner)
 		.Speed(1.5f)
 		.Apply();
 
+	pOwner->Take_Explode(DAMAGE_TYPE::HARD);
+
 	pOwner->Stop_Effect("Corin_Saw_Slash0");
 	pOwner->Play_Effect("Corin_Ex_Explode", _vector3(0.1f, 0.7f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }

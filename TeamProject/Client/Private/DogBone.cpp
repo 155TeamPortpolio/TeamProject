@@ -44,7 +44,7 @@ HRESULT CDogBone::Initialize(INIT_DESC* pArg)
     AMBIENTACTOR_DESC* pDesc = static_cast<AMBIENTACTOR_DESC*>(pArg);
 
     m_AnimName = pDesc->strAnimName;
-    m_bLoop = pDesc->bLoop;
+    m_fDelayTime = pDesc->fDelay;
 
     return S_OK;
 }

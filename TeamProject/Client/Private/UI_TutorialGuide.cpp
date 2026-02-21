@@ -83,23 +83,46 @@ void CUI_TutorialGuide::Update(_float dt)
     {
     case STATE::READY:
         if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+        {
             Change_State(STATE::ACTIVE);
+            BattleSystem()->LockBattleTime(false);
+            BattleSystem()->LockPlayer(false);
+        } 
         break;
     case STATE::ACTIVE:
         //if (InputDevice()->Key_Tap('T'))
         //    Change_State(STATE::DEACTIVATING);
         break;
-    case STATE::DEACTIVATING:
+    case STATE::DEACTIVATING:  
         m_fTimer += dt;
-        if (m_fTimer >= m_fDurationFadeout && !m_isFadeout)
+
+        // 팝업 띄우기
+        if (!m_isPopupComplete)
         {
+            BattleSystem()->LockPlayer(true);
+
+            // 이번 튜토리얼 (이번챕터) 완료! - 몬스터한테 공격하지말라고 하려고
+            TUTORIAL_DESC desc;
+            desc.eType = m_eType;
+            desc.eState = TUTORIAL_STATE::COMPLETED;
+            EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
+
+            m_isPopupComplete = true;
+        }
+
+        // 페이드 시작
+        if (m_fTimer >= m_fDurationFadeStart && !m_isFaded)
+        { 
             UIDirector()->FadeOut_Screen(0.2f);
-            m_isFadeout = true;
+            m_isFaded = true;
         } 
-        if (m_fTimer >= m_fDurationWipeout)
+
+        // 클리어 호출
+        if (m_fTimer >= m_fDurationClear)
+        {
+            BattleSystem()->LockBattleTime(true);
             Change_State(STATE::INACTIVE);
-        //if (!BattleSystem()->isVFXRunning(BATTLE_VFX_TYPE::WIPEOUT))
-        //    Change_State(STATE::INACTIVE); 
+        } 
         break;
     } 
 
@@ -150,7 +173,6 @@ HRESULT CUI_TutorialGuide::Create_SlotComplete()
 
 HRESULT CUI_TutorialGuide::Show_ResultBanner()
 {
-    GameInstance()->Set_EngineTimeScale(0.f);
     UIDirector()->FadeIn_Screen(0.2f);
 
     auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_LotteryResultBanner" })
@@ -161,8 +183,9 @@ HRESULT CUI_TutorialGuide::Show_ResultBanner()
  
     UIManager()->Add_UIObject(pObj, LevelManager()->Get_NowLevelKey());
 
-    pObj->Set_OnClick([]() { 
-        GameInstance()->Set_EngineTimeScale(1.f);
+    pObj->Set_OnClick([]() {
+        BattleSystem()->LockBattleTime(false);
+        BattleSystem()->LockPlayer(false);
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
         });
 
@@ -228,7 +251,6 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         if (m_pGuideStart)
             m_pGuideStart->UI_DeActive();
         UIDirector()->Hide_Mouse();
-        GameInstance()->Set_EngineTimeScale(1.f);
         Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Play();
         break;
     case STATE::DEACTIVATING:
@@ -237,8 +259,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         if (m_pSlotComplete)
             m_pSlotComplete->UI_Active();
         m_fTimer = 0.f;
-        m_isFadeout = false;
-        //GameInstance()->Set_EngineTimeScale(0.f);
+        m_isFaded = false;
+        m_isPopupComplete = false;
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::CLEAR);
         break;
     case STATE::INACTIVE:
@@ -297,7 +319,7 @@ void CUI_TutorialGuide::AdvanceTutorial()
     auto next = GetNextTutorialType(m_eType);
     
     if (next == TUTORIAL_TYPE::END)
-        Show_ResultBanner();// LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        Show_ResultBanner();
     else
     {
         TUTORIAL_DESC desc = {};

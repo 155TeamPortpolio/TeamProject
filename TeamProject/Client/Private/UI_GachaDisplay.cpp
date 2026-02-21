@@ -37,8 +37,6 @@ HRESULT CUI_GachaDisplay::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaDisplay::Awake()
 {
-    if (m_pVideo)
-        m_pVideo->Play_Video(m_eGrade);
 }
 
 void CUI_GachaDisplay::Update(_float dt)
@@ -117,17 +115,20 @@ void CUI_GachaDisplay::Cache()
 
 void CUI_GachaDisplay::Create_Video(function<void()> onVideoFinished)
 {
+    CUI_GachaVideo::VIDEO_DESC* pDesc = new CUI_GachaVideo::VIDEO_DESC;
+    pDesc->eGrade = m_eGrade;
+    pDesc->onVideoFinished = onVideoFinished;
+
     PrototypeManager()->Add_ProtoType("Gacha_Level", "Proto_GameObject_GachaVideo", CUI_GachaVideo::Create());
 
     auto pObj = Builder::Create_UIObject({ "Gacha_Level", "Proto_GameObject_GachaVideo"})
+        .Add_UIDesc(pDesc)
         .Build("video");
 
     if (!pObj)
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
-    m_pVideo = dynamic_cast<CUI_GachaVideo*>(pObj);
-    m_pVideo->Set_OnVideoFinished(onVideoFinished);
 }
 
 void CUI_GachaDisplay::Create_SkipButton(function<void()> onClickSkip)

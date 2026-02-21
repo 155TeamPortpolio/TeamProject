@@ -60,10 +60,7 @@ void CLevelMgr::Update(_float dt)
         break;
     case Engine::LEVEL_STATE::REQUEST: //다음 레벨로 가는 것을 요청한 상태
         if (!m_LoadingLevelKey.empty() && m_LevelCreators.count(m_LoadingLevelKey)) {
-
-            if(m_TransDesc.KeepResource == false)
-                ClearResource();
-
+            ClearResource();
             m_pCurrentLevel = m_LevelCreators[m_LoadingLevelKey]();
             m_pCurrentLevel->Awake(); //확정 후 초기화
             m_eState = LEVEL_STATE::LOADING; //로딩 레벨 설정이 되어 있으면 로딩을 진행함.
@@ -78,9 +75,7 @@ void CLevelMgr::Update(_float dt)
     case Engine::LEVEL_STATE::LOADED: //로딩이 완료되면 아까 요청한 레벨로 전환
         if (!m_TransDesc.nextLevelKey.empty() && m_LevelCreators.count(m_TransDesc.nextLevelKey)) {
 
-            if (m_TransDesc.KeepResource == false)
-                ClearResource();
-
+            ClearResource();
             m_pCurrentLevel = m_LevelCreators[m_TransDesc.nextLevelKey]();
             m_eState = LEVEL_STATE::STABLE;
             m_TransDesc.Reset();
@@ -127,7 +122,7 @@ void CLevelMgr::ClearResource()
     string levelTag = m_pCurrentLevel->Get_Key();
     if(levelTag == G_GlobalLevelKey)return;
     Safe_Release(m_pCurrentLevel);
-    CGameInstance::GetInstance()->Clear_LevelResource(levelTag);
+    CGameInstance::GetInstance()->Clear_LevelResource(levelTag,m_TransDesc.KeepResource);
 }
 
 #pragma region For_OtherManager

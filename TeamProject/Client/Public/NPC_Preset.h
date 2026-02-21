@@ -20,7 +20,7 @@ static vector<string> NPC_MALE_ANIM = {
 
 static vector<string> NPC_FEMALE_ANIM = {
     "_Stand_Calm01_017",
-    "_Stand_Calm01_018",
+    "_Stand_Calm02_018",
     "_Stand_Idle01_001",
     "_Stand_Positive_028",
     "_Stand_Talk02_007",

@@ -228,6 +228,14 @@ void CJaneDoe::Reset_State()
     m_pStateMachine->Reset_Trigger("ToMove");
     m_pStateMachine->Reset_Trigger("ToIdle");
     m_pStateMachine->Set_Trigger("ResetState");
+    if (m_bIsMain)
+    {
+        m_pStateMachine->Set_Trigger("ResetState");
+    }
+    else
+    {
+        m_pStateMachine->Set_Trigger("SwitchOut");
+    }
 }
 
 void CJaneDoe::On_Start()
@@ -240,6 +248,7 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
     m_fDissolveProgress = 0.f;
     SetRenderLayer(RENDER_LAYER::Default);
 
+    m_bReserveCombo = false;
     Set_Switch(eType);
     m_pStateMachine->Set_Trigger("SwitchIn");
 }

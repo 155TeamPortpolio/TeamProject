@@ -76,6 +76,13 @@ public:
 		void Use_Cloud(_bool b);
 	};
 
+	struct Zero_Shadow {
+		CGameObject* pShadowCam = { nullptr };
+
+		void Set_ShadowPos(_vector3 vPosition);
+		void Set_Light(LIGHT_DESC LightDesc);
+	};
+
 private:
 	CZero_Level(const string& LevelKey);
 	virtual ~CZero_Level() DEFAULT;
@@ -108,12 +115,13 @@ public:
 	class CAudioSource* Get_ZeroBGM() { return m_pBGM; };
 	Zero_Fog* Get_ZeroFog() { return &m_tZeroFog; };
 	Zero_Cloud* Get_ZeroCloud() { return &m_tZeroCloud; };
+	void Get_ZeroShadow() { }
 
 private:
 	class CAudioSource* m_pBGM = nullptr;
 	Zero_Fog	m_tZeroFog;
 	Zero_Cloud	m_tZeroCloud;
-
+	Zero_Shadow m_tZeroShadow;
 public:
 	static CZero_Level* Create(const string& LevelKey);
 	virtual void Free() override;

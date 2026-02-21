@@ -376,6 +376,11 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.6f))
+    {
+        pOwner->Take_Explode(DAMAGE_TYPE::HARD);
+    }
+
     Update_Effects(pOwner);
 }
 
