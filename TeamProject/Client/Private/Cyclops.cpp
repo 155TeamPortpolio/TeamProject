@@ -28,6 +28,8 @@
 #include "Cyclops_Move.h"
 #include "Cyclops_Chase.h"
 
+#include "EffectContainer.h"
+
 CCyclops::CCyclops()
 	: CEnemyNormal()
 {
@@ -77,6 +79,9 @@ HRESULT CCyclops::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;
@@ -401,6 +406,9 @@ void CCyclops::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 
 void CCyclops::Spit(_uint iSpitType)
 {
+	Play_Effect("Cyclops_Shot" + to_string(m_iShotCount % 3), _vector3(0.f, 1.f, 1.2f), _quaternion(0.f, 0.f, 0.f, 1.f));
+	++m_iShotCount;
+
 	if (ENUM(CCyclops_Spit::SPIT::ARC_RIGHT) < iSpitType || 0 > iSpitType)
 		return;
 
@@ -561,4 +569,21 @@ void CCyclops::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
-} 
+}
+
+HRESULT CCyclops::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("cyclops_shot.json")
+			.Build("Cyclops_Shot" + to_string(i));
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	return S_OK;
+}

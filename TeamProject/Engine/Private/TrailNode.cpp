@@ -88,12 +88,18 @@ void CTrailNode::Update(_float dt)
 	{
 	case Engine::CTrailModel::POINT_MODE::CENTER:
 	{
+		if (!m_IsEffectActive)
+			break;
+
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
-		pTrail->Update_CenterPoint(context.vLinePoint0, dt);
+		pTrail->Update_CenterPoint(vPosition, dt);
 
 	}break;
 	case Engine::CTrailModel::POINT_MODE::SEGMENT:
 	{
+		if (!m_IsEffectActive)
+			break;
+
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 		_vector3 vPosition1 = vPosition0;
 		vPosition1.y -= 5.f;
@@ -126,10 +132,10 @@ void CTrailNode::Play()
 {
 	m_IsEffectActive = true;
 	m_fElpasedTime = 0.f;
+	Get_Component<CTrailModel>()->Reset();
 
 	if (CTrailModel::POINT_MODE::LINE == m_eMode)
 	{
-		Get_Component<CTrailModel>()->Reset();
 		Get_Component<CTrailModel>()->SetFadeOut(false);
 	}
 }

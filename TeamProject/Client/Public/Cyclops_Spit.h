@@ -38,6 +38,10 @@ private:
     _vector MakeSpreadDir_Yaw(_fvector vLookDir, _float fYawDeg);
 
 private:
+    void Spawn_DeadEffect();
+    void Initialize_Effects();
+
+private:
     const _float4x4*    m_pHeadBone = { nullptr };
     _bool               m_isStraight = { false };
     _bool               m_isArc = { false };

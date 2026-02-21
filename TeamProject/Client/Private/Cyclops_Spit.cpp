@@ -13,6 +13,7 @@
 #include "StaticModel.h"
 
 #include "Character.h"
+#include "EffectContainer.h"
 
 CCyclops_Spit::CCyclops_Spit()
 	: CEnemy()
@@ -30,8 +31,8 @@ HRESULT CCyclops_Spit::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CCollider>();
 	Add_Component<CRigidBody>();
-	Add_Component<CMaterial>();
-	Add_Component<CStaticModel>();
+	//Add_Component<CMaterial>();
+	//Add_Component<CStaticModel>();
 
 	return S_OK;
 }
@@ -44,13 +45,15 @@ HRESULT CCyclops_Spit::Initialize(INIT_DESC* pArg)
 
 	m_pHeadBone = pDesc->pHeadBone;
 
-	Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
-	Get_Component<CTransform>()->Scale({ 0.2f, 0.2f, 0.2f });
+	//Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
+	//Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
+	//Get_Component<CTransform>()->Scale({ 0.2f, 0.2f, 0.2f });
 
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_isAlive = false;
+
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -102,6 +105,10 @@ void CCyclops_Spit::Update(_float dt)
 
 		XMStoreFloat3(&m_vVelocity, v);
 		m_pTransform->Set_Pos(vResultPos);
+
+		_vector3 vDir = m_vVelocity;
+		vDir.Normalize();
+		m_pTransform->Set_Look(vDir);
 	}
 
 }
@@ -172,6 +179,10 @@ void CCyclops_Spit::OnTriggerEnter(CGameObject* pOther)
 
 void CCyclops_Spit::ShootSpit(SPIT eSpitType)
 {
+	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Trail");
+	if (pEffect)
+		static_cast<CEffectContainer*>(pEffect)->Play();
+
 	_matrix ParentWorld = XMLoadFloat4x4(Get_Component<CChild>()->Get_Parent()->Get_Component<CTransform>()->Get_WorldMatrix_Ptr());
 	_matrix HeadBone = XMLoadFloat4x4(m_pHeadBone);
 
@@ -249,6 +260,8 @@ void CCyclops_Spit::FinishSpit()
 	m_isAlive = false;
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_vDir = {};
+
+	Spawn_DeadEffect();
 }
 
 _float CCyclops_Spit::ComputeGravityScale(_float lifeTime, _float rampTime)
@@ -283,6 +296,30 @@ _vector CCyclops_Spit::MakeSpreadDir_Yaw(_fvector vLookDir, _float fYawDeg)
 	_vector outDir = XMVector3TransformNormal(d, rot);
 
 	return XMVector3Normalize(outDir);
+}
+
+void CCyclops_Spit::Spawn_DeadEffect()
+{
+	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("cyclops_spit_explode.json")
+		.Position(vWorldPosition)
+		.Build("Explode");
+
+	ObjectManager()->Add_Object(pEffect, { LevelManager()->Get_NowLevelKey(),"Effect_Layer" });
+}
+
+void CCyclops_Spit::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("cyclops_trail.json")
+		.Build("Trail");
+
+	pEffect->Stop();
+	pObjectContainer->Add_Child(pEffect);
 }
 
 CCyclops_Spit* CCyclops_Spit::Create()
