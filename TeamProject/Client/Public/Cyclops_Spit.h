@@ -56,6 +56,9 @@ private:
     _bool               m_isCollisionCooltime = { false };
     _float2             m_vCollisionCooltime = { 0.1f, 0.f };
 
+    _bool               m_isSound = { false };
+    _float2             m_vSoundTime = { 2.f, 0.f };
+
 
 public:
     static CCyclops_Spit* Create();

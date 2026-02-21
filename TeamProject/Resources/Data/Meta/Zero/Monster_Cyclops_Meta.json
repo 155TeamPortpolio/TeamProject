@@ -46,6 +46,11 @@
           "EventTime": 2.5480833053588867,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.399999976158142,
+          "EventType": "Sound",
+          "EventTag": "cyclops_Spit_ThreeTime.wav"
         }
       ]
     },
@@ -195,6 +200,11 @@
           "EventTime": 1.3333333730697632,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.800000011920929,
+          "EventType": "Sound",
+          "EventTag": "cyclops_SpitOnce.wav"
         }
       ]
     },
@@ -215,6 +225,11 @@
           "EventTime": 1.9870046377182007,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.1399999856948853,
+          "EventType": "Sound",
+          "EventTag": "cyclops_Shoot.wav"
         }
       ]
     },
@@ -240,6 +255,11 @@
           "EventTime": 1.0345029830932617,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.6103963255882263,
+          "EventType": "Sound",
+          "EventTag": "cyclops_Swing.wav"
         }
       ]
     },
