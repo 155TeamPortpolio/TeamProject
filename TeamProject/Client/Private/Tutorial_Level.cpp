@@ -10,6 +10,8 @@
 #include "PostProcessCommand.h"
 #include "PostRenderer.h"
 
+#include "AudioSource.h"
+
 #include "Light.h"
 
 #include "MapLoader.h"
@@ -28,6 +30,9 @@ CTutorial_Level::CTutorial_Level(const string& LevelKey)
     m_pGameInstance{ CGameInstance::GetInstance() }
 {
     Safe_AddRef(m_pGameInstance);
+
+    m_pBGM = CAudioSource::Create();
+    m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BGM");
 }
 
 HRESULT CTutorial_Level::Initialize()
@@ -88,6 +93,8 @@ HRESULT CTutorial_Level::Awake()
     //desc.eType = TUTORIAL_TYPE::EXTREME_EVADE;
     //desc.eState = TUTORIAL_STATE::INFO;
     //EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
+     
+    m_pBGM->Slot("TutorialBGM.wav").Group(SOUND_GROUP::BGM).Attribute3D(false).Volume(0.2f).Loop(true).Play();
 
     return S_OK;
 }
@@ -158,6 +165,9 @@ CTutorial_Level* CTutorial_Level::Create(const string& LevelKey)
 void CTutorial_Level::Free()
 {
     __super::Free();
+    m_pBGM->FadeOut_Volume("TutorialBGM.wav", 0.9);
+
     m_pPlayer->Clear_Characters();
     m_pGameInstance->DestroyInstance();
+    Safe_Release(m_pBGM);
 }
