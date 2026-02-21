@@ -36,7 +36,7 @@ HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
     Cache();
      
     Create_TutorialDescriptions();
-    //Create_TutorialVideo();
+    Create_TutorialVideo();
     Create_ExitButton();
     Create_ExitBanner();
     Create_EnterButton();
@@ -87,7 +87,7 @@ void CUI_TutorialInfo::UI_Active(void* pArg)
     
     UIDirector()->Show_Mouse();
     UIDirector()->FadeIn_Screen(0.2f);
-    GameInstance()->Set_EngineTimeScale(0.f);
+    GameInstance()->Set_EngineTimeScale(0.f);////////////////////////////////////////////////////////////////
 }
 
 void CUI_TutorialInfo::UI_DeActive(void* pArg)
@@ -138,7 +138,7 @@ HRESULT CUI_TutorialInfo::Create_TutorialDescriptions()
 HRESULT CUI_TutorialInfo::Create_TutorialVideo()
 {
     auto pObj = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialVideo"})
-        .Build("video");
+        .Build("TutorialVideo");
 
     if (!pObj)
         return E_FAIL;
@@ -225,8 +225,8 @@ void CUI_TutorialInfo::Change_Description(TUTORIAL_TYPE eType)
 
     Change_TitleText(eType);
 
-    //if (m_pVideo) 
-    //    m_pVideo->Play(eType);
+    if (m_pVideo) 
+        m_pVideo->Play(eType);
 }
 
 void CUI_TutorialInfo::Change_TitleText(TUTORIAL_TYPE eType)
