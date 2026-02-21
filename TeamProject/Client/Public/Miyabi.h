@@ -40,6 +40,7 @@ public: // 타겟팅
 public: // 서리
     _bool   Has_Frost() const { return m_iFrost > 0; }
     _bool   Can_Charge() const { return m_iFrost >= 2; }
+    _int    Get_Frost() const { return m_iFrost; }
     void    Increase_Frost(_uint iFrost);
     void    Decrease_Frost(_uint iFrost);
 
@@ -63,6 +64,7 @@ public: // 모션블러
 
 public: // 무기 이펙트 메쉬
     void    Set_WeaponEffectMesh(_bool bOn);
+    void    Set_WeaponFire(_bool bOn);
 
 private: // 초기화
     HRESULT Initialize_StateMachine();

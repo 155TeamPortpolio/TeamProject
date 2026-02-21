@@ -164,6 +164,13 @@ void CBattlePlayer::Render_GUI()
             iter.second->Set_RenderState(true);
         }
     }
+    if (ImGui::Button("AttackZero"))
+    {
+        for (auto Character : m_BattleCharacters)
+        {
+            Character->Set_AttackPower(0.f);
+        }
+    }
 
     ImGui::Separator();
     if (ImGui::Button("RecoverHP"))

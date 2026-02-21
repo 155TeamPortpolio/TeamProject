@@ -130,6 +130,7 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_SwitchInParryAid_L_End::Enter(CMiyabi* pOwner)
 {
+    pOwner->Pop_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L_End")
         .Loop(false)
         .Speed(1.2f)
