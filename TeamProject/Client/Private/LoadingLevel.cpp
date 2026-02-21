@@ -55,8 +55,8 @@ void CLoadingLevel::Update()
 	pRcsMgr->GetPreloadProgress(done, total);
 	if (ResourceManager()->isLoadComplete() &&(m_leastTime>1.f))
 	{
-		UIDirector()->FadeOut_Screen(1.f);
 		LevelManager()->Notify_LoadComplete();
+		//UIDirector()->FadeOut_Screen(1.f);
 	}
 
 }
