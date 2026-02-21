@@ -76,8 +76,9 @@ void CMiyabiState_ChargeAttack::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_ChargeAttack::Update(CMiyabi* pOwner, _float dt)
 {
-    // 버튼 놓으면 Release 트리거
-    if (InputDevice()->Mouse_Away(MOUSE_BTN::LB))
+    // 3단 충전 완료 후에만 Release 허용
+    if (InputDevice()->Mouse_Away(MOUSE_BTN::LB)
+        && m_pSubStateMachine->Get_Int("ChargeLevel") >= 3)
         m_pSubStateMachine->Set_Trigger("Release");
 
     m_pSubStateMachine->Set_Bool("CanCharge", pOwner->Can_Charge());

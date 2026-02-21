@@ -132,7 +132,6 @@ void CZeroStage_Boss::Intro()
 
 void CZeroStage_Boss::BattleStart()
 {
-	return;
 	Active_Enemy();
 	CBattleSystem::GetInstance()->SetActive(true);
 	CamDirector()->EnterBoss();
