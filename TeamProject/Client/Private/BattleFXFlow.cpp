@@ -609,14 +609,17 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	if (accumulatedTimeSec < totalDuration)
 		AddWait(totalDuration - accumulatedTimeSec);
+	
+	//AddWait(0.05f);
+	//AddCall([]() {UIDirector()->FadeOut_Screen(0.f); });
 
-	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
 		CamDirector()->EndWipeOut();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+		UIDirector()->FadeOut_Screen(0.2f);
 		});
 
 	Start(nullptr);

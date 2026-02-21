@@ -1551,6 +1551,9 @@
     <Filter Include="02. GameObject\Effect\AttackRange">
       <UniqueIdentifier>{7f4f46b8-b6c8-426d-a5b9-febe89cdec7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Npc\BangBoo">
+      <UniqueIdentifier>{6c98ca37-6140-4d9b-8160-0dcaf301fef4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">

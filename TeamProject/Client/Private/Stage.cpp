@@ -305,6 +305,7 @@ void CStage::BaseIntro(StageContext& context)
 
 				UIDirector()->Hide_HUD(CUIDirector::HUD::BATTLE);
 				UIDirector()->Show_SceneFrame();
+				BattleSystem()->GetBattlePlayer()->Lock_Input();
 			}
 				});
 			m_introFlow.AddWaitUntil(seqId, []()

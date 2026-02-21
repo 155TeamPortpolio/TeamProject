@@ -6,6 +6,7 @@
 #include "StageRouter.h"
 #include "EffectContainer.h"
 #include "CamDirector.h"
+#include "BattlePlayer.h"
 
 //component
 #include "AudioSource.h"
@@ -127,6 +128,7 @@ void CZeroStage_Boss::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
 		if (!HasBattleStarter())
 			m_eStageState = StageState::BattleStart;
 	}

@@ -6,6 +6,7 @@
 #include "StageRouter.h"
 #include "ZeroPortal.h"
 #include "UIDirector.h"
+#include "BattlePlayer.h"
 /*PostRenderer*/
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
@@ -97,6 +98,7 @@ void CZeroStage_Start::Intro()
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageState = StageState::None;
 		Active_Portal();
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
 	}
 }
 
