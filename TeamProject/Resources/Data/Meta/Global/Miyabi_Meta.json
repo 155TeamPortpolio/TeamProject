@@ -1002,7 +1002,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 1.013742756843567,
+          "EventTime": 1.073742756843567,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }

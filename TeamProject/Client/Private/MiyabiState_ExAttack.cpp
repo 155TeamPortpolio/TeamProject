@@ -241,6 +241,7 @@ void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
             auto EnergyDesc = pOwner->Get_EnergyDesc();
             if (EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy)
             {
+                pOwner->Reset_ReserveCombo();   // 이러면 콤보카운트를 공짜로 까먹는다. 
                 m_pOwnerStateMachine->Set_Bool("Extra", true);
             }
         }
