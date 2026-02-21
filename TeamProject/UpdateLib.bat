@@ -107,6 +107,8 @@ xcopy /y "%BASE%%PHYSX_DIR%\PhysXCommon_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
 xcopy /y "%BASE%%PHYSX_DIR%\PhysXFoundation_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
 xcopy /y "%BASE%%PHYSX_DIR%\PhysXCooking_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
 xcopy /y "%BASE%%PHYSX_DIR%\PhysXGpu_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXDevice64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%%PHYSX_DIR%\glut32.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
 
 xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\" "%PROJECT_PATH%\Bin\ShaderFiles\" >nul 2>&1
 xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\" "%PROJECT_PATH%\Bin\ShaderFiles\" >nul 2>&1

@@ -10,6 +10,9 @@
 #include "UI_Seoriyeol.h"
 #include "BattleSystem.h"
 
+#include "ZeroPortal.h"
+#include "CamPortalController.h"
+
 void CamDebugInput::UpdateInput(_float dt)
 {
     const auto& levelKey = LevelManager()->Get_NowLevelKey();
@@ -33,6 +36,7 @@ void CamDebugInput::UpdateInput(_float dt)
 
     if (cam.IsFinished(CamEventType::UltimateFinished))
         cam.RequestSequence("Battle/Back");
+
 
     JehyunInput(dt);
 }

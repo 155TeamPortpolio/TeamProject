@@ -35,7 +35,17 @@ private:
 
 	vector<CHARACTER> m_characters = {};
 
+	vector<CHARACTER> m_pendingCharacters;
+	ATTRIBUTE m_pendingAttribute = ATTRIBUTE::END;
+
+	_bool  m_isCardSequence = {};
+	_int   m_iCardIndex = { 0 };
+	_float m_fCardTimer = { 0.f };
+	const _float m_fCardDelay = { 0.1f };
+
 private:
+	void Update_CardSequence(_float dt);
+
 	void Create_BackButton();
 	void Create_HomeButton();
 	void Create_PartySynergy();

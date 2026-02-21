@@ -107,10 +107,17 @@ void CDefilerLaser::Update(_float dt)
                 static_cast<CEffectContainer*>(pLaser)->Stop();
         }
     }
+
+    _float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
+    _vector scale, position, rotation;
+    XMMatrixDecompose(&scale, &rotation, &position, XMLoadFloat4x4(&worldMatrix));
+
+    Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), rotation);
 }
 
 void CDefilerLaser::Late_Update(_float dt)
 {
+    Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 void CDefilerLaser::Render_GUI()
