@@ -13,9 +13,11 @@ namespace
     static const string kAtlasTexKey = "DamageText.png";
     static const string kColorAtlasTexKey = "DamageTextColor.png";
 
-    constexpr _uint  kColorIdx_JaneDoe = 3;
-    constexpr _uint  kColorIdx_Corin   = 3;
-    constexpr _uint  kColorIdx_Miyabi  = 2;
+    constexpr _float kSpecialWordChance = 0.02f;
+
+    constexpr _uint  kColorIdx_JaneDoe = 0;
+    constexpr _uint  kColorIdx_Corin = 3;
+    constexpr _uint  kColorIdx_Miyabi = 2;
 
     constexpr _uint  kColorFrameCountX = 8;
     constexpr _uint  kColorFrameCountY = 1;
@@ -32,25 +34,25 @@ namespace
     constexpr _float kOverlapHold = 0.23f;
     constexpr _float kRisePx = 0.f;
 
-    constexpr _float kInTotalSec  = 0.30f;
+    constexpr _float kInTotalSec = 0.30f;
     constexpr _float kOutTotalSec = 0.30f;
-    constexpr _float kHoldSec     = 1.f;
+    constexpr _float kHoldSec = 1.f;
 
-    constexpr _float kDigitInSec  = 0.20f;
+    constexpr _float kDigitInSec = 0.20f;
     constexpr _float kDigitOutSec = 0.20f;
 
     constexpr _float kAlphaOutSecRatio = 0.5f;
-    constexpr _float kAlphaInSecRatio  = 0.45f;
+    constexpr _float kAlphaInSecRatio = 0.45f;
 
     constexpr _float kScaleStart = 1.3f;
-    constexpr _float kScaleHold  = 0.55f;
-    constexpr _float kScaleEnd   = 0.3f;
+    constexpr _float kScaleHold = 0.55f;
+    constexpr _float kScaleEnd = 0.3f;
 
-    constexpr EaseType kScaleEase    = EaseType::OutCubic;
-    constexpr EaseType kAlphaInEase  = EaseType::OutCubic;
+    constexpr EaseType kScaleEase = EaseType::OutCubic;
+    constexpr EaseType kAlphaInEase = EaseType::OutCubic;
     constexpr EaseType kAlphaOutEase = EaseType::OutQuad;
 
-    constexpr _float   kFlashSec  = 0.12f;
+    constexpr _float   kFlashSec = 0.12f;
     constexpr EaseType kFlashEase = EaseType::OutQuad;
 
     constexpr _float kDamageScaleMin = 0.3f;
@@ -59,16 +61,16 @@ namespace
     constexpr _float kDamageScaleMaxDamage = 10000.f;
 
     constexpr _float kDamageBangBangThreshold = 7000.f;
-    constexpr _float kBangWidthRatio          = 1.f;
-    constexpr _float kBangExtraTightPx        = 9.f;
+    constexpr _float kBangWidthRatio = 1.f;
+    constexpr _float kBangExtraTightPx = 9.f;
 
-    constexpr _float kRippleAttackSec     = 0.06f;
-    constexpr _float kRippleReleaseSec    = 0.10f;
-    constexpr _float kRippleTauSec        = 0.30f;
-    constexpr _float kRippleFreq          = 3.2f;
-    constexpr _float kRippleAmp           = 0.12f;
+    constexpr _float kRippleAttackSec = 0.06f;
+    constexpr _float kRippleReleaseSec = 0.10f;
+    constexpr _float kRippleTauSec = 0.30f;
+    constexpr _float kRippleFreq = 3.2f;
+    constexpr _float kRippleAmp = 0.12f;
     constexpr _float kRippleSpeedPxPerSec = 360.f;
-    constexpr _float kRippleChance        = 1.f;
+    constexpr _float kRippleChance = 1.f;
 
     struct DamageTextTiming
     {
@@ -205,6 +207,42 @@ void CUI_DamageText::Update(_float dt)
 void CUI_DamageText::UI_Active(void* arg)
 {
     auto desc = static_cast<DAMAGE_DESC*>(arg);
+
+    {
+        const _float roll = Helper::Get_Random_Float(0.f, 1.f);
+        if (roll < kSpecialWordChance)
+        {
+            const string* protoKey = nullptr;
+            string instName;
+
+            if (desc->charaName == CHARACTER::JaneDoe || desc->charaName == CHARACTER::Corin)
+            {
+                static const string kGangtaProto = "Proto_GameObject_Gangta";
+                protoKey = &kGangtaProto;
+                instName = "GangtaProc";
+            }
+            else if (desc->charaName == CHARACTER::Miyabi)
+            {
+                static const string kSeoriyeolProto = "Proto_GameObject_Seoriyeol";
+                protoKey = &kSeoriyeolProto;
+                instName = "SeoriyeolProc";
+            }
+
+            if (protoKey)
+            {
+                auto builder = Builder::Create_UIObject({G_GlobalLevelKey, *protoKey});
+                auto uiObj = builder.Build(instName);
+
+                auto ui = static_cast<CUI_Object*>(uiObj);
+                ui->UI_Active(arg);
+
+                UIManager()->Add_UIObject(ui, LevelManager()->Get_NowLevelKey());
+
+                UI_DeActive({});
+                return;
+            }
+        }
+    }
 
     m_time = 0.f;
     m_enableRipple = (Helper::Get_Random_Float(0.f, 1.f) < kRippleChance);

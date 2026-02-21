@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UI_Seoriyeol.h"
+#include "UI_DamageText.h"
 // Engine
 #include "GameInstance.h"
 #include "ObjectContainer.h"
@@ -23,7 +24,24 @@ HRESULT CUI_Seoriyeol::Initialize(INIT_DESC* arg)
 
 void CUI_Seoriyeol::Update(_float dt)
 {
+    dt *= 1.2f;
+
     __super::Update(dt);
+
+    if (m_followHandle.isValid())
+    {
+        auto obj = ObjectManager()->Request_Object(m_followHandle);
+        Vector3 p = obj->Get_WorldPos();
+        p += m_followOffset;
+        m_worldPos = _float3(p.x, p.y, p.z);
+    }
+
+    Update_WorldToScreen(m_worldPos);
+
+    {
+        m_vAnchorOffset.x -= 800.f;
+        m_vAnchorOffset.y -= 500.f;
+    }
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
@@ -33,6 +51,34 @@ void CUI_Seoriyeol::Update(_float dt)
 
 void CUI_Seoriyeol::UI_Active(void* arg)
 {
+    auto desc = static_cast<DAMAGE_DESC*>(arg);
+
+    m_followHandle = {};
+    m_followOffset = Vector3(0.f, 0.f, 0.f);
+    m_worldPos = _float3(0.f, 0.f, 0.f);
+
+    if (desc)
+    {
+        m_followHandle = desc->followHandle;
+
+        if (m_followHandle.isValid())
+        {
+            m_followOffset = Vector3(0.f, 1.3f, 0.f);
+            if (desc->followOffset.LengthSquared() > 0.f) m_followOffset = desc->followOffset;
+
+            auto obj = ObjectManager()->Request_Object(m_followHandle);
+            Vector3 p = obj->Get_WorldPos();
+            p += m_followOffset;
+            m_worldPos = _float3(p.x, p.y, p.z);
+        }
+        else
+        {
+            m_worldPos = _float3(desc->pos.x, desc->pos.y, desc->pos.z);
+        }
+    }
+
+    Update_WorldToScreen(m_worldPos);
+
     SetAllChildAnim(0);
 }
 
