@@ -51,7 +51,7 @@ void CBattleFXFlow::Initialize_Preset()
 		SwitchCancle.bCanIntersect = false;
 		SwitchCancle.fVFXDuration = duration;
 		SwitchCancle.fBlurDuration = .2f;
-		SwitchCancle.SetTimeData({ duration, 0.4f, 0.35f, 0.35f, EaseType::InOutBack });
+		SwitchCancle.SetTimeData({ duration, 0.3f, 0.3f, 0.3f, EaseType::InOutBack });
 		SwitchCancle.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 	{

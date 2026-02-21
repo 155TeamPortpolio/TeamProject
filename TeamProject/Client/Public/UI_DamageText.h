@@ -13,10 +13,9 @@ struct DAMAGE_DESC : public UI_DESC
     _int          damage{};
     CHARACTER     charaName{};
     _bool         isEnemy{};
-
     _bool         useColorMix = true;
     _float        colorMix = 1.f;
-    _bool         isSpecial = { false };
+    _bool         isSpecial = false;
 };
 
 class CUI_DamageText final : public CUI_WorldToScreen
