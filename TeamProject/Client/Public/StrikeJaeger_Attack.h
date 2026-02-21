@@ -36,6 +36,10 @@ public:
 public:
 	static CStrikeJaeger_Attack1* Create() { return new CStrikeJaeger_Attack1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CStrikeJaeger* pOwner);
+
 };
 
 class CStrikeJaeger_Attack3 : public IBaseState<CStrikeJaeger>
@@ -48,6 +52,10 @@ public:
 public:
 	static CStrikeJaeger_Attack3* Create() { return new CStrikeJaeger_Attack3(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CStrikeJaeger* pOwner);
+
 };
 
 class CStrikeJaeger_Attack5: public IBaseState<CStrikeJaeger>
@@ -60,6 +68,10 @@ public:
 public:
 	static CStrikeJaeger_Attack5* Create() { return new CStrikeJaeger_Attack5(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CStrikeJaeger* pOwner);
+
 };
 
 

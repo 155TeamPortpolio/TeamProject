@@ -140,14 +140,24 @@ void CStrikeJaeger_Attack1::Enter(CStrikeJaeger* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("StrikeJaeger_Ani_Attack01_Fast")
 		.Apply();
+
 }
 
 void CStrikeJaeger_Attack1::Update(CStrikeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CStrikeJaeger_Attack1::Exit(CStrikeJaeger* pOwner)
 {
+}
+
+void CStrikeJaeger_Attack1::Update_Effects(CStrikeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Strike_Slash0_0", _vector3(0.f, 0.9f, 0.f), _quaternion(0.7f, 0.11f, 0.11f, 0.7f));
+	if (IsCrossAnimProgress(0.48f))
+		pOwner->Play_Effect("Strike_Slash0_1", _vector3(0.f, 1.f, 0.f), _quaternion(-0.08f, 0.68f, 0.69f, -0.24f));
 }
 
 /*============================================================================*/
@@ -161,10 +171,24 @@ void CStrikeJaeger_Attack3::Update(CStrikeJaeger* pOwner, _float dt)
 {
 	if (3.f >= pOwner->GetTargetingInfo().fDistance)
 		m_pOwnerStateMachine->Change_State("Attack03_End");
+
+	Update_Effects(pOwner);
 }
 
 void CStrikeJaeger_Attack3::Exit(CStrikeJaeger* pOwner)
 {
+}
+
+void CStrikeJaeger_Attack3::Update_Effects(CStrikeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.26f))
+		pOwner->Play_Effect("Strike_Slash0_0", _vector3(0.f, 1.1f, 0.3f), _quaternion(0.67f, -0.16f, -0.13f, 0.71f));
+	if (IsCrossAnimProgress(0.31f))
+		pOwner->Play_Effect("Strike_Slash0_1", _vector3(0.f, 1.1f, 0.3f), _quaternion(0.35f, 0.63f, 0.68f, 0.13f));
+	if (IsCrossAnimProgress(0.34f))
+		pOwner->Play_Effect("Strike_Slash0_2", _vector3(0.f, 0.7f, 0.f), _quaternion(0.02f, 0.71f, 0.7f, 0.f));
+	if (IsCrossAnimProgress(0.41f))
+		pOwner->Play_Effect("Strike_Slash0_3", _vector3(0.f, 0.7f, 0.f), _quaternion(0.72f, -0.01f, -0.05f, 0.69f));
 }
 
 /*============================================================================*/
@@ -176,8 +200,23 @@ void CStrikeJaeger_Attack5::Enter(CStrikeJaeger* pOwner)
 
 void CStrikeJaeger_Attack5::Update(CStrikeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CStrikeJaeger_Attack5::Exit(CStrikeJaeger* pOwner)
 {
+}
+
+void CStrikeJaeger_Attack5::Update_Effects(CStrikeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.17f))
+		pOwner->Play_Effect("Strike_Slash0_0", _vector3(0.f, 1.f, 0.3f), _quaternion(0.66f, -0.28f, -0.25f, 0.65f));
+	if (IsCrossAnimProgress(0.25f))
+		pOwner->Play_Effect("Strike_Slash0_1", _vector3(0.f, 1.f, 0.3f), _quaternion(-0.12f, -0.7f, 0.69f, -0.14f));
+	if (IsCrossAnimProgress(0.17f)) 
+	{
+		pOwner->Play_Effect("Strike_Slash0_2", _vector3(-0.3f, 1.1f, 0.3f), _quaternion(-0.25f, 0.67f, 0.65f, -0.27f));
+		pOwner->Play_Effect("Strike_Slash0_3", _vector3(0.3f, 1.1f, 0.3f), _quaternion(-0.08f, 0.72f, 0.5f, 0.47f));
+
+	}
 }

@@ -26,6 +26,7 @@
 #include "ThugAssaulter_Parried.h"
 
 #include "AttackSign.h"
+#include "EffectContainer.h"
 
 CThugAssaulter::CThugAssaulter()
 	: CEnemyNormal()
@@ -76,6 +77,9 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;
@@ -486,6 +490,31 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Hit");
 	
+	return S_OK;
+}
+
+HRESULT CThugAssaulter::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("assaulter_slash0.json")
+			.Build("Assaulter_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("assaulter_spin.json")
+			.Build("Assaulter_Spin");
+		pEffect->Set_Alive(false);
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 	return S_OK;
 }
 

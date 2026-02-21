@@ -35,6 +35,9 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CThugAssaulter* pOwner);
+
+private:
 	_bool		m_isFinish = { false };
 	_bool		m_isParryEnable = { false };
 };
@@ -49,6 +52,9 @@ public:
 public:
 	static CThugAssaulter_Attack2* Create() { return new CThugAssaulter_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugAssaulter* pOwner);
 
 private:
 	_bool		m_isFirstAttack = { false };
@@ -71,6 +77,9 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CThugAssaulter* pOwner);
+
+private:
 	_bool m_isFirstAttack = { false };
 	HitDesc m_tHitDesc = {};
 	_bool		m_isFinish = { false };
@@ -87,6 +96,9 @@ public:
 public:
 	static CThugAssaulter_Attack4* Create() { return new CThugAssaulter_Attack4(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugAssaulter* pOwner);
 
 private:
 	_bool		m_isFinish = { false };

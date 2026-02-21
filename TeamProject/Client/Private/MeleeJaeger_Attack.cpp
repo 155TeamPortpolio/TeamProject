@@ -179,10 +179,17 @@ void CMeleeJaeger_Attack1::Enter(CMeleeJaeger* pOwner)
 
 void CMeleeJaeger_Attack1::Update(CMeleeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CMeleeJaeger_Attack1::Exit(CMeleeJaeger* pOwner)
 {
+}
+
+void CMeleeJaeger_Attack1::Update_Effects(CMeleeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.37f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_0", _vector3(0.f, 0.7f, 0.f), _quaternion(0.27f, 0.66f, 0.09f, 0.7f));
 }
 
 /*============================================================================*/
@@ -194,10 +201,17 @@ void CMeleeJaeger_Attack2::Enter(CMeleeJaeger* pOwner)
 
 void CMeleeJaeger_Attack2::Update(CMeleeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CMeleeJaeger_Attack2::Exit(CMeleeJaeger* pOwner)
 {
+}
+
+void CMeleeJaeger_Attack2::Update_Effects(CMeleeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.34f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_0", _vector3(0.f, 0.9f, 0.f), _quaternion(0.35f, 0.61f, 0.f, 0.71f));
 }
 
 /*============================================================================*/
@@ -209,10 +223,17 @@ void CMeleeJaeger_Attack3::Enter(CMeleeJaeger* pOwner)
 
 void CMeleeJaeger_Attack3::Update(CMeleeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CMeleeJaeger_Attack3::Exit(CMeleeJaeger* pOwner)
 {
+}
+
+void CMeleeJaeger_Attack3::Update_Effects(CMeleeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.31f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_0", _vector3(0.f, 1.5f, 0.f), _quaternion(-0.24f, 0.64f, 0.66f, -0.31f));
 }
 
 /*============================================================================*/
@@ -224,10 +245,21 @@ void CMeleeJaeger_Attack4::Enter(CMeleeJaeger* pOwner)
 
 void CMeleeJaeger_Attack4::Update(CMeleeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CMeleeJaeger_Attack4::Exit(CMeleeJaeger* pOwner)
 {
+}
+
+void CMeleeJaeger_Attack4::Update_Effects(CMeleeJaeger* pOwner)
+{
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_0", _vector3(0.f, 1.f, 0.f), _quaternion(-0.35f, 0.62f, 0.16f, -0.68f));
+	if (IsCrossAnimProgress(0.27f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_1", _vector3(0.f, 1.f, 0.f), _quaternion(-0.07f, 0.72f, 0.69f, 0.06f));
+	if (IsCrossAnimProgress(0.47f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_2", _vector3(0.f, 1.1f, 0.f), _quaternion(0.51f, 0.52f, 0.38f, 0.57f));
 }
 
 /*============================================================================*/
@@ -239,8 +271,15 @@ void CMeleeJaeger_Attack5::Enter(CMeleeJaeger* pOwner)
 
 void CMeleeJaeger_Attack5::Update(CMeleeJaeger* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CMeleeJaeger_Attack5::Exit(CMeleeJaeger* pOwner)
 {
+}
+
+void CMeleeJaeger_Attack5::Update_Effects(CMeleeJaeger* pOwner)
+{
+	if(IsCrossAnimProgress(0.45f))
+		pOwner->Play_Effect("Melee_Jaeger_Slash0_0", _vector3(0.f, 1.2f, 0.f), _quaternion(0.71f, -0.01f, 0.01f, 0.7f));
 }

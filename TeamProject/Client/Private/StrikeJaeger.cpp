@@ -28,6 +28,8 @@
 #include "StrikeJaeger_Chase.h"
 #include "StrikeJaeger_Parried.h"
 
+#include "EffectContainer.h"
+
 CStrikeJaeger::CStrikeJaeger()
 	: CEnemyNormal()
 {
@@ -401,6 +403,22 @@ HRESULT CStrikeJaeger::Initialize_Transitions()
 		CStateMachine<CStrikeJaeger>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CStrikeJaeger>::CONDITION_TRIGGER, "Idle_To_Hit");
+
+	return S_OK;
+}
+
+HRESULT CStrikeJaeger::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("strike_slash0.json")
+			.Build("Strike_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
 
 	return S_OK;
 }

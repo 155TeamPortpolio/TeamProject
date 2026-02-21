@@ -537,10 +537,27 @@ void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (m_fAnimProgress < 0.1f)
 		pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeState_Attack_04_1_Phase1::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_04_1_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	if (IsCrossAnimProgress(0.16f))
+	{
+		auto smokeTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_trail.json")
+			.Build("Smoke");
+
+		auto smokeBoneFollower = smokeTrail->Add_Component<CBoneFollower>();
+		smokeBoneFollower->Initialize(nullptr);
+		smokeBoneFollower->Link_Bone(pOwner->Get_Component<CAnimator3D>(), "RootNode");
+		ObjectManager()->Add_Object(smokeTrail, { pOwner->Get_Level(),"Effect_Layer" });
+	}
 }
 
 void CSacrificeState_Attack_04_2_Phase1::Enter(CSacrifice* pOwner)
