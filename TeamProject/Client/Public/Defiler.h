@@ -73,6 +73,9 @@ private:
     void SummonWave();
 
 public:
+    void ControlEnv(ENVTYPE type, _bool set);
+    void ControlBGM();
+public:
     void ResetAllFlags();
 
 private:

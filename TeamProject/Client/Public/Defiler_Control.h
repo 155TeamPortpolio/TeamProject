@@ -232,6 +232,9 @@ struct DefilerMaterialPreset {
   
 };
 
+enum class ENVTYPE {
+    REDSKY,BLACKSKY
+};
 
 NS_END
 
