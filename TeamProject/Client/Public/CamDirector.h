@@ -86,7 +86,7 @@ public:
     void          EndParry() { m_parry.End(); }
     // Switch
     void          EnterSwitch() { m_switch.Begin(); }
-    void          EndSwitch() { m_switch.End(); }
+    void          EndSwitch() { m_switch.Switch(); }
     // Portal
     void          EnterPortal(OBJECT_HANDLE portalHandle) { m_portal.Begin(portalHandle); }
     void          ExitPortal() { m_portal.End(); }

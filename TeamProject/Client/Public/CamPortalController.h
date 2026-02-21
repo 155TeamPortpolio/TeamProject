@@ -20,8 +20,8 @@ public:
     {
         struct Common
         {
-            _float   pivotSec = 0.6f;
-            _float   enterSec = 0.8f;
+            _float   pivotSec = 0.8f;
+            _float   enterSec = 0.5f;
 
             EaseType pivotEase = EaseType::InOutSine;
             EaseType enterEase = EaseType::InCubic;

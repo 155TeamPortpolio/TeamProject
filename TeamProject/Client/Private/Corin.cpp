@@ -113,6 +113,22 @@ void CCorin::Update(_float dt)
         Update_States();
         m_pStateMachine->Update(dt);
     }
+
+    auto bus = Get_Component<CAnimator3D>()->Get_EventBus();
+
+    for (EVENT_INST& instance : bus)
+    {
+        switch (instance.Type)
+        {
+        case CLIP_EVENT_TYPE::NOTIFY:
+            break;
+
+        case CLIP_EVENT_TYPE::SOUND:
+            Get_Component<CAudioSource>()->Slot(instance.Tag).Volume(0.7f).Attribute3D(true).Loop(false).Play();
+            break;
+        }
+    }
+
     __super::Update(dt);
 }
 
