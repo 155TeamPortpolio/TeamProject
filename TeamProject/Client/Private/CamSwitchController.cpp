@@ -112,12 +112,12 @@ void CamSwitchController::Begin()
     lens.fovFrom = lens.fovSaved;
     lens.holdDesiredFov = tune.common.zoomInDeg;
 
+    hold = {};
     hold.target = CamDirector()->GetCurHandle();
 
+    pair = {};
     pair.attacker = hold.target;
     pair.victim = CamDirector()->GetCurTarget();
-
-    pair = {};
 
     sw = {};
     PivotStab_ApplyTuning(sw.pivotStab, tune.pivot);
@@ -175,8 +175,6 @@ void CamSwitchController::Switch()
     if (core.state == State::CancelRecover) return;
 
     const OBJECT_HANDLE cur = CamDirector()->GetCurHandle();
-    if (!cur.isValid()) { BeginCancelRecover(); return; }
-    if (!hold.target.isValid()) { BeginCancelRecover(); return; }
 
     if (cur == hold.target) { BeginCancelRecover(); return; }
 
@@ -225,6 +223,7 @@ void CamSwitchController::BeginSwitchTo(OBJECT_HANDLE newTarget)
     sw.fovFrom = CameraManager()->GetFov();
     sw.fovTo = lens.fovSaved;
 
+    pair = {};
     pair.attacker = newTarget;
     pair.victim = CamDirector()->GetCurTarget();
 
@@ -242,6 +241,12 @@ void CamSwitchController::BeginSwitchTo(OBJECT_HANDLE newTarget)
 void CamSwitchController::Update(_float dt)
 {
     if (!core.active) return;
+
+    if (InputDevice()->Key_Tap(VK_F4))
+    {
+        string state = Helper::EnumToString(core.state);
+        __debugbreak();
+    }
 
     EnsureAutoSwitch();
 
@@ -319,13 +324,9 @@ void CamSwitchController::Update(_float dt)
 
         if (uPose >= 1.f && uFov >= 1.f)
         {
-            sw.recoverFrom = p;
-            sw.recoverTo = sw.goal;
-
-            core.state = State::Recover;
-            core.elapsed = 0.f;
-
-            lens.holdDesiredFov = lens.fovSaved;
+            ApplyPose(sw.switchTo);
+            ApplyFovTarget(lens.fovSaved);
+            End();
             return;
         }
         return;
@@ -346,7 +347,6 @@ void CamSwitchController::Update(_float dt)
         const _float tPose = Math::ApplyEase(tune.sw.recoverPoseEase, uPose);
 
         Pose p = LerpPose(sw.recoverFrom, sw.recoverTo, tPose);
-        p.pivotWorld = sw.recoverTo.pivotWorld;
 
         ApplyPose(p);
         ApplyFovTarget(lens.fovSaved);
@@ -362,7 +362,6 @@ void CamSwitchController::Update(_float dt)
 
             core.state = State::Hold;
             core.elapsed = 0.f;
-            return;
         }
         return;
     }

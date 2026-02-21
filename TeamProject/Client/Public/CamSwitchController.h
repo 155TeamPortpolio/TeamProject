@@ -45,10 +45,10 @@ public:
             _float   blendSec = 1.0f;
             EaseType blendEase = EaseType::OutCubic;
 
-            _float   fovBlendSec = 1.0f;
+            _float   fovBlendSec = 0.1f;
             EaseType fovBlendEase = EaseType::OutCubic;
 
-            _float   recoverPoseSec = 0.45f;
+            _float   recoverPoseSec = 0.5f;
             EaseType recoverPoseEase = EaseType::OutCubic;
         } sw;
 
