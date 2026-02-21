@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "BattleSystem.h"
 #include "Zero_Level.h"
+#include "BattlePlayer.h"
 #include "StageRouter.h"
 
 CZeroStage_Elite::CZeroStage_Elite()
@@ -70,6 +71,7 @@ void CZeroStage_Elite::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
 		if (!HasBattleStarter())
 			m_eStageState = StageState::BattleStart;
 	}
