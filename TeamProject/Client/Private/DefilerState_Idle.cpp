@@ -19,10 +19,17 @@ void CDefilerState_Idle::Update(CDefiler* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
 	/* Idle */
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	m_IdleElapsedTime += dt;
 	if (m_IdleElapsedTime >= IdleDuration)
 	{
-		pOwner->Get_MainStateMachine()->Set_Trigger("Idle_To_Attack");
+		if (blackBoard.ForceIDLE) {
+			m_IdleElapsedTime = 0;
+			blackBoard.ForceIDLE = false;
+		}
+		else {
+			pOwner->Get_MainStateMachine()->Set_Trigger("Idle_To_Attack");
+		}
 	}
 }
 

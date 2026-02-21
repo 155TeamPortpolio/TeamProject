@@ -9,7 +9,7 @@
 #include "DefilerLaser.h"
 #include "DisplayGate.h"
 #include "CameraMgr.h"
-
+#include "AudioSource.h"
 CDefilerState_Attack* CDefilerState_Attack::Create()
 {
 	CDefilerState_Attack* pInstance = new CDefilerState_Attack();
@@ -24,7 +24,6 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
-	Type = 10;
 	switch (Type)
 	{
 	case 0 :
@@ -40,7 +39,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 2 :
 	{
-		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Front",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack06",0.f,1.f });//·¹ÀÌÀú
 		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//³»¸®Âï
 		break;
@@ -75,6 +74,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	case 7 :
 	{
 		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//³»¸®Âï
 		break;
 	}
 	case 8 :
@@ -162,15 +162,13 @@ void CDefilerState_Attack::Enter(CDefiler* pOwner)
 	__super::Enter(pOwner);
 	auto& blackboard = pOwner->GetBlackBoard();
 	Build_Pattern(pOwner, blackboard.patternIndex);
-	blackboard.patternIndex++;
-	if (blackboard.patternIndex > 12)
-		blackboard.patternIndex = 0.f;
-
 	if (!isMiasma && blackboard.MiasmaPhase) {
 		Build_Pattern(pOwner, 13);
 		isMiasma = true;
 	}
-
+	else {
+		blackboard.patternIndex > 12 ? blackboard.patternIndex = 0.f : blackboard.patternIndex++;
+	}
 	if (!blackboard.patternTransition.empty())
 	{
 		blackboard.ReservePattern();
@@ -684,6 +682,10 @@ void CDefilerState_Attack_08_01_Loop::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(true)
 		.Apply();
+
+	pOwner->Get_Component<CAudioSource>()->Slot("DefilerChargeLoop.wav")
+		.Volume(0.4f).Loop(-1).PlayUnique();
+
 	pOwner->ChainParry(true);
 }
 
@@ -707,6 +709,7 @@ void CDefilerState_Attack_08_01_Loop::Exit(CDefiler* pOwner)
 	m_Interval = 0.f;
 	m_Elapsed = 0.f;
 	pOwner->ChainParry(false);
+	pOwner->Get_Component<CAudioSource>()->Slot("DefilerChargeLoop.wav").FadeOut(0.5f);
 }
 
 void CDefilerState_Attack_08_01_End::Enter(CDefiler* pOwner)
@@ -775,7 +778,7 @@ void CDefilerState_Attack_08_02::Update_Effects(CDefiler* pOwner)
 void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-
+	pOwner->Get_Component<CAudioSource>()->Slot("TsunamiEntrance.wav").Attribute3D(true).Volume(0.7f).Play();
 
 	pOwner->Control_TargetEnable(false);
 
@@ -786,7 +789,8 @@ void CDefilerState_Attack_09_Start::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
-
+	pOwner->Get_Component<CAudioSource>()->Slot("TsunamiEntrance.wav")
+		.Volume(0.4f).Play();
 }
 
 void CDefilerState_Attack_09_Start::Update(CDefiler* pOwner, _float dt)
@@ -828,6 +832,9 @@ void CDefilerState_Attack_09_Loop::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(true)
 		.Apply();
+	pOwner->Get_Component<CAudioSource>()->Slot("DefilerChargeLoop.wav")
+		.Volume(0.5f).Loop(-1).PlayUnique();
+	pOwner->ControlEnv(ENVTYPE::SURGE, true);
 }
 
 void CDefilerState_Attack_09_Loop::Update(CDefiler* pOwner, _float dt)
@@ -841,6 +848,8 @@ void CDefilerState_Attack_09_Loop::Update(CDefiler* pOwner, _float dt)
 void CDefilerState_Attack_09_Loop::Exit(CDefiler* pOwner)
 {
 	m_ElapsedTime = 0.f;
+	pOwner->ControlEnv(ENVTYPE::SURGE, false);
+	pOwner->Get_Component<CAudioSource>()->Slot("DefilerChargeLoop.wav").FadeOut(0.5f);
 }
 
 void CDefilerState_Attack_09_Loop::Update_Effects(CDefiler* pOwner)
