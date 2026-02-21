@@ -43,7 +43,11 @@ void CUI_PartyCard::Change_Character(CHARACTER eCharacter, ATTRIBUTE eMaxAttribu
     }
 
     if (m_pRTDraw)
+    {
         m_pRTDraw->SetRenderLayer(layer);
+        m_pRTDraw->UI_Active();
+    }
+        
     Set_ChildAlive(CHILD::EMPTY, !hasCharacter);
     Set_ChildAlive(CHILD::OCCUPIED, hasCharacter);  
 }
