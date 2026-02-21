@@ -128,7 +128,7 @@
                 0.0,
                 0.0,
                 0.0,
-                0.0
+                1.0
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -293,7 +293,8 @@
                     "animClips": [],
                     "children": [],
                     "typeTag": "Mask",
-                    "maskTextureKey": "empty.png"
+                    "maskTextureKey": "empty.png",
+                    "maskThreshold": 0.10000000149011612
                 },
                 {
                     "alive": true,
@@ -358,7 +359,7 @@
                             52.0
                         ],
                         "size": [
-                            402.6666564941406,
+                            237.3333282470703,
                             120.0
                         ],
                         "scale": [
@@ -399,7 +400,7 @@
                     "animClips": [],
                     "children": [],
                     "typeTag": "Image",
-                    "textureTag": "Title_HollowLogo.png"
+                    "textureTag": "Title_CityLogo.png"
                 },
                 {
                     "alive": true,
