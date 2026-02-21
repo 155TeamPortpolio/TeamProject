@@ -82,10 +82,10 @@ void CUI_GachaPage::Update(_float dt)
 void CUI_GachaPage::UI_Active(void* pArg)
 {
     UIDirector()->FadeIn_Screen(0.2f);
+    UIDirector()->Show_Mouse();
     Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
-    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
-    UIDirector()->Show_Mouse();
+    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play(); 
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)
