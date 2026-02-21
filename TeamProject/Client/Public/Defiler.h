@@ -62,7 +62,6 @@ public:
 
 public:
     void Parried() override;
-    void Change_Pattern();
 private:
     void MoveByTraceMode(_float dt, _float moveScale = 1.f);
     void RotateToTarget(_float dt, _float rotateSpeed = 1.f);

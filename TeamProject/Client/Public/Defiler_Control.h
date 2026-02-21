@@ -170,6 +170,7 @@ static const unordered_map<string, DefilerAttackType> DefilerAtkData =
 	{"J_Type_On",{"Area","Evade","Normal",true}}    ,{"J_Type_Off",{"Area","Evade","Normal",false}},
 	{"K_Type_On",{"Area","Parry","Hard",true}}      ,{"K_Type_Off",{"Area","Parry","Hard",false}},
 	{"L_Type_On",{"Area","Evade","Hard",true}}      ,{"L_Type_Off",{"Area","Evade","Hard",false}},
+	{"M_Type_On",{"Ground","Evade","Normal",true}}  ,{"M_Type_Off",{"Ground","Evade","Normal",false}},
 };
 
 struct DefilerDissolve {
