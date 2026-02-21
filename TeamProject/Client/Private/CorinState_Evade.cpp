@@ -70,6 +70,9 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
                 desc.eAction = TUTORIAL_ACTION::DODGE;
                 EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
             }
+            pOwner->Get_Component<CAudioSource>()->Slot("PerfectEvade")
+                .Attribute3D(true)
+                .PlayUnique();
             pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }

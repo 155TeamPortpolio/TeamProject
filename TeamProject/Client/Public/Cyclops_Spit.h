@@ -54,7 +54,10 @@ private:
     _float              m_fRampTime = 0.12f;  // 중력 램프업 시간(0.08~0.2 추천)
 
     _bool               m_isCollisionCooltime = { false };
-    _float2             m_vCollisionCooltime = { 0.1f, 0.f };
+    _float2             m_vCollisionCooltime = { 0.05f, 0.f };
+
+    _bool               m_isSound = { false };
+    _float2             m_vSoundTime = { 2.f, 0.f };
 
 
 public:

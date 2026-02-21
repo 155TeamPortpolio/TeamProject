@@ -46,7 +46,9 @@ void CUI_GachaCurrency::UI_Active(void* pArg)
 
     // 텍스트 슬롯 (패딩, 값) 에 값 채움
     string strValue = to_string(iValue);
-    _int iPaddingCount = max(0, m_iMaxDigits - strValue.length());
+    _int iValueLen = static_cast<_int>(strValue.length());
+
+    _int iPaddingCount = (m_iMaxDigits > iValueLen) ? m_iMaxDigits - iValueLen : 0;
     string strPadding(iPaddingCount, '0');
 
     m_pTextSlots[ENUM(CHILD::PADDING)]->Set_Text(Helper::ConvertToWideString(strPadding));

@@ -229,9 +229,12 @@ void CTestLevel::Update()
 	}
 	
 	// [`] 
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
-	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
-	//}	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+		CBattleSystem::GetInstance()->LockBattleTime(true);
+	}	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+		CBattleSystem::GetInstance()->LockBattleTime(false);
+	}	
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
 	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
 	//}

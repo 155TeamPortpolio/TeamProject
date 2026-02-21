@@ -8,15 +8,40 @@
 
 void CUI_TutorialVideo::Play(TUTORIAL_TYPE eType)
 {
+    if (!m_pPlayer || !m_pDecoder)
+        return;
+
+    // 0) 렌더가 이전 SRV 잡고 있을 수 있으니 끊기
+    if (auto sprite = Get_Component<CSprite2D>())
+        sprite->Set_Param("SpriteTexture", { nullptr, "Texture2D", 0 });
+
+    // ? 1) 디코드 스레드를 먼저 멈추고 기다리기
+  //  VideoService()->StopDecode(m_PlayerID);          // <- join까지 보장되게
+    m_pDecoder->RequestStopDecode();                 // <- 안전망
+    // 2) 플레이어 정리
+    m_pPlayer->Stop();
     m_pPlayer->Close();
 
+    // 3) 파일 경로 선택
+    std::string filePath = Get_VideoPath(eType);
+
+    // 4) 디코더 재오픈
+    m_pDecoder->Close();
+    if (!m_pDecoder->Open(filePath))
+        return;
+    m_pDecoder->SetLoop(false);
+
+    // 5) 플레이어 오픈
     CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = Get_VideoPath(eType);
+    desc.filePath = filePath;
     desc.loop = true;
     m_pPlayer->Open(desc);
 
+    // 6) 새 디코드 스레드 시작(반드시 새 세션으로)
     VideoService()->StartDecode(m_PlayerID);
+
     m_pPlayer->Play();
+    Set_Alive(true);
 }
 
 HRESULT CUI_TutorialVideo::Initialize_Prototype()
@@ -41,9 +66,9 @@ HRESULT CUI_TutorialVideo::Initialize(INIT_DESC* pArg)
 
     /*비디오 플레이어에게 플레이할 영상을 알려줌*/
     CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = "../Bin/Resources/Video/Tutorial_GroggyCombo.mp4";
+    desc.filePath = "../Bin/Resources/Video/Tutorial_ExtremeEvade.mp4";
     desc.loop = true;
-    m_pPlayer->Open(desc);
+    m_pPlayer->Open(desc); 
 
     VideoService()->StartDecode(m_PlayerID);
 
@@ -51,7 +76,7 @@ HRESULT CUI_TutorialVideo::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("VideoPlay");
 
-    m_vAnchorOffset = { 823.f, 170.f };
+    m_vAnchorOffset = { 823.f, 172.f };
     m_vSize = { 457.f, 257.f};
 
     return S_OK;
@@ -65,7 +90,9 @@ void CUI_TutorialVideo::Update(_float dt)
 {
     __super::Update(dt);
 
-    Get_Component<CSprite2D>()->Set_Param("SpriteTexture", { m_pPlayer->GetSRV(),"Texture2D",0 });
+    auto pSRV = m_pPlayer->GetSRV();
+    if (pSRV)
+        Get_Component<CSprite2D>()->Set_Param("SpriteTexture", { pSRV  ,"Texture2D", 0 });
 }
 
 void CUI_TutorialVideo::UI_Active(void* pArg)
@@ -75,6 +102,7 @@ void CUI_TutorialVideo::UI_Active(void* pArg)
 void CUI_TutorialVideo::UI_DeActive(void* pArg)
 {
     m_pPlayer->Stop();
+    Set_Alive(false);
 }
 
 string CUI_TutorialVideo::Get_VideoPath(TUTORIAL_TYPE eType)

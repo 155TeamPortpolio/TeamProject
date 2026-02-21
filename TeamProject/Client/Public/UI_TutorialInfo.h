@@ -48,6 +48,7 @@ private:
 	HRESULT Create_ExitBanner();
 	HRESULT Create_EnterButton();
 
+	void OnClickEnter();
 	void Change_Description(TUTORIAL_TYPE eType);
 	void Change_TitleText(TUTORIAL_TYPE eType);
 

@@ -5,6 +5,8 @@
 #include "FieldSystem.h"
 #include "BackGroundSpawner.h"
 
+#include "UIDirector.h"
+
 CRoom_Street::CRoom_Street(const ROOM_DESC& desc)
 	:CRoom(desc)
 {

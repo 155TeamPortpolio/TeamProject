@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -78,6 +79,10 @@ HRESULT CCyclops::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/Cyclops/Sound");
+	Get_Component<CAudioSource>()->Slot("cyclops_Spawn.wav").Attribute3D(true).Play();
+
 
 	return S_OK;
 }
@@ -508,6 +513,7 @@ void CCyclops::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);
@@ -561,4 +567,11 @@ void CCyclops::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
-} 
+}
+
+void CCyclops::PlaySoundFromMeta()
+{
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
+}
