@@ -98,7 +98,15 @@ void CUI_TutorialGuide::Update(_float dt)
 
         // 팝업 띄우기
         if (!m_isPopupComplete)
-        { 
+        {
+            BattleSystem()->LockPlayer(true);
+
+            // 이번 튜토리얼 (이번챕터) 완료! - 몬스터한테 공격하지말라고 하려고
+            TUTORIAL_DESC desc;
+            desc.eType = m_eType;
+            desc.eState = TUTORIAL_STATE::COMPLETED;
+            EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
+
             m_isPopupComplete = true;
         }
 
@@ -112,10 +120,8 @@ void CUI_TutorialGuide::Update(_float dt)
         // 클리어 호출
         if (m_fTimer >= m_fDurationClear)
         {
-            Change_State(STATE::INACTIVE);
-
-            BattleSystem()->LockPlayer(true);
             BattleSystem()->LockBattleTime(true);
+            Change_State(STATE::INACTIVE);
         } 
         break;
     } 
