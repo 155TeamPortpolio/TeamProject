@@ -33,6 +33,7 @@ void CJaneDoeState_Idle::Enter(CJaneDoe* pOwner)
 void CJaneDoeState_Idle::Update(CJaneDoe* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+    pOwner->Get_StateMachine()->Reset_Trigger("ResetState");
 }
 
 void CJaneDoeState_Idle::Exit(CJaneDoe* pOwner)

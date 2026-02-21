@@ -40,6 +40,7 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 void CMiyabiState_Idle::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+    pOwner->Get_StateMachine()->Reset_Trigger("ResetState");
 }
 
 void CMiyabiState_Idle::Exit(CMiyabi* pOwner)
