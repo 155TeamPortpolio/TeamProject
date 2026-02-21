@@ -137,6 +137,7 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_SwitchInParryAid_L_End::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L_End")
         .Loop(false)
         .Speed(1.2f)
