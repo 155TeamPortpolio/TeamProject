@@ -279,7 +279,8 @@ FOUR_DIR CDefiler::Get_FourDirection()
 }
 void CDefiler::Parried()
 {
-	m_tStatus.iGroggyValue += 1.f;
+	m_tStatus.iGroggyValue += 1.5f;
+	Get_Component<CAudioSource>()->Slot("DefilerParried.wav").Volume(0.7f).Play();
 }
 
 void CDefiler::MoveByTraceMode(_float dt, _float moveScale)
@@ -604,7 +605,12 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 }
 void CDefiler::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.3f).Play();
+	if (event.find("VO") != string::npos) {
+		Get_Component<CAudioSource>()->Slot(event).Volume(0.5f).Play();
+	}
+	else {
+		Get_Component<CAudioSource>()->Slot(event).Attribute3D(true).Volume(0.4f).Play();
+	}
 }
 void CDefiler::Controll_Attack(const string& event)
 {
@@ -668,6 +674,9 @@ void CDefiler::Control_Summon(const string& event)
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	BattleSystem()->HitVFX(eDamageType);
+	Get_Component<CAudioSource>()->Slot(
+		eDamageType==DAMAGE_TYPE::NORMAL? 
+		"DefilerHitLight.wav" : "DefilerHitHeavy.wav").Volume(0.5f).Play();
 
 	_float fTakeDamage = fDamage;
 	if (m_tStatus.isGroggy)
@@ -699,6 +708,7 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 			.LayerBlend(.8f, 0.1f, .1f, EaseType::InOutQuint)
 			.Loop(false)
 			.Apply();
+		Get_Component<CAudioSource>()->Slot("VO_Bbya.wav").Volume(0.5f).PlayUnique();
 	}
 	if (m_pStateMachine->Get_CurrentState()->Get_StateName() == "Groggy"){
 		FOUR_DIR dir = Get_FourDirection();
@@ -711,6 +721,8 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 			.LayerBlend(.8f, 0.1f, .1f, EaseType::InOutQuint)
 			.Loop(false)
 			.Apply();
+
+		Get_Component<CAudioSource>()->Slot("VO_Hyat.wav").Volume(0.5f).PlayUnique();
 	}
 
 	_vector3 vWorldPosition = Get_BipedPos("Bip001");
@@ -1346,6 +1358,20 @@ HRESULT CDefiler::Create_Colliders()
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::SPHERE;
 		WeaponDesc.vAttackSize = _float3{ 4.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+			return E_FAIL;
+	}
+	/* Ground */
+	{
+		BATTLE_COLLIDER_DESC WeaponDesc{};
+
+		WeaponDesc.tagName = "Ground";
+		WeaponDesc.isAttachBone = true;
+		WeaponDesc.tagBone = "Root";
+		WeaponDesc.pOwnerAnimator3D = pAnimator;
+		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		WeaponDesc.vAttackSize = _float3{ 5.f,3.f,5.f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
