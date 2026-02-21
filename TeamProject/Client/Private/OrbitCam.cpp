@@ -10,6 +10,7 @@
 #include "GameInstance.h"
 #include "Helper_Func.h"
 #include "PhysicsSystem.h"
+#include "CamDirector.h"
 // Component
 #include "Character.h"
 #include "CharacterController.h"
@@ -1327,12 +1328,16 @@ void COrbitCam::Render_GUI()
     ImGui::SeparatorText("OrbitCam");
 
     const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-    const float childHeight = (textLineHeight * 9) + (ImGui::GetStyle().WindowPadding.y * 2);
+    const float childHeight = (textLineHeight * 11) + (ImGui::GetStyle().WindowPadding.y * 2);
 
     const Vector3 pivotWorld = m_pose.pivotCurWorld;
     const Vector3 localOffset = m_pose.pivotInternalOffset + m_pose.pivotExternalOffset;
 
     const _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
+
+    auto swCtrl = CamDirector()->GetSwitch();
+    const _bool swActive = swCtrl.IsActive();
+    const string swStateStr = Helper::EnumToString(swCtrl.GetState());
 
     ImGui::BeginChild("##OrbitCamChild", ImVec2{0, childHeight}, true);
 
@@ -1344,6 +1349,14 @@ void COrbitCam::Render_GUI()
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("ChainParry");
         ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(isChainParry ? "O" : "X");
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Switch Active");
+        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(swActive ? "O" : "X");
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Switch State");
+        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(swStateStr.c_str());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Distance");
@@ -1376,8 +1389,5 @@ void COrbitCam::Render_GUI()
     ImDrawList* dl = ImGui::GetBackgroundDrawList();
     if (Helper::WorldToScreen(pivotWorld, screen, view, proj, vp))
         dl->AddCircleFilled(ImVec2(screen.x, screen.y), 4.f, IM_COL32(255, 0, 0, 255));
-
-    CamSwitchController controller;
-    controller.Render_GUI();
 #endif
 }

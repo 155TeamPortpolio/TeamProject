@@ -89,6 +89,8 @@ public:
     // Switch
     void          EnterSwitch() { m_switch.Begin(); }
     void          EndSwitch() { m_switch.Switch(); }
+    auto          GetSwitch() const { return m_switch; }
+
     // Portal
     void          EnterPortal(OBJECT_HANDLE portalHandle) { m_portal.Begin(portalHandle); }
     void          ExitPortal() { m_portal.End(); }

@@ -152,10 +152,10 @@ public:
     void Begin();
     void Update(_float dt);
     void End();
-
     void Switch();
 
-    void Render_GUI();
+    _bool IsActive() const { return core.active; }
+    CamSwitchController::State GetState() const { return core.state; }
 
 private:
     void EnsureAutoSwitch();

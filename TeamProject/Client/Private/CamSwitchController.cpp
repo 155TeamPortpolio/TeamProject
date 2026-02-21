@@ -582,34 +582,3 @@ CamSwitchController::Pose CamSwitchController::BuildGoalPose_SimplePair() const
     g.dist = hold.pose.dist + add;
     return g;
 }
-
-void CamSwitchController::Render_GUI()
-{
-#ifdef _USING_GUI
-    if (!ImGui::Begin("CamSwitchController", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::End();
-        return;
-    }
-
-    if (ImGui::BeginTable("##CamSwitchTable", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_BordersInnerV))
-    {
-        ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed);
-        ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthFixed);
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Active");
-        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(core.active ? "true" : "false");
-
-        const string stateStr = Helper::EnumToString(core.state);
-
-        ImGui::TableNextRow();
-        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("State");
-        ImGui::TableSetColumnIndex(1); ImGui::TextUnformatted(stateStr.c_str());
-
-        ImGui::EndTable();
-    }
-
-    ImGui::End();
-#endif
-}
