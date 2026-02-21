@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "BattleSystem.h"   
 #include "BattlePlayer.h"
+#include "CamSwitchController.h"
 // Engine
 #include "GameInstance.h"
 #include "Helper_Func.h"
@@ -1375,5 +1376,8 @@ void COrbitCam::Render_GUI()
     ImDrawList* dl = ImGui::GetBackgroundDrawList();
     if (Helper::WorldToScreen(pivotWorld, screen, view, proj, vp))
         dl->AddCircleFilled(ImVec2(screen.x, screen.y), 4.f, IM_COL32(255, 0, 0, 255));
+
+    CamSwitchController controller;
+    controller.Render_GUI();
 #endif
 }

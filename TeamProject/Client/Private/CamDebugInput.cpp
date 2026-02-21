@@ -51,7 +51,7 @@ void CamDebugInput::JehyunInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-
+        cam.EndSwitch();
     }
 
     if (InputDevice()->Key_Tap(VK_F4))

@@ -50,11 +50,6 @@ public:
 
             _float   recoverPoseSec = 0.45f;
             EaseType recoverPoseEase = EaseType::OutCubic;
-
-            _float   arriveRollDeg = 2.5f;
-
-            _float   rollSettleSec = 0.35f;
-            EaseType rollSettleEase = EaseType::OutCubic;
         } sw;
 
         struct PivotFilter
@@ -71,7 +66,6 @@ public:
         Vector3 pivotWorld{};
         _float  yawWorldDeg = 0.f;
         _float  pitchDeg = 0.f;
-        _float  rollDeg = 0.f;
         _float  dist = 0.f;
     };
 
@@ -161,6 +155,8 @@ public:
 
     void Switch();
 
+    void Render_GUI();
+
 private:
     void EnsureAutoSwitch();
     void BeginSwitchTo(OBJECT_HANDLE newTarget);
@@ -176,7 +172,6 @@ private:
 
     _float EvalCancelFov(_float tSec) const;
     _float EvalSwitchFov(_float tSec) const;
-    _float EvalRollSettle(_float tSec) const;
 
     _float CalcBehindYawDeg(OBJECT_HANDLE target) const;
 

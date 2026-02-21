@@ -97,15 +97,15 @@ void CZeroPortal::Update(_float dt)
 
 void CZeroPortal::Late_Update(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_F3))
-	{
-		CamDirector()->EnterPortal(Get_Handle());
-		Active_Portal();
-	}
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CamDirector()->ExitPortal();
-	}
+	//if (InputDevice()->Key_Tap(VK_F3))
+	//{
+	//	CamDirector()->EnterPortal(Get_Handle());
+	//	Active_Portal();
+	//}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//	CamDirector()->ExitPortal();
+	//}
 }
 
 void CZeroPortal::Render_GUI()

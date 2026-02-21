@@ -33,6 +33,8 @@ public:
     void          AutoField(CamStartDir dir);
     void          AutoBattle(CamStartDir dir);
 
+    Vector3       GetBipPos(OBJECT_HANDLE h, _float offsetY = 0.f);
+
     CGameObject*  GetSpaceRef()              const { return m_spaceRefHandle.Get(); }
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj()); }
