@@ -172,6 +172,7 @@ public:
 	void HardHitLack();
 	void SetLayerTimeScale(BATTLE_OBJ_TYPE type, _float scale);
 	void ResetLayerTimeScale(BATTLE_OBJ_TYPE type);
+	void LockBattleTime(_bool Lock);
 
 public:
 	const array<string, ENUM(BATTLE_OBJ_TYPE::END)>& Get_BattleLayer() {return m_layerTag;};

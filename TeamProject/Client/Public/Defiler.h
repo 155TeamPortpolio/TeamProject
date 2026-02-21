@@ -57,6 +57,7 @@ public:
     void Control_TargetEnable(_bool On);
     void Update_Dissolve(_float dt);
 
+    void Play_AttackRange(_float3 position, _float scale);
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
     void Stop_Effect(const string& effectTag);
 
@@ -71,6 +72,9 @@ private:
     void Send_DamageText(_float damage, CHARACTER charaName);
     void SummonWave();
 
+public:
+    void ControlEnv(ENVTYPE type, _bool set);
+    void ControlBGM();
 public:
     void ResetAllFlags();
 

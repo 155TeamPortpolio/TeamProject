@@ -540,6 +540,23 @@ void CBattleSystem::EndSwitch()
 	m_pFXFlow->Cancle_Switch();
 }
 
+void CBattleSystem::LockPlayer(_bool Lock)
+{
+	if (m_pBattlePlayer) {
+		if (Lock) {
+			m_pBattlePlayer->Lock_Input();
+		}
+		else{
+			m_pBattlePlayer->UnLock_Input();
+		}
+	}
+}
+
+void CBattleSystem::LockBattleTime(_bool Lock)
+{
+	m_pFXFlow->LockBattleTime(Lock);
+}
+
 void CBattleSystem::Free()
 {
 	__super::Free();

@@ -126,7 +126,7 @@ void CDefilerWeapon::Update(_float dt)
 		Stop_Effect("Defiler_Throw_Axe_Trail");
 
 		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
-		vWorldPosition.y += 0.1f;
+		vWorldPosition.y -= 0.1f;
 		if (m_isFinalThrow)
 		{
 			auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })

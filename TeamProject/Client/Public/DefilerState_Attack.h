@@ -315,6 +315,10 @@ public:
 public:
 	static CDefilerState_Attack_Grab* Create() { return new CDefilerState_Attack_Grab(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner);
+
 };
 
 class CDefilerState_Attack_Summon:  public CDefilerState_Attack

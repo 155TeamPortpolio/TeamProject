@@ -48,6 +48,7 @@ private:
     void DrawTab_Objects();
     void DrawTab_IndexAudit();
     void DrawTab_Tools();
+    void DrawTab_VFX();
 
     const char* TypeName(BATTLE_OBJ_TYPE type) const;
 public:
