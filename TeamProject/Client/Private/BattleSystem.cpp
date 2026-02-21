@@ -326,7 +326,7 @@ void CBattleSystem::CleanUp_Data()
 	for (size_t i = 0; i < ENUM(BATTLE_OBJ_TYPE::END); i++)
 	{
 		BATTLE_OBJ_TYPE eType = BATTLE_OBJ_TYPE(i);
-		auto& vector = m_BattleObjInfos[eType];
+		auto vector = m_BattleObjInfos[eType];
 		for (size_t j = 0; j < vector.size(); j++)
 		{
 			if (!vector[j].hObject.isValid()) {
