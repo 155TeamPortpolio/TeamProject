@@ -24,6 +24,8 @@ void CRoom_Lottery::Enter()
 
 	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
 	UIDirector()->Show_Lottery();
+
+	FieldSystem()->PlayBGM("LotteryBGM.wav", 0.2f);
 }
 
 void CRoom_Lottery::Exit()
@@ -40,6 +42,8 @@ void CRoom_Lottery::Exit()
 	
 	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
 	UIDirector()->Hide_Lottery();
+
+	FieldSystem()->FadeOutBGM();
 }
 
 void CRoom_Lottery::Update()
