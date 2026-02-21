@@ -201,18 +201,19 @@ void CMiasmaHeavyJaeger::OnTriggerEnter(CGameObject* pOther)
 	if (nullptr != pEnemy)
 	{
 		m_pStateMachine->Set_Trigger("Parried");
-
+		m_isParryEnable = false;
+		m_isOnAttack = false;
 	}
 }
 
 void CMiasmaHeavyJaeger::Parried()
 {
-	m_bStopMove = true;
+	m_bParried = true;
 	m_pStateMachine->Set_Trigger("Parried");
 	Get_Component<CCollider>()->Set_CompActive(false);
 	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
-
-
+	m_isParryEnable = false;
+	m_isOnAttack = false;
 }
 
 void CMiasmaHeavyJaeger::SpawnChild()
@@ -317,7 +318,7 @@ void CMiasmaHeavyJaeger::Route_AnimEvent(CAnimator3D* animator)
 				HitDesc		HitDesc = {};
 				HitDesc.eHitType = HIT_TYPE::ONCE;
 				HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
-				HitDesc.fDamage = 0.f;
+				HitDesc.fDamage = 10.f;
 				HitDesc.fInterval = 0.f;
 				HitDesc.iMaxCount = 1;
 				SetBattleColliderObject("Bip001", CEnemy::BATTLE_COLTYPE::ATTACK,
@@ -337,7 +338,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 	auto* animator = Get_Component<CAnimator3D>();
 	auto* transform = Get_Component<CTransform>();
 
-	if (m_bStopMove||!animator || !transform|| dt <= 0.f)
+	if (m_bParried ||!animator || !transform|| dt <= 0.f)
 		return;
 
 	const _vector3    rootDeltaLocal = animator->Get_RootBoneMoveDelta();
@@ -378,7 +379,7 @@ void CMiasmaHeavyJaeger::MoveByAnim(_float dt, _float moveScale)
 
 	if (moveLenSigned > 0.f)
 	{
-		distScale = 1.f + distToTarget;
+		distScale = 1.f + distToTarget*0.4;
 	}
 
 	_vector3 velocityWorld = (moveWorld)*distScale;

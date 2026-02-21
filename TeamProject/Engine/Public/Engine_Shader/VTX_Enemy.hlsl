@@ -1,7 +1,7 @@
 #include "Shader_Define.hlsl"
 
 float fUseVanish;
-float fEmissiveStrength;
+float fEmissiveStrength ;
 float3 vEmissiveColor;
 float3 vRimLightColor;
 float fRimLightPower;

@@ -23,30 +23,35 @@ namespace
         const _float tau = 1.f / max(speed, 0.0001f);
         return Math::ExpAlpha(tau, dt);
     }
+
     Quaternion YawPitchQuat(const Vector2& rotDeg)
     {
         const float yawRad = XMConvertToRadians(rotDeg.x);
         const float pitchRad = XMConvertToRadians(rotDeg.y);
         return Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
     }
+
     Vector3 OrbitCamPos(const Vector3& pivot, const Quaternion& q, float dist)
     {
         const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
         return pivot + backDir * dist;
     }
+
     Vector3 FootPos(OBJECT_HANDLE h)
     {
         auto obj = ObjectManager()->Request_Object(h);
-        auto cc  = obj->Get_Component<CCharacterController>();
+        auto cc = obj->Get_Component<CCharacterController>();
         return cc->Get_FootPosition();
     }
+
     Vector3 BasePivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
-        auto cc  = obj->Get_Component<CCharacterController>();
+        auto cc = obj->Get_Component<CCharacterController>();
         const Vector3 foot = cc->Get_FootPosition();
         return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + offsetY, 0.f);
     }
+
     void BuildOrbitBasis(const Vector2& rotDeg, Vector3& outLook, Vector3& outRight, Quaternion& outQ)
     {
         outQ = YawPitchQuat(rotDeg);
@@ -54,6 +59,7 @@ namespace
         outLook = -backDir;
         outRight = Vector3::Transform(Vector3(1.f, 0.f, 0.f), outQ);
     }
+
     Vector3 LockPivotPos(OBJECT_HANDLE h, _float offsetY)
     {
         auto obj = ObjectManager()->Request_Object(h);
@@ -90,7 +96,7 @@ namespace
                 return Vector3(tf->Get_WorldPos()) + Vector3(0.f, offsetY, 0.f);
             };
 
-        if (enemyClass == CEnemy::ENEMY_CLASS::BOSS/* || enemyClass == CEnemy::ENEMY_CLASS::ELITE*/)
+        if (enemyClass == CEnemy::ENEMY_CLASS::BOSS)
             return GetBipPivot();
 
         return GetCcPivot();
@@ -112,7 +118,7 @@ HRESULT COrbitCam::Initialize_Prototype()
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
     Add_Component<CEventListener>();
-    
+
     m_pose.rotGoalDeg = Vector2(0.f, m_prof.startPitchDeg);
     m_pose.rotCurDeg = m_pose.rotGoalDeg;
 
@@ -129,6 +135,9 @@ HRESULT COrbitCam::Initialize_Prototype()
     Lock_Reset();
     AutoYaw_OnTarget();
     Switch_Reset();
+
+    m_freezeMode = FreezeMode::None;
+    m_freeze = 0.f;
 
     ClampTargets();
     return S_OK;
@@ -157,9 +166,9 @@ void COrbitCam::SetTarget(OBJECT_HANDLE h)
 
     auto ClampDist = [&]
         {
-            m_pose.distWanted = clamp(keepWantedDist,  m_prof.distMin, m_prof.distMax);
-            m_pose.distGoal   = clamp(m_pose.distGoal, m_prof.distMin, m_prof.distMax);
-            m_pose.distCur    = clamp(m_pose.distCur,  m_prof.distMin, m_prof.distMax);
+            m_pose.distWanted = clamp(keepWantedDist, m_prof.distMin, m_prof.distMax);
+            m_pose.distGoal = clamp(m_pose.distGoal, m_prof.distMin, m_prof.distMax);
+            m_pose.distCur = clamp(m_pose.distCur, m_prof.distMin, m_prof.distMax);
         };
 
     if (!m_target.isValid())
@@ -404,10 +413,50 @@ void COrbitCam::SnapFromOrbitPose(const Vector3& pivotWorld, const Vector3& camP
     m_pTransform->Set_WorldQuaternion(camRot);
 }
 
-_bool COrbitCam::SkipUpdate(_float dt)
+void COrbitCam::SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist)
 {
-    if (m_parryMode) return true;
-    if (m_switchMode) return true;
+    auto cc = Get_Component<CCharacterController>();
+    cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
+
+    m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
+    m_pTransform->Set_WorldQuaternion(camRot);
+
+    const Vector3 basePivotWorld = GetBasePivotTargetPos(m_target);
+
+    Switch_Reset();
+
+    m_pose.pivotExternalOffset = Vector3::Zero;
+    m_pose.pivotInternalOffset = pivotWorld - basePivotWorld;
+
+    PivotStab_Reset(pivotWorld);
+
+    m_pose.pivotCurWorld = pivotWorld;
+    m_pose.pivotGoalWorld = pivotWorld;
+
+    Vector3 toPivot = pivotWorld - camPos;
+    const float rawDist = toPivot.Length();
+    if (rawDist > 0.f) toPivot /= rawDist;
+
+    Vector2 rotDeg{};
+    CalcRotDeg(toPivot, rotDeg);
+
+    m_pose.rotCurDeg = rotDeg;
+    m_pose.rotGoalDeg = rotDeg;
+
+    dist = clamp(dist, m_prof.distMin, m_prof.distMax);
+
+    m_pose.distCur = dist;
+    m_pose.distGoal = dist;
+    m_pose.distWanted = dist;
+
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    ClampTargets();
+}
+
+_bool COrbitCam::Freeze_SkipUpdate(_float dt)
+{
     if (!m_target.isValid()) return true;
 
     if (m_freeze > 0.f)
@@ -415,6 +464,8 @@ _bool COrbitCam::SkipUpdate(_float dt)
         m_freeze -= dt;
         return true;
     }
+
+    if (Freeze_On()) return true;
 
     if (Lock_On() && !Lock_Handle().isValid())
         ClearLockOn();
@@ -447,8 +498,7 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
     OrbitLockEval lockRes{};
     if (!Lock_On()) return lockRes;
 
-    if (m_parryMode) return lockRes;
-    if (m_switchMode) return lockRes;
+    if (Freeze_On()) return lockRes;
 
     lockRes = EvalLock(dt, m_pose.rotGoalDeg.x, m_pose.distWanted);
 
@@ -458,9 +508,9 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
     return lockRes;
 }
 
-
 void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
 {
+    if (Freeze_On()) return;
     if (lockRes.weight > 0.f) return;
 
     const Vector3 foot = GetFoot();
@@ -470,21 +520,9 @@ void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
     m_pose.rotGoalDeg.x += EvalAutoYaw(dt, foot, camLook, camRight, m_pose.rotGoalDeg.x);
 }
 
-void COrbitCam::ApplyCollide(_float dt)
-{
-    const OrbitCollideEval res = EvalCollideDist(dt, m_prof,m_pose.pivotGoalWorld, m_pose.distWanted, m_pose.rotCurDeg, m_pose.rotGoalDeg, m_pose.distGoal);
-
-    m_hitDist = res.hit;
-
-    m_yawDeltaCapDeg = res.yawDeltaCapDeg;
-    m_pitchDeltaCapDeg = res.pitchDeltaCapDeg;
-
-    m_pose.distGoal = res.goalDist;
-}
-
 void COrbitCam::Priority_Update(_float dt)
 {
-    if (SkipUpdate(dt)) return;
+    if (Freeze_SkipUpdate(dt)) return;
 
     UpdateSwitch(dt);
 
@@ -512,7 +550,7 @@ void COrbitCam::Priority_Update(_float dt)
     Vector2 rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     const Vector3 pivotCurNext = m_pose.pivotCurWorld + (m_pose.pivotGoalWorld - m_pose.pivotCurWorld) * pivotA;
 
-    if (lockRes.weight <= 0.f && m_prof.autoYaw && !m_dialogueYaw.active)
+    if (lockRes.weight <= 0.f && m_prof.autoYaw && !m_dialogueYaw.active && !m_dialogueMode)
     {
         const Vector3 foot = GetFoot();
 
@@ -635,12 +673,34 @@ void COrbitCam::EvalOcclusion()
 
 void COrbitCam::DialogueYaw_Set(_float yawGoalDeg, _float weight)
 {
-    m_dialogueYaw.active     = true;
-    m_dialogueYaw.yawGoalDeg = yawGoalDeg; 
-    m_dialogueYaw.weight     = clamp(weight, 0.f, 1.f);
+    m_dialogueYaw.active = true;
+    m_dialogueYaw.yawGoalDeg = yawGoalDeg;
+    m_dialogueYaw.weight = clamp(weight, 0.f, 1.f);
 }
 
-void COrbitCam::SwitchMode_ResumeSync()
+void COrbitCam::SwitchMode_Begin()
+{
+    m_freezeMode = FreezeMode::Switch;
+}
+
+void COrbitCam::SwitchMode_End()
+{
+    if (m_freezeMode == FreezeMode::Switch)
+        m_freezeMode = FreezeMode::None;
+}
+
+void COrbitCam::ParryMode_Begin()
+{
+    m_freezeMode = FreezeMode::Parry;
+}
+
+void COrbitCam::ParryMode_End()
+{
+    if (m_freezeMode == FreezeMode::Parry)
+        m_freezeMode = FreezeMode::None;
+}
+
+void COrbitCam::ResumeSync()
 {
     m_pose.rotGoalDeg = m_pose.rotCurDeg;
 
@@ -660,29 +720,6 @@ void COrbitCam::SwitchMode_ResumeSync()
 
     ClampTargets();
 }
-
-
-void COrbitCam::ParryMode_ResumeSync()
-{
-    m_pose.rotGoalDeg = m_pose.rotCurDeg;
-
-    m_pose.distWanted = m_pose.distCur;
-    m_pose.distGoal = m_pose.distCur;
-
-    m_pose.pivotGoalWorld = m_pose.pivotCurWorld;
-
-    m_switch = {};
-    m_freeze = 0.f;
-
-    m_hitDist = false;
-    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
-    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
-
-    PivotStab_Reset(m_pose.pivotCurWorld);
-
-    ClampTargets();
-}
-
 
 void COrbitCam::ClampTargets()
 {
@@ -770,8 +807,7 @@ void COrbitCam::AutoYaw_OnTarget()
 
 _float COrbitCam::EvalAutoYaw(_float dt, const Vector3& foot, const Vector3& camLookWorld, const Vector3& camRightWorld, _float curYawDeg)
 {
-    if (m_parryMode) return 0.f;
-    if (m_switchMode) return 0.f;
+    if (Freeze_On()) return 0.f;
     if (!m_prof.autoYaw) return 0.f;
 
     if (m_autoYaw.holdTimer > 0.f)
@@ -853,6 +889,7 @@ OrbitInputEval COrbitCam::EvalInput(_float dt, _float lockW)
     OrbitInputEval out{};
 
     if (m_lockInput) return out;
+    if (Freeze_On()) return out;
 
 #ifdef _USING_GUI
     auto& io = ImGui::GetIO();
@@ -1257,48 +1294,6 @@ void COrbitCam::DrawDebugPivot()
     ImDrawList* dl = ImGui::GetBackgroundDrawList();
     dl->AddCircleFilled(ImVec2(sx, sy), 4.f, IM_COL32(255, 0, 0, 255));
 #endif
-}
-
-void COrbitCam::SnapFromExternalPose(const Vector3& pivotWorld, const Vector3& camPos, const Quaternion& camRot, _float dist)
-{
-    auto cc = Get_Component<CCharacterController>();
-    cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
-
-    m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
-    m_pTransform->Set_WorldQuaternion(camRot);
-
-    const Vector3 basePivotWorld = GetBasePivotTargetPos(m_target);
-
-    Switch_Reset();
-
-    m_pose.pivotExternalOffset = Vector3::Zero;
-    m_pose.pivotInternalOffset = pivotWorld - basePivotWorld;
-
-    PivotStab_Reset(pivotWorld);
-
-    m_pose.pivotCurWorld = pivotWorld;
-    m_pose.pivotGoalWorld = pivotWorld;
-
-    Vector3 toPivot = pivotWorld - camPos;
-    const float rawDist = toPivot.Length();
-    if (rawDist > 0.f) toPivot /= rawDist;
-
-    Vector2 rotDeg{};
-    CalcRotDeg(toPivot, rotDeg);
-
-    m_pose.rotCurDeg = rotDeg;
-    m_pose.rotGoalDeg = rotDeg;
-
-    dist = clamp(dist, m_prof.distMin, m_prof.distMax);
-
-    m_pose.distCur = dist;
-    m_pose.distGoal = dist;
-    m_pose.distWanted = dist;
-
-    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
-    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
-
-    ClampTargets();
 }
 
 COrbitCam* COrbitCam::Create()

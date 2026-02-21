@@ -32,8 +32,7 @@ void CBattleFXFlow::Initialize_Preset()
 		Parry.bCanIntersect = true;
 		Parry.fVFXDuration = duration;
 		Parry.fBlurDuration = .3f;
-		Parry.SetTimeData({ duration, 0.3f, 0.35f, 0.45f, EaseType::OutCubic });
-		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)] = TIME_SCALING({ duration, 0.01f, 0.1f, .2f , EaseType::InOutSine });
+		Parry.SetTimeData({ duration, 0.1f, 0.05f, 0.55f, EaseType::OutCubic });
 		Parry.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] =	TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 
@@ -88,12 +87,13 @@ void CBattleFXFlow::Initialize_Preset()
 	}
 	{
 		auto& Clear = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::CLEAR)];
-		const _float duration = 1.f;
+		const _float duration = 1.2f;
 		Clear.bCanIntersect = false;
 		Clear.fVFXDuration = duration;
-		Clear.fBlurDuration = duration;
-		Clear.SetTimeData({ duration, 0.05f, 0.0f, .02f , EaseType::OutQuint });
-		Clear.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{duration, 1.0f, 0.3f, .0f, EaseType::OutQuint};
+		Clear.fBlurDuration = 0.1;
+		Clear.SetTimeData({ duration, 0.0f, 0.1f, .7f , EaseType::OutQuint });
+		Clear.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] =
+			TIME_SCALE_DATA{duration, 1.f, 0.8f, 0.1f, EaseType::OutQuint};
 	}
 }
 
@@ -472,7 +472,7 @@ void CBattleFXFlow::Cancle_Switch()
 		Cancel();
 		UIDirector()->Hide_Switch();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
-		CamDirector()->EndSwitch();
+		//CamDirector()->EndSwitch();
 	}
 }
 
@@ -600,15 +600,25 @@ void CBattleFXFlow::StartVfx_Clear()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::CLEAR)];
 	AddParallelTimeScaleAll(preset);
 	CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
-	AddCall([this, preset, pPost]() {
-		pPost->GetCommand<CSaturationCommand>()
-			->SetIntensity(1.f)
-			->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
-			->SetDuration(preset.fVFXDuration)
-			->SetEaseType(EaseType::OutBack)
-			->SetEnable(true);
+	AddCall([pPost, preset]()
+		{
+			if (!pPost) return;
+			pPost->GetCommand<CSaturationCommand>()
+				->SetIntensity(1.f)
+				->SetSaturationType(ENUM(SATURATIONTYPE::STATIC))
+				->SetDuration(preset.fVFXDuration)
+				->SetEaseType(EaseType::InOutCubic)
+				->SetEnable(true);
+
+			pPost->GetCommand<CRadialBlurCommand>()
+				->SetDuration(preset.fBlurDuration)
+				->SetEaseType(EaseType::OutSine)
+				->SetIntensity(.6f)
+				->SetEnable(true);
 		});
 
+	AddCall([this, preset]() { CameraManager()->SetFov(-15.f, 0.05, EaseType::InOutQuad, 15.f, preset.fVFXDuration- 0.05, EaseType::InOutSine);});
+	AddWait(0.05);
 	AddCall([this]() {
 		UIDirector()->Show_Clear();
 		UIDirector()->Hide_HUD(CUIDirector::BATTLE);

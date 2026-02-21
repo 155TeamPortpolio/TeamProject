@@ -298,7 +298,291 @@
                     "children": [],
                     "typeTag": "Text",
                     "text": {
-                        "content": "캐릭터의 현재 데시벨은 화면 좌측에 나타나며, 공격이 적에게 명중하거나 특정\n스킬 시전 시 데시벨을 획득 할 수 있습니다. 캐릭터가 데시벨을 획득하는 동시에\n파티원도 일정 비율의 데시벨을 회복합니다.\n\n데시벨이 1000/2000/3000pt에 도달하면 [Uproar]/[Blasting]/\n[Maximum]의 순서로 점점 데시벨 레벨이 증가합니다.\n\n데시벨 레벨이 [Maximum]에 도달했을 때 Q을 탭하면 데시벨을 소모해\n[궁극기]를 시전할 수 있습니다. 스킬을 시전하는 동안 무적 효과를 보유합니다.\n[궁극기] 는 일반적으로 더 높은 피해 및 경직 능력을 지닙니다. ",
+                        "content": "캐릭터의 현재             은 화면 좌측에 나타나며, 공격이 적에게 명중하거나 특정\n스킬 시전 시             을 획득 할 수 있습니다. 캐릭터가 데시벨을 획득하는 동시에\n파티원도 일정 비율의             을 회복합니다.\n\n           이            /           /            pt에 도달하면                   /                    /\n                        의 순서로 점점                     이 증가합니다.\n\n데시벨 레벨이                         에 도달했을 때 Q을 탭하면 데시벨을 소모해\n               를 시전할 수 있습니다. 스킬을 시전하는 동안 무적 효과를 보유합니다.\n               는 일반적으로 더 높은 피해 및 경직 능력을 지닙니다. ",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            134.0,
+                            60.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.5333333611488342,
+                        0.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "데시벨",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            119.0,
+                            88.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.5333333611488342,
+                        0.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "데시벨",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            174.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.5333333611488342,
+                        0.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "데시벨     1000  2000  3000                         [Uproar]  [Blasting]\n[Maximum]                          데시벨 레벨\n\n                        [Maximum]\n[궁극기]\n[궁극기]",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
+                    }
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            201.0,
+                            117.0
+                        ],
+                        "size": [
+                            0.0,
+                            0.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        0.5333333611488342,
+                        0.0,
+                        1.0
+                    ],
+                    "stencilMode": 0,
+                    "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "데시벨",
                         "fontTag": "NanumSquareNeo.spritefont",
                         "fontScale": 0.49999988079071045,
                         "outlined": false,

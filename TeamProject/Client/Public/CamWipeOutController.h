@@ -61,7 +61,7 @@ public:
             _float pelvisMul          = 0.38f;
             _float maxVictimDist      = 3.0f;
             EaseType approachEase     = EaseType::OutExpo;
-        };
+        } common;
         struct Shot1
         {
             _float holdSec            = 0.1f;
@@ -80,7 +80,7 @@ public:
             _float fovAdd             = 8.f;
             _float pitchAddDeg        = -6.f;
             _float pivotYAdd          = -0.15f;
-        };
+        } shot1;
         struct Shot2
         {
             _float holdSec          = 1.f;
@@ -93,7 +93,7 @@ public:
             _float baseVictimWeight = 0.50f;
             _float holdDolly        = 0.12f;
             _float fitStrength      = 1.0f;
-        };
+        } shot2;
         struct Shot3
         {
             _float holdSec          = 1.f;
@@ -103,7 +103,7 @@ public:
             _float baseVictimWeight = 0.35f;
             _float holdDolly        = 0.10f;
             _float fitStrength      = 0.55f;
-        };
+        } shot3;
         struct Shot4
         {
             _float holdSec          = 1.2f;
@@ -117,14 +117,9 @@ public:
             _float holdDolly        = 3.80f;
             _float holdYawSweepDeg  = 15.f;
             _float fitStrength      = 0.55f;
-        };
+        } shot4;
         EaseType holdEaseShot1_3 = EaseType::InOutSine;
         EaseType holdEaseShot4   = EaseType::InExpo;
-        Common   common{};
-        Shot1    shot1{};
-        Shot2    shot2{};
-        Shot3    shot3{};
-        Shot4    shot4{};
     };
 
 public:
