@@ -39,7 +39,7 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
 void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-
+    pOwner->Get_StateMachine()->Reset_Trigger("ResetState");
     //if (!pOwner->Is_MainCharacter())
     //{
     //    if (m_pIdleVoiceChannel)
