@@ -313,6 +313,18 @@ void CCorin::On_Special()
 
 void CCorin::On_Hit(DAMAGE_TYPE eType)
 {
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+    m_bReserveCombo = false;
+
+    m_pStateMachine->Set_Bool("IsMove", false);
+    m_pStateMachine->Reset_Trigger("Attack");
+    m_pStateMachine->Reset_Trigger("ToEvade");
+    m_pStateMachine->Reset_Trigger("ToMove");
+    m_pStateMachine->Reset_Trigger("ToIdle");
+    m_pStateMachine->Reset_Trigger("ResetState");
+
     m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
     m_pStateMachine->Set_Trigger("ToHit");
 }
