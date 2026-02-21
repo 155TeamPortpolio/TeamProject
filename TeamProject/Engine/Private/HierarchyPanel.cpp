@@ -203,6 +203,7 @@ void CHierarchyPanel::ShowUIObjectList()
 {
 	if (!m_pContext->pSelectedLevel) return;
 	auto& LevelObj = m_pContext->pUIManager->Get_LevelUI(m_pContext->pSelectedLevel->Get_Key());
+	auto& GlLevelObj = m_pContext->pUIManager->Get_LevelUI(G_GlobalLevelKey);
 
 	if (LevelObj.empty())
 		return;
@@ -211,6 +212,12 @@ void CHierarchyPanel::ShowUIObjectList()
 	ImGui::SeparatorText(InstanceListHeader.c_str());
 
 	for (auto& Object : LevelObj) {
+		if (!Object || !Object->Is_Root()) continue;
+		bool isSel = (m_pContext->pSelectedObject == Object);
+		Object->RenderHierarchy(m_pContext->pSelectedObject, isSel);
+	}
+	ImGui::SeparatorText("Global_LevelUI");
+	for (auto& Object : GlLevelObj) {
 		if (!Object || !Object->Is_Root()) continue;
 		bool isSel = (m_pContext->pSelectedObject == Object);
 		Object->RenderHierarchy(m_pContext->pSelectedObject, isSel);
