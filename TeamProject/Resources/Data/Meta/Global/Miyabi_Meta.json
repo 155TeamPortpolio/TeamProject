@@ -238,7 +238,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 0.6385964751243591,
+          "EventTime": 0.6585964751243591,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -328,7 +328,7 @@
           "EventTag": "KatanaAttackEnd"
         },
         {
-          "EventTime": 0.10006497800350189,
+          "EventTime": 0.11006497800350189,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -342,7 +342,7 @@
       "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Branch_01_Attack_02",
       "Events": [
         {
-          "EventTime": 0.7855750322341919,
+          "EventTime": 0.7955750322341919,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -366,7 +366,7 @@
           "EventTag": "KatanaAttackEnd"
         },
         {
-          "EventTime": 1.438206672668457,
+          "EventTime": 1.448206672668457,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -499,7 +499,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 0.5031188726425171,
+          "EventTime": 0.5131188726425171,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
@@ -1002,7 +1002,7 @@
           "EventTag": "AreaAttackHard"
         },
         {
-          "EventTime": 1.063742756843567,
+          "EventTime": 1.013742756843567,
           "EventType": "Notify",
           "EventTag": "CheckCombo"
         }
