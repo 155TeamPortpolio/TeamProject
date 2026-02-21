@@ -70,9 +70,10 @@ void CThugPoacher_Arrow::Priority_Update(_float dt)
 
 void CThugPoacher_Arrow::Update(_float dt)
 {
+	m_pTransform->Translate(m_vDir * m_fSpeed * dt);
+
 	__super::Update(dt);
 
-	m_pTransform->Translate(m_vDir * m_fSpeed * dt);
 }
 
 void CThugPoacher_Arrow::Late_Update(_float dt)
@@ -173,7 +174,7 @@ void CThugPoacher_Arrow::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
 	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("poacher_trail")
+		.Asset("poacher_trail.json")
 		.Build("Trail");
 
 	pObjectContainer->Add_Child(pEffect);

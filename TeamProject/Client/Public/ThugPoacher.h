@@ -74,6 +74,9 @@ private:
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+    /* For Effect */
+    _uint m_iShotCount{};
+
 };
 
 NS_END

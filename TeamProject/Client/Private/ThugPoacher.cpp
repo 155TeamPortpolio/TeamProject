@@ -29,6 +29,7 @@
 #include "ThugPoacher_Chase.h"
 
 #include "JaegerLaser.h"
+#include "EffectContainer.h"
 
 CThugPoacher::CThugPoacher()
 	: CEnemyNormal()
@@ -305,7 +306,7 @@ HRESULT CThugPoacher::Ready_Arrows(_uint iNum)
 
 _float3 CThugPoacher::Get_FirePos()
 {
-	Matrix Bone = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "CrossBowD_01");
+	Matrix Bone = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, "CrossbowD_01");
 	Matrix World = m_pTransform->Get_WorldMatrix();
 
 	_vector3  T, S;
@@ -403,6 +404,12 @@ void CThugPoacher::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 
 void CThugPoacher::ShootArrow()
 {
+	Deactive_Laser();
+
+	auto pEffet = Get_Component<CObjectContainer>()->Find_ObjectByName("Poacher_Shot" + to_string(m_iShotCount % 3));
+	static_cast<CEffectContainer*>(pEffet)->Play();
+	++m_iShotCount;
+
 	auto pObjectContainerCom = Get_Component<CObjectContainer>();
 	for (auto& index : m_ArrowsChildIndices)
 	{
@@ -480,6 +487,7 @@ HRESULT CThugPoacher::Initialize_Transitions()
 HRESULT CThugPoacher::Initialize_Effects()
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
 
 	/* Laser */
 	{
@@ -490,6 +498,19 @@ HRESULT CThugPoacher::Initialize_Effects()
 			pLaser->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "CrossbowD_01");
 			pObjectContainer->Add_Child(pLaser, false);
 		}
+	}
+
+	_smatrix offsetMatrix = _smatrix::Identity;
+	offsetMatrix.Translation(_vector3(0.f, 0.f, 0.2f));
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("poacher_shot.json")
+			.Build("Poacher_Shot" + to_string(i));
+
+		pEffect->Stop();
+		pEffect->AttachBone(pAnimator, "CrossbowD_01", offsetMatrix, true);
+		pObjectContainer->Add_Child(pEffect, false);
 	}
 
 

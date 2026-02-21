@@ -67,6 +67,7 @@ void CJaegerLaser::Render_GUI()
 void CJaegerLaser::Active_Laser()
 {
 	m_isAlive = true;
+	m_IsDeactive = false;
 
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
