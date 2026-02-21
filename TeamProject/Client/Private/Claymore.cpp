@@ -96,6 +96,12 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 			SetTutorialMode(desc.eType);
 		});
 
+	Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+		{
+			if (desc.eState != TUTORIAL_STATE::COMPLETED)
+				m_isAutoPatternPlay = true;
+		});
+
 	m_isUseGroggyRimLight = true;
 
 	return S_OK;
@@ -258,6 +264,7 @@ void CClaymore::Render_GUI()
 	if (nullptr != pCharacter) {
 		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
 
+		ImGui::Text(u8"속성 이상 가중치 : %.2f", m_tStatus.fPropertiesValue);
 		ImGui::Text("RimLightPower : %.2f", m_fRimLightPower);
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -481,6 +488,8 @@ void CClaymore::SetTutorialMode(TUTORIAL_TYPE eMode)
 		return;
 
 	m_eCurTutorial = eMode;
+	m_isAutoPatternPlay = false;
+
 
 	if (m_eCurTutorial == TUTORIAL_TYPE::GROGGY_COMBO)
 	{

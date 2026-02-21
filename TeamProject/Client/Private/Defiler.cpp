@@ -680,11 +680,23 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 		eDamageType==DAMAGE_TYPE::NORMAL? 
 		"DefilerHitLight.wav" : "DefilerHitHeavy.wav").Volume(0.5f).Play();
 
+	_bool	isPropertiesAttack = false;
 	_float fTakeDamage = fDamage;
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
 		m_tStatus.iGroggyValue += .5f;
+
+	{
+		// 속성 공격 가중치(강타, 서리열 등
+		m_tStatus.fPropertiesValue += fTakeDamage * 1.5f;
+		if (m_tStatus.fPropertiesValue >= 100.f)
+		{
+			isPropertiesAttack = true;
+			fTakeDamage *= 2.f;				// 이때 더 쌔게 때린다는 느낌 ㄱㄱ
+			m_tStatus.fPropertiesValue = 0.f;
+		}
+	}
 
 	m_tStatus.iNowHP -= fTakeDamage;
 
@@ -766,7 +778,7 @@ void CDefiler::Update_States(_float dt)
 		m_pStateMachine->Change_State("Groggy");
 }
 
-void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
+void CDefiler::Send_DamageText(_float damage, CHARACTER charaName, _bool isSpecial)
 {
 	DAMAGE_DESC desc{};
 	damage = Helper::Get_Random_Int(1000, 10000); // �ӽ�
@@ -775,6 +787,7 @@ void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
 	desc.followOffset = Calc_WorldOffsetWithBip();
 	desc.isEnemy = true;
 	desc.charaName = charaName;
+	desc.isSpecial = isSpecial;
 	UIDirector()->Request_DamageText(desc);
 }
 

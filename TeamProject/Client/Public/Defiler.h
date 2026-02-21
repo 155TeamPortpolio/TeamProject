@@ -69,7 +69,7 @@ private:
     void Update_States(_float dt);
     void Route_AnimEvent(CAnimator3D* animator);
     void Controll_Attack(const string& event);
-    void Send_DamageText(_float damage, CHARACTER charaName);
+    void Send_DamageText(_float damage, CHARACTER charaName, _bool isSpecial = false);
     void SummonWave();
 
 public:

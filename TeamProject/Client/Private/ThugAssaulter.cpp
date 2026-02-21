@@ -78,6 +78,8 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	m_isUseGroggyRimLight = true;
+
 	return S_OK;
 }
 
