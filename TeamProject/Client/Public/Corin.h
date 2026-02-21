@@ -18,6 +18,7 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
+
 public: // 상태머신
     CStateMachine<CCorin>* Get_StateMachine() { return m_pStateMachine; }
 
@@ -31,6 +32,9 @@ public: // 행동 이벤트
     virtual void    On_Ultimate()                   override;
     virtual void    On_Special()                    override;
     virtual void    On_Hit(DAMAGE_TYPE eType)       override;
+
+public: // 편의 함수
+    void Take_Explode(DAMAGE_TYPE eType);
 
 private: // 초기화
     HRESULT Initialize_StateMachine();

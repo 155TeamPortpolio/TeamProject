@@ -6,6 +6,8 @@
 #include "CamDirector.h"
 #include "Miyabi.h"
 
+#include "AudioSource.h"
+
 CMiyabiState_SwitchInAttack* CMiyabiState_SwitchInAttack::Create()
 {
     auto pInstance = new CMiyabiState_SwitchInAttack();
@@ -74,8 +76,19 @@ void CMiyabiState_SwitchInAttack::Exit(CMiyabi* pOwner)
 void CMiyabiState_SwitchInAttack_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack")
+        .ReserveSpeed(0.f, 0.4f, 1.5f, EaseType::OutExpo)
+        .ReserveSpeed(0.4f, 0.45f, 0.2f, EaseType::OutQuint)
+        .ReserveSpeed(0.5f, 0.8f, 0.8f, EaseType::OutBack)
+        .ReserveSpeed(0.8f, 1.f, 1.f, EaseType::Linear)
         .Loop(false)
         .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_SwitchInAttack_SFX")
+        .Attribute3D(true)
+        .Play();
+    pOwner->Get_Component<CAudioSource>()->Sequence("SwitchInAttack")
+        .Attribute3D(true)
+        .PlayNext();
 
     m_vPos = pOwner->Get_WorldPos();
     m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);

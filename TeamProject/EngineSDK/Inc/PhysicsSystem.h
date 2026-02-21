@@ -116,7 +116,7 @@ private:
     map<string, PxTriangleMesh*> m_CachedTriangleMeshes;                 // ÄíÅ·µÈ ¸Þ½¬ Ä³½Ì
     PxCooking* m_pCooking = { nullptr };
 
-    _float m_fFixedTimeStep = 1.f / 60.f;  // 60Hz
+    _float m_fFixedTimeStep = 1.f / 30.f;  // 60Hz
     _float m_fAccumulator = 0.f;
 
 public:

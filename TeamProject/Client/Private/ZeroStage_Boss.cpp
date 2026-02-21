@@ -94,6 +94,8 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV.wav").Attribute3D(false).Loop(-1).Volume(0.3f).Play();
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV2.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({
 			_float3{0.f, 0.f ,0.f},
 			_float3{0.f, 0.f ,0.f},

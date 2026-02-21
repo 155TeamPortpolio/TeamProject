@@ -12,10 +12,17 @@ void CDefilerState_Born::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
+
 }
 
 void CDefilerState_Born::Update(CDefiler* pOwner, _float dt)
 {
+	m_ElapsedTime += dt;
+	if (!m_bBorn&&dt>0.3f) {
+		pOwner->ControlBGM();
+		m_bBorn = true;
+	}
+
 	__super::Update(pOwner, dt);
 }
 

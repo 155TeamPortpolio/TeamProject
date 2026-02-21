@@ -99,7 +99,7 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.5f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
+    if (m_fStateTime > 1.f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
     {
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }

@@ -101,6 +101,11 @@ void CCorinState_SwitchInAttack_Start::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
+    if (IsCrossAnimProgress(0.4f))
+    {
+        pOwner->Take_Explode(DAMAGE_TYPE::HARD);
+    }
+
     if (IsCrossAnimProgress(0.45f))
     {
         if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::GROGGY_COMBO)

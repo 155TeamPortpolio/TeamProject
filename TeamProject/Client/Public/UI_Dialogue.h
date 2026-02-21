@@ -40,6 +40,8 @@ private:
 	NpcDialogueDesc		m_tDialogueDesc = {};
 	ChoiceDesc			m_tChoiceDesc = {};
 
+	NpcDialogueDesc		m_tPendingBroadcast = {};
+
 private:
 	void Add_Children(const string& strLevelTag, const string& strPrototypeTag, CHILD child);
 	void Bind_EventListener();

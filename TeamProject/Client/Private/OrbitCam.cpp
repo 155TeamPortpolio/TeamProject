@@ -235,6 +235,9 @@ void COrbitCam::SetLockOn(OBJECT_HANDLE h)
     if (h == Lock_Handle()) return;
 
     Lock_Switch(h);
+
+    m_lockFocus = m_pose.pivotCurWorld;
+    m_hasLockFocus = true;
 }
 
 void COrbitCam::ClearLockOn()
@@ -252,15 +255,21 @@ void COrbitCam::Lock_ReenterBlend(_float blendInSec)
 
 void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
 {
+    if (!m_lock.active) return;
+    if (!m_lock.handle.isValid()) return;
+
+    m_lock.savedDist = m_pose.distCur;
+
     m_lockBlend.active = true;
     m_lockBlend.entering = true;
     m_lockBlend.elapsed = 0.f;
     m_lockBlend.duration = max(blendInSec, 0.0001f);
     m_lockBlend.ease = ease;
     m_lockBlend.weight = 0.f;
+    m_lockBlend.holdFirstFrame = true;
 
-    m_lockFocus = {};
-    m_hasLockFocus = false;
+    m_lockFocus = m_pose.pivotCurWorld;
+    m_hasLockFocus = true;
 }
 
 void COrbitCam::ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease)
@@ -1014,6 +1023,8 @@ void COrbitCam::Lock_Reset()
     m_lockBlend = {};
     m_lockFocus = {};
     m_hasLockFocus = false;
+    m_lockSuspend = {};
+    m_lockAir = {};
 }
 
 void COrbitCam::Lock_Enter(OBJECT_HANDLE h, _float curDist)
@@ -1022,12 +1033,20 @@ void COrbitCam::Lock_Enter(OBJECT_HANDLE h, _float curDist)
     m_lock.handle = h;
     m_lock.savedDist = curDist;
 
+    m_lockSuspend = {};
+    m_lockAir = {};
+
     Lock_BlendStart(true);
 }
 
 void COrbitCam::Lock_Exit()
 {
     if (!Lock_On()) return;
+
+    m_lockSuspend.active = false;
+    m_lockSuspend.timer = 0.f;
+    m_lockSuspend.hasPrevTargetPivot = false;
+    m_lockAir = {};
 
     if (!m_lockBlend.active)
     {
@@ -1040,9 +1059,41 @@ void COrbitCam::Lock_Exit()
 
 void COrbitCam::Lock_BlendUpdate(_float dt)
 {
+    constexpr _float kSuspendReenterBlendSec = 0.12f;
+
+    if (m_lockSuspend.cooldown > 0.f)
+    {
+        m_lockSuspend.cooldown -= dt;
+        if (m_lockSuspend.cooldown < 0.f) m_lockSuspend.cooldown = 0.f;
+    }
+
+    if (m_lockSuspend.active)
+    {
+        m_lockSuspend.timer -= dt;
+        if (m_lockSuspend.timer < 0.f) m_lockSuspend.timer = 0.f;
+
+        m_lockBlend.active = false;
+        m_lockBlend.weight = 0.f;
+
+        if (m_lockSuspend.timer > 0.f) return;
+
+        m_lockSuspend.active = false;
+
+        if (m_lock.active && m_lock.handle.isValid())
+            Lock_ReenterBlend(kSuspendReenterBlendSec, m_prof.lockBlendInEase);
+
+        return;
+    }
+
     if (!m_lockBlend.active)
     {
         m_lockBlend.weight = m_lock.active ? 1.f : 0.f;
+        return;
+    }
+
+    if (m_lockBlend.holdFirstFrame)
+    {
+        m_lockBlend.holdFirstFrame = false;
         return;
     }
 
@@ -1060,6 +1111,7 @@ void COrbitCam::Lock_BlendUpdate(_float dt)
             m_lock = {};
             m_lockFocus = {};
             m_hasLockFocus = false;
+            m_lockSuspend = {};
         }
         return;
     }
@@ -1079,7 +1131,12 @@ OrbitLockEval COrbitCam::EvalLock(_float dt, _float curYawDeg, _float curDist)
 
     if (!m_target.isValid()) return out;
 
-    const Vector3 playerPivot = GetBasePivotTargetPos(m_target);
+    const Vector3 basePlayerPivot = GetBasePivotTargetPos(m_target);
+
+    Vector3 playerPivot = basePlayerPivot;
+    if (m_lockBlend.active && m_lockBlend.entering)
+        playerPivot = Vector3::Lerp(m_pose.pivotCurWorld, basePlayerPivot, w);
+
     return EvalLock_PlayerPivot(dt, playerPivot, curYawDeg, curDist);
 }
 
@@ -1224,38 +1281,294 @@ OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPi
         out.dist = curDist + (m_lock.savedDist - curDist) * k;
     }
 
-    if (w <= 0.f) return out;
     if (!m_lock.handle.isValid()) return out;
 
-    const Vector3 targetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
+    constexpr _float kEps = 0.0001f;
 
-    Vector3 flat = targetPivot - playerPivot;
+    constexpr _float kYawFreezeXZStart = 0.35f;
+    constexpr _float kYawFreezeXZEnd = 0.90f;
+
+    constexpr _float kOverheadFadeStartDeg = 55.f;
+    constexpr _float kOverheadFadeEndDeg = 82.f;
+
+    constexpr _float kOverheadEnterElevationDeg = 68.f;
+    constexpr _float kOverheadExitElevationDeg = 55.f;
+    constexpr _float kOverheadEnterXZ = 0.80f;
+    constexpr _float kOverheadExitXZ = 1.20f;
+
+    constexpr _float kOverheadYawMul = 0.15f;
+    constexpr _float kOverheadFocusMinXZ = 0.90f;
+
+    constexpr _float kLockLookYawMaxDegPerSec = 720.f;
+    constexpr _float kLockLookPitchMaxDegPerSec = 540.f;
+
+    constexpr _float kFocusUpMaxDeg = 72.f;
+    constexpr _float kFocusUpMaxDegParry = 68.f;
+
+    constexpr _float kTargetPivotTauXZ = 0.10f;
+    constexpr _float kTargetPivotTauY = 0.20f;
+
+    constexpr _float kTeleportJumpDist = 2.2f;
+    constexpr _float kTeleportJumpY = 1.8f;
+    constexpr _float kTeleportSpeed = 22.f;
+    constexpr _float kTeleportMinDistForSpeed = 0.9f;
+
+    constexpr _float kLockSuspendSec = 0.10f;
+    constexpr _float kLockSuspendCooldownSec = 0.25f;
+
+    const Vector3 rawTargetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
+
+    if (m_lockSuspend.active)
+    {
+        m_lockSuspend.prevTargetPivot = rawTargetPivot;
+        m_lockSuspend.hasPrevTargetPivot = true;
+        out.weight = 0.f;
+        return out;
+    }
+
+    if (m_lockSuspend.hasPrevTargetPivot && m_lockSuspend.cooldown <= 0.f)
+    {
+        const Vector3 targetDelta = rawTargetPivot - m_lockSuspend.prevTargetPivot;
+        const _float jumpDist = targetDelta.Length();
+        const _float jumpSpeed = jumpDist / max(dt, kEps);
+
+        _bool jumpByDist = jumpDist >= kTeleportJumpDist;
+        _bool jumpByY = fabsf(targetDelta.y) >= kTeleportJumpY;
+        _bool jumpBySpeed = (jumpDist >= kTeleportMinDistForSpeed) && (jumpSpeed >= kTeleportSpeed);
+
+        if (jumpByDist || jumpByY || jumpBySpeed)
+        {
+            m_lockSuspend.active = true;
+            m_lockSuspend.timer = kLockSuspendSec;
+            m_lockSuspend.cooldown = kLockSuspendCooldownSec;
+            m_lockSuspend.prevTargetPivot = rawTargetPivot;
+            m_lockSuspend.hasPrevTargetPivot = true;
+
+            m_lockBlend.active = false;
+            m_lockBlend.weight = 0.f;
+
+            m_lockAir.hasFilteredTargetPivot = false;
+            m_lockAir.overheadActive = false;
+
+            out.weight = 0.f;
+            out.yawAddDeg = 0.f;
+            out.focusPos = m_hasLockFocus ? m_lockFocus : playerPivot;
+            return out;
+        }
+    }
+
+    m_lockSuspend.prevTargetPivot = rawTargetPivot;
+    m_lockSuspend.hasPrevTargetPivot = true;
+
+    if (!m_lockAir.hasFilteredTargetPivot)
+    {
+        m_lockAir.filteredTargetPivot = rawTargetPivot;
+        m_lockAir.hasFilteredTargetPivot = true;
+    }
+    else
+    {
+        const _float aXZ = Math::ExpAlpha(kTargetPivotTauXZ, dt);
+        const _float aY = Math::ExpAlpha(kTargetPivotTauY, dt);
+
+        m_lockAir.filteredTargetPivot.x = Math::Lerp(m_lockAir.filteredTargetPivot.x, rawTargetPivot.x, aXZ);
+        m_lockAir.filteredTargetPivot.z = Math::Lerp(m_lockAir.filteredTargetPivot.z, rawTargetPivot.z, aXZ);
+        m_lockAir.filteredTargetPivot.y = Math::Lerp(m_lockAir.filteredTargetPivot.y, rawTargetPivot.y, aY);
+    }
+
+    const Vector3 targetPivot = m_lockAir.filteredTargetPivot;
+
+    const Vector3 toTargetRaw = targetPivot - playerPivot;
+    const _float toTargetLenRaw = toTargetRaw.Length();
+    if (toTargetLenRaw <= kEps) return out;
+
+    Vector3 flatRaw = toTargetRaw;
+    flatRaw.y = 0.f;
+    const _float lenXZRaw = flatRaw.Length();
+
+    const _float elevationDegRaw = XMConvertToDegrees(atan2f(fabsf(toTargetRaw.y), max(lenXZRaw, kEps)));
+
+    if (!m_lockAir.overheadActive)
+    {
+        if (elevationDegRaw >= kOverheadEnterElevationDeg || lenXZRaw <= kOverheadEnterXZ)
+            m_lockAir.overheadActive = true;
+    }
+    else
+    {
+        if (elevationDegRaw <= kOverheadExitElevationDeg && lenXZRaw >= kOverheadExitXZ)
+            m_lockAir.overheadActive = false;
+    }
+
+    if (lenXZRaw > kYawFreezeXZEnd)
+    {
+        m_lockAir.lastGoodFlatDir = flatRaw / lenXZRaw;
+        m_lockAir.hasLastGoodFlatDir = true;
+    }
+    else if (!m_lockAir.hasLastGoodFlatDir && lenXZRaw > kEps)
+    {
+        m_lockAir.lastGoodFlatDir = flatRaw / lenXZRaw;
+        m_lockAir.hasLastGoodFlatDir = true;
+    }
+
+    if (w <= 0.f) return out;
+
+    const Vector3 toTarget = targetPivot - playerPivot;
+    const _float toTargetLen = toTarget.Length();
+    if (toTargetLen <= kEps) return out;
+
+    Vector3 flat = toTarget;
     flat.y = 0.f;
 
-    const _float len = flat.Length();
-    if (len == 0.f) return out;
+    const _float lenXZ = flat.Length();
 
-    flat /= len;
+    _float xzYawScale = 0.f;
+    if (lenXZ >= kYawFreezeXZEnd) xzYawScale = 1.f;
+    else if (lenXZ > kYawFreezeXZStart) xzYawScale = (lenXZ - kYawFreezeXZStart) / (kYawFreezeXZEnd - kYawFreezeXZStart);
 
-    const _float desiredYawDeg = XMConvertToDegrees(atan2f(flat.x, flat.z));
-    const _float deltaYawDeg = Math::WrapDeg(desiredYawDeg - curYawDeg);
+    const _float elevationDeg = XMConvertToDegrees(atan2f(fabsf(toTarget.y), max(lenXZ, kEps)));
 
-    const _float a = ExpAlphaSpeed(m_prof.lockYawSpeed, dt);
+    _float overheadT = 0.f;
+    if (elevationDeg >= kOverheadFadeEndDeg) overheadT = 1.f;
+    else if (elevationDeg > kOverheadFadeStartDeg) overheadT = (elevationDeg - kOverheadFadeStartDeg) / (kOverheadFadeEndDeg - kOverheadFadeStartDeg);
 
-    out.yawAddDeg = deltaYawDeg * a * w;
+    _float overheadYawScale = 1.f - overheadT;
+    overheadYawScale = overheadYawScale * overheadYawScale;
 
-    _float distT = len / (len + m_prof.lockFocusDist);
+    _float yawFollowScale = xzYawScale * overheadYawScale;
+    if (m_lockAir.overheadActive) yawFollowScale *= kOverheadYawMul;
+
+    Vector3 yawDir{};
+    _bool hasYawDir = false;
+
+    if (lenXZ > kEps)
+    {
+        yawDir = flat / lenXZ;
+        hasYawDir = true;
+    }
+
+    if (m_lockAir.overheadActive && m_lockAir.hasLastGoodFlatDir)
+    {
+        yawDir = m_lockAir.lastGoodFlatDir;
+        hasYawDir = true;
+    }
+
+    if (hasYawDir)
+    {
+        const _float desiredYawDeg = XMConvertToDegrees(atan2f(yawDir.x, yawDir.z));
+        const _float deltaYawDeg = Math::WrapDeg(desiredYawDeg - curYawDeg);
+
+        const _float a = ExpAlphaSpeed(m_prof.lockYawSpeed, dt);
+
+        _float yawAdd = deltaYawDeg * a * w * yawFollowScale;
+
+        const _float yawStepCap = kLockLookYawMaxDegPerSec * max(dt, 0.f);
+        yawAdd = clamp(yawAdd, -yawStepCap, yawStepCap);
+
+        out.yawAddDeg = yawAdd;
+    }
+
+    _float distT = lenXZ / (lenXZ + m_prof.lockFocusDist);
     distT = clamp(distT, 0.f, 1.f);
 
     const _float focusT = m_prof.lockFocusNear + (m_prof.lockFocusFar - m_prof.lockFocusNear) * distT;
-    out.focusPos = Vector3::Lerp(playerPivot, targetPivot, focusT);
+
+    Vector3 desiredFocus = Vector3::Lerp(playerPivot, targetPivot, focusT);
+
+    desiredFocus.x = Math::Lerp(playerPivot.x, desiredFocus.x, yawFollowScale);
+    desiredFocus.z = Math::Lerp(playerPivot.z, desiredFocus.z, yawFollowScale);
+
+    if (m_lockAir.overheadActive && m_lockAir.hasLastGoodFlatDir)
+    {
+        Vector3 desiredFlat = desiredFocus - playerPivot;
+        desiredFlat.y = 0.f;
+
+        _float desiredFlatLen = desiredFlat.Length();
+        _float anchorLen = max(desiredFlatLen, kOverheadFocusMinXZ);
+
+        const Vector3 anchoredXZ = playerPivot + m_lockAir.lastGoodFlatDir * anchorLen;
+
+        desiredFocus.x = Math::Lerp(desiredFocus.x, anchoredXZ.x, overheadT);
+        desiredFocus.z = Math::Lerp(desiredFocus.z, anchoredXZ.z, overheadT);
+    }
+
+    const Vector3 camPos = m_pTransform->Get_WorldPos();
+
+    auto ClampFocusUp = [&](const Vector3& inFocus) -> Vector3
+        {
+            Vector3 outFocus = inFocus;
+
+            Vector3 dir = outFocus - camPos;
+            const _float len = dir.Length();
+            if (len <= kEps) return outFocus;
+
+            dir /= len;
+
+            Vector2 rot{};
+            CalcRotDeg(dir, rot);
+
+            const _float upPitchLimit = (m_freezeMode == FreezeMode::Parry) ? -kFocusUpMaxDegParry : -kFocusUpMaxDeg;
+            rot.y = max(rot.y, upPitchLimit);
+            rot.y = clamp(rot.y, -89.f, 89.f);
+
+            const Quaternion q = YawPitchQuat(rot);
+            const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+            const Vector3 lookDir = -backDir;
+
+            outFocus = camPos + lookDir * len;
+            return outFocus;
+        };
+
+    desiredFocus = ClampFocusUp(desiredFocus);
+
+    if (m_hasLockFocus)
+    {
+        Vector3 prevDir = m_lockFocus - camPos;
+        Vector3 rawDir = desiredFocus - camPos;
+
+        const _float prevLen = prevDir.Length();
+        const _float rawLen = rawDir.Length();
+
+        if (prevLen > kEps && rawLen > kEps)
+        {
+            prevDir /= prevLen;
+            rawDir /= rawLen;
+
+            Vector2 prevRot{};
+            Vector2 rawRot{};
+
+            CalcRotDeg(prevDir, prevRot);
+            CalcRotDeg(rawDir, rawRot);
+
+            const _float upPitchLimit = (m_freezeMode == FreezeMode::Parry) ? -kFocusUpMaxDegParry : -kFocusUpMaxDeg;
+            rawRot.y = max(rawRot.y, upPitchLimit);
+
+            const _float maxYawStep = kLockLookYawMaxDegPerSec * max(dt, 0.f);
+            const _float maxPitchStep = kLockLookPitchMaxDegPerSec * max(dt, 0.f);
+
+            const _float yawDelta = clamp(Math::WrapDeg(rawRot.x - prevRot.x), -maxYawStep, maxYawStep);
+            const _float pitchDelta = clamp(rawRot.y - prevRot.y, -maxPitchStep, maxPitchStep);
+
+            const _float yawClamped = prevRot.x + yawDelta;
+            const _float pitchClamped = clamp(max(prevRot.y + pitchDelta, upPitchLimit), -89.f, 89.f);
+
+            const Quaternion q = YawPitchQuat(Vector2(yawClamped, pitchClamped));
+            const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+            const Vector3 lookDir = -backDir;
+
+            desiredFocus = camPos + lookDir * rawLen;
+        }
+    }
+
+    out.focusPos = desiredFocus;
 
     m_lockFocus = out.focusPos;
     m_hasLockFocus = true;
 
     if (m_prof.lockAutoZoom && !out.hasDist)
     {
-        const _float wanted = len * m_prof.lockAutoZoomFactor;
+        _float autoZoomLenXZ = lenXZ;
+        if (m_lockAir.overheadActive) autoZoomLenXZ = max(autoZoomLenXZ, kOverheadFocusMinXZ);
+
+        const _float wanted = autoZoomLenXZ * m_prof.lockAutoZoomFactor;
         const _float clampedDist = clamp(wanted, m_prof.distMin, m_prof.distMax);
 
         if (curDist < clampedDist)
@@ -1346,6 +1659,10 @@ void COrbitCam::Render_GUI()
     {
         ImGui::TableSetupColumn("Label", ImGuiTableColumnFlags_WidthFixed, 160.f);
         ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch);
+
+        ImGui::TableNextRow();
+        ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("Fov");
+        ImGui::TableSetColumnIndex(1); ImGui::Text("%.1f", CameraManager()->GetFov());
 
         ImGui::TableNextRow();
         ImGui::TableSetColumnIndex(0); ImGui::TextUnformatted("ChainParry");

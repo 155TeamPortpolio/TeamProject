@@ -251,7 +251,24 @@ void CMiyabi::Decrease_Frost(_uint iFrost)
 
 void CMiyabi::Reset_State()
 {
-	m_pStateMachine->Set_Trigger("ResetState");
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+	m_bReserveCombo = false;
+
+	m_pStateMachine->Set_Bool("IsMove", false);
+	m_pStateMachine->Reset_Trigger("Attack");
+	m_pStateMachine->Reset_Trigger("ToEvade");
+	m_pStateMachine->Reset_Trigger("ToMove");
+	m_pStateMachine->Reset_Trigger("ToIdle");
+	if (m_bIsMain)
+	{
+		m_pStateMachine->Set_Trigger("ResetState");
+	}
+	else
+	{
+		m_pStateMachine->Set_Trigger("SwitchOut");
+	}
 }
 
 void CMiyabi::On_Start()
@@ -264,6 +281,7 @@ void CMiyabi::On_SwitchIn(SWITCH eType)
 	m_fDissolveProgress = 0.f;
 	SetRenderLayer(RENDER_LAYER::Default);
 
+	m_bReserveCombo = false;
 	Set_Switch(eType);
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
@@ -1096,6 +1114,10 @@ HRESULT CMiyabi::Initialize_Sound()
 		, "Miyabi_AssaultAttack_Voice_01"
 		, "Miyabi_AssaultAttack_Voice_02"
 		, "Miyabi_AssaultAttack_Voice_03"
+	);
+	AudioSrc->Add_Sequence("SwitchInAttack"
+		, "Miyabi_SwitchInAttack_Voice_01"
+		, "Miyabi_SwitchInAttack_Voice_02"
 	);
 
 

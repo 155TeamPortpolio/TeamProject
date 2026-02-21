@@ -676,9 +676,14 @@ void CDefiler::Control_Summon(const string& event)
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	BattleSystem()->HitVFX(eDamageType);
-	Get_Component<CAudioSource>()->Slot(
-		eDamageType==DAMAGE_TYPE::NORMAL? 
-		"DefilerHitLight.wav" : "DefilerHitHeavy.wav").Volume(0.5f).Play();
+	Get_Component<CAudioSource>()->
+		Slot(eDamageType==DAMAGE_TYPE::NORMAL? "DefilerHitLight.wav" : "DefilerHitHeavy.wav")
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.4f:0.5f).Play();
+
+	if (eDamageType == DAMAGE_TYPE::SWITCH) {
+		m_BlackBoard.ForceIDLE = true;
+		m_pStateMachine->Change_State("Idle");
+	}
 
 	_bool	isPropertiesAttack = false;
 	_float fTakeDamage = fDamage;
@@ -806,13 +811,24 @@ void CDefiler::ControlEnv(ENVTYPE type, _bool set)
 			zero->Get_ZeroFog()->RollBack_Fog(1.f, EaseType::InOutCirc);
 		}
 	}
+	if (type == ENVTYPE::SURGE) {
+		if (set) {
+			FOG_DESC desc;
+			desc.fogColor = { 0.135f, 0.f, 0.f,1.f };
+			desc.fogDensity = 0.078;
+			zero->Get_ZeroFog()->Change_FogState(desc, 10.f, EaseType::InExpo);
+		}
+		else {
+			zero->Get_ZeroFog()->RollBack_Fog(1.f, EaseType::InOutCirc);
+		}
+	}
 }
 
 void CDefiler::ControlBGM()
 {
 	auto level = LevelManager()->Get_CurrentLevel();
 	if (auto zero = dynamic_cast<CZero_Level*>(level)) {
-		zero->Get_ZeroBGM()->Slot("TheDefilerBossTheme.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
+		zero->Get_ZeroBGM()->Slot("TheDefilerBossTheme.wav").Attribute3D(false).Loop(-1).Volume(0.25f).Play();
 	}
 }
 
