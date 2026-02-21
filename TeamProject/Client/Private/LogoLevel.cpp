@@ -30,7 +30,7 @@ HRESULT CLogoLevel::Awake()
 void CLogoLevel::Update()
 {
 	if (InputDevice()->Key_Tap('Y')) {
-		LevelManager()->Request_ChangeLevel("Scott_Level", true);
+		LevelManager()->Request_ChangeLevel("MainCity_Level", true);
 	}
 }
 

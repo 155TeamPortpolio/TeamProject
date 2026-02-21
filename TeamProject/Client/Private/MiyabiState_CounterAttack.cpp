@@ -83,6 +83,9 @@ void CMiyabiState_Counter_Start::Enter(CMiyabi* pOwner)
 	pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_CounterAttack_SFX.wav")
 		.Attribute3D(true)
 		.Play();
+	pOwner->Get_Component<CAudioSource>()->Sequence("CounterAttack")
+		.Attribute3D(true)
+		.PlayNext();
 
 	m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
 	pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));

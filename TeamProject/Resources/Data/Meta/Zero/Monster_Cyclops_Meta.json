@@ -46,6 +46,11 @@
           "EventTime": 2.5480833053588867,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.399999976158142,
+          "EventType": "Sound",
+          "EventTag": "cyclops_Spit_ThreeTime.wav"
         }
       ]
     },
@@ -135,15 +140,48 @@
     },
     {
       "ClipTag": "Cyclops_Ani_Walk_FL_LFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.33000001311302185,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 1.1200000047683716,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Cyclops_Ani_Walk_FR_LFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.33000001311302185,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 1.190000057220459,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Cyclops_Ani_Walk_LF_RFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.20000000298023224,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Attack_01",
@@ -162,6 +200,11 @@
           "EventTime": 1.3333333730697632,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.800000011920929,
+          "EventType": "Sound",
+          "EventTag": "cyclops_SpitOnce.wav"
         }
       ]
     },
@@ -182,6 +225,11 @@
           "EventTime": 1.9870046377182007,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.1399999856948853,
+          "EventType": "Sound",
+          "EventTag": "cyclops_Shoot.wav"
         }
       ]
     },
@@ -207,6 +255,11 @@
           "EventTime": 1.0345029830932617,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.6103963255882263,
+          "EventType": "Sound",
+          "EventTag": "cyclops_Swing.wav"
         }
       ]
     },
@@ -320,27 +373,93 @@
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Run_Loop",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.05000000074505806,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 0.5,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Run_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.5099999904632568,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 0.9200000166893005,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Walk_B",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.38999998569488525,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 1.0499999523162842,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Walk_F",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.25999999046325684,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 1.1100000143051147,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Walk_L",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.25999999046325684,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_Cyclops_Ani_Walk_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.47999998927116394,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        },
+        {
+          "EventTime": 1.100000023841858,
+          "EventType": "Sound",
+          "EventTag": "cyclops_FootStep.wav"
+        }
+      ]
     }
   ]
 }

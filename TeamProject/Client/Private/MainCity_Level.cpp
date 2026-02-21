@@ -72,6 +72,7 @@ HRESULT CMainCity_Level::Awake()
 		RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "MainCity_Level", Version);
 	}
 
+	UIDirector()->FadeIn_Screen();
 	return S_OK;
 }
 

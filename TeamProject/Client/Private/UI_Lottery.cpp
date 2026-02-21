@@ -92,7 +92,7 @@ void CUI_Lottery::UI_Active(void* pArg)
     Set_Alive(true);
     Set_ChildAnimation(CHILD::ICON_SCRATCH, 0);
     Set_ChildAnimation(CHILD::NEWSPAPER, 0);
-    Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Volume(2.f).Play();
     if(m_iState == STATE::READY)
         m_iReward = rand() % ENUM(REWARD::END); 
     UIDirector()->Show_Mouse();
@@ -214,7 +214,7 @@ void CUI_Lottery::OnClick_RefreshNews()
         return;
 
     Get_Component<CAudioSource>()->Slot("UI_Tick.wav").Attribute3D(false).Loop(false).Play();
-    Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Play();
+    Get_Component<CAudioSource>()->Slot("UI_PageTurning.wav").Attribute3D(false).Loop(false).Volume(3.f).Play();
     Set_ChildAnimation(CHILD::OVERLAY_REFRESH, 0);
     Set_ChildAnimation(CHILD::ICON_REFRESH, 0);
 

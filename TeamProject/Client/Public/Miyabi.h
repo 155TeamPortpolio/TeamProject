@@ -57,6 +57,7 @@ public: // 행동 이벤트
     virtual void    OnDamage()                      override;
     virtual void    OnPerfectDodge()                override;
     virtual void    OnDefensiveAssist()             override;
+    virtual void    OnComboSound()                  override;
 
 public: // 모션블러
     void    Add_MotionBlur();
