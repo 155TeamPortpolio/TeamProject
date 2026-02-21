@@ -30,9 +30,9 @@ public:
 
             _bool  chooseNearerSidePreset = true;
 
-            _float lookOffset = -0.3f;
-            _float rightOffset = 0.1f;
-            _float upOffset = 0.f;
+            _float lookOffset = -3.25f;
+            _float rightOffset = 1.f;
+            _float upOffset = -0.2f;
 
             _float distBaseAdd = 0.f;
             _float distRatio = 0.12f;
@@ -41,18 +41,19 @@ public:
 
         struct Switch
         {
-            _float   camPosBlendSec = 0.2f;
+            _float   camPosBlendSec = 0.4f;
             EaseType camPosBlendEase = EaseType::OutCubic;
 
-            _float   pivotBlendSec = 0.5f;
+            _float   pivotBlendSec = 0.4f;
             EaseType pivotBlendEase = EaseType::OutCubic;
 
             _float   fovBlendSec = 0.5f;
-            EaseType fovBlendEase = EaseType::OutCubic;
-            _float   fovSwitchRecoverTarget = 60.f;
+            EaseType fovBlendEase = EaseType::OutSine;
+            _float   fovSwitchRecoverTarget = 40.f;
 
-            _float   recoverPoseSec = 0.5f;
-            EaseType recoverPoseEase = EaseType::OutCubic;
+            _float   recoverPoseSec = 1.f;
+            EaseType recoverPoseEase = EaseType::InOutCubic;
+            _float   recoverCamPosAddY = 1.75f;
 
             _float   recoverFovSec = 1.f;
             EaseType recoverFovEase = EaseType::InOutSine;
@@ -95,7 +96,6 @@ public:
     struct BeginOrbitBaseline
     {
         Pose   pose{};
-        _float yawOffsetFromBehindDeg = 0.f;
         _bool  valid = false;
     } beginOrbit;
 
@@ -146,9 +146,11 @@ public:
         Vector3 recoverPivotFrom{};
 
         Pose    recoverTo{};
+        Pose    recoverLookBasis{};
 
         PivotStab pivotStab{};
         _bool     active = false;
+        _bool     hasRecoverLookBasis = false;
 
         _int sideSign = 1;
 
@@ -200,10 +202,7 @@ private:
     Vector3 BuildSwitchPivotGoal_EnemyCenter() const;
     Vector3 BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) const;
     _int    ChooseSwitchSideSign() const;
-
     Pose    BuildRecoverPose_PlayerCenter() const;
-
-private:
     Pose    BuildPoseFromPivotAndCamPos(const Vector3& pivotWorld, const Vector3& camPos, const Pose& fallback) const;
 };
 

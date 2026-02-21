@@ -174,6 +174,7 @@ void CamSwitchController::End()
     lens.hasFovCommanded = true;
 
     auto orbit = CamDirector()->GetOrbitCam();
+    orbit->SyncFromCurTransform();
     orbit->ResumeSync();
     orbit->SwitchMode_End();
 
@@ -278,6 +279,8 @@ void CamSwitchController::BeginSwitchTo(OBJECT_HANDLE newTarget)
     sw.recoverCamPosFrom = Vector3::Zero;
     sw.recoverPivotFrom = Vector3::Zero;
     sw.recoverTo = {};
+    sw.recoverLookBasis = {};
+    sw.hasRecoverLookBasis = false;
 
     sw.recoverFovFrom = 0.f;
     sw.recoverFovTo = 0.f;
@@ -372,6 +375,10 @@ void CamSwitchController::Update(_float dt)
         {
             sw.recoverCamPosFrom = curCamPos;
             sw.recoverPivotFrom = curPivot;
+
+            sw.recoverLookBasis = p;
+            sw.hasRecoverLookBasis = true;
+
             sw.recoverTo = BuildRecoverPose_PlayerCenter();
 
             PivotStab_Reset(sw.pivotStab, sw.recoverTo.pivotWorld);
@@ -400,7 +407,8 @@ void CamSwitchController::Update(_float dt)
         const _float uPose = clamp(core.elapsed / poseDur, 0.f, 1.f);
         const _float tPose = Math::ApplyEase(tune.sw.recoverPoseEase, uPose);
 
-        const Vector3 recoverCamPosGoal = PoseToCamPos(sw.recoverTo);
+        Vector3 recoverCamPosGoal = PoseToCamPos(sw.recoverTo);
+        recoverCamPosGoal.y += tune.sw.recoverCamPosAddY;
 
         const Vector3 curPivot = Vector3::Lerp(sw.recoverPivotFrom, sw.recoverTo.pivotWorld, tPose);
         const Vector3 curCamPos = Vector3::Lerp(sw.recoverCamPosFrom, recoverCamPosGoal, tPose);
@@ -416,7 +424,12 @@ void CamSwitchController::Update(_float dt)
 
         if (uPose >= 1.f && uFov >= 1.f)
         {
-            ApplyPose(sw.recoverTo);
+            Vector3 finalCamPos = PoseToCamPos(sw.recoverTo);
+            finalCamPos.y += tune.sw.recoverCamPosAddY;
+
+            const Pose finalPose = BuildPoseFromPivotAndCamPos(sw.recoverTo.pivotWorld, finalCamPos, sw.recoverTo);
+
+            ApplyPose(finalPose);
             ApplyFovTarget(lens.fovSaved);
             End();
             return;
@@ -477,9 +490,9 @@ Vector3 CamSwitchController::CalcCenterPivot(OBJECT_HANDLE h) const
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector3 foot = cc->Get_FootPosition();
-    const _float halfHeight = cc->Get_HalfSize();
+    const _float halfSize = cc->Get_HalfSize();
 
-    return foot + Vector3(0.f, halfHeight, 0.f);
+    return foot + Vector3(0.f, halfSize * 1.5f, 0.f);
 }
 
 void CamSwitchController::UpdatePairPivots(_float dt)
@@ -612,23 +625,14 @@ _int CamSwitchController::ChooseSwitchSideSign() const
 
 CamSwitchController::Pose CamSwitchController::BuildRecoverPose_PlayerCenter() const
 {
-    Pose out = beginOrbit.valid ? beginOrbit.pose : hold.pose;
+    Pose out = sw.hasRecoverLookBasis ? sw.recoverLookBasis : (beginOrbit.valid ? beginOrbit.pose : hold.pose);
 
     const OBJECT_HANDLE target = sw.target.isValid() ? sw.target : hold.target;
     if (!target.isValid()) return out;
 
     out.pivotWorld = CalcCenterPivot(target);
 
-    if (beginOrbit.valid)
-    {
-        out.pitchDeg = beginOrbit.pose.pitchDeg;
-        out.dist = beginOrbit.pose.dist;
-        out.yawWorldDeg = Math::WrapDeg(CalcBehindYawDeg(target) + beginOrbit.yawOffsetFromBehindDeg);
-    }
-    else
-    {
-        out.yawWorldDeg = CalcBehindYawDeg(target);
-    }
+    if (beginOrbit.valid) out.dist = beginOrbit.pose.dist;
 
     return out;
 }
@@ -712,14 +716,5 @@ void CamSwitchController::CaptureBeginOrbitBaseline()
 {
     beginOrbit = {};
     beginOrbit.pose = CaptureCurPose();
-
-    if (!hold.target.isValid())
-    {
-        beginOrbit.valid = true;
-        return;
-    }
-
-    const _float behindYaw = CalcBehindYawDeg(hold.target);
-    beginOrbit.yawOffsetFromBehindDeg = Math::WrapDeg(beginOrbit.pose.yawWorldDeg - behindYaw);
     beginOrbit.valid = true;
 }
