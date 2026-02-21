@@ -89,6 +89,9 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 	// ¿Ã∫•∆Æ : TUTORIAL_DESC
 	Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
 		{ 
+			if (desc.eState == TUTORIAL_STATE::COMPLETED)
+				m_isAutoPatternPlay = false;
+
 			if (desc.eState != TUTORIAL_STATE::PLAY)
 				return;
 
@@ -446,6 +449,8 @@ void CClaymore::SetTutorialMode(TUTORIAL_TYPE eMode)
 		return;
 
 	m_eCurTutorial = eMode;
+	m_isAutoPatternPlay = true;
+
 
 	if (m_eCurTutorial == TUTORIAL_TYPE::GROGGY_COMBO)
 	{
