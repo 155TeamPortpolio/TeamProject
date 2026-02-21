@@ -34,6 +34,7 @@ private:
 	TUTORIAL_TYPE m_eType = { TUTORIAL_TYPE::EXTREME_EVADE };
 
 	_bool m_isCheck = {};
+	_bool m_isQuit = {};
 
 	class CTextSlot* m_pTitle = {};
 	map<TUTORIAL_TYPE, CUI_Object*> m_Descriptions;
