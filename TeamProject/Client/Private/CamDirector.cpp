@@ -123,6 +123,15 @@ void CCamDirector::AutoBattle(CamStartDir dir)
     }
 }
 
+Vector3 CCamDirector::GetBipPos(OBJECT_HANDLE h, _float offsetY)
+{
+    auto obj = ObjectManager()->Request_Object(h);
+    auto anim = obj->Get_Component<CAnimator3D>();
+    _float4x4 m{};
+    anim->Get_BipWorld(&m);
+    return Vector3(m._41, m._42, m._43) + Vector3(0.f, offsetY, 0.f);
+}
+
 void CCamDirector::Update(_float dt)
 {
     m_events.BeginFrame();
