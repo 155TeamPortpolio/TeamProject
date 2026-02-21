@@ -42,10 +42,10 @@ public:
 
         struct Switch
         {
-            _float   blendSec = 1.0f;
+            _float   blendSec = 0.5f;
             EaseType blendEase = EaseType::OutCubic;
 
-            _float   fovBlendSec = 0.1f;
+            _float   fovBlendSec = 0.5f;
             EaseType fovBlendEase = EaseType::OutCubic;
 
             _float   recoverPoseSec = 0.5f;
@@ -81,6 +81,9 @@ public:
         _float fovSaved = 0.f;
         _float fovFrom = 0.f;
         _float holdDesiredFov = 0.f;
+
+        _float fovCommanded = 0.f;
+        _bool  hasFovCommanded = false;
     } lens;
 
     struct PivotStab
