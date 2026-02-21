@@ -63,6 +63,7 @@ public: // 모션블러
 
 public: // 무기 이펙트 메쉬
     void    Set_WeaponEffectMesh(_bool bOn);
+    void    Set_WeaponFire(_bool bOn);
 
 private: // 초기화
     HRESULT Initialize_StateMachine();

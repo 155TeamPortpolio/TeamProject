@@ -458,6 +458,22 @@ void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
 	}
 }
 
+void CMiyabi::Set_WeaponFire(_bool bOn)
+{
+	auto MiyabiFire = Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+	if (MiyabiFire != nullptr)
+	{
+		if (bOn)
+		{
+			MiyabiFire->Set_Alive(true);
+		}
+		else
+		{
+			MiyabiFire->Set_Alive(false);
+		}
+	}
+}
+
 HRESULT CMiyabi::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CMiyabi>::Create();
