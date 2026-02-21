@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "Sprite2D.h"
+#include "TextSlot.h"
 
 HRESULT CUI_Loading::Initialize_Prototype()
 {
@@ -21,21 +23,43 @@ HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
 
     const string& strNextLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NextLevel();
     string fileName = {};
-    
+    string bgFileName = {};
+
     // 다음레벨에 따라 로드할 json 파일 이름 분기처리
-    if (strNextLevelKey == "City_Level")
-        fileName = "loading_city";
-    else if (strNextLevelKey == "Zero_Level")
+    if (strNextLevelKey == "Zero_Level" ||
+        strNextLevelKey == "Scott_Level")
+    {
         fileName = "loading_hollow";
+        bgFileName = "Loading_Hollow_Zero_Cam" + to_string(Helper::Get_Random_Int(1, 6));
+    }
+    else if (strNextLevelKey == "MainCity_Level")
+    {
+        fileName = "loading_city";
+        bgFileName = "Loading_MainCity_Cam" + to_string(Helper::Get_Random_Int(1, 6));
+    }
     else
+    {
         fileName = "loading_default";
+        bgFileName = "Loading_MainCity_Cam1";
+    }
 
     //fileName = "loading_default"; //테스트 코드
-     
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath(fileName + ".json");
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath(fileName + ".json")));
+
+    Cache();
+
+    if (m_pBg)
+        m_pBg->Change_Texture(0, G_GlobalLevelKey, bgFileName + ".png");
+
+    if (m_pSubtitle)
+        m_pSubtitle->Set_Text(Get_RandomText(strNextLevelKey));
+
+    return S_OK;
+}
+
+void CUI_Loading::Awake()
+{
     // 자식(fade) 자식의 0번 애니메이션 재생 (FadeIn)
     if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("fade"))
         if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
@@ -45,12 +69,6 @@ HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
     if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("nowLoading"))
         if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
             pUI->Set_Animation(0);
-
-    return S_OK;
-}
-
-void CUI_Loading::Awake()
-{  
 }
 
 void CUI_Loading::Update(_float dt)
@@ -58,6 +76,75 @@ void CUI_Loading::Update(_float dt)
     __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_Loading::Cache()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    auto pBG = pContainer->Find_Descendant("bg");
+    if (pBG)
+        m_pBg = pBG->Get_Component<CSprite2D>();
+
+    auto pSubtitle = pContainer->Find_Descendant("subtitle");
+    if (pSubtitle)
+        m_pSubtitle = pSubtitle->Get_Component<CTextSlot>();
+}
+
+wstring CUI_Loading::Get_RandomText(const string& strNextLevelKey)
+{
+    int index = 0;
+
+    // ---------------------------
+    // 제로공동 / 스코트
+    // ---------------------------
+    if (strNextLevelKey == "Zero_Level" ||
+        strNextLevelKey == "Scott_Level")
+    {
+        index = Helper::Get_Random_Int(0, 5);
+
+        switch (index)
+        {
+        case 0:
+            return L"공동 내부에서는 에테르 농도가\n지속적으로 상승하며 장시간 체류 시\n침식 위험이 증가합니다.";
+        case 1:
+            return L"적의 공격 직전 금빛 알림이 나타나면\n극한 지원을 발동할 수 있으며\n붉은빛 알림 시 극한 회피만 가능합니다.";
+        case 2:
+            return L"공동 내부의 이벤트는 선택에 따라\n다른 결과를 초래할 수 있으니\n신중하게 판단하세요.";
+        case 3:
+            return L"파티의 스트레스 수치가 100에 도달할\n때마다 침식 증상 1개를 랜덤으로\n획득합니다.";
+        case 4:
+            return L"스코트의 전용 화면을 통해\n공동 탐사 진행 상황과 데이터\n기록을 관리할 수 있습니다.";
+        case 5:
+            return L"스코트에서는 공동 탐사 관련\n튜토리얼을 진행할 수 있으며\n기초 시스템을 익힐 수 있습니다.";
+        }
+    }
+    // ---------------------------
+    // 메인시티
+    // ---------------------------
+    else if (strNextLevelKey == "MainCity_Level")
+    {
+        index = Helper::Get_Random_Int(0, 4);
+
+        switch (index)
+        {
+        case 0:
+            return L"메인시티에서는 각종 상점과 시설을\n이용할 수 있습니다.\n의뢰 수주 및 에이전트 육성을 진행하세요.";
+        case 1:
+            return L"아우의 복권은 하루 한 번\n무료로 이용할 수 있으며\n페니를 획득할 수 있습니다.";
+        case 2:
+            return L"라면 가게에서 식사를 하면 일정\n시간 동안 전투에 유리한 버프 효과를\n받을 수 있습니다.";
+        case 3:
+            return L"모집을 통해 새로운 에이전트를\n영입할 수 있으며 높은 등급일수록\n강력한 능력을 보유합니다.";
+        case 4:
+            return L"기간 한정 모집은 특정 에이전트의\n등장 확률이 상승하며 일정 횟수\n이상 진행 시 확정 보상이 있습니다.";
+        }
+    }
+
+    // ---------------------------
+    // 기본
+    // ---------------------------
+    return L"잠시만 기다려 주세요.\n데이터를 불러오는 중입니다.\n로딩이 곧 완료됩니다.";
 }
 
 CGameObject* CUI_Loading::Create()
