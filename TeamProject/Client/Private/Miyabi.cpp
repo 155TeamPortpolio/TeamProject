@@ -185,14 +185,14 @@ void CMiyabi::Render_GUI()
 
 void CMiyabi::Show_Ghost()
 {
-	if (m_pGhost)
-		m_pGhost->Set_Show(true);
+	//if (m_pGhost)
+	//	m_pGhost->Set_Show(true);
 }
 
 void CMiyabi::Hide_Ghost()
 {
-	if (m_pGhost)
-		m_pGhost->Set_Show(false);
+	//if (m_pGhost)
+	//	m_pGhost->Set_Show(false);
 }
 
 _bool CMiyabi::Can_Evade()
@@ -451,10 +451,14 @@ void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
 	if (bOn)
 	{
 		pModel->Show_MehsByName("0015_Unagi_Weapon03_mesh0015");
+		if (m_pGhost)
+			m_pGhost->Set_Show(false);
 	}
 	else
 	{
 		pModel->Hide_MehsByName("0015_Unagi_Weapon03_mesh0015");
+		if (m_pGhost)
+			m_pGhost->Set_Show(true);
 	}
 }
 
