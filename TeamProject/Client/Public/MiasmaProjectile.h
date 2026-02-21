@@ -29,6 +29,9 @@ public:
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
 
 private:
+    void Initialize_Effects();
+
+private:
     _float m_ElapsedTime = {};
     _float m_fMoveSpeed = { 45 };
     _vector3 m_vTargetVelocity = {};

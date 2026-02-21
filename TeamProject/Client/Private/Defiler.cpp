@@ -28,6 +28,7 @@
 #include "DefilerAxe.h"
 #include "DefilerWall.h"
 #include "WaterWaves.h"
+#include "AttackRange.h"
 
 #include "EventListener.h"
 #include "AudioSource.h"
@@ -163,6 +164,7 @@ void CDefiler::Update(_float dt)
 
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
+
 }
 
 void CDefiler::Late_Update(_float dt)
@@ -854,6 +856,13 @@ void CDefiler::Update_Dissolve(_float deltaTime)
 	}
 }
 
+void CDefiler::Play_AttackRange(_float3 position, _float scale)
+{
+	auto pAttackRange = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackRange");
+	if (pAttackRange)
+		static_cast<CAttackRange*>(pAttackRange)->Play_AttackRange(position, scale);
+}
+
 void CDefiler::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
 {
 	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
@@ -988,13 +997,23 @@ HRESULT CDefiler::Initialize_Effects()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	Create_AttackSign("Bip001_Head");
 
-	/* Default Particle */
-	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("defiler_default_particle.json")
-		.Build("Defiler_Default_Particle");
+	/* Attack Range */
+	{
+		auto pAttackRange = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackRange" })
+			.Build("AttackRange");
 
-	pEffect->AttachBone(pAnimator, "Bip001_Head");
-	pObjectContainer->Add_Child(pEffect, false);
+		pObjectContainer->Add_Child(pAttackRange, false);
+	}
+
+	/* Default Particle */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("defiler_default_particle.json")
+			.Build("Defiler_Default_Particle");
+
+		pEffect->AttachBone(pAnimator, "Bip001_Head");
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	/* Laser */
 	for (_uint i = 0; i < 3; ++i)
@@ -1222,17 +1241,6 @@ HRESULT CDefiler::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("defiler_axe_light3.json")
 			.Build("Defiler_Axe_Light3");
-		pEffect->Stop();
-		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
-		pObjectContainer->Add_Child(pEffect, false);
-	}
-	{
-		_smatrix offsetMatrix = _smatrix::Identity;
-		offsetMatrix.Translation(_vector3(2.f, 0.f, 0.f));
-
-		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("defiler_wave_axe_charge.json")
-			.Build("Defiler_Wave_Axe_Charge");
 		pEffect->Stop();
 		pEffect->AttachBone(pAnimator, "Ctr_M_Weapon_01", offsetMatrix);
 		pObjectContainer->Add_Child(pEffect, false);

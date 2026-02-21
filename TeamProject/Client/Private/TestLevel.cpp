@@ -37,6 +37,7 @@
 #include "TrailNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
+#include "JaegerLaser.h"
 
 /* Character */
 #include "Miyabi.h"
@@ -173,6 +174,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+
 
 	CBattleSystem::GetInstance()->SetActive(true);
 
