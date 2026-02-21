@@ -165,5 +165,14 @@ struct OrbitReturnPreset
     Vector3 camPosFrom{};
     Vector3 camPosTo{};
 };
+struct OrbitLockSuspendState
+{
+    _bool   active = false;
+    _float  timer = 0.f;
+    _float  cooldown = 0.f;
+
+    _bool   hasPrevTargetPivot = false;
+    Vector3 prevTargetPivot{};
+};
 
 NS_END
