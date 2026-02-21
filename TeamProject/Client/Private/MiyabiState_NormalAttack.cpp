@@ -493,9 +493,29 @@ void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
         //pOwner->Get_Name() + "Attack_06_End"
     };
 
+    _float fAnimSpeed = 1.1f;
+    if (iIndex >= 2)
+    {
+        fAnimSpeed = 1.3f;
+    }
+
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .Speed(fAnimSpeed)
         .Apply();
+
+    m_strSound = "Miyabi_NormalAttack0" + to_string(iIndex + 1) + "_End_SFX";
+    pOwner->Get_Component<CAudioSource>()->Slot(m_strSound)
+        .Attribute3D(true)
+        .Play();
+
     pOwner->Unlock_Move();
+}
+
+void CMiyabiState_Attack_End::Exit(CMiyabi* pOwner)
+{
+    pOwner->Get_Component<CAudioSource>()->Slot(m_strSound)
+        .Attribute3D(true)
+        .Stop();
 }
 
 #pragma endregion

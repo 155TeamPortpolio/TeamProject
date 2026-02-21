@@ -70,8 +70,8 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	//if (FAILED(Initialize_Effects()))
-	//	return E_FAIL;
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
 
 	if (FAILED(Initialize_Sound()))
 		return E_FAIL;
@@ -1114,6 +1114,10 @@ HRESULT CMiyabi::Initialize_Sound()
 		, "Miyabi_AssaultAttack_Voice_01"
 		, "Miyabi_AssaultAttack_Voice_02"
 		, "Miyabi_AssaultAttack_Voice_03"
+	);
+	AudioSrc->Add_Sequence("SwitchInAttack"
+		, "Miyabi_SwitchInAttack_Voice_01"
+		, "Miyabi_SwitchInAttack_Voice_02"
 	);
 
 
