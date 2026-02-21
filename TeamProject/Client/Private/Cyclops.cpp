@@ -285,7 +285,7 @@ HRESULT CCyclops::Ready_Children(INIT_DESC* pArg)
 	WeaponDesc.isAttachBone = true;
 	WeaponDesc.tagBone = "Bn_Head";
 	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.vAttackSize = { 0.5f,0.f,0.f };
+	WeaponDesc.vAttackSize = { 0.7f,0.f,0.f };
 
 	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 		return E_FAIL;
