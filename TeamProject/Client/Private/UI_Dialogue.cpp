@@ -216,6 +216,7 @@ void CUI_Dialogue::Open_Dialogue(const string& strNewSequenceID, _uint iNewSeque
     desc.strName = m_tDialogueDesc.Name;
     desc.strMessage = m_tDialogueDesc.Text;
     desc.hasChoice = (m_tDialogueDesc.ChoiceNum > 0) ? true : false;
+    desc.SequenceID = m_tDialogueDesc.SequenceID;
 
     // 메시지 UI 활성화
     pMessage->UI_Active(&desc);
