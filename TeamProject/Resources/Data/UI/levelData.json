@@ -1,14 +1,7 @@
 {
   "levels": {
     "Global_Level": {
-      "objects": [
-        
-        {
-          "prototypeTag": "Proto_GameObject_Dialogue",
-          "instanceName": "dialogue",
-          "prefabPath" : ""
-        },
-        
+      "objects": [        
         {
           "prototypeTag": "Proto_GameObject_SceneFrame",
           "instanceName": "scene_frame",
@@ -81,6 +74,12 @@
           "prototypeTag": "Proto_GameObject_FieldHUD",
           "instanceName": "hud_field",
           "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Dialogue",
+          "instanceName": "dialogue",
+          "prefabPath" : ""
         }
       ]
     },
@@ -90,6 +89,12 @@
         {
           "prototypeTag": "Proto_GameObject_FieldHUD",
           "instanceName": "hud_field",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Dialogue",
+          "instanceName": "dialogue",
           "prefabPath" : ""
         },
         
