@@ -81,6 +81,8 @@ HRESULT CTutorial_Level::Awake()
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
     BattleSystem()->SpawnMosnter("Proto_GameObject_Claymore", _float3(-0.18f, 2.f, 1.59f));
 
+    CamDirector()->AutoBattle(CamStartDir::Back);
+
     /**/
     //TUTORIAL_DESC desc = {};
     //desc.eType = TUTORIAL_TYPE::EXTREME_EVADE;

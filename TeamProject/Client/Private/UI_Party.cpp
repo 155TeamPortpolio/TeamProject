@@ -63,6 +63,8 @@ void CUI_Party::Update(_float dt)
 {
     __super::Update(dt);
 
+    Update_CardSequence(dt);
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -102,19 +104,27 @@ void CUI_Party::UI_Active(void* pArg)
             iPartySynergyCount = counts[i];
             eMaxAttribute = static_cast<ATTRIBUTE>(i);
         }
-    } 
-
-    // 각각 카드 셋팅
-    for (_int i = 0; i < PARTY_COUNT; ++i)
-    {
-        if (i < pDesc->characters.size())
-            m_pPartyCard[i]->Change_Character(pDesc->characters[i], (iPartySynergyCount >= 2) ? eMaxAttribute : ATTRIBUTE::END );
-        else
-            m_pPartyCard[i]->Change_Character(CHARACTER::END);
     }
 
     // 시너지 셋팅
     m_pPartySynergy->Set_Synergy(iPartySynergyCount, iTotalPartyCount);
+
+    //// 각각 카드 셋팅
+    //for (_int i = 0; i < PARTY_COUNT; ++i)
+    //{
+    //    if (i < pDesc->characters.size())
+    //        m_pPartyCard[i]->Change_Character(pDesc->characters[i], (iPartySynergyCount >= 2) ? eMaxAttribute : ATTRIBUTE::END );
+    //    else
+    //        m_pPartyCard[i]->Change_Character(CHARACTER::END);
+    //}
+
+    // 카드 셋팅 바로 하지 말고 저장해놓고 하나씩 셋팅
+    m_pendingCharacters = pDesc->characters;
+    m_pendingAttribute = (iPartySynergyCount >= 2) ? eMaxAttribute : ATTRIBUTE::END;
+
+    m_iCardIndex = 0;
+    m_fCardTimer = m_fCardDelay;
+    m_isCardSequence = true;
 
     UIDirector()->Show_Mouse();
 }
@@ -134,6 +144,31 @@ void CUI_Party::Create_BackButton()
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_Party::Update_CardSequence(_float dt)
+{
+    if (!m_isCardSequence)
+        return;
+
+    m_fCardTimer += dt;
+
+    if (m_fCardTimer < m_fCardDelay)
+        return;
+
+    m_fCardTimer = 0.f;
+
+    if (m_iCardIndex < PARTY_COUNT)
+    {
+        if (m_iCardIndex < m_pendingCharacters.size())
+            m_pPartyCard[m_iCardIndex]->Change_Character(m_pendingCharacters[m_iCardIndex], m_pendingAttribute);
+        else
+            m_pPartyCard[m_iCardIndex]->Change_Character(CHARACTER::END);
+
+        m_iCardIndex++;
+    }
+    else
+        m_isCardSequence = false;
 }
 
 void CUI_Party::Create_HomeButton()
