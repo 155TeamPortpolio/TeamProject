@@ -70,8 +70,8 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	//if (FAILED(Initialize_Effects()))
-	//	return E_FAIL;
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
 
 	if (FAILED(Initialize_Sound()))
 		return E_FAIL;
