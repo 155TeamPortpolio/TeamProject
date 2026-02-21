@@ -17,16 +17,6 @@ namespace
         return pivotWorld + backDir * dist;
     }
 
-    CamSwitchController::Pose LerpPose(const CamSwitchController::Pose& a, const CamSwitchController::Pose& b, _float t)
-    {
-        CamSwitchController::Pose out{};
-        out.pivotWorld = Vector3::Lerp(a.pivotWorld, b.pivotWorld, t);
-        out.yawWorldDeg = a.yawWorldDeg + Math::WrapDeg(b.yawWorldDeg - a.yawWorldDeg) * t;
-        out.pitchDeg = Math::Lerp(a.pitchDeg, b.pitchDeg, t);
-        out.dist = Math::Lerp(a.dist, b.dist, t);
-        return out;
-    }
-
     _float YawFromDirDeg(const Vector3& dir)
     {
         Vector3 d = dir;
@@ -446,8 +436,6 @@ void CamSwitchController::CaptureHoldPose()
     hold.pose.pitchDeg = s.pose.rotCurDeg.y;
     hold.pose.dist = s.pose.distCur;
     hold.pose.pivotWorld = CalcCenterPivot(hold.target);
-
-    hold.valid = true;
 }
 
 void CamSwitchController::FollowHoldPivot(_float dt)
@@ -489,83 +477,62 @@ Vector3 CamSwitchController::CalcCenterPivot(OBJECT_HANDLE h) const
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector3 foot = cc->Get_FootPosition();
-    return foot + Vector3(0.f, tune.pivotBase.centerAboveFootY, 0.f);
-}
+    const _float halfHeight = cc->Get_HalfSize();
 
-CamSwitchController::PivotSample CamSwitchController::SamplePivots(OBJECT_HANDLE h) const
-{
-    PivotSample s{};
-    if (!h.isValid()) return s;
-
-    auto obj = ObjectManager()->Request_Object(h);
-    auto cc = obj->Get_Component<CCharacterController>();
-
-    const Vector3 foot = cc->Get_FootPosition();
-
-    const _float t = clamp(tune.common.faceYOffsetMul, 0.f, 1.f);
-    const _float faceAboveFootY = Math::Lerp(tune.pivotBase.faceAboveFootYMin, tune.pivotBase.faceAboveFootYMax, t);
-
-    s.centerPivot = foot + Vector3(0.f, tune.pivotBase.centerAboveFootY, 0.f);
-    s.facePivot = foot + Vector3(0.f, faceAboveFootY, 0.f);
-    s.valid = true;
-    return s;
+    return foot + Vector3(0.f, halfHeight, 0.f);
 }
 
 void CamSwitchController::UpdatePairPivots(_float dt)
 {
-    const PivotSample aS = SamplePivots(pair.attacker);
-    if (!aS.valid)
+    if (!pair.attacker.isValid())
     {
         pair = {};
         return;
     }
 
+    const Vector3 attackerCenter = CalcCenterPivot(pair.attacker);
+
     if (!pair.aValid || dt <= 0.f)
     {
-        pair.aCenter = aS.centerPivot;
-        pair.aFace = aS.facePivot;
+        pair.aCenter = attackerCenter;
         pair.aValid = true;
     }
     else
     {
         const _float t = clamp(dt * tune.common.pivotFollowLerpSpeed, 0.f, 1.f);
-        pair.aCenter = Vector3::Lerp(pair.aCenter, aS.centerPivot, t);
-        pair.aFace = Vector3::Lerp(pair.aFace, aS.facePivot, t);
+        pair.aCenter = Vector3::Lerp(pair.aCenter, attackerCenter, t);
         pair.aValid = true;
     }
 
-    const PivotSample vS = SamplePivots(pair.victim);
-    if (!vS.valid)
+    if (!pair.victim.isValid())
     {
         pair.vCenter = Vector3::Zero;
-        pair.vFace = Vector3::Zero;
         pair.vValid = false;
         return;
     }
 
-    Vector3 delta = vS.facePivot - pair.aFace;
+    const Vector3 victimCenter = CalcCenterPivot(pair.victim);
+
+    Vector3 delta = victimCenter - pair.aCenter;
     delta.y = 0.f;
     const _float dist = delta.Length();
 
     if (dist > tune.common.maxVictimDist)
     {
         pair.vCenter = Vector3::Zero;
-        pair.vFace = Vector3::Zero;
         pair.vValid = false;
         return;
     }
 
     if (!pair.vValid || dt <= 0.f)
     {
-        pair.vCenter = vS.centerPivot;
-        pair.vFace = vS.facePivot;
+        pair.vCenter = victimCenter;
         pair.vValid = true;
         return;
     }
 
     const _float t = clamp(dt * tune.common.pivotFollowLerpSpeed, 0.f, 1.f);
-    pair.vCenter = Vector3::Lerp(pair.vCenter, vS.centerPivot, t);
-    pair.vFace = Vector3::Lerp(pair.vFace, vS.facePivot, t);
+    pair.vCenter = Vector3::Lerp(pair.vCenter, victimCenter, t);
     pair.vValid = true;
 }
 
@@ -599,7 +566,7 @@ Vector3 CamSwitchController::BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) c
 
     if (pair.vValid)
     {
-        Vector3 d = pair.vFace - pair.aFace;
+        Vector3 d = pair.vCenter - pair.aCenter;
         d.y = 0.f;
         const _float pairDist = d.Length();
 

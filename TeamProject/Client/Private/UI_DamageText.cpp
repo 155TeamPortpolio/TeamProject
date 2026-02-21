@@ -13,7 +13,7 @@ namespace
     static const string kAtlasTexKey = "DamageText.png";
     static const string kColorAtlasTexKey = "DamageTextColor.png";
 
-    constexpr _float kSpecialWordChance = 0.02f;
+    constexpr _float kSpecialWordChance = 0.01f;
 
     constexpr _uint  kColorIdx_JaneDoe = 0;
     constexpr _uint  kColorIdx_Corin = 3;

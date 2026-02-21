@@ -17,20 +17,12 @@ public:
             _float   holdFov = 30.f;
             EaseType enterEase = EaseType::OutCubic;
 
-            _float   faceYOffsetMul = 0.6f;
             _float   maxVictimDist = 10.f;
             _float   pivotFollowLerpSpeed = 18.f;
 
             _float   cancelFovSec = 0.5f;
             EaseType cancelFovEase = EaseType::OutCubic;
         } common;
-
-        struct Pivot
-        {
-            _float centerAboveFootY = 1.5f;
-            _float faceAboveFootYMin = 1.1f;
-            _float faceAboveFootYMax = 1.3f;
-        } pivotBase;
 
         struct SwitchGoal
         {
@@ -57,7 +49,7 @@ public:
 
             _float   fovBlendSec = 0.5f;
             EaseType fovBlendEase = EaseType::OutCubic;
-            _float   fovSwitchRecoverTarget = 40.f;
+            _float   fovSwitchRecoverTarget = 60.f;
 
             _float   recoverPoseSec = 0.5f;
             EaseType recoverPoseEase = EaseType::OutCubic;
@@ -125,15 +117,7 @@ public:
         OBJECT_HANDLE target{};
         Pose          pose{};
         PivotStab     pivotStab{};
-        _bool         valid = false;
     } hold;
-
-    struct PivotSample
-    {
-        Vector3 centerPivot{};
-        Vector3 facePivot{};
-        _bool   valid = false;
-    };
 
     struct PairData
     {
@@ -141,11 +125,9 @@ public:
         OBJECT_HANDLE victim{};
 
         Vector3 aCenter{};
-        Vector3 aFace{};
         _bool   aValid = false;
 
         Vector3 vCenter{};
-        Vector3 vFace{};
         _bool   vValid = false;
     } pair;
 
@@ -212,18 +194,17 @@ private:
     _float CalcBehindYawDeg(OBJECT_HANDLE target) const;
 
 private:
-    Vector3    CalcCenterPivot(OBJECT_HANDLE h) const;
-    PivotSample SamplePivots(OBJECT_HANDLE h) const;
-    void       UpdatePairPivots(_float dt);
+    Vector3 CalcCenterPivot(OBJECT_HANDLE h) const;
+    void    UpdatePairPivots(_float dt);
 
-    Vector3    BuildSwitchPivotGoal_EnemyCenter() const;
-    Vector3    BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) const;
-    _int       ChooseSwitchSideSign() const;
+    Vector3 BuildSwitchPivotGoal_EnemyCenter() const;
+    Vector3 BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) const;
+    _int    ChooseSwitchSideSign() const;
 
-    Pose       BuildRecoverPose_PlayerCenter() const;
+    Pose    BuildRecoverPose_PlayerCenter() const;
 
 private:
-    Pose       BuildPoseFromPivotAndCamPos(const Vector3& pivotWorld, const Vector3& camPos, const Pose& fallback) const;
+    Pose    BuildPoseFromPivotAndCamPos(const Vector3& pivotWorld, const Vector3& camPos, const Pose& fallback) const;
 };
 
 NS_END
