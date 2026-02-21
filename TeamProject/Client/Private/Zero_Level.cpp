@@ -61,7 +61,7 @@
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
 #include "ProceduralSky.h"
-
+#include "Light.h"
 #include "AudioSource.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
@@ -77,18 +77,21 @@ HRESULT CZero_Level::Initialize()
 	CUIDirector::GetInstance()->Load_LevelObjects("Zero_Level");
 
 	/*ENV*/
+	//Cloud
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
-
+	//Fog
 	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
 		->SetColor(_float4(0.08f, 0.02f, 0.02f, 1.0f))
 		->SetDensity(0.02f)
 		->SetEnable(true);
-	
+	//ShadowCam
+	m_tZeroShadow.pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+
 	/* BGM */
 	m_pBGM = CAudioSource::Create();
 	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/BGM");
-
+	
 	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
@@ -325,7 +328,6 @@ void CZero_Level::Zero_Fog::Update_Fog(_float dt)
 		->GetCommand<CFogCommand>()
 		->SetFogDesc(tCurFog)
 		->SetEnable(true);
-
 }
 
 void CZero_Level::Zero_Fog::Set_BaseFog(FOG_DESC FogDesc)
@@ -453,3 +455,17 @@ void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
 }
 
 #pragma endregion
+
+void CZero_Level::Zero_Shadow::Set_ShadowPos(_vector3 vPosition)
+{
+	if (!pShadowCam) return;
+
+	pShadowCam->Get_Component<CTransform>()->Set_Pos(vPosition);
+}
+
+void CZero_Level::Zero_Shadow::Set_Light(LIGHT_DESC LightDesc)
+{
+	if (!pShadowCam) return;
+
+	pShadowCam->Get_Component<CLight>()->Set_Desc(LightDesc, LIGHT_TYPE::DIRECTIONAL);
+}

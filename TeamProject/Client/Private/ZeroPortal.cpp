@@ -66,7 +66,8 @@ void CZeroPortal::Awake()
 	m_vBaseScale	= m_pTransform->Get_Scale();
 	m_vExtendScale	= m_vBaseScale * 3.f;
 	m_fDuration		= 0.7f;
-
+	
+	//NoiseSequence();
 	PortalEffectFlowSetting();
 }
 
@@ -81,18 +82,10 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
 	Focus(dt);
-
+	
 	m_PortalFlow.Tick(dt);
 
-	//if (m_OnActive)
-	//{
-	//	m_fActiveElapsedTime += dt;
-	//	if (m_fActiveElapsedTime >= m_fActiveDuration)
-	//	{
-	//		NoiseSequence();
-	//		m_OnActive = false;
-	//	}
-	//}
+	Update_ActivePortal(dt);
 }
 
 void CZeroPortal::Late_Update(_float dt)
@@ -100,7 +93,7 @@ void CZeroPortal::Late_Update(_float dt)
 	if (InputDevice()->Key_Tap(VK_F3))
 	{
 		CamDirector()->EnterPortal(Get_Handle());
-		Active_Portal();
+		Active_PortalEffect();
 	}
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
@@ -152,10 +145,13 @@ void CZeroPortal::Interact(CGameObject* pObject)
 {
 	if (!m_bIsInteractable)
 		return;
-
-	m_pOwnerStage->StageChangeOn(m_choiceIndex);
+	m_bUsingPortal = true;
 	m_bIsInteractable = false;
 	Get_Component<CAudioSource>()->Slot("ZeroPortal_Enter.wav").Play();
+
+	
+	CamDirector()->EnterPortal(Get_Handle());
+	
 }
 
 OBJECT_HANDLE CZeroPortal::Get_InteractHandle()
@@ -214,6 +210,26 @@ void CZeroPortal::NoiseSequence()
 		->SetDuration(0.25f)
 		->SetNum(4)
 		->SetEnable(true);
+}
+
+void CZeroPortal::Update_ActivePortal(_float dt)
+{
+	if (!m_bUsingPortal)
+		return;
+
+	m_fElapsedPortal += dt;
+
+	if (!m_PortalFlow.IsRunning()) {
+		if (m_fElapsedPortal > m_fEffectTiming) {
+			m_PortalFlow.Start();
+		}
+	}
+	else {
+		if (m_PortalFlow.IsDoneAll()) {
+			m_pOwnerStage->StageChangeOn(m_choiceIndex);
+			m_bUsingPortal = false;
+		}
+	}
 }
 
 void CZeroPortal::Active_PortalEffect()

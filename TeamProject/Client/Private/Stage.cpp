@@ -374,7 +374,7 @@ void CStage::BaseOutro()
 	if (!m_outroFlowBuilt) {
 		m_outroFlowBuilt = true;
 		size_t seqId = m_outroFlow.BeginSequence();
-		m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
+		//m_outroFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeOut_Screen(1.f); });
 		m_outroFlow.AddWait(seqId, 2.0f);
 		//m_outroFlow.AddOnce(seqId, [this]() {RenderSystem()->UnRegister_AddictiveColor(); });
 	}
