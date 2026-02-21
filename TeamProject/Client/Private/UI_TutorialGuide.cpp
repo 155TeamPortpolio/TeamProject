@@ -93,17 +93,30 @@ void CUI_TutorialGuide::Update(_float dt)
         //if (InputDevice()->Key_Tap('T'))
         //    Change_State(STATE::DEACTIVATING);
         break;
-    case STATE::DEACTIVATING:
-        BattleSystem()->LockBattleTime(true);
-        BattleSystem()->LockPlayer(true);
+    case STATE::DEACTIVATING:  
         m_fTimer += dt;
-        if (m_fTimer >= m_fDurationFadeout && !m_isFadeout)
-        {
+
+        // 팝업 띄우기
+        if (!m_isPopupComplete)
+        { 
+            m_isPopupComplete = true;
+        }
+
+        // 페이드 시작
+        if (m_fTimer >= m_fDurationFadeStart && !m_isFaded)
+        { 
             UIDirector()->FadeOut_Screen(0.2f);
-            m_isFadeout = true;
+            m_isFaded = true;
         } 
-        if (m_fTimer >= m_fDurationWipeout)
+
+        // 클리어 호출
+        if (m_fTimer >= m_fDurationClear)
+        {
             Change_State(STATE::INACTIVE);
+
+            BattleSystem()->LockPlayer(true);
+            BattleSystem()->LockBattleTime(true);
+        } 
         break;
     } 
 
@@ -240,7 +253,8 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         if (m_pSlotComplete)
             m_pSlotComplete->UI_Active();
         m_fTimer = 0.f;
-        m_isFadeout = false;
+        m_isFaded = false;
+        m_isPopupComplete = false;
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::CLEAR);
         break;
     case STATE::INACTIVE:
