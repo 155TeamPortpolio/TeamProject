@@ -37,6 +37,7 @@
 #include "TrailNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
+#include "JaegerLaser.h"
 
 /* Character */
 #include "Miyabi.h"
@@ -109,11 +110,11 @@ HRESULT CTestLevel::Initialize()
 	//RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
-	auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
-		.Position(_float3(0.f,1.f,0.f))
-		.Build("Portal");
-	
-	ObjectManager()->Add_Object(pPortal, { "Test_Level","Portal" });
+	//auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
+	//	.Position(_float3(0.f,1.f,0.f))
+	//	.Build("Portal");
+	//
+	//ObjectManager()->Add_Object(pPortal, { "Test_Level","Portal" });
 
 	return S_OK;
 }
@@ -173,6 +174,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+
 
 	CBattleSystem::GetInstance()->SetActive(true);
 

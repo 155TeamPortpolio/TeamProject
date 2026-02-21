@@ -89,7 +89,7 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
-    if (pOwner->Can_Charge())
+    if (pOwner->Can_Charge() && pOwner->Get_Frost() >= 6)
     {
         if (InputDevice()->Mouse_Hold(MOUSE_BTN::LB))
         {
@@ -104,6 +104,10 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
         {
             m_fHoldTime = 0.f;
         }
+    }
+    else
+    {
+        m_fHoldTime = 0.f;
     }
 
     auto pMiyabiState = pOwner->Get_StateMachine();

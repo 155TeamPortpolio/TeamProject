@@ -5,10 +5,12 @@
 #include "Enemy.h"
 #include "BattleSystem.h"   
 #include "BattlePlayer.h"
+#include "CamSwitchController.h"
 // Engine
 #include "GameInstance.h"
 #include "Helper_Func.h"
 #include "PhysicsSystem.h"
+#include "CamDirector.h"
 // Component
 #include "Character.h"
 #include "CharacterController.h"
@@ -1326,7 +1328,7 @@ void COrbitCam::Render_GUI()
     ImGui::SeparatorText("OrbitCam");
 
     const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-    const float childHeight = (textLineHeight * 9) + (ImGui::GetStyle().WindowPadding.y * 2);
+    const float childHeight = (textLineHeight * 11) + (ImGui::GetStyle().WindowPadding.y * 2);
 
     const Vector3 pivotWorld = m_pose.pivotCurWorld;
     const Vector3 localOffset = m_pose.pivotInternalOffset + m_pose.pivotExternalOffset;

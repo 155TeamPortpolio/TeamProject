@@ -1548,6 +1548,9 @@
     <Filter Include="03. Utility\08. CamDirector\06. CamPotalController">
       <UniqueIdentifier>{970cc2ad-5753-40b1-83d3-e987a0215b11}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Effect\AttackRange">
+      <UniqueIdentifier>{7f4f46b8-b6c8-426d-a5b9-febe89cdec7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -3014,6 +3017,9 @@
     <ClInclude Include="..\public\CamPortalController.h">
       <Filter>03. Utility\08. CamDirector\06. CamPotalController</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\AttackRange.h">
+      <Filter>02. GameObject\Effect\AttackRange</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4432,6 +4438,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamPortalController.cpp">
       <Filter>03. Utility\08. CamDirector\06. CamPotalController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AttackRange.cpp">
+      <Filter>02. GameObject\Effect\AttackRange</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

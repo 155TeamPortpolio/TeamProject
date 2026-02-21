@@ -131,12 +131,13 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)
     CCharacter::ROOTMOTION_DESC desc;
     desc.iModeMask = ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION);
-    desc.fMoveWeight = 5.f;
+    desc.fMoveWeight = 3.f;
     pOwner->Process_RootMotion(dt, desc);
 }
 
 void CJaneDoeState_SwitchInParryAid_L_End::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Pop_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L_End")
         .Loop(false)
         .Speed(1.2f)

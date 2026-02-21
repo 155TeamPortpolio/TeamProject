@@ -1875,6 +1875,11 @@
           "EventTime": 1.1105958223342896,
           "EventType": "Sound",
           "EventTag": "JaneDoe_Slash_5.wav"
+        },
+        {
+          "EventTime": 1.1743924713134766,
+          "EventType": "Notify",
+          "EventTag": "CheckCombo"
         }
       ]
     },

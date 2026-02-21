@@ -137,6 +137,15 @@ void CZero_Level::Update()
 	if (GetAsyncKeyState('M')) {
 		m_tZeroFog.RollBack_Fog(1.f, EaseType::Linear);
 	}
+
+	if (InputDevice()->Key_Tap('Z'))
+	{
+		auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackRange" })
+			.Position(_float3(0.f, 1.f, 0.f))
+			.Build("effect");
+
+		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 HRESULT CZero_Level::Render()
@@ -192,7 +201,6 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
 	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_JaegerLaser", CJaegerLaser::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
@@ -250,7 +258,7 @@ void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
 		_int Rand = Helper::Get_Random_Int(0, i);
 		swap(Map[i], Map[Rand]);
 	}
-	
+	 
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)

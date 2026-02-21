@@ -241,6 +241,7 @@ void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
             auto EnergyDesc = pOwner->Get_EnergyDesc();
             if (EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy)
             {
+                pOwner->Reset_ReserveCombo();   // 이러면 콤보카운트를 공짜로 까먹는다. 
                 m_pOwnerStateMachine->Set_Bool("Extra", true);
             }
         }
@@ -322,10 +323,14 @@ void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_03")
         .ReserveSpeed(0.f, 0.1f, 0.7f, EaseType::InQuad)
-        .ReserveSpeed(0.1f, 0.2f, 2.f, EaseType::OutExpo)
-        .ReserveSpeed(0.2f, 0.5f, 1.5f, EaseType::OutQuad)
-        .ReserveSpeed(0.5f, 1.0f, 1.2f, EaseType::OutQuart)
+        .ReserveSpeed(0.1f, 0.2f, 1.8f, EaseType::OutExpo)
+        .ReserveSpeed(0.2f, 0.5f, 1.3f, EaseType::OutQuad)
+        .ReserveSpeed(0.5f, 1.0f, 1.f, EaseType::OutQuart)
         .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_SFX.wav")
+        .Attribute3D(true)
+        .Play();
 
     m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
     pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
@@ -379,14 +384,16 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
         m_iCount++;
     }
 
-    if (IsCrossAnimProgress(0.33f))
+    if (IsCrossAnimProgress(0.3f))
     {
         pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack03")
             .Attribute3D(true)
             .PlayNext();
-        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_SFX.wav")
-            .Attribute3D(true)
-            .Play();
+    }
+
+    if (IsCrossAnimProgress(0.8f))
+    {
+        pOwner->Set_WeaponEffectMesh(false);
     }
 
     Update_Effects(pOwner);
@@ -470,7 +477,9 @@ void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
     else
     {
         if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+        {
             iIndex = 1;
+        }
         else
             iIndex = 2;
     }
@@ -482,31 +491,30 @@ void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_ExAttack_End::Update(CMiyabi* pOwner, _float dt)
 {
-    if(IsCrossAnimProgress(0.4f))
+    _int iIndex = {};
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+        iIndex = 0;
+    else
     {
-        _int iIndex = {};
-        if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
-            iIndex = 0;
+        if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+            iIndex = 1;
         else
-        {
-            if (!m_pOwnerStateMachine->Get_Bool("Extra"))
-                iIndex = 1;
-            else
-                iIndex = 2;
-        }
-        switch (iIndex)
-        {
-        case 1:
-            pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_End_SFX.wav")
-                .Attribute3D(true)
-                .Play();
-            break;
-        case 2:
-            pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
-                .Attribute3D(true)
-                .Play();
-            break;
-        }
+            iIndex = 2;
+    }
+
+    if (IsCrossAnimProgress(0.2f) && iIndex == 2)
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
+            .Attribute3D(true)
+            .Play();
+    }
+
+    if(IsCrossAnimProgress(0.4f) && iIndex == 1)
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_End_SFX.wav")
+            .Attribute3D(true)
+            .Play();
+        pOwner->Set_WeaponEffectMesh(false);
     }
 }
 

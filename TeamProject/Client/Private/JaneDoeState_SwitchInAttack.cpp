@@ -48,7 +48,7 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.451f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::NORMAL)
+                    , DAMAGE_TYPE::SWITCH)
             );
         }
         else if (Event.Tag == "AreaAttackHard")
@@ -59,7 +59,7 @@ void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.451f * Helper::Get_Random_Float(1.f, 1.5f)
-                    , DAMAGE_TYPE::HARD)
+                    , DAMAGE_TYPE::SWITCH)
             );
         }
     }
