@@ -634,12 +634,6 @@ void CPhysicsSystem::Free()
     m_Materials.clear();
     m_pMaterial = nullptr;
 
-    if (m_pCudaManager)
-    {
-        m_pCudaManager->release();
-        m_pCudaManager = nullptr;
-    }
-
     if (m_pControllerManager)
     {
         m_pControllerManager->release();
@@ -650,6 +644,12 @@ void CPhysicsSystem::Free()
     {
         m_pScene->release();
         m_pScene = nullptr;
+    }
+
+    if (m_pCudaManager)
+    {
+        m_pCudaManager->release();
+        m_pCudaManager = nullptr;
     }
 
     if (m_pDispatcher)
