@@ -32,6 +32,9 @@ public:
 public:
 	static CMiasmaGrandierJaeger_Attack* Create();
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CMiasmaGrandierJaeger* pOwner);
 };
 
 class CMiasmaGrandierJaeger_Hit : public IHState<CMiasmaGrandierJaeger>
@@ -56,6 +59,9 @@ public:
 public:
 	static CMiasmaGrandierJaeger_DisAppear* Create();
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Spawn_Effect(CMiasmaGrandierJaeger* pOwner);
 };
 
 //=================================================================================//

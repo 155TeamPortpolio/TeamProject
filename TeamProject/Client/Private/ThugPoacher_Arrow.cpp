@@ -2,6 +2,7 @@
 #include "ThugPoacher_Arrow.h"
 #include "GameInstance.h"
 #include "BattleSystem.h"
+#include "EffectContainer.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -31,8 +32,8 @@ HRESULT CThugPoacher_Arrow::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CCollider>();
 	Add_Component<CRigidBody>();
-	Add_Component<CMaterial>();
-	Add_Component<CStaticModel>();
+	//Add_Component<CMaterial>();
+	//Add_Component<CStaticModel>();
 
 	return S_OK;
 }
@@ -45,13 +46,15 @@ HRESULT CThugPoacher_Arrow::Initialize(INIT_DESC* pArg)
 
 	m_pWeaponBone = pDesc->pWeapon;
 
-	Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
+	//Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Default.model");
+	//Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 	Get_Component<CTransform>()->Scale({ 0.2f, 0.2f, 0.2f });
 
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_isAlive = false;
+
+	Initialize_Effects();
 
 	return S_OK;
 }
@@ -67,9 +70,10 @@ void CThugPoacher_Arrow::Priority_Update(_float dt)
 
 void CThugPoacher_Arrow::Update(_float dt)
 {
+	m_pTransform->Translate(m_vDir * m_fSpeed * dt);
+
 	__super::Update(dt);
 
-	m_pTransform->Translate(m_vDir * m_fSpeed * dt);
 }
 
 void CThugPoacher_Arrow::Late_Update(_float dt)
@@ -163,6 +167,17 @@ void CThugPoacher_Arrow::FinishArrow()
 	m_isAlive = false;
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_vDir = {};
+}
+
+void CThugPoacher_Arrow::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("poacher_trail.json")
+		.Build("Trail");
+
+	pObjectContainer->Add_Child(pEffect);
 }
 
 CThugPoacher_Arrow* CThugPoacher_Arrow::Create()
