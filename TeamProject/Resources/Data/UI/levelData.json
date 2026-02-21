@@ -2,11 +2,6 @@
   "levels": {
     "Global_Level": {
       "objects": [
-        {
-          "prototypeTag": "Proto_GameObject_ScreenFade",
-          "instanceName": "screen_fade",
-          "prefabPath" : ""
-        },
         
         {
           "prototypeTag": "Proto_GameObject_Dialogue",
