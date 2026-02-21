@@ -107,6 +107,7 @@ inline void RemoveFlag(TraceFlag& value, TraceFlag flag)
 typedef struct tagDefilerBlackBoard
 {
     _bool MiasmaPhase = {};
+    _bool ForceIDLE = {};
 	_vector3 vTargetPos = {};
 	_vector3 vTargetDir = {};
 	

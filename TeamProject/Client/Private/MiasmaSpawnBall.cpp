@@ -111,7 +111,7 @@ void CMiasmaSpawnBall::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-	if (timeRatio >= 1.f)
+	if (timeRatio >= 1.f && Get_Position().y <=-1.5f)
 	{
 		SpawnJaeger();
 
