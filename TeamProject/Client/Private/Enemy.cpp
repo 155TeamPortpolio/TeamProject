@@ -340,6 +340,9 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	else
 		m_tStatus.iGroggyValue += 2;
 
+	if (m_isUseGroggyRimLight == true && m_tStatus.iGroggyValue >= 100.f)
+		m_tGroggyRimLight.eCaptureCharacter = charaName;
+
 	m_tStatus.iNowHP -= fTakeDamage;
 
 	if (0 >= m_tStatus.iNowHP)
@@ -580,6 +583,12 @@ void CEnemy::ManageGroggy(const _float dt)
 		// UI È¿°ú¿ë
 		m_tStatus.isGroggyStay = true;
 		Reset_ComboCount();
+
+		if (m_isUseGroggyRimLight)
+		{
+			m_vRimLightColor = m_tGroggyRimLight.vColors[ENUM(m_tGroggyRimLight.eCaptureCharacter)];
+			m_tGroggyRimLight.vTime.y = 0.f;
+		}
 	}
 
 	if (true == m_tStatus.isGroggy)
@@ -613,7 +622,35 @@ void CEnemy::ManageGroggy(const _float dt)
 				m_tStatus.isGroggy = false;
 			}
 		}
+
+		if (m_isUseGroggyRimLight)
+		{
+			m_tGroggyRimLight.vTime.y += dt;
+			
+			if (m_tGroggyRimLight.vTime.x <= m_tGroggyRimLight.vTime.y)
+				m_tGroggyRimLight.vTime.y = 0.f;
+
+			_float T = clamp(m_tGroggyRimLight.vTime.y / m_tGroggyRimLight.vTime.x, 0.f, 1.f);
+
+			_float fPingPong = (T < 0.5f)
+				? (T * 2.f)          // 0~0.5  -> 0~1
+				: ((1.f - T) * 2.f); // 0.5~1  -> 1~0
+
+			_float EaseT = Math::ApplyEase(EaseType::InOutQuad, fPingPong);
+
+			m_fRimLightPower = m_tGroggyRimLight.vPower.x + (m_tGroggyRimLight.vPower.y - m_tGroggyRimLight.vPower.x) * EaseT;
+
+			if (m_tStatus.isGroggy == false)
+			{
+				m_tGroggyRimLight.vTime.y = 0.f;
+				m_tGroggyRimLight.eCaptureCharacter = { CHARACTER::END };
+				m_vRimLightColor = {};
+				m_fRimLightPower = 0.f;
+			}
+		}
 	}
+
+
 }
 
 DIR CEnemy::GetDIRToPlayer()

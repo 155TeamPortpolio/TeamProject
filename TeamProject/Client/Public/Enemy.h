@@ -165,7 +165,14 @@ protected:
     _bool m_isUseInspector = { false };
 #endif // _USING_GUI
 
+    /* For.Groggy RimLight*/
+    _bool   m_isUseGroggyRimLight = { false };
+    GROGGY_RIMLIGHT m_tGroggyRimLight = {};
 
+    // 강공(코린,노란색), 빙결(미야비,푸른색), 에테르(제인 도, 분홍색)
+    //_float3 m_vGroggyRimRightColors[3] = { { 0.784, 0.392f, 0.f }, {0.f, 0.384, 1.f}, {0.611f, 0.f, 1.f} };
+    //_float2 m_vGroggyRimRightTime = { 1.2f, 0.f };
+    //_float2 m_vGroggyRimRightPower = { 5.f, 20.f };
 
     // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
     //_float                  m_fDetectedRange = { 5.f };
