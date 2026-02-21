@@ -25,6 +25,7 @@ HRESULT CLoadingLevel::Awake()
 {
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->FadeIn_Screen();
 	uiDirector->Load_LevelObjects("Loading_Level");
 
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
@@ -39,9 +40,6 @@ HRESULT CLoadingLevel::Awake()
 		PreLoadForTestLevel();
 		m_bGlobal = true;
 	}
-
-	// 페이드인
-	UIDirector()->FadeIn_Screen();
 
 	return S_OK;
 }
