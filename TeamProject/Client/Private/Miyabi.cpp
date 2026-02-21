@@ -70,6 +70,9 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	if (FAILED(Initialize_Sound()))
 		return E_FAIL;
 
@@ -465,9 +468,6 @@ HRESULT CMiyabi::Initialize_StateMachine()
 		return E_FAIL;
 
 	if (FAILED(Initialize_Transitions()))
-		return E_FAIL;
-
-	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	m_pStateMachine->Set_DefaultState("Idle");

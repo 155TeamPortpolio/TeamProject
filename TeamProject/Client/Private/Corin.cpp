@@ -56,9 +56,14 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
 {
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
+
     if (FAILED(Initialize_StateMachine()))
         return E_FAIL;
+
     if (FAILED(Initialize_Weapon()))
+        return E_FAIL;
+
+    if (FAILED(Initialize_Effects()))
         return E_FAIL;
 
     if (FAILED(Initialize_Sounds()))
@@ -322,9 +327,6 @@ HRESULT CCorin::Initialize_StateMachine()
         return E_FAIL;
 
     if (FAILED(Initialize_Transitions()))
-        return E_FAIL;
-
-    if (FAILED(Initialize_Effects()))
         return E_FAIL;
 
     m_pStateMachine->Set_DefaultState("Idle");
