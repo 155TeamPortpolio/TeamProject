@@ -174,5 +174,15 @@ struct OrbitLockSuspendState
     _bool   hasPrevTargetPivot = false;
     Vector3 prevTargetPivot{};
 };
+struct OrbitLockAirStabState
+{
+    _bool   overheadActive = false;
+
+    _bool   hasLastGoodFlatDir = false;
+    Vector3 lastGoodFlatDir = Vector3::Zero;
+
+    _bool   hasFilteredTargetPivot = false;
+    Vector3 filteredTargetPivot = Vector3::Zero;
+};
 
 NS_END

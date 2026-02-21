@@ -122,7 +122,7 @@ private:
     OBJECT_HANDLE Lock_Handle() const { return m_lock.handle; }
     _float        Lock_Weight() const { return m_lockBlend.weight; }
     void          Lock_Enter(OBJECT_HANDLE h, _float curDist);
-    void          Lock_Switch(OBJECT_HANDLE h) { m_lock.handle = h; m_lockSuspend = {}; }
+    void          Lock_Switch(OBJECT_HANDLE h) { m_lock.handle = h; m_lockSuspend = {}; m_lockAir = {}; }
     void          Lock_Exit();
     void          Lock_BlendStart(_bool entering);
     void          Lock_BlendUpdate(_float dt);
@@ -173,7 +173,8 @@ private:
     CCamOcclusionTracker  m_occlusion{};
     OrbitDialogueYaw      m_dialogueYaw{};
     OrbitReturnPreset     m_returnPreset{};
-    OrbitLockSuspendState m_lockSuspend{};
+    OrbitLockSuspendState m_lockSuspend{}; 
+    OrbitLockAirStabState m_lockAir{};
 
 public:
     static  COrbitCam* Create();
