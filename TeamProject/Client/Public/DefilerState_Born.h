@@ -12,6 +12,7 @@ public:
 	virtual void Exit(CDefiler* pOwner) override;
 private:
 	_bool m_bBorn = false;
+	_float m_ElapsedTime = {};
 public:
 	static CDefilerState_Born* Create() { return new CDefilerState_Born(); }
 	virtual void Free() override { __super::Free(); }
