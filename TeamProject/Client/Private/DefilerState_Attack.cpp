@@ -25,7 +25,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
 
-	Type = 14;
+	Type = 9;
 
 	switch (Type)
 	{

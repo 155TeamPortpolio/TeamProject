@@ -20,26 +20,26 @@ public:
     {
         struct Common
         {
-            _float   pivotSec = 0.8f;
-            _float   enterSec = 0.5f;
+            _float   pivotSec = 0.7f;
+            _float   enterSec = 0.6f;
 
             EaseType pivotEase = EaseType::InOutSine;
-            EaseType enterEase = EaseType::InCubic;
+            EaseType enterEase = EaseType::InOutCubic;
         } common;
 
         struct Goal
         {
             _float pitchDeg = -6.f;
             
-            _float distMul = 0.62f;
+            _float distMul = 0.4f;
             _float distMin = 0.5f;
 
             _float enterDistMin = 0.01f;
 
-            _float pullDistMul = 0.80f;
+            _float pullDistMul = 0.5f;
 
-            _float fovAdd = 16.f;
-            _float pullFovAdd = 6.f;
+            _float fovAdd = 24.f;
+            _float pullFovAdd = 12.f;
 
             _float pivotYAdd = 0.25f;
 

@@ -65,7 +65,7 @@ private:
 private:
     _bool m_bUsingPortal = { false };
     _float m_fElapsedPortal = { 0.f };
-    _float m_fEffectTiming = { 0.4f };
+    _float m_fEffectTiming = { 0.65f };
 
 private:
     _bool m_OnExtend = false;
