@@ -39,7 +39,7 @@ void CStrikeJaeger_Attack::Enter(CStrikeJaeger* pOwner)
 			iAttackPatternIndex = 3;
 		else if (targetinginfo.fDistance < hysteriesis.fComboExit)		// 적당히 전진 공격
 			iAttackPatternIndex = 1;
-		else if (targetinginfo.fDistance < hysteriesis.fChaseEnter)		// 멀 때, 돌진공격
+		else if (targetinginfo.fDistance < hysteriesis.fChaseExit)		// 멀 때, 돌진공격
 			iAttackPatternIndex = 2;
 		else
 		{
@@ -77,6 +77,7 @@ void CStrikeJaeger_Attack::Update(CStrikeJaeger* pOwner, _float dt)
 			{
 				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOffAttackCol_L")
 				pOwner->SetBattleColliderObject("Weapon_L", CEnemy::BATTLE_COLTYPE::ATTACK, false);
@@ -84,6 +85,7 @@ void CStrikeJaeger_Attack::Update(CStrikeJaeger* pOwner, _float dt)
 			{
 				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOffAttackCol_R")
 				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, false);

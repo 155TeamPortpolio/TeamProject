@@ -58,7 +58,7 @@ namespace Engine
 	static const string G_GlobalLevelKey = "Global_Level";
 	static const string G_EngineTimerID = "Engine_Timer";
 	static constexpr _uint g_iMaxNumBones = 10000;
-	static constexpr _uint g_iMaxTransform = 7500;
+	static constexpr _uint g_iMaxTransform = 10000;
 	static constexpr _uint g_iMaxLightss = 46;
 	static constexpr _uint MAX_TEXTURE_TYPE_VALUE = static_cast<_uint>(TEXTURE_TYPE::END);
 	static constexpr _uint g_iMaxNumInstances = 3000;

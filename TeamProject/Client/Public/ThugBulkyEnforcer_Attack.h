@@ -26,6 +26,8 @@ private:
 	_bool DecideAttackPattern(CThugBulkyEnforcer* pOwner);
 
 private:
+	HitDesc		m_HardHitDesc = {};
+	HitDesc		m_KnockOutHitDesc = {};
 	_bool			m_isEndAttack = { false };
 };
 

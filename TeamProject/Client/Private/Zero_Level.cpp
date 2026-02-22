@@ -78,6 +78,12 @@ HRESULT CZero_Level::Initialize()
 
 	/*ENV*/
 	//Cloud
+	auto pPost = RenderSystem()->GetPostRenderer();
+	auto pFogCommand = pPost->GetCommand<CFogCommand>();
+	m_PrevFog = pFogCommand->GetFogDesc();
+	m_bPrevFogUse = pFogCommand->IsEnabled();
+	/*pFogCommand->SetEnable(false);*/
+
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
 	//Fog
@@ -100,14 +106,6 @@ HRESULT CZero_Level::Initialize()
 	m_Context.isFirstIn = true;
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 	Ready_Stage();
-
-	{
-		auto pEnviromentEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_enviroment.json")
-			.Build("Enviroment_Particle");
-
-		ObjectManager()->Add_Object(pEnviromentEffect, { "Zero_Level","Effect_Layer" });
-	}
 	
 	return S_OK;
 }
@@ -184,8 +182,8 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Giant", CGiant::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
@@ -257,7 +255,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
@@ -296,10 +294,20 @@ void CZero_Level::Free()
 	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()->
 		SetEnable(false);
 
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	pCloud->Set_CloudInfo(m_PrevCloud);
+
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CFogCommand>()
+		->SetFogDesc(m_PrevFog)
+		->SetEnable(m_bPrevFogUse);
+
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Clear_Characters();
 	Safe_Release(m_pBGM);
+
 }
 
 #pragma region Fog

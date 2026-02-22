@@ -333,14 +333,22 @@ void CEnemy::Active_AttackSign(_bool parryEnable, _bool isUsedSound)
 
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	_float	fTakeDamage = fDamage;
+	_float	fTakeDamage = charaName == CHARACTER::Miyabi ? fDamage * 0.6f : fDamage;
 	_bool	isPropertiesAttack = false;
 	BattleSystem()->HitVFX(eDamageType);
+	Get_Component<CAudioSource>()->
+		Slot(eDamageType == DAMAGE_TYPE::NORMAL ? "EnemyHitLight.wav" : "EnemyHitHeavy.wav")
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.4f : 0.5f).Play();
 
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
-		m_tStatus.iGroggyValue += 2;
+	{
+		if (charaName == CHARACTER::JaneDoe)
+			m_tStatus.iGroggyValue += 1.2f;
+		else
+			m_tStatus.iGroggyValue += 0.8f;
+	}
 
 	// 속성 공격 가중치
 	m_tStatus.fPropertiesValue += fTakeDamage * 1.5f;
@@ -424,6 +432,7 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 
 	// UI Mgr에 등록
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
+	UIDirector()->Register_EnemyHUD(pEnemyStatus);	// UIDirector에 핸들 캐싱
 
 	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
 }
@@ -442,6 +451,7 @@ void CEnemy::Create_UIBossHUD()
 
 	// UI Mgr에 등록
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
+	UIDirector()->Register_EnemyHUD(pBossHUD);	// UIDirector에 핸들 캐싱
 
 	m_hUIEnemyStatus = pBossHUD->Get_Handle();
 }
@@ -633,7 +643,7 @@ void CEnemy::ManageGroggy(const _float dt)
 		{
 			m_tGroggyManage.fGroggyDecreaseTime += dt;
 
-			if (0.1f <= m_tGroggyManage.fGroggyDecreaseTime)
+			if (0.07f <= m_tGroggyManage.fGroggyDecreaseTime)
 			{
 				--m_tStatus.iGroggyValue;
 				m_tGroggyManage.fGroggyDecreaseTime = 0.f;
@@ -700,13 +710,13 @@ void CEnemy::Parried()
 	if (false == m_isParryEnable)
 		return;
 
-	m_tStatus.iGroggyValue += 15.f;
+	m_tStatus.iGroggyValue += 10.f;
 }
 
 void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable, _bool isUsedSound)
 {
 	SetOnAttack(true, eSide);
-	Active_AttackSign(ParryEnable);
+	Active_AttackSign(ParryEnable, isUsedSound);
 }
 
 void CEnemy::Create_MeshPyramid()

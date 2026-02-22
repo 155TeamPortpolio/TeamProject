@@ -86,7 +86,7 @@ HRESULT CMeleeJaeger::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	m_isUseGroggyRimLight = true;
 
-	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
 	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 
@@ -289,8 +289,6 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 		pShieldDesc->pHandBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bip001_L_Hand");
 		pShieldDesc->iMaxHP = m_tStatus.iMaxHP * 0.25f;
 
-	
-
 		COLLIDER_DESC ShieldColliderDesc= {};
 		ShieldColliderDesc.eGroup = COLLISION_GROUP::MONSTER;
 		ShieldColliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
@@ -419,6 +417,14 @@ void CMeleeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 	}
 }
 
+void CMeleeJaeger::SetIsShield(_bool is)
+{
+	m_isShield = is;
+
+	if (m_isShield == false)
+		Get_Component<CAudioSource>()->Slot("melee_BreakShield.wav").Attribute3D(true).Play();
+}
+
 void CMeleeJaeger::StartRoll(_float fDegree)
 {
 	m_pShield->StartRoll(fDegree);
@@ -508,7 +514,7 @@ HRESULT CMeleeJaeger::Initialize_Effects()
 HRESULT CMeleeJaeger::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.1f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 3.f;
 	m_tHysteriesis.fComboEnter = 3.5f;

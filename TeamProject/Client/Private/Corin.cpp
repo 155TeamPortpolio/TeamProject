@@ -686,7 +686,13 @@ void CCorin::Update_States()
             {
                 m_bReserveCombo = false;
                 if (m_TargetHandle.isAlive())
+                {
+                    Get_Component<CAudioSource>()->Slot("ComboSwitch")
+                        .Attribute3D(true)
+                        .Volume(0.5f)
+                        .Play();
                     BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+                }
             }
         }
     }

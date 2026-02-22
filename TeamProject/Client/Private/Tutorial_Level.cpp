@@ -51,11 +51,11 @@ HRESULT CTutorial_Level::Awake()
 
     BattleSystem()->SetBattleCharacters({CHARACTER::Corin, CHARACTER::JaneDoe });
     BattleSystem()->SetActive(true);
-
     /* Environment */
-    auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+    auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
     pCloud->Set_Alive(true);
-    dynamic_cast<CProceduralSky*>(pCloud)->Set_CloudInfo({ _float3(0.151,0.109,0.074),_float3(0.15,0.158, 0.032), _float3(0.0,0.0,0.0),1.f,
+    m_PrevCloud = pCloud->Get_CloudInfo();
+    pCloud->Set_CloudInfo({ _float3(0.151,0.109,0.074),_float3(0.15,0.158, 0.032), _float3(0.0,0.0,0.0),1.f,
         _float3(1.0,0.25,0.0),_float3(1.0,0.649, 0.0), 0.0 });
 
     auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
@@ -75,8 +75,10 @@ HRESULT CTutorial_Level::Awake()
     pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
     auto pPost = RenderSystem()->GetPostRenderer();
-    pPost->GetCommand<CFogCommand>()->
-        SetEnable(false);
+    auto pFogCommand = pPost->GetCommand<CFogCommand>();
+    m_PrevFog = pFogCommand->GetFogDesc();
+    m_bPrevFogUse = pFogCommand->IsEnabled();
+    pFogCommand->SetEnable(false);
 
     /* Monster */
     PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_Claymore", CClaymore::Create());
@@ -169,6 +171,14 @@ void CTutorial_Level::Free()
 {
     __super::Free();
     m_pBGM->FadeOut_Volume("TutorialBGM.wav", 0.9);
+
+    auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+    pCloud->Set_CloudInfo(m_PrevCloud);
+
+    auto pPost = RenderSystem()->GetPostRenderer();
+    pPost->GetCommand<CFogCommand>()
+        ->SetFogDesc(m_PrevFog)
+        ->SetEnable(m_bPrevFogUse);
 
     m_pPlayer->Clear_Characters();
     m_pGameInstance->DestroyInstance();

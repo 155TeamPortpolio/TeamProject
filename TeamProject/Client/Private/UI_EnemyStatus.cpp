@@ -3,10 +3,11 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "EventListener.h"
+#include "EventListener.h" 
 
 #include "GaugeUI.h"
 #include "TextSlot.h"
+#include "Sprite2D.h"
 
 HRESULT CUI_EnemyStatus::Initialize_Prototype()
 {
@@ -31,7 +32,7 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     m_pMonsterStatus = pDesc->pMonsterStatus;
     m_tOwnerHandle = pDesc->tOwnerHandle;
 
-    Load_Json("enemy_status.json");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("enemy_status.json")));
     Cache_Children();
 
     // 타겟 락온 이벤트 등록
@@ -41,6 +42,11 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
         });
 
     return S_OK;
+}
+
+void CUI_EnemyStatus::Awake()
+{
+    Set_ChildAlive(CHILD::GROUP2, false);
 }
 
 void CUI_EnemyStatus::Update(_float dt)
@@ -64,15 +70,22 @@ void CUI_EnemyStatus::Update(_float dt)
         Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
     Set_GroggyText(m_pMonsterStatus->iGroggyValue, 2);
 
+    // 이상게이지
+    Update_Anormaly();
+    Set_GaugeFill(CHILD::ATTRIBUTE_GAUGE, m_pMonsterStatus->fPropertiesValue / 100.f);
+
     // 모든 하위 UI 업데이트
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_EnemyStatus::Load_Json(const string& resourceKey)
+void CUI_EnemyStatus::UI_Active(void* pArg)
 {
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath(resourceKey);
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+    Set_Alpha(1.f);
+}
+
+void CUI_EnemyStatus::UI_DeActive(void* pArg)
+{
+    Set_Alpha(0.f);
 }
 
 void CUI_EnemyStatus::Cache_Children()
@@ -82,11 +95,7 @@ void CUI_EnemyStatus::Cache_Children()
     // 자식 UI 오브젝트 포인터를 배열에 캐싱
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
     {
-        const string& strInstanceName = INSTANCENAMES[i];
-        if (strInstanceName.empty())
-            continue;
-
-        auto pObj = pContainer->Find_Descendant(strInstanceName);
+        auto pObj = pContainer->Find_Descendant(INSTANCENAMES[i]);
         if (!pObj)
             continue;
 
@@ -100,7 +109,13 @@ void CUI_EnemyStatus::Cache_Children()
             m_pGauges[i] = pGauge;
     }
 
-    m_pGroggyText = m_pChildren[ENUM(CHILD::TEXT_GROGGY)]->Get_Component<CTextSlot>();
+    auto pGroggyText = pContainer->Find_Descendant("groggyText");
+    if (pGroggyText)
+        m_pGroggyText = pGroggyText->Get_Component<CTextSlot>();
+
+    auto pIcon = pContainer->Find_Descendant("attributeIcon");
+    if (pIcon)
+        m_pIcon = pIcon->Get_Component<CSprite2D>();
 }
 
 void CUI_EnemyStatus::Set_TargetLock(TARGET_LOCK_DESC& desc)
@@ -179,6 +194,60 @@ void CUI_EnemyStatus::Apply_Blink(_float fRatio, _float dt)
     _float t = (sinf(m_fBlinkAcc) * 0.5f) + 0.5f; // 0 ~ 1
     Vector4 vColor = Vector4::Lerp(Vector4(UI_HPBACK_DARK), Vector4(UI_HPBACK_LIGHT), t);
     Set_ChildColor(CHILD::GAUGE_HP_BACK, vColor);
+}
+
+void CUI_EnemyStatus::Update_Anormaly()
+{
+    if (m_eLastHitCharacter == m_pMonsterStatus->eLastHitCharacter)
+        return;
+
+    if (!m_pIcon)
+        return;
+
+    m_eLastHitCharacter = m_pMonsterStatus->eLastHitCharacter;
+
+    Set_ChildAlive(CHILD::GROUP2, true);
+    Apply_CharacterColor(m_eLastHitCharacter);
+    m_pIcon->Change_Texture(0, G_GlobalLevelKey, Get_IconFilePath(m_eLastHitCharacter));
+}
+
+string CUI_EnemyStatus::Get_IconFilePath(CHARACTER eCharacter)
+{
+    switch (eCharacter)
+    {
+    case CHARACTER::Miyabi: return "IconFrost.png";
+    case CHARACTER::Corin:
+    case CHARACTER::JaneDoe:
+    default:
+        return "IconPhysDmg.png";
+    }
+}
+
+void CUI_EnemyStatus::Apply_CharacterColor(CHARACTER eCharacter)
+{
+    _float4 gauge{};
+    _float4 gaugeBG{};
+    _float4 iconBG{};
+
+    switch (eCharacter)
+    {
+    case CHARACTER::Miyabi:
+        gauge = _float4(0.129f, 0.953f, 0.937f, 1.f);
+        gaugeBG = _float4(0.231f, 0.376f, 0.439f, 1.f);
+        iconBG = _float4(0.004f, 0.310f, 0.439f, 1.f);
+        break;
+    case CHARACTER::Corin:
+    case CHARACTER::JaneDoe:
+    default:
+        gauge = _float4(1.f, 0.859f, 0.f, 1.f);
+        gaugeBG = _float4(0.408f, 0.361f, 0.188f, 1.f);
+        iconBG = _float4(0.384f, 0.275f, 0.f, 1.f); 
+        break;
+    }
+
+    Set_ChildColor(CHILD::ATTRIBUTE_GAUGE, gauge);
+    Set_ChildColor(CHILD::ATTRIBUTE_GAUGE_BG, gaugeBG);
+    Set_ChildColor(CHILD::ATTRIBUTE_ICON_BG, iconBG);
 }
 
 void CUI_EnemyStatus::Set_ChildAlive(CHILD child, _bool isAlive)

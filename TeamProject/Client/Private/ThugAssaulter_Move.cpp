@@ -34,9 +34,9 @@ void CThugAssaulter_Move::Enter(CThugAssaulter* pOwner)
 			_int i = Helper::Get_Random_Int(1, 3);
 
 			if (i == 0)
-				iMovePatternIndex = MOVEINDEX::Evade;
-			else
 				iMovePatternIndex = MOVEINDEX::Walk_Back;
+			else
+				iMovePatternIndex = MOVEINDEX::Evade;
 		}
 		else if (hysteriesis.fComboExit <= fDistance)
 			iMovePatternIndex = MOVEINDEX::Walk_Front;

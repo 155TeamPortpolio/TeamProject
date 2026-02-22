@@ -41,6 +41,21 @@
           "EventTime": 1.0939570665359497,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.5199999809265137,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Low.wav"
+        },
+        {
+          "EventTime": 0.7711501121520996,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        },
+        {
+          "EventTime": 0.8563352823257446,
+          "EventType": "Notify",
+          "EventTag": "melee_FootStepR.wav"
         }
       ]
     },
@@ -48,14 +63,9 @@
       "ClipTag": "MeleeJaeger_Ani_Attack_02",
       "Events": [
         {
-          "EventTime": 0.5642625093460083,
+          "EventTime": 0.21286550164222717,
           "EventType": "Notify",
-          "EventTag": "ShieldRollStart"
-        },
-        {
-          "EventTime": 0.8999999761581421,
-          "EventType": "Notify",
-          "EventTag": "ShieldRollEnd"
+          "EventTag": "UnleashAttack"
         },
         {
           "EventTime": 0.3833542466163635,
@@ -63,19 +73,34 @@
           "EventTag": "TurnOnAttackCol"
         },
         {
+          "EventTime": 0.5642625093460083,
+          "EventType": "Notify",
+          "EventTag": "ShieldRollStart"
+        },
+        {
           "EventTime": 0.7163093090057373,
           "EventType": "Notify",
           "EventTag": "TurnOffAttackCol"
         },
         {
-          "EventTime": 0.21286550164222717,
-          "EventType": "Notify",
-          "EventTag": "UnleashAttack"
-        },
-        {
           "EventTime": 0.7196881175041199,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Notify",
+          "EventTag": "ShieldRollEnd"
+        },
+        {
+          "EventTime": 0.26354774832725525,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Middle.wav"
+        },
+        {
+          "EventTime": 0.5541260838508606,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
         }
       ]
     },
@@ -101,6 +126,11 @@
           "EventTime": 0.7648595571517944,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.4000000059604645,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Middle.wav"
         }
       ]
     },
@@ -146,6 +176,21 @@
           "EventTime": 1.765302062034607,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.36803120374679565,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Middle.wav"
+        },
+        {
+          "EventTime": 0.63001948595047,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Middle.wav"
+        },
+        {
+          "EventTime": 1.1770000457763672,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Low.wav"
         }
       ]
     },
@@ -171,6 +216,11 @@
           "EventTime": 1.221573829650879,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.6467835903167725,
+          "EventType": "Sound",
+          "EventTag": "melee_Attack_Low.wav"
         }
       ]
     },
@@ -204,7 +254,13 @@
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Evade",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.30000001192092896,
+          "EventType": "Sound",
+          "EventTag": "melee_BackFlip.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Hit_H_Back",
@@ -344,27 +400,93 @@
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Move_B",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.3345029354095459,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        },
+        {
+          "EventTime": 0.9263157844543457,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Move_F",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6222222447395325,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.0362573862075806,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Move_F_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.378947377204895,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.0713450908660889,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Move_L",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.4561403691768646,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.0222222805023193,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Move_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.5590643882751465,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        },
+        {
+          "EventTime": 0.952046811580658,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Move_R_F",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6292397975921631,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.0292397737503052,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Run_End",
@@ -372,11 +494,28 @@
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Run_Loop",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepL.wav"
+        },
+        {
+          "EventTime": 0.27654320001602173,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "MeleeJaeger_Ani_Run_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.3400000035762787,
+          "EventType": "Sound",
+          "EventTag": "melee_FootStepR.wav"
+        }
+      ]
     }
   ]
 }

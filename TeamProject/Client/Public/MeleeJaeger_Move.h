@@ -15,7 +15,8 @@ private:
 		Walk_Left,
 		Walk_Right,
 		Walk_F_R,
-		Walk_R_F
+		Walk_R_F,
+		Evade
 	};
 
 public:
@@ -114,6 +115,18 @@ public:
 
 public:
 	static CMeleeJaeger_Walk_R_F* Create() { return new CMeleeJaeger_Walk_R_F(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+class CMeleeJaeger_Evade : public IBaseState<CMeleeJaeger>
+{
+public:
+	virtual void Enter(CMeleeJaeger* pOwner) override;
+	virtual void Update(CMeleeJaeger* pOwner, _float dt) override;
+	virtual void Exit(CMeleeJaeger* pOwner) override;
+
+public:
+	static CMeleeJaeger_Evade* Create() { return new CMeleeJaeger_Evade(); }
 	virtual void Free() override { __super::Free(); }
 };
 

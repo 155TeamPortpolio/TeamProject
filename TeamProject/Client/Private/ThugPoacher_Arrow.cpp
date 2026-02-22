@@ -74,6 +74,11 @@ void CThugPoacher_Arrow::Update(_float dt)
 
 	__super::Update(dt);
 
+	m_vLifeTime.y += dt;
+
+	if (m_vLifeTime.x <= m_vLifeTime.y)
+		FinishArrow();
+
 	if (m_isSound)
 	{
 		m_vSoundTime.y += dt;
@@ -196,6 +201,7 @@ void CThugPoacher_Arrow::FinishArrow()
 	m_vDir = {};
 	SetRenderLayer(RENDER_LAYER::None);
 	m_isSound = true;
+	m_vLifeTime.y = {};
 }
 
 void CThugPoacher_Arrow::Initialize_Effects()

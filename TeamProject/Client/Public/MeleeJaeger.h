@@ -42,7 +42,7 @@ public:
     /* Setter */
     void            Idle() { m_isIdle = true; }
     virtual void    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
-    void            SetIsShield(_bool is) { m_isShield = is; }
+    void            SetIsShield(_bool is); /*{ m_isShield = is; }*/
     void            StartRoll(_float fDegree);
     void            EndRoll();
 

@@ -43,6 +43,11 @@
           "EventTag": "TurnOnAttackCol_L"
         },
         {
+          "EventTime": 0.46000000834465027,
+          "EventType": "Sound",
+          "EventTag": "StrikerBaseSwing2.wav"
+        },
+        {
           "EventTime": 0.5,
           "EventType": "Sound",
           "EventTag": "StrikerSlash08.wav"
@@ -56,11 +61,6 @@
           "EventTime": 0.5839505791664124,
           "EventType": "Notify",
           "EventTag": "TurnOffAttackCol_L"
-        },
-        {
-          "EventTime": 0.46000000834465027,
-          "EventType": "Sound",
-          "EventTag": "StrikerBaseSwing2.wav"
         }
       ]
     },
@@ -219,15 +219,33 @@
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Dodge",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "striker_Evade.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Dodge_L",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "striker_Evade.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Dodge_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "striker_Evade.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Hit_H_Back",
@@ -387,35 +405,113 @@
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Run_End",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.15000000596046448,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Run_Loop",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        },
+        {
+          "EventTime": 0.22514620423316956,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Run_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.4000000059604645,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_B",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6230669021606445,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.3131903409957886,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_F",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.712475597858429,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.3830409049987793,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_FL_RFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6733592748641968,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.2908382415771484,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_FR_RFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.699999988079071,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.304808259010315,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_L",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6985054612159729,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.3774528503417969,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_L_Loop",
@@ -427,7 +523,18 @@
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6007147431373596,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.2768681049346924,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_R_Loop",
@@ -439,7 +546,18 @@
     },
     {
       "ClipTag": "StrikeJaeger_Ani_Walk_RF_LFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.6230669021606445,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.2740740776062012,
+          "EventType": "Sound",
+          "EventTag": "striker_FootStepR.wav"
+        }
+      ]
     }
   ]
 }

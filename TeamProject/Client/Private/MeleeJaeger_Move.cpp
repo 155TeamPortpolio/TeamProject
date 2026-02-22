@@ -32,7 +32,15 @@ void CMeleeJaeger_Move::Enter(CMeleeJaeger* pOwner)
 
 		// 거리기반 행동판단해야함
 		if (fDistance <= hysteriesis.fEvadeEnter)
-			iMovePatternIndex = MOVEINDEX::Walk_Back;
+		{
+			_int i = Helper::Get_Random_Int(1, 3);
+
+			if (i == 1)
+				iMovePatternIndex = MOVEINDEX::Walk_Back;
+			else
+				iMovePatternIndex = MOVEINDEX::Evade;
+			
+		}
 		else if (fDistance <= hysteriesis.fComboExit)
 			iMovePatternIndex = Helper::Get_Random_Int(3, 7);
 		else
@@ -69,6 +77,7 @@ void CMeleeJaeger_Move::Register_States()
 	//m_pSubStateMachine->Register_State("Walk_F_L", CMeleeJaeger_Walk_F_L::Create());
 	m_pSubStateMachine->Register_State("Walk_F_R", CMeleeJaeger_Walk_F_R::Create());
 	m_pSubStateMachine->Register_State("Walk_R_F", CMeleeJaeger_Walk_R_F::Create());
+	m_pSubStateMachine->Register_State("Evade", CMeleeJaeger_Evade::Create());
 }
 
 void CMeleeJaeger_Move::Register_Transitions()
@@ -206,5 +215,20 @@ void CMeleeJaeger_Walk_R_F::Update(CMeleeJaeger* pOwner, _float dt)
 }
 
 void CMeleeJaeger_Walk_R_F::Exit(CMeleeJaeger* pOwner)
+{
+}
+
+/*============================================================================*/
+void CMeleeJaeger_Evade::Enter(CMeleeJaeger* pOwner)
+{
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("MeleeJaeger_Ani_Evade")
+		.Apply();
+}
+
+void CMeleeJaeger_Evade::Update(CMeleeJaeger* pOwner, _float dt)
+{
+}
+
+void CMeleeJaeger_Evade::Exit(CMeleeJaeger* pOwner)
 {
 }
