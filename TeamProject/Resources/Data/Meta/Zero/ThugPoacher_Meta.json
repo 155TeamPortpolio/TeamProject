@@ -25,35 +25,122 @@
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_B",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.7200000286102295,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.3918129205703735,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_F",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.8483431339263916,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.659999966621399,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_FL_RFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.9345029592514038,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.690000057220459,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_FR_RFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.8615984320640564,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.690000057220459,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_L",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.8284600377082825,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        },
+        {
+          "EventTime": 1.690000057220459,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_R",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.7200000286102295,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.448148250579834,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_ThugPoacher_Ani_Walk_RF_LFoot",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.596491277217865,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        },
+        {
+          "EventTime": 1.440000057220459,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "ThugPoacher_Ani_Attack_01",
       "Events": [
+        {
+          "EventTime": 0.30000001192092896,
+          "EventType": "Sound",
+          "EventTag": "poacher_Shoot_ThreeTimes_FULL.wav"
+        },
+        {
+          "EventTime": 0.35750487446784973,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithoutSound"
+        },
         {
           "EventTime": 0.8767381310462952,
           "EventType": "Notify",
@@ -73,11 +160,6 @@
           "EventTime": 2.0003249645233154,
           "EventType": "Notify",
           "EventTag": "FinishAll"
-        },
-        {
-          "EventTime": 0.35750487446784973,
-          "EventType": "Notify",
-          "EventTag": "UnleashAttack"
         }
       ]
     },
@@ -87,7 +169,7 @@
         {
           "EventTime": 0.82962965965271,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithoutSound"
         },
         {
           "EventTime": 1.3222222328186035,
@@ -98,6 +180,11 @@
           "EventTime": 1.65925931930542,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.09000000357627869,
+          "EventType": "Sound",
+          "EventTag": "poacher_Attack2_FULL.wav"
         }
       ]
     },
@@ -118,6 +205,11 @@
           "EventTime": 1.8680959939956665,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.0800000429153442,
+          "EventType": "Sound",
+          "EventTag": "poacher_Attack3.wav"
         }
       ]
     },
@@ -151,7 +243,13 @@
     },
     {
       "ClipTag": "ThugPoacher_Ani_Evade",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Sound",
+          "EventTag": "poacher_Evade.wav"
+        }
+      ]
     },
     {
       "ClipTag": "ThugPoacher_Ani_Hit_H_Back",
@@ -299,11 +397,28 @@
     },
     {
       "ClipTag": "ThugPoacher_Ani_Run_Loop",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.019999999552965164,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepL.wav"
+        },
+        {
+          "EventTime": 0.36000001430511475,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        }
+      ]
     },
     {
       "ClipTag": "ThugPoacher_Ani_Run_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.3799999952316284,
+          "EventType": "Sound",
+          "EventTag": "poacher_FootStepR.wav"
+        }
+      ]
     }
   ]
 }

@@ -18,7 +18,7 @@ void CDefilerState_Born::Enter(CDefiler* pOwner)
 void CDefilerState_Born::Update(CDefiler* pOwner, _float dt)
 {
 	m_ElapsedTime += dt;
-	if (!m_bBorn&&dt>0.3f) {
+	if (!m_bBorn&& m_ElapsedTime >0.1f) {
 		pOwner->ControlBGM();
 		m_bBorn = true;
 	}

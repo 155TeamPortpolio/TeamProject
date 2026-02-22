@@ -109,7 +109,7 @@ namespace Client {
 		HitDesc& Damage(_float f, DAMAGE_TYPE e = DAMAGE_TYPE::NORMAL) { fDamage = f; eDamageType = e; return *this; }
 		HitDesc& Interval(_float f) { fInterval = f; return *this; }
 		HitDesc& MaxCount(_uint i) { iMaxCount = i; return *this; }
-		HitDesc& Charge(_float fEnergy, _float fDecibel) { fEnergyCharge = fEnergy; fDecibelCharge = fDecibel; return *this; }
+		HitDesc& Charge(_float fEnergy = 1.f, _float fDecibel = 10.f) { fEnergyCharge = fEnergy; fDecibelCharge = fDecibel; return *this; }
 	};
 
 	// 게이지 지연및 보간 상태

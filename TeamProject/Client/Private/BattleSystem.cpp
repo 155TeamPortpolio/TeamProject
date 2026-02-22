@@ -99,6 +99,7 @@ void CBattleSystem::SetActive(_bool isActive)
 		return;
 	}
 	else {
+		m_pFXFlow->Clear();
 		m_isActive = true;
 	}
 }

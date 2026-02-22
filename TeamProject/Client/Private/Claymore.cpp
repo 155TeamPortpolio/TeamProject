@@ -380,7 +380,8 @@ void CClaymore::Parried()
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parried");
-	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetOnAttack(false, ATTACK_SIDE::NONE); 	
+	SetBattleColliderObject("Weapon", BATTLE_COLTYPE::ATTACK, false);
 }
 
 HRESULT CClaymore::Ready_Children(INIT_DESC* pArg)
@@ -572,7 +573,7 @@ HRESULT CClaymore::Initialize_Transitions()
 HRESULT CClaymore::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 2.5f;

@@ -1554,6 +1554,9 @@
     <Filter Include="02. GameObject\Object\Npc\BangBoo">
       <UniqueIdentifier>{6c98ca37-6140-4d9b-8160-0dcaf301fef4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\WipeoutOverlay">
+      <UniqueIdentifier>{49cfe856-c353-43a0-843d-34cf5f398ecb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -3026,6 +3029,9 @@
     <ClInclude Include="..\public\BangBoo.h">
       <Filter>02. GameObject\Object\Npc\BangBoo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_WipeoutOverlay.h">
+      <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4450,6 +4456,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BangBoo.cpp">
       <Filter>02. GameObject\Object\Npc\BangBoo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_WipeoutOverlay.cpp">
+      <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

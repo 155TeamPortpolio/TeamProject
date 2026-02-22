@@ -83,6 +83,7 @@ HRESULT CGacha_Level::Awake()
 
 void CGacha_Level::Update()
 {
+	Set_ShadowCam();
 	Update_CamTime();
 	Update_AvatarSequence();
 }
@@ -152,6 +153,22 @@ void CGacha_Level::Update_CamTime()
 		if (CamDirector()->GetTime() >= 2.2f)
 			m_pGachaProps->PlayTVSequence();
 	}
+}
+
+void CGacha_Level::Set_ShadowCam()
+{
+	auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+
+	auto pTransform = pShadowCam->Get_Component<CTransform>();
+	pTransform->Set_Pos(_float4(0.f, 50.f, -50.f, 1.f));
+
+	LIGHT_DESC lightDesc = {};
+	lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
+	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+	lightDesc.fLightIntensity = 1.f;
+	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 }
 
 void CGacha_Level::Update_AvatarSequence()
