@@ -939,6 +939,10 @@ void CBattlePlayer::NotifyCharacterSwitchOut(_bool bNext)
         if (m_iParryingCount == 0) m_iParryingCount = 6;
         m_fSwitchTimer = SWITCH_COOLDOWN;
     }
+    else
+    {
+        m_fSwitchTimer = 0.02f;
+    }
 }
 
 _bool CBattlePlayer::Can_Switch() const
