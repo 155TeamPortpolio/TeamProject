@@ -12,6 +12,7 @@
 #include "UI_ClearRT.h"
 #include "UI_SwitchRT.h"
 #include "UI_WipeoutRT.h"
+#include "UI_WipeoutOverlay.h"
 
 HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
 {
@@ -24,6 +25,7 @@ HRESULT CUI_RenderTargetScreen::Initialize_Prototype()
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ClearRT", CUI_ClearRT::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SwitchRT", CUI_SwitchRT::Create());
     PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_WipeoutRT", CUI_WipeoutRT::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_WipeoutOverlay", CUI_WipeoutOverlay::Create());
 
 	return S_OK;
 }
@@ -43,7 +45,17 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
     Ready_RenderState();
     Ready_RTDrawObjects();
 
+    // Create Wipeout Overlay
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_WipeoutOverlay"}).Build("wipeoutOverlay");
+    if (pObj)
+    {
+        UIManager()->Add_UIObject(pObj, LevelManager()->Get_NowLevelKey());
+        UIDirector()->Register(pObj);
+    } 
+
     m_pTransform->Scale(_float3(m_vViewPortSize.x, m_vViewPortSize.y, 1.f));
+
+    SetRenderLayer(RENDER_LAYER::None);
 
 	return S_OK;
 }

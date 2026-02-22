@@ -225,6 +225,20 @@ void CUIDirector::Show_Wipeout()
 	UI_Active("wipeoutRT");
 }
 
+void CUIDirector::Show_WipeoutOverlay()
+{
+	UI_Active("wipeout_overlay");
+}
+
+_bool CUIDirector::Is_WipeoutOverlayFinished()
+{
+	auto handle = Find_Handle("wipeout_overlay");
+	if (!handle)
+		return true;
+
+	return handle->Get()->Is_AnimFinished();
+}
+
 void CUIDirector::Initialize()
 {
 	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록
