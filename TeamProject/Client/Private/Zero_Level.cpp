@@ -78,6 +78,12 @@ HRESULT CZero_Level::Initialize()
 
 	/*ENV*/
 	//Cloud
+	auto pPost = RenderSystem()->GetPostRenderer();
+	auto pFogCommand = pPost->GetCommand<CFogCommand>();
+	m_PrevFog = pFogCommand->GetFogDesc();
+	m_bPrevFogUse = pFogCommand->IsEnabled();
+	/*pFogCommand->SetEnable(false);*/
+
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
 	//Fog
@@ -100,14 +106,6 @@ HRESULT CZero_Level::Initialize()
 	m_Context.isFirstIn = true;
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 	Ready_Stage();
-
-	{
-		auto pEnviromentEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_enviroment.json")
-			.Build("Enviroment_Particle");
-
-		ObjectManager()->Add_Object(pEnviromentEffect, { "Zero_Level","Effect_Layer" });
-	}
 	
 	return S_OK;
 }
@@ -118,11 +116,7 @@ HRESULT CZero_Level::Awake()
 		return E_FAIL;
 
 	UIDirector()->FadeIn_Screen();
-	auto pPost = RenderSystem()->GetPostRenderer();
-	auto pFogCommand = pPost->GetCommand<CFogCommand>();
-	m_PrevFog = pFogCommand->GetFogDesc();
-	m_bPrevFogUse = pFogCommand->IsEnabled();
-	pFogCommand->SetEnable(false);
+
 	return S_OK;
 }
 
@@ -278,7 +272,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
