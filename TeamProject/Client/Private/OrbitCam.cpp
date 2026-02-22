@@ -583,6 +583,8 @@ void COrbitCam::Priority_Update(_float dt)
         rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     }
 
+    OrbitCollideEval colRes{};
+
     if (m_dialogueMode)
     {
         m_hitDist = false;
@@ -593,13 +595,19 @@ void COrbitCam::Priority_Update(_float dt)
     }
     else
     {
-        const OrbitCollideEval colRes = EvalCollideDist(dt, m_prof, pivotCurNext, m_pose.distWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
+        colRes = EvalCollideDist(dt, m_prof, pivotCurNext, m_pose.distWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
 
         m_hitDist = colRes.hit;
         m_yawDeltaCapDeg = colRes.yawDeltaCapDeg;
         m_pitchDeltaCapDeg = colRes.pitchDeltaCapDeg;
 
         m_pose.distGoal = colRes.goalDist;
+
+        if (colRes.hit)
+        {
+            if (m_pose.distGoal > colRes.allowedDist) m_pose.distGoal = colRes.allowedDist;
+            if (m_pose.distCur > colRes.allowedDist) m_pose.distCur = colRes.allowedDist;
+        }
     }
 
     const float distA = ExpAlphaSpeed(m_prof.distSmooth, dt);
@@ -607,6 +615,12 @@ void COrbitCam::Priority_Update(_float dt)
     m_pose.rotCurDeg = rotCurNext;
     m_pose.pivotCurWorld = pivotCurNext;
     m_pose.distCur = m_pose.distCur + (m_pose.distGoal - m_pose.distCur) * distA;
+
+    if (!m_dialogueMode && m_hitDist)
+    {
+        if (m_pose.distCur > colRes.allowedDist) m_pose.distCur = colRes.allowedDist;
+        if (m_pose.distGoal > colRes.allowedDist) m_pose.distGoal = colRes.allowedDist;
+    }
 
     ApplyPose(dt, lockRes);
     EvalOcclusion();
@@ -789,6 +803,8 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
         }
     }
 
+    const _bool hardGroundClamped = HardClampCameraPosToGround(camPos);
+
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
 
@@ -798,6 +814,12 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
     {
         Vector3 lookAt = Vector3::Lerp(pivot, lockRes.focusPos, lockRes.weight);
         m_pTransform->LookAt(Vector4(lookAt.x, lookAt.y, lookAt.z, 1.f));
+        return;
+    }
+
+    if (hardGroundClamped)
+    {
+        m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
         return;
     }
 
@@ -1579,6 +1601,54 @@ OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPi
     }
 
     return out;
+}
+
+_bool COrbitCam::QueryGroundMinCamY_BySweep(const Vector3& candidateCamPos, _float& outMinCamY)
+{
+    auto scene = PhysicsSystem()->Get_Scene();
+    if (!scene) return false;
+
+    const _float ccRadius = Get_Component<CCharacterController>()->Get_Radius();
+    const _float probeRadius = max(0.01f, ccRadius * m_prof.hardGroundRadiusScale);
+
+    const _float probeUp = max(0.01f, m_prof.hardGroundProbeUp);
+    const _float probeDown = max(0.01f, m_prof.hardGroundProbeDown);
+    const _float padding = max(0.f, m_prof.hardGroundPadding);
+
+    const Vector3 startPos = candidateCamPos + Vector3(0.f, probeUp, 0.f);
+    const _float sweepDist = probeUp + probeDown;
+
+    PxSphereGeometry geom(probeRadius);
+    PxTransform posePx(PxVec3(startPos.x, startPos.y, startPos.z));
+
+    PxQueryFilterData filterData;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
+
+    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::GROUND), false);
+
+    PxSweepBuffer hit;
+    PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL;
+
+    const PxVec3 dirPx(0.f, -1.f, 0.f);
+
+    const _bool ok = scene->sweep(geom, posePx, dirPx, sweepDist, hit, hitFlags, filterData, &filterCallback);
+    if (!ok || !hit.hasBlock) return false;
+
+    const _float impactCenterY = startPos.y - (_float)hit.block.distance;
+    outMinCamY = impactCenterY + padding;
+    return true;
+}
+
+_bool COrbitCam::HardClampCameraPosToGround(Vector3& inOutCamPos)
+{
+    if (!m_prof.hardGroundClamp) return false;
+
+    _float minCamY = 0.f;
+    if (!QueryGroundMinCamY_BySweep(inOutCamPos, minCamY)) return false;
+    if (inOutCamPos.y >= minCamY) return false;
+
+    inOutCamPos.y = minCamY;
+    return true;
 }
 
 void COrbitCam::DrawDebugPivot()

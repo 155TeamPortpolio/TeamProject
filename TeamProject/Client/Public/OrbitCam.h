@@ -114,6 +114,8 @@ private:
     OrbitInputEval   EvalInput(_float dt, _float lockW);
     OrbitCollideEval EvalCollideDist(_float dt, const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg, _float distGoal);
     _float           CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg);
+    _bool   QueryGroundMinCamY_BySweep(const Vector3& candidateCamPos, _float& outMinCamY);
+    _bool   HardClampCameraPosToGround(Vector3& inOutCamPos);
 
 private:
     void          Lock_Reset();

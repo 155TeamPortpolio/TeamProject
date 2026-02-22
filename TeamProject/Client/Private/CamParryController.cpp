@@ -943,20 +943,28 @@ void CamParryController::End()
     OrbitSnapshot snap{};
     orbit->CaptureSnapshot(snap);
 
+    auto IsEffectiveLockOn = [&](const OrbitSnapshot& s) -> _bool
+        {
+            const _bool hasHandle = s.lock.handle.isValid();
+
+            if (!hasHandle) return false;
+
+            if (s.lockBlend.active)
+            {
+                if (s.lockBlend.entering) return true;
+                return false;
+            }
+
+            if (s.lock.active) return true;
+            if (s.lockBlend.weight > 0.001f) return true;
+
+            return false;
+        };
+
     OBJECT_HANDLE lockHandle = snap.lock.handle;
-    const _bool lockWasOn = lockHandle.isValid() && (snap.lock.active || snap.lockBlend.active || snap.lockBlend.weight > 0.f);
+    const _bool lockOn = IsEffectiveLockOn(snap);
 
-    _bool lockOn = lockWasOn;
-    _bool restoringLock = false;
-
-    if (!lockOn && exit.savedLockWasOn && exit.savedLockHandle.isValid())
-    {
-        lockHandle = exit.savedLockHandle;
-        lockOn = true;
-        restoringLock = true;
-    }
-
-    exit.returnLockHandle = lockHandle;
+    exit.returnLockHandle = lockOn ? lockHandle : OBJECT_HANDLE{};
     exit.returnLockBlend = lockOn && exit.returnLockHandle.isValid();
 
     if (exit.returnLockBlend)

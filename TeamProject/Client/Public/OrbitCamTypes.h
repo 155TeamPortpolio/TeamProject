@@ -85,30 +85,30 @@ struct OrbitProfile
     _float pitchLimitMinDeg = -40.f;
     _float pitchLimitMaxDeg = 50.f;
 
-    _float rotSmooth   = 14.f;
-    _float distSmooth  = 12.f;
+    _float rotSmooth = 14.f;
+    _float distSmooth = 12.f;
     _float pivotSmooth = 12.f;
 
-    _float offsetY     = 0.f;
+    _float offsetY = 0.f;
 
-    _float startDist     = 4.8f;
+    _float startDist = 4.8f;
     _float startPitchDeg = -20.f;
-    _float startHeight   = 0.85f;
+    _float startHeight = 0.85f;
 
-    _bool  autoYaw      = true;
+    _bool  autoYaw = true;
     _float autoYawSpeed = 0.4f;
     _float autoYawDelay = 0.6f;
 
-    _float zoomInCollide  = 12.f;
+    _float zoomInCollide = 12.f;
     _float zoomOutCollide = 6.f;
 
     _float switchBlendSec = 1.f;
-    EaseType switchEase   = EaseType::OutCubic;
+    EaseType switchEase = EaseType::OutCubic;
 
     _float lockYawSpeed = 22.f;
 
     _float lockFocusNear = 0.35f;
-    _float lockFocusFar  = 0.70f;
+    _float lockFocusFar = 0.70f;
     _float lockFocusDist = 2.5f;
 
     _bool  lockAutoZoom = true;
@@ -124,6 +124,12 @@ struct OrbitProfile
 
     _float yawHitDeltaCapDeg = 200.f;
     _float pitchHitDeltaCapDeg = 180.f;
+
+    _bool  hardGroundClamp = true;
+    _float hardGroundProbeUp = 1.25f;
+    _float hardGroundProbeDown = 4.0f;
+    _float hardGroundPadding = 0.03f;
+    _float hardGroundRadiusScale = 0.95f;
 };
 struct OrbitSnapshot
 {
