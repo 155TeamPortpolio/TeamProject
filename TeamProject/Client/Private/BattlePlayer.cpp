@@ -171,6 +171,20 @@ void CBattlePlayer::Render_GUI()
             Character->Set_AttackPower(0.f);
         }
     }
+    if(m_bLockInput)
+    {
+        if (ImGui::Button("UnLockInput"))
+        {
+            m_bLockInput = false;
+        }
+    }
+    else
+    {
+        if (ImGui::Button("LockInput"))
+        {
+            m_bLockInput = true;
+        }
+    }
 
     ImGui::Separator();
     if (ImGui::Button("RecoverHP"))
