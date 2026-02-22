@@ -1,6 +1,6 @@
 {
   "TagDataFormat": "Base",
-  "TagArea": "Zero_6_1",
+  "TagArea": "Zero_3_2",
   "iVersion": 1,
   "Layers": [
     {
@@ -8,8 +8,8 @@
       "Objects": [
         {
           "iObjID": 0,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Decalout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Decalout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_AnimMeshout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_AnimMeshout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -37,8 +37,8 @@
         },
         {
           "iObjID": 1,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Groundout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Groundout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Bridgeout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Bridgeout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -66,8 +66,8 @@
         },
         {
           "iObjID": 2,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_NAPMeshRootout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_NAPMeshRootout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Buildingout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Buildingout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -95,8 +95,8 @@
         },
         {
           "iObjID": 3,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Pillarout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Pillarout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Ceilingout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Ceilingout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -124,8 +124,8 @@
         },
         {
           "iObjID": 4,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Propout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Propout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Constructionout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Constructionout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -153,8 +153,8 @@
         },
         {
           "iObjID": 5,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Stairout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Stairout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Decalout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Decalout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -182,8 +182,8 @@
         },
         {
           "iObjID": 6,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Wallout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Wallout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Groundout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Groundout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -211,8 +211,8 @@
         },
         {
           "iObjID": 7,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_3_AnimMeshout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_3_AnimMeshout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_NAPMeshRootout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_NAPMeshRootout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -240,8 +240,8 @@
         },
         {
           "iObjID": 8,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_BackGround_Groupout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_BackGround_Groupout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_PathMeshout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_PathMeshout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -269,8 +269,8 @@
         },
         {
           "iObjID": 9,
-          "TagModelResourceKey": "Stage_Zero_Abyss_3_2_Buildingout.model",
-          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_2_Buildingout.mat",
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Propout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Propout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -293,6 +293,93 @@
             0.0,
             0.0,
             0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 10,
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Stairout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Stairout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 11,
+          "TagModelResourceKey": "Stage_Zero_Abyss_2_1_Wallout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_2_1_Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 12,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_BackGround_Groupout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_BackGround_Groupout.mat",
+          "vRight": [
+            -0.5671068429946899,
+            0.0,
+            0.8236543536186218,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.8236543536186218,
+            0.0,
+            -0.5671068429946899,
+            0.0
+          ],
+          "vPos": [
+            -21.6363468170166,
+            11.430992126464844,
+            -19.308088302612305,
             1.0
           ]
         }

@@ -5,6 +5,7 @@
 #include "EnemyNormal.h"
 
 #include "AudioSource.h"
+#include "Animator3D.h"
 #include "CharacterController.h"
 
 CEnemyNormal::CEnemyNormal()
@@ -177,3 +178,9 @@ void CEnemyNormal::GUI_DebugButton()
 	}
 }
 
+void CEnemyNormal::PlaySoundFromMeta()
+{
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
+}

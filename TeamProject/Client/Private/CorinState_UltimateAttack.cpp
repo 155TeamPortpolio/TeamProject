@@ -119,12 +119,6 @@ void CCorinState_UltimateAttack_Loop::Enter(CCorin* pOwner)
         //.Speed(2.f)
         .Apply();
 
-    if (IsCrossAnimProgress(0.9f))
-    {
-        pOwner->End_AllAttackColliders();
-        pOwner->Take_Explode(DAMAGE_TYPE::HARD);
-    }
-
     pOwner->Play_Effect("Corin_Ultimate_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
@@ -144,7 +138,18 @@ void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
         }
     }
 
+    if (IsCrossAnimProgress(0.9f))
+    {
+        pOwner->End_AllAttackColliders();
+        pOwner->Take_Explode(DAMAGE_TYPE::HARD);
+    }
+
     Update_Effects(pOwner);
+}
+
+void CCorinState_UltimateAttack_Loop::Exit(CCorin* pOwner)
+{
+    pOwner->End_AttackCollider("Saw");
 }
 
 void CCorinState_UltimateAttack_Loop::Update_Effects(CCorin* pOwner)

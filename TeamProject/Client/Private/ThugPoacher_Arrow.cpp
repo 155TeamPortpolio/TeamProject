@@ -138,7 +138,7 @@ void CThugPoacher_Arrow::OnTriggerEnter(CGameObject* pOther)
 		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 		if (nullptr != pEnemy)
 		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
 			CameraManager()->AddImpact(1, 0);
 			isCollision = true;
 		}

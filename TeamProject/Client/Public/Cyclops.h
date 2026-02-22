@@ -52,7 +52,6 @@ private:
     void Update_States(const _float dt);
     void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
-    void PlaySoundFromMeta();
 
 private:
     CStateMachine<CCyclops>* m_pStateMachine = { nullptr };

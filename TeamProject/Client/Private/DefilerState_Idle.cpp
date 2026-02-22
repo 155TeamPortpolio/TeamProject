@@ -13,6 +13,10 @@ void CDefilerState_Idle::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(true)
 		.Apply();
+
+	if (!blackBoard.patternTransition.empty() && blackBoard.patternTransition.front().nextPattern == "Attack_Barrier") {
+		IdleDuration = .5f;
+	}
 }
 
 void CDefilerState_Idle::Update(CDefiler* pOwner, _float dt)

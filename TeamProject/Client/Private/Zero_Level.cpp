@@ -214,7 +214,7 @@ void CZero_Level::Ready_Stage()
 {
 	/*Stage*/
 	m_pRouter = Add_LevelObject<CStageRouter>();Safe_AddRef(m_pRouter);
-	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level","Router_Layer" });
+	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level", "Router_Layer" });
 
 	m_StageContainer.emplace(StageType::Start, CZeroStage_Start::Create(this));
 	m_StageContainer.emplace(StageType::Rest, CZeroStage_Start::Create(this));
@@ -223,28 +223,31 @@ void CZero_Level::Ready_Stage()
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
 	//BuildGraph
-	m_pRouter->BuildGraph(2, StageType::Start, StageType::Elite);
+	m_pRouter->BuildGraph(1, StageType::Start, StageType::Elite);
 
 	//Start
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start1" };
 	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
- 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
+ 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_3_1", "Zero_3_2", "Zero_Spec3_1", "Zero_Spec3_2", "Zero_8_1"};
 	Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
+	_uint Boss_Process{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
+		Boss_Process = 1; //Start BossMap Index;
+
 	//Elite
-	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_2_1" };
-	Shuffle_MapCycle(m_mapCycle[StageType::Elite].maps);
+	string Elite{};
+	Boss_Process == 1 ? Elite = "Zero_Com26_1" : Elite = "Zero_8_2";
+	m_mapCycle[StageType::Elite].maps.push_back(Elite);
 
 	//Boss
-	_uint Boss_Process{};
-	if(!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 2; //Start BossMap Index;
-
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
-	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <=2)? Boss_Process : 1);
-	ChangeStage(StageType::Boss);
+
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
+	
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
