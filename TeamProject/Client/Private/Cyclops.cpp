@@ -279,6 +279,7 @@ void CCyclops::Parried()
 
 	m_pStateMachine->Change_State("Parried");
 	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetBattleColliderObject("Head", CEnemy::BATTLE_COLTYPE::ATTACK, false);
 }
 
 HRESULT CCyclops::Ready_Children(INIT_DESC* pArg)
