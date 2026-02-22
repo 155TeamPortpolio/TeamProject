@@ -118,7 +118,11 @@ HRESULT CZero_Level::Awake()
 		return E_FAIL;
 
 	UIDirector()->FadeIn_Screen();
-
+	auto pPost = RenderSystem()->GetPostRenderer();
+	auto pFogCommand = pPost->GetCommand<CFogCommand>();
+	m_PrevFog = pFogCommand->GetFogDesc();
+	m_bPrevFogUse = pFogCommand->IsEnabled();
+	pFogCommand->SetEnable(false);
 	return S_OK;
 }
 
@@ -201,8 +205,8 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Giant", CGiant::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
@@ -313,10 +317,20 @@ void CZero_Level::Free()
 	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()->
 		SetEnable(false);
 
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	pCloud->Set_CloudInfo(m_PrevCloud);
+
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CFogCommand>()
+		->SetFogDesc(m_PrevFog)
+		->SetEnable(m_bPrevFogUse);
+
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Clear_Characters();
 	Safe_Release(m_pBGM);
+
 }
 
 #pragma region Fog

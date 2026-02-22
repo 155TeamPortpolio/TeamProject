@@ -46,11 +46,13 @@ public: //setter
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 	void	SetBattleCharacters(const vector<CHARACTER>& eCharacters);
 	void	SetChainParryToPlayer(_bool onStart);
+
 public:
 	void	StartGimmick(BATTLE_VFX_TYPE eVFXType);
 	void	HitVFX(DAMAGE_TYPE eDamageType);
 	void	StartSwitch(CHARACTER eLeft, CHARACTER eRight);
 	void	EndSwitch();
+	void	StartUltimate(_float duration);
 public:
 	void	LockPlayer(_bool Lock);
 	void	LockBattleTime(_bool Lock);

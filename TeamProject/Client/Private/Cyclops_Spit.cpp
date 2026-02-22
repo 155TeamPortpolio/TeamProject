@@ -108,7 +108,15 @@ void CCyclops_Spit::Update(_float dt)
 	}
 
 	if (m_isStraight)
+	{
 		m_pTransform->Translate(m_vDir * m_fShootSpeed * dt);
+		m_fLifeTime += dt;
+		if (m_fLifeTime >= 4.f)
+		{
+			FinishSpit();
+			m_fLifeTime = {};
+		}
+	}
 
 	if (m_isArc)
 	{
@@ -285,6 +293,7 @@ void CCyclops_Spit::ShootSpit(SPIT eSpitType)
 	m_isAlive = true;
 	SetRenderLayer(RENDER_LAYER::Default);
 	m_isSound = false;
+	m_fLifeTime = {};
 }
 
 void CCyclops_Spit::FinishSpit()
@@ -301,6 +310,7 @@ void CCyclops_Spit::FinishSpit()
 	Spawn_DeadEffect();
 	SetRenderLayer(RENDER_LAYER::None);
 	m_isSound = true;
+	m_fLifeTime = {};
 }
 
 _float CCyclops_Spit::ComputeGravityScale(_float lifeTime, _float rampTime)
