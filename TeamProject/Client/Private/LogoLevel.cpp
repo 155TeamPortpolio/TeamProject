@@ -3,6 +3,9 @@
 #include "GameInstance.h"
 #include "LevelMgr.h"
 
+/*Video*/
+#include "UI_LogoVideo.h"
+
 /* UI */
 #include "UIDirector.h"
 
@@ -24,18 +27,31 @@ HRESULT CLogoLevel::Awake()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Logo_Level");
 
+	Create_LogoVideo();
 	return S_OK;
 }
 
 void CLogoLevel::Update()
 {
 	if (InputDevice()->Key_Tap('Y')) {
-		LevelManager()->Request_ChangeLevel("MainCity_Level", true);
+		LevelManager()->Request_ChangeLevel("Scott_Level", true);
 	}
 }
 
 HRESULT CLogoLevel::Render()
 {
+	return S_OK;
+}
+
+HRESULT CLogoLevel::Create_LogoVideo()
+{
+	PrototypeManager()->Add_ProtoType("Logo_Level", "Proto_GameObject_LogoVideo", CUI_LogoVideo::Create());
+
+	auto pObj = Builder::Create_UIObject({ "Logo_Level", "Proto_GameObject_LogoVideo" })
+		.Build("video");
+
+	UIManager()->Add_UIObject(pObj, "Logo_Level");
+
 	return S_OK;
 }
 
