@@ -1143,6 +1143,7 @@ void CSacrificeState_OverDrive_Release_Loop_Phase2::Update(CSacrifice* pOwner, _
 
 		pOwner->Stop_Effect("Sacrifice_Cloud");
 		pOwner->SetOverDriveCharged(true);
+		pOwner->Get_Component<CAudioSource>()->FadeOut_Volume("Sacrifice_Overdrive_Charge.wav", 0.8f);
 	}
 }
 
