@@ -494,6 +494,7 @@
     <ClInclude Include="..\Public\UI_TutorialGuide.h" />
     <ClInclude Include="..\Public\UI_TutorialGuideSlot.h" />
     <ClInclude Include="..\Public\UI_TutorialGuideStart.h" />
+    <ClInclude Include="..\public\UltimateBG.h" />
     <ClInclude Include="..\public\ZeroStage_Rest.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
     <ClInclude Include="..\Public\SoftDirectionalOutlineUI.h" />
@@ -1025,6 +1026,7 @@
     <ClCompile Include="..\Private\UI_TutorialGuide.cpp" />
     <ClCompile Include="..\Private\UI_TutorialGuideSlot.cpp" />
     <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp" />
+    <ClCompile Include="..\private\UltimateBG.cpp" />
     <ClCompile Include="..\private\ZeroStage_Rest.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />
     <ClCompile Include="..\Private\SoftDirectionalOutlineUI.cpp" />
