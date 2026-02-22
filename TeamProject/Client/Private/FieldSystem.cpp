@@ -45,10 +45,6 @@ void CFieldSystem::SetActive(_bool is)
 		m_pRoomDirector->ClearRooms();
 		FieldSystem()->FadeOutBGM();
 	}
-	else if (m_isActive == false && is == true)
-	{
-		FieldSystem()->Set_DayPahse(DayPhase::Morning);
-	}
 	m_isActive = is;
 }
 

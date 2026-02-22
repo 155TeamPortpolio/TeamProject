@@ -30,6 +30,10 @@ private:
 	class CPlayer* m_pPlayer = { nullptr };
 	CAudioSource* m_pBGM = {};
 
+	CLOUD_DESC		m_PrevCloud = {};
+	FOG_DESC		m_PrevFog = {};
+	_bool			m_bPrevFogUse = {};
+
 public:
 	static CTutorial_Level* Create(const string& LevelKey);
 	virtual void Free() override;
