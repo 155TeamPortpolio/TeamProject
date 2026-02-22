@@ -200,6 +200,7 @@ void CDefiler::Release_AttackCollider()
 void CDefiler::ChainParry(_bool OnStart)
 {
 	BattleSystem()->SetChainParryToPlayer(OnStart);
+		m_BlackBoard.isChainParry = OnStart;
 }
 void CDefiler::Control_TargetEnable(_bool On)
 {
@@ -642,6 +643,10 @@ void CDefiler::Controll_Attack(const string& event)
 	else 
 	{
 		m_isParryEnable = false;
+	}
+
+	if (m_BlackBoard.isChainParry) {
+		m_isParryEnable = true;
 	}
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }

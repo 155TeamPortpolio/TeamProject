@@ -625,7 +625,9 @@ void CBattleFXFlow::StartVfx_WipeOut()
 	if (accumulatedTimeSec < timelineEndSec)
 		AddWait(timelineEndSec - accumulatedTimeSec);
 	//0.417
-	AddWait(0.3f);
+	AddWait(0.2f);
+	AddCall([this]() {UIDirector()->Show_WipeoutOverlay(); });
+	AddWait(0.1f);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
