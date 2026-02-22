@@ -121,7 +121,12 @@ HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey)
 		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Sacrifice_BGM.wav", 0.9f);
-	
+	else if ("Zero_Boss2" == context.mapKey)
+	{
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV.wav").FadeOut(0.2f);
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV2.wav").FadeOut(0.2f);
+	}
+	//m_pOwnerLevel->Get_ZeroShadow().
 	return S_OK;
 }
 
