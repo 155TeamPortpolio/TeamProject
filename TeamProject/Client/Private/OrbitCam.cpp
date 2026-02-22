@@ -156,9 +156,14 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
+            if (!desc.bLock)
+            {
+                ClearLockOn();
+                return;
+            }
+
             if (!desc.tHandle.isValid()) return;
-            if (desc.bLock) SetLockOn(desc.tHandle);
-            else ClearLockOn();
+            SetLockOn(desc.tHandle);
         });
 
     return S_OK;
@@ -1096,7 +1101,6 @@ void COrbitCam::Lock_Reset()
     m_lockBlend = {};
     m_lockFocus = {};
     m_hasLockFocus = false;
-    m_lockSuspend = {};
     m_lockAir = {};
 }
 
@@ -1105,8 +1109,6 @@ void COrbitCam::Lock_Enter(OBJECT_HANDLE h, _float curDist)
     m_lock.active = true;
     m_lock.handle = h;
     m_lock.savedDist = curDist;
-
-    m_lockSuspend = {};
     m_lockAir = {};
 
     Lock_BlendStart(true);
@@ -1116,9 +1118,6 @@ void COrbitCam::Lock_Exit()
 {
     if (!Lock_On()) return;
 
-    m_lockSuspend.active = false;
-    m_lockSuspend.timer = 0.f;
-    m_lockSuspend.hasPrevTargetPivot = false;
     m_lockAir = {};
 
     if (!m_lockBlend.active)
@@ -1132,32 +1131,6 @@ void COrbitCam::Lock_Exit()
 
 void COrbitCam::Lock_BlendUpdate(_float dt)
 {
-    constexpr _float kSuspendReenterBlendSec = 0.12f;
-
-    if (m_lockSuspend.cooldown > 0.f)
-    {
-        m_lockSuspend.cooldown -= dt;
-        if (m_lockSuspend.cooldown < 0.f) m_lockSuspend.cooldown = 0.f;
-    }
-
-    if (m_lockSuspend.active)
-    {
-        m_lockSuspend.timer -= dt;
-        if (m_lockSuspend.timer < 0.f) m_lockSuspend.timer = 0.f;
-
-        m_lockBlend.active = false;
-        m_lockBlend.weight = 0.f;
-
-        if (m_lockSuspend.timer > 0.f) return;
-
-        m_lockSuspend.active = false;
-
-        if (m_lock.active && m_lock.handle.isValid())
-            Lock_ReenterBlend(kSuspendReenterBlendSec, m_prof.lockBlendInEase);
-
-        return;
-    }
-
     if (!m_lockBlend.active)
     {
         m_lockBlend.weight = m_lock.active ? 1.f : 0.f;
@@ -1184,7 +1157,6 @@ void COrbitCam::Lock_BlendUpdate(_float dt)
             m_lock = {};
             m_lockFocus = {};
             m_hasLockFocus = false;
-            m_lockSuspend = {};
         }
         return;
     }
@@ -1381,57 +1353,7 @@ OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPi
     constexpr _float kTargetPivotTauXZ = 0.10f;
     constexpr _float kTargetPivotTauY = 0.20f;
 
-    constexpr _float kTeleportJumpDist = 2.2f;
-    constexpr _float kTeleportJumpY = 1.8f;
-    constexpr _float kTeleportSpeed = 22.f;
-    constexpr _float kTeleportMinDistForSpeed = 0.9f;
-
-    constexpr _float kLockSuspendSec = 0.10f;
-    constexpr _float kLockSuspendCooldownSec = 0.25f;
-
     const Vector3 rawTargetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
-
-    if (m_lockSuspend.active)
-    {
-        m_lockSuspend.prevTargetPivot = rawTargetPivot;
-        m_lockSuspend.hasPrevTargetPivot = true;
-        out.weight = 0.f;
-        return out;
-    }
-
-    if (m_lockSuspend.hasPrevTargetPivot && m_lockSuspend.cooldown <= 0.f)
-    {
-        const Vector3 targetDelta = rawTargetPivot - m_lockSuspend.prevTargetPivot;
-        const _float jumpDist = targetDelta.Length();
-        const _float jumpSpeed = jumpDist / max(dt, kEps);
-
-        _bool jumpByDist = jumpDist >= kTeleportJumpDist;
-        _bool jumpByY = fabsf(targetDelta.y) >= kTeleportJumpY;
-        _bool jumpBySpeed = (jumpDist >= kTeleportMinDistForSpeed) && (jumpSpeed >= kTeleportSpeed);
-
-        if (jumpByDist || jumpByY || jumpBySpeed)
-        {
-            m_lockSuspend.active = true;
-            m_lockSuspend.timer = kLockSuspendSec;
-            m_lockSuspend.cooldown = kLockSuspendCooldownSec;
-            m_lockSuspend.prevTargetPivot = rawTargetPivot;
-            m_lockSuspend.hasPrevTargetPivot = true;
-
-            m_lockBlend.active = false;
-            m_lockBlend.weight = 0.f;
-
-            m_lockAir.hasFilteredTargetPivot = false;
-            m_lockAir.overheadActive = false;
-
-            out.weight = 0.f;
-            out.yawAddDeg = 0.f;
-            out.focusPos = m_hasLockFocus ? m_lockFocus : playerPivot;
-            return out;
-        }
-    }
-
-    m_lockSuspend.prevTargetPivot = rawTargetPivot;
-    m_lockSuspend.hasPrevTargetPivot = true;
 
     if (!m_lockAir.hasFilteredTargetPivot)
     {

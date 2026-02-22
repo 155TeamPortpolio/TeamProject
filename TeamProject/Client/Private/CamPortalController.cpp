@@ -8,7 +8,7 @@
 Quaternion CamPortalController::YawPitchQuatDeg(_float yawDeg, _float pitchDeg)
 {
     const _float yawRad = XMConvertToRadians(yawDeg);
-    const _float pitchRad = XMConvertToRadians(-pitchDeg);
+    const _float pitchRad = XMConvertToRadians(pitchDeg);
     return Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 }
 
@@ -32,10 +32,16 @@ CamPortalController::ShotGoal CamPortalController::CaptureCurAsShot() const
     auto orbit = CamDirector()->GetOrbitCam();
     auto cam = CamDirector()->GetOrbitCamComp();
 
-    OrbitSnapshot s{};
-    orbit->CaptureSnapshot(s);
+    auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 
-    return ShotFromOrbitSnapshot(s, cam->Get_FOV());
+    const Vector3 pivot = orbit->GetPivot();
+    const Vector3 camPos = camTf->Get_WorldPos();
+
+    ShotGoal g{};
+    g.pivotWorld = pivot;
+    g.dist = (pivot - camPos).Length();
+    g.fov = cam->Get_FOV();
+    return g;
 }
 
 void CamPortalController::ClampAboveGround(Vector3& pivotWorld, _float yawDeg, _float pitchDeg, _float dist) const
@@ -98,6 +104,9 @@ CamPortalController::ShotGoal CamPortalController::BuildEnterGoal(_float u) cons
     const Vector3 portalPos = portalTf->Get_WorldPos();
     const Vector3 portalAim = portalPos + Vector3(0.f, tune.goal.pivotYAdd, 0.f);
 
+    Vector3 portalForward = portalTf->Dir(STATE::LOOK);
+    portalForward.Normalize();
+
     const _float t = Math::ApplyEase(tune.common.enterEase, u);
 
     const _float enterMin = max(tune.goal.enterDistMin, 0.f);
@@ -107,8 +116,10 @@ CamPortalController::ShotGoal CamPortalController::BuildEnterGoal(_float u) cons
 
     const _float finalFov = m_enterFrom.fov + tune.goal.fovAdd + tune.goal.pullFovAdd;
 
+    const Vector3 finalPivot = portalAim + portalForward * tune.goal.enterPivotForwardPush;
+
     ShotGoal g{};
-    g.pivotWorld = portalAim;
+    g.pivotWorld = Vector3::Lerp(m_enterFrom.pivotWorld, finalPivot, t);
     g.dist = Math::Lerp(m_enterFrom.dist, finalDist, t);
     g.fov = Math::Lerp(m_enterFrom.fov, finalFov, t);
 
@@ -162,14 +173,17 @@ void CamPortalController::Begin(OBJECT_HANDLE portalHandle)
 
     auto orbit = CamDirector()->GetOrbitCam();
     auto cam = CamDirector()->GetOrbitCamComp();
+    auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 
     orbit->CaptureSnapshot(m_prevOrbit);
     m_prevFov = cam->Get_FOV();
 
-    m_from = ShotFromOrbitSnapshot(m_prevOrbit, m_prevFov);
+    m_from = CaptureCurAsShot();
 
-    m_lockYawDeg = m_prevOrbit.pose.rotCurDeg.x;
-    m_lockPitchDeg = m_prevOrbit.pose.rotCurDeg.y;
+    const Vector3 look = camTf->Dir(STATE::LOOK);
+
+    m_lockYawDeg = XMConvertToDegrees(atan2f(look.x, look.z));
+    m_lockPitchDeg = XMConvertToDegrees(asinf(clamp(-look.y, -1.f, 1.f)));
 
     m_pivotSec = max(tune.common.pivotSec, 0.f);
     m_enterSec = max(tune.common.enterSec, 0.f);
@@ -180,6 +194,8 @@ void CamPortalController::Begin(OBJECT_HANDLE portalHandle)
 
     orbit->Lock_Input();
     orbit->SwitchMode_Begin();
+
+    ApplyShot(m_from);
 }
 
 void CamPortalController::End()
@@ -217,7 +233,6 @@ void CamPortalController::Update(_float dt)
         {
             m_state = State::Enter;
             m_elapsed = 0.f;
-
             m_enterFrom = CaptureCurAsShot();
         }
         return;

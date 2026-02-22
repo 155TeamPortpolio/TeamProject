@@ -247,7 +247,7 @@ void CZero_Level::Ready_Stage()
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
 	
-	ChangeStage(StageType::Boss);
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

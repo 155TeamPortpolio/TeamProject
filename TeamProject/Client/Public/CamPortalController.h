@@ -49,6 +49,8 @@ public:
 
             _float minPivotAboveFootY = 0.20f;
             _float minCamAboveFootY = 0.05f;
+
+            _float enterPivotForwardPush = 0.6f;
         } goal;
     } tune;
 
