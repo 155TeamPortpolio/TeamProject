@@ -10,6 +10,7 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
         .Speed(1.5f)
         .Loop(false)
         .Apply();
+    pOwner->Push_Invincible();
 }
 
 void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
