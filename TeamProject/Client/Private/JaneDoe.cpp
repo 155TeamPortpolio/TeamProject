@@ -707,6 +707,14 @@ HRESULT CJaneDoe::Initialize_Effects()
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
     }
+    for (_uint i = 0; i < 3; ++i)
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_normal3_slash.json")
+            .Build("JaneDoe_Wide_Slash" + to_string(i));
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
+    }
 
     // Sting
     {
