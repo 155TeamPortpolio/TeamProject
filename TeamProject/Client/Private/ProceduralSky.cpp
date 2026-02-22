@@ -73,6 +73,7 @@ HRESULT CProceduralSky::Initialize(INIT_DESC* pArg)
 	customInstance->Set_Param("g_CloudDark", { &m_vCloudDark, "float3", sizeof(_float3) });
 	customInstance->Set_Param("g_CloudCoverage_Param", { &m_fCloudCoverage, "float", sizeof(_float) });
 	customInstance->Set_Param("g_HazeColor", { &m_vHazeColor, "float3", sizeof(_float3) });
+	customInstance->Set_Param("bMoon", { &m_bUseMoon, "bool", sizeof(_bool) });
 	
 	customInstance->Set_Param("matProjInv", { &m_MatProjectionInv, "matrix", sizeof(_float4x4) });
 	customInstance->Set_Param("matViewInv", { &m_MatViewInv, "matrix", sizeof(_float4x4) });

@@ -2,6 +2,7 @@
 
 float g_Time;
 float3 SunDir;
+bool bMoon = false;
 
 float g_SunIntensity = 15.0;
 float3 g_SkyTopColor = float3(0.01, 0.015, 0.06);
@@ -204,7 +205,8 @@ PS_OUT PS_MAIN(PS_IN In)
     float heightFactor = saturate(dir.y * 0.2 + 0.2);
     float3 manualSky = lerp(g_SkyHorizonColor, g_SkyTopColor, pow(heightFactor, 3.5));
     float3 skyColor = lerp(scatterColor, manualSky, g_SkyAtmosphereBlend);
-    //skyColor += sunDisk(dir, sunDir);
+    if (!bMoon)
+        skyColor += sunDisk(dir, sunDir);
 
     float3 finalColor = skyColor;
     float sunH = saturate(sunDir.y);
@@ -257,12 +259,12 @@ PS_OUT PS_MAIN(PS_IN In)
     moonUV.x = dot(projected, moonRight);
     moonUV.y = dot(projected, moonUp);
 
-    float moonRadius = 0.04;
+    float moonRadius = 0.1;
     float moonDist = length(moonUV) / moonRadius;
 
     moonUV = moonUV / moonRadius * 0.5 + 0.5;
 
-    if (moonDist < 1.0)
+    if (bMoon && moonDist < 1.0)
     {
         float4 moonTex = SpecularTexture.Sample(DefaultSampler, moonUV);
         float circle = smoothstep(1.0, 0.95, moonDist);
