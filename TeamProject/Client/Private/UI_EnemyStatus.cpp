@@ -78,6 +78,16 @@ void CUI_EnemyStatus::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
+void CUI_EnemyStatus::UI_Active(void* pArg)
+{
+    Set_Alpha(1.f);
+}
+
+void CUI_EnemyStatus::UI_DeActive(void* pArg)
+{
+    Set_Alpha(0.f);
+}
+
 void CUI_EnemyStatus::Cache_Children()
 {
     auto pContainer = Get_Component<CObjectContainer>();
