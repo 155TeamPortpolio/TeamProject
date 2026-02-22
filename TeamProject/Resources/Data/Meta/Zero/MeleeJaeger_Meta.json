@@ -496,7 +496,7 @@
       "ClipTag": "MeleeJaeger_Ani_Run_Loop",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "melee_FootStepL.wav"
         },
