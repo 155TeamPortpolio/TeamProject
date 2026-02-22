@@ -535,6 +535,12 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
     BattleSystem()->EndSwitch();
+    for (auto Character : m_BattleCharacters)
+    {
+        if (!Character)
+            continue;
+        Character->Stop_ComboSound();
+    }
 }
 
 void CBattlePlayer::Cancel_ComboAttack()
@@ -542,6 +548,12 @@ void CBattlePlayer::Cancel_ComboAttack()
     m_fComboSelectTimer = 0.f;
     m_bComboSelect = false;
     BattleSystem()->EndSwitch();
+    for (auto Character : m_BattleCharacters)
+    {
+        if (!Character)
+            continue;
+        Character->Stop_ComboSound();
+    }
 }
 
 void CBattlePlayer::Start_ChainParry()
