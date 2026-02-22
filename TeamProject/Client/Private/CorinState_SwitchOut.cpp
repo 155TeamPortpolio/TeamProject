@@ -11,6 +11,8 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
         .Speed(1.5f)
         .Apply();
 
+    pOwner->Push_Invincible();
+
     pOwner->Stop_Effect("Corin_Saw_Slash0");
     pOwner->Stop_Effect("Corin_Saw_Slash1");
     pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
