@@ -741,6 +741,7 @@ void CBattleFXFlow::Start_Ultimate(_float duration)
 	Clear(false);
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)]);
 	AddCall([this]() {
+		UIDirector()->Hide_EnemyHUD();
 		string nowLevel = LevelManager()->Get_NowLevelKey();
 		if (auto layer = ObjectManager()->Get_Layer({ nowLevel, m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)] }))
 			layer->Set_RenderState(false);
@@ -750,6 +751,7 @@ void CBattleFXFlow::Start_Ultimate(_float duration)
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
+		UIDirector()->Show_EnemyHUD();
 		string nowLevel = LevelManager()->Get_NowLevelKey();
 		if (auto layer = ObjectManager()->Get_Layer({ nowLevel ,m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)] }))
 			layer->Set_RenderState(true);
