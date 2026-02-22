@@ -40,6 +40,10 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack1* Create() { return new CThugBulkyEnforcer_Attack1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugBulkyEnforcer* pOwner);
+
 };
 
 // 앞으로 나오면서 오른손 살짝 어퍼컷 다음 왼손 내리꽂으면서 강펀치
@@ -53,6 +57,9 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack2* Create() { return new CThugBulkyEnforcer_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugBulkyEnforcer* pOwner);
 
 private:
 	_bool	m_isSecondAttack = { false };
@@ -71,6 +78,9 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 	_bool	m_isSecondAttack = { false };
+
+private:
+	void Update_Effects(CThugBulkyEnforcer* pOwner);
 };
 
 // 바닥 짚기 ? 내려찍기 ? 3과 이어지는 착지하는 모션으로 추정
@@ -84,6 +94,9 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack4* Create() { return new CThugBulkyEnforcer_Attack4(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugBulkyEnforcer* pOwner);
 };
 
 //시퀀스1-1. 왼쪽 대각선 사이드 위빙 후 왼손 훅
@@ -97,6 +110,9 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack5_1* Create() { return new CThugBulkyEnforcer_Attack5_1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugBulkyEnforcer* pOwner);
 };
 
 //시퀀스1-2. 오른쪽 대각선 사이드 위빙으로 파고든 후 오른손 훅 치는 척하면서 왼손 어퍼컷
@@ -110,6 +126,9 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack5_2* Create() { return new CThugBulkyEnforcer_Attack5_2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugBulkyEnforcer* pOwner);
 
 private:
 	_bool m_isFinishFirst = { false };

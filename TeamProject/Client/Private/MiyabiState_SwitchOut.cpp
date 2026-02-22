@@ -11,6 +11,9 @@ void CMiyabiState_SwitchOut::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Speed(1.5f)
         .Apply();
+
+    pOwner->Push_Invincible();
+
     pOwner->Set_WeaponFire(false);
 }
 

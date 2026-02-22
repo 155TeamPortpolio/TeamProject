@@ -24,6 +24,9 @@ void CSacrificeState_ChangePhase::Exit(CSacrifice* pOwner)
 	pOwner->SetPhase(CSacrifice::PHASE::PHASE2);
 	pOwner->ChangePhase_SetUp();
 	pOwner->Set_Hitable(true);
+
+	pOwner->Control_TargetEnable(true);
+	pOwner->HideHUD(false);
 }
 
 void CSacrificeState_ChangePhase::Update_Effects(CSacrifice* pOwner)

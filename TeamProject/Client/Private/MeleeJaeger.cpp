@@ -30,6 +30,8 @@
 #include "MeleeJaeger_Chase.h"
 #include "MeleeJaeger_Parried.h"
 
+#include "EffectContainer.h"
+
 CMeleeJaeger::CMeleeJaeger()
 	: CEnemyNormal()
 {
@@ -80,6 +82,8 @@ HRESULT CMeleeJaeger::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
 	m_isUseGroggyRimLight = true;
 
 	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
@@ -481,6 +485,22 @@ HRESULT CMeleeJaeger::Initialize_Transitions()
 		CStateMachine<CMeleeJaeger>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CMeleeJaeger>::CONDITION_TRIGGER, "Idle_To_Hit");
+
+	return S_OK;
+}
+
+HRESULT CMeleeJaeger::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("melee_jaeger_slash0.json")
+			.Build("Melee_Jaeger_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
 
 	return S_OK;
 }

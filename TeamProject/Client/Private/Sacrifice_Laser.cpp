@@ -116,7 +116,7 @@ void CSacrifice_Laser::Update(_float dt)
 		vPosition0 += vDir * 0.8f;
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND) + ENUM(COLLISION_GROUP::NAP);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
@@ -162,7 +162,7 @@ void CSacrifice_Laser::Update(_float dt)
 		vPosition0 += vDir * 0.8f;
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND) + ENUM(COLLISION_GROUP::NAP);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
@@ -194,6 +194,11 @@ void CSacrifice_Laser::Update(_float dt)
 		}
 
 	}
+
+	_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
+	_vector scale, position, rotation;
+	XMMatrixDecompose(&scale, &rotation, &position, XMLoadFloat4x4(&worldMatrix));
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), rotation);
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }

@@ -281,6 +281,7 @@ void CJaneDoe::On_ChainParry()
 
     if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
     {
+        Push_Invincible();
         // 이미 SwitchIn이면 서브만 리셋
         IHState<CJaneDoe>* pSwitchIn = dynamic_cast<IHState<CJaneDoe>*>(
             m_pStateMachine->Get_CurrentState());
@@ -707,6 +708,14 @@ HRESULT CJaneDoe::Initialize_Effects()
             .Build("JaneDoe_Wide_Slash");
         pEffect->Stop();
         pObjectContainer->Add_Child(pEffect, false);
+    }
+    for (_uint i = 0; i < 3; ++i)
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("janedoe_normal3_slash.json")
+            .Build("JaneDoe_Wide_Slash" + to_string(i));
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect);
     }
 
     // Sting

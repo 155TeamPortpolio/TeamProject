@@ -31,6 +31,7 @@
 #include "ThugBulkyEnforcer_Parried.h"
 
 #include "AttackSign.h"
+#include "EffectContainer.h"
 
 CThugBulkyEnforcer::CThugBulkyEnforcer()
 	: CEnemy()
@@ -86,6 +87,9 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Sound");
@@ -625,6 +629,51 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Hit");
+
+	return S_OK;
+}
+
+HRESULT CThugBulkyEnforcer::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_hit_ground0.json")
+			.Build("Bulky_HitGround0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_hit_ground1.json")
+			.Build("Bulky_HitGround1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_punch.json")
+			.Build("Bulky_Punch");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_knee_kick.json")
+			.Build("Bulky_KneeKick");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 2; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_slash0.json")
+			.Build("Bulky_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
 
 	return S_OK;
 }

@@ -30,6 +30,7 @@ void CSacrificeState_Born::Update(CSacrifice* pOwner, _float dt)
 
 void CSacrificeState_Born::Exit(CSacrifice* pOwner)
 {
+	pOwner->HideHUD(false);
 }
 
 void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
