@@ -224,6 +224,7 @@ void CCorin::On_ChainParry()
 
     if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
     {
+        Push_Invincible();
         // 이미 SwitchIn이면 서브만 리셋
         IHState<CCorin>* pSwitchIn = dynamic_cast<IHState<CCorin>*>(
             m_pStateMachine->Get_CurrentState());
@@ -685,7 +686,13 @@ void CCorin::Update_States()
             {
                 m_bReserveCombo = false;
                 if (m_TargetHandle.isAlive())
+                {
+                    Get_Component<CAudioSource>()->Slot("ComboSwitch")
+                        .Attribute3D(true)
+                        .Volume(0.5f)
+                        .Play();
                     BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+                }
             }
         }
     }

@@ -63,6 +63,8 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
 
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
         {
+            if (desc.eState != TUTORIAL_STATE::PLAY)
+                return;
             if (desc.eType == TUTORIAL_TYPE::END)
                 return;
             else
@@ -865,6 +867,16 @@ void CCharacter::Stop_Effect(const string& effectTag)
         return;
 
     static_cast<CEffectContainer*>(pEffect)->Stop();
+}
+
+void CCharacter::Stop_ComboSound()
+{
+    auto AudioSource = Get_Component<CAudioSource>();
+    if (AudioSource)
+    {
+        AudioSource->Slot("ComboSwitch")
+            .Stop();
+    }
 }
 
 void CCharacter::Update_Rotation(_float dt)

@@ -5,15 +5,15 @@
   "Entities": [
     {
       "iEntityID": 0,
-      "tagName": "Invwall_XWall",
-      "iType": 4,
+      "tagName": "BattleStarter",
+      "iType": 1,
       "vScale": [
         0.9999886155128479,
         1.0,
         0.9999885559082031
       ],
       "vRotation": [
-        6.027598992847105e-12,
+        6.027600727570581e-12,
         1.5707964897155762,
         -4.968335465260765e-11
       ],

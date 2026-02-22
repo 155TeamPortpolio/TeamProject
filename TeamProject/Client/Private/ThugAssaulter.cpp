@@ -318,7 +318,7 @@ void CThugAssaulter::OnPooledRelease()
 
 void CThugAssaulter::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() /*|| false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -532,7 +532,7 @@ HRESULT CThugAssaulter::Initialize_Effects()
 HRESULT CThugAssaulter::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 0.2f, 0.f };
+	m_vIdleTime = { 0.1f, 0.f };
 
 	//// Target 감지 범위 (default = 5.f)
 	//m_fDetectedRange = 5.f;

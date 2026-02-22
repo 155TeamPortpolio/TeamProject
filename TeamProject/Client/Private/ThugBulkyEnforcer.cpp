@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -90,6 +91,9 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
+
+	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 	return S_OK;
 }
@@ -376,7 +380,7 @@ void CThugBulkyEnforcer::OnPooledRelease()
 
 void CThugBulkyEnforcer::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName()/* || false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -515,6 +519,7 @@ void CThugBulkyEnforcer::FinishWeaponCollider()
 void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -546,9 +551,13 @@ void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHA
 	}
 	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
-		m_pStateMachine->Set_Trigger("Idle_To_Hit");
-		DIR eDir = GetDIRToPlayer();
-		m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+		_int i = Helper::Get_Random_Int(1, 4);
+		if (i == 1)
+		{
+			m_pStateMachine->Set_Trigger("Idle_To_Hit");
+			DIR eDir = GetDIRToPlayer();
+			m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+		}
 	}
 	else {
 		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Hit_Stay")
@@ -710,6 +719,11 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	ManageAttackHistory();
 	CheckDistanceFromPlayer();
 	RotateToPlayer(dt);
+
+	// 사운드 재생
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
 
 	//================================
 	ControlState(dt);

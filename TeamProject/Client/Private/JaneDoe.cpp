@@ -281,6 +281,7 @@ void CJaneDoe::On_ChainParry()
 
     if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
     {
+        Push_Invincible();
         // 이미 SwitchIn이면 서브만 리셋
         IHState<CJaneDoe>* pSwitchIn = dynamic_cast<IHState<CJaneDoe>*>(
             m_pStateMachine->Get_CurrentState());
@@ -855,7 +856,13 @@ void CJaneDoe::Update_States()
             {
                 m_bReserveCombo = false;
                 if (m_TargetHandle.isAlive())
+                {
+                    Get_Component<CAudioSource>()->Slot("ComboSwitch")
+                        .Attribute3D(true)
+                        .Volume(0.5f)
+                        .Play();
                     BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+                }
             }
         }
     }

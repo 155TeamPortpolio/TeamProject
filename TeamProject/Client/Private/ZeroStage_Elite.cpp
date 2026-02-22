@@ -64,6 +64,13 @@ HRESULT CZeroStage_Elite::Enter_Stage(StageContext& context)
 	m_PlayerHandle = context.hPlayer;
 	BaseIntro(context);
 	Active_Player(CStage::PlayerPoint::Typical);
+
+	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+		{
+			_float4{ 0.08f, 0.05f, 0.04f, 1.0f },
+			0.02f
+		});
+
 	return S_OK;
 }
 
@@ -122,7 +129,7 @@ void CZeroStage_Elite::End()
 		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
 
 		//ReCycle
-		m_pOwnerLevel->Get_Router()->BuildGraph(2, StageType::Rest, StageType::Boss);
+		m_pOwnerLevel->Get_Router()->BuildGraph(3, StageType::Rest, StageType::Boss);
 		m_pOwnerLevel->ChangeStage(StageType::Rest);
 	}
 }

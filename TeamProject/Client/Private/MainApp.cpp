@@ -250,6 +250,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	ResourceManager()->Add_ResourcePath("empty.png", "../Bin/Resources/Global/UI/Image/empty.png");
 	ResourceManager()->Add_ResourcePath("Run2.png", "../Bin/Resources/Global/UI/Image/Loading/Run2.png");
 	ResourceManager()->Add_ResourcePath("LoadingText.png", "../Bin/Resources/Global/UI/Image/Loading/LoadingText.png");
+	ResourceManager()->Add_ResourcePath("Logo_Mi2.png", "../Bin/Resources/Global/UI/Image/Logo/Logo_Mi2.png");
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Logo", CUI_Logo::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Loading", CUI_Loading::Create());
@@ -282,6 +283,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	ResourceManager()->Add_ResourcePath("cloud_noise.png", "../Bin/Resources/Global/Shader/cloud_noise.png");
 	ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Global/Shader/Eff_Noise_092.png");
 	ResourceManager()->Add_ResourcePath("Eff_Noise_146.png", "../Bin/Resources/Global/Shader/Eff_Noise_146.png");
+	ResourceManager()->Add_ResourcePath("moon_bright.png", "../Bin/Resources/Global/Shader/moon_bright.png");
+	ResourceManager()->Add_ResourcePath("moon_glow.png", "../Bin/Resources/Global/Shader/moon_glow.png");
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CProceduralSky::Create());
 

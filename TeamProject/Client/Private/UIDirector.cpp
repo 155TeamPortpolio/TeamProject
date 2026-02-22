@@ -15,6 +15,7 @@
 #include "UI_Party.h"
 #include "UI_Switch.h"
 #include "UI_TutorialInfo.h"
+#include "UltimateBG.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -29,6 +30,16 @@ HRESULT CUIDirector::Register(CUI_Object* pObj)
 		return E_FAIL;
 
 	m_handles.emplace(strInstanceName, pObj->Get_Handle());
+
+	return S_OK;
+}
+
+HRESULT CUIDirector::Register_EnemyHUD(CUI_Object* pObj)
+{
+	if (!pObj)
+		return E_FAIL;
+
+	m_hEnemyHUDs.push_back(pObj->Get_Handle());
 
 	return S_OK;
 }
@@ -69,6 +80,23 @@ void CUIDirector::Create_Fade()
 	m_hFade = pFade->Get_Handle();
 }
 
+void CUIDirector::Create_Ultimate()
+{
+	ResourceManager()->Add_ResourcePath("UltimateBg_Miyabi.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_Miyabi.png");
+	ResourceManager()->Add_ResourcePath("UltimateBg_JaneDoe.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_JaneDoe.png");
+	ResourceManager()->Add_ResourcePath("UltimateBg_Corin.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_Corin.png");
+
+	if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ultimate", CUltimateBG::Create())))
+		return;
+
+	auto pUltimate = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Ultimate" }).Build("Ultimate");
+	if (!pUltimate)
+		return;
+	ObjectManager()->Add_Object(pUltimate, { G_GlobalLevelKey, "UI_Layer" });
+
+	m_pUltimate = dynamic_cast<CUltimateBG*>(pUltimate);
+}
+
 void CUIDirector::Show_SceneFrame()
 {
 	UI_Active("scene_frame");
@@ -97,6 +125,28 @@ void CUIDirector::Show_HUD(HUD hud, _bool isFade)
 void CUIDirector::Hide_HUD(HUD hud)
 {
 	Hide_HUD(Get_HUDName(hud));
+}
+
+void CUIDirector::Show_EnemyHUD()
+{
+	for (auto& handle : m_hEnemyHUDs)
+	{
+		if (!handle.isValid())
+			continue;
+
+		handle.Get()->UI_Active();
+	}
+}
+
+void CUIDirector::Hide_EnemyHUD()
+{
+	for (auto& handle : m_hEnemyHUDs)
+	{
+		if (!handle.isValid())
+			continue;
+
+		handle.Get()->UI_DeActive();
+	}
 }
 
 void CUIDirector::Show_Party(vector<CHARACTER> characters)
@@ -137,6 +187,11 @@ void CUIDirector::Hide_Switch()
 {
 	UI_DeActive("switch");
 	UI_DeActive("switchRT");
+}
+
+void CUIDirector::Show_Ultimate(CHARACTER eCharacter, _float duration)
+{
+	m_pUltimate->Show_Ultimate(eCharacter, duration);
 }
 
 void CUIDirector::Show_Lottery()
@@ -249,11 +304,14 @@ void CUIDirector::Initialize()
 
 	// 페이드인 글로벌 레벨에 생성
 	Create_Fade();
+	Create_Ultimate();
 }
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)
 {
+	// 핸들 정리
 	m_handles.clear();
+	m_hEnemyHUDs.clear();
 
 	m_levelKey = levelKey;
 	// 레벨에 프로토타입 등록
@@ -405,4 +463,5 @@ void CUIDirector::Free()
 	__super::Free();
 
 	m_handles.clear();
+	m_hEnemyHUDs.clear();
 }

@@ -370,6 +370,7 @@
     <ClInclude Include="..\Public\AttackSign.h" />
     <ClInclude Include="..\Public\BackgroundNpc.h" />
     <ClInclude Include="..\Public\BackGroundSpawner.h" />
+    <ClInclude Include="..\public\BangBoo.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
     <ClInclude Include="..\public\BattleStarter.h" />
@@ -489,11 +490,13 @@
     <ClInclude Include="..\Public\UI_Banner.h" />
     <ClInclude Include="..\Public\UI_GachaCharacterIntro.h" />
     <ClInclude Include="..\public\Tutorial_Level.h" />
+    <ClInclude Include="..\public\UI_LogoVideo.h" />
     <ClInclude Include="..\Public\UI_Mouse.h" />
     <ClInclude Include="..\Public\UI_SpeechBubble.h" />
     <ClInclude Include="..\Public\UI_TutorialGuide.h" />
     <ClInclude Include="..\Public\UI_TutorialGuideSlot.h" />
     <ClInclude Include="..\Public\UI_TutorialGuideStart.h" />
+    <ClInclude Include="..\public\UltimateBG.h" />
     <ClInclude Include="..\Public\UI_WipeoutOverlay.h" />
     <ClInclude Include="..\public\ZeroStage_Rest.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Parried.h" />
@@ -904,6 +907,7 @@
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
     <ClCompile Include="..\Private\BackGroundSpawner.cpp" />
+    <ClCompile Include="..\private\BangBoo.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\private\BattleStarter.cpp" />
@@ -1021,11 +1025,13 @@
     <ClCompile Include="..\Private\UI_Banner.cpp" />
     <ClCompile Include="..\Private\UI_GachaCharacterIntro.cpp" />
     <ClCompile Include="..\private\Tutorial_Level.cpp" />
+    <ClCompile Include="..\private\UI_LogoVideo.cpp" />
     <ClCompile Include="..\Private\UI_Mouse.cpp" />
     <ClCompile Include="..\Private\UI_SpeechBubble.cpp" />
     <ClCompile Include="..\Private\UI_TutorialGuide.cpp" />
     <ClCompile Include="..\Private\UI_TutorialGuideSlot.cpp" />
     <ClCompile Include="..\Private\UI_TutorialGuideStart.cpp" />
+    <ClCompile Include="..\private\UltimateBG.cpp" />
     <ClCompile Include="..\Private\UI_WipeoutOverlay.cpp" />
     <ClCompile Include="..\private\ZeroStage_Rest.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Parried.cpp" />

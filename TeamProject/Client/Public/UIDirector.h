@@ -23,6 +23,7 @@ private:
 
 public:
 	HRESULT Register(class CUI_Object* pObj);
+	HRESULT Register_EnemyHUD(class CUI_Object* pObj);
 
 public:
 	//==================== Common ===============
@@ -45,6 +46,11 @@ public:
 	/* HUD를 화면에서 숨김 */
 	void Hide_HUD(HUD hud);
 
+	/* Enemy, Boss HUD를 화면에 표시 */
+	void Show_EnemyHUD();
+	/* Enemy, Boss HUD를 화면에서 숨김 */
+	void Hide_EnemyHUD();
+
 	//==================== Scott ===============
 	void Show_Party(vector<CHARACTER> characters);
 	void Hide_Party();
@@ -54,6 +60,7 @@ public:
 	void Show_Switch(CHARACTER eLeft, CHARACTER eRight);
 	void Hide_Switch();
 
+	void Show_Ultimate(CHARACTER eCharacter, _float duration);
 	//==================== MainCity ===============
 	void Show_Lottery();
 	void Hide_Lottery();
@@ -91,6 +98,7 @@ public:
 
 private:
 	void Create_Fade();
+	void Create_Ultimate();
 
 	/* json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장 */
 	void Load_UILevelData(const string& resourceKey);
@@ -110,6 +118,9 @@ private:
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
 	UI_HANDLE		m_hFade = {};
+	class CUltimateBG*	m_pUltimate = nullptr;
+
+	vector<UI_HANDLE>	m_hEnemyHUDs;
 
 public:
 	virtual void Free() override;

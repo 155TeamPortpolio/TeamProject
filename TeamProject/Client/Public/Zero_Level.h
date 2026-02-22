@@ -124,6 +124,10 @@ private:
 	Zero_Cloud	m_tZeroCloud;
 	Zero_Shadow m_tZeroShadow;
 
+
+	CLOUD_DESC		m_PrevCloud = {};
+	FOG_DESC		m_PrevFog = {};
+	_bool			m_bPrevFogUse = {};
 public:
 	static CZero_Level* Create(const string& LevelKey);
 	virtual void Free() override;

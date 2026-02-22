@@ -69,7 +69,7 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 void CPlayer::Awake()
 {
 	//First Setting Denny
-	_uint Denny = 10000;
+	_uint Denny = 150000;
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", Denny);
 }
 
