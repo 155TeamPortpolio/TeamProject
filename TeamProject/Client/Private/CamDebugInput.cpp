@@ -48,14 +48,4 @@ void CamDebugInput::DebugInput(_float dt)
 
     auto& cam = *CamDirector();
     auto& mgr = *CameraManager();
-
-    if (InputDevice()->Key_Tap(VK_F3))
-    {
-        cam.GetOrbitCam()->Lock_Input();
-    }
-
-    if (InputDevice()->Key_Tap(VK_F4))
-    {
-        cam.GetOrbitCam()->Unlock_Input();
-    }
 }

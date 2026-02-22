@@ -92,7 +92,7 @@ void CCamDirector::EnterBoss()
 
 void CCamDirector::ExitBoss()
 {
-    CameraManager()->SetFov(-10.f, 2.f, EaseType::InOutCubic);
+    CameraManager()->SetFov(-10.f, 0.f, EaseType::InOutCubic);
     CameraManager()->SetZFar(500.f, 2.f, EaseType::InOutCubic);
 }
 
