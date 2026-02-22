@@ -129,11 +129,22 @@ void CJaneDoeState_ExAttack_Start::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    //0.18 ~ 0.57 ->Set_LookTarget false
+    if (IsCrossAnimProgress(0.18f))
+        pOwner->Set_LookTarget(false);
+
+    if (IsCrossAnimProgress(0.57f))
+        pOwner->Set_LookTarget(true);
+
     Update_Effects(pOwner);
 }
 
 void CJaneDoeState_ExAttack_Start::Exit(CJaneDoe* pOwner)
 {
+    if (!pOwner->Is_LookTarget())
+    {
+        pOwner->Set_LookTarget(true);
+    }
     pOwner->Clear_MotionBlur();
 }
 

@@ -1,6 +1,9 @@
 #include "pch.h"
-#include "GameInstance.h"
 #include "CorinState_Hit.h"
+
+#include "GameInstance.h"
+#include "BattleSystem.h"
+
 #include "Corin.h"
 
 #include "CharacterController.h"
@@ -93,6 +96,7 @@ void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Hit::Exit(CCorin* pOwner)
 {
+	BattleSystem()->LockPlayer(false);
 	pOwner->Set_ResetMove(true);
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
@@ -116,6 +120,20 @@ void CCorin_HitHard::Enter(CCorin* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.6f)
 		.Apply();
+	BattleSystem()->LockPlayer(true);
+}
+
+void CCorin_HitHard::Update(CCorin* pOwner, _float dt)
+{
+	if(IsCrossAnimProgress(0.35f))
+		BattleSystem()->LockPlayer(false);
+}
+
+_bool CCorin_HitHard::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+	//if (m_fAnimProgress < 0.35f)
+	//	return false;
+	return true;
 }
 
 void CCorin_HitKnockOut::Enter(CCorin* pOwner)
@@ -126,4 +144,18 @@ void CCorin_HitKnockOut::Enter(CCorin* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.7f)
 		.Apply();
+	BattleSystem()->LockPlayer(true);
+}
+
+void CCorin_HitKnockOut::Update(CCorin* pOwner, _float dt)
+{
+	if (IsCrossAnimProgress(0.35f))
+		BattleSystem()->LockPlayer(false);
+}
+
+_bool CCorin_HitKnockOut::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+	//if (m_fAnimProgress < 0.35f)
+	//	return false;
+	return true;
 }
