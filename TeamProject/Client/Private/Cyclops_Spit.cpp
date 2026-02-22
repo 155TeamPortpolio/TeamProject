@@ -53,7 +53,17 @@ HRESULT CCyclops_Spit::Initialize(INIT_DESC* pArg)
 
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CCollider>()->Set_CompActive(false);
+
 	m_isAlive = false;
+
+	m_HardHitDesc.eDamageType = DAMAGE_TYPE::HARD;
+	m_HardHitDesc.eHitType = HIT_TYPE::ONCE;
+	m_HardHitDesc.fDamage = 10.f;
+
+	m_KnockOutHitDesc.eDamageType = DAMAGE_TYPE::KNOCKOUT;
+	m_KnockOutHitDesc.eHitType = HIT_TYPE::ONCE;
+	m_KnockOutHitDesc.fDamage = 13.f;
+
 
 	return S_OK;
 }
@@ -159,7 +169,13 @@ void CCyclops_Spit::OnTriggerEnter(CGameObject* pOther)
 		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 		if (nullptr != pEnemy)
 		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			HitDesc hitdesc = {};
+			if (m_eSpitType == SPIT::STRAIGHT)
+				hitdesc = m_KnockOutHitDesc;
+			else
+				hitdesc = m_HardHitDesc;
+
+			pEnemy->Take_Damage(hitdesc.eDamageType, hitdesc.fDamage);
 			CameraManager()->AddImpact(1, 0);
 			isCollision = true;
 		}
@@ -201,7 +217,9 @@ void CCyclops_Spit::ShootSpit(SPIT eSpitType)
 	
 	_vector vLookDir = XMVector3Normalize(ParentWorld.r[2]);
 
-	switch (eSpitType)
+	m_eSpitType = eSpitType;
+
+	switch (m_eSpitType)
 	{
 	case Client::CCyclops_Spit::SPIT::STRAIGHT:
 	{

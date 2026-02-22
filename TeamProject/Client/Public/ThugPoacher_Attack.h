@@ -21,6 +21,9 @@ private:
 	void Register_States();
 	void Register_Transitions();
 	void AttackFromIndex(_int iMoveIndex);
+
+private:
+	_bool m_isShoot = { false };
 };
 
 class CThugPoacher_Attack1 : public IBaseState<CThugPoacher>

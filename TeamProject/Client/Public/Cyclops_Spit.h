@@ -46,6 +46,10 @@ private:
 
     _float              m_fLifeTime = {};
 
+    SPIT                m_eSpitType = { SPIT::ARC_CENTER };
+    HitDesc             m_HardHitDesc = {};
+    HitDesc		        m_KnockOutHitDesc = {};
+
     /* Arc */
     _float3             m_vVelocity{};   // 현재 속도(벡터)
     _float              m_fArcSpeed = 5.f;   // 전방 속도

@@ -307,7 +307,7 @@ void CEnemy::Set_Alive(_bool alive)
 
 }
 
-void CEnemy::Active_AttackSign(_bool parryEnable)
+void CEnemy::Active_AttackSign(_bool parryEnable, _bool isUsedSound)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
 
@@ -327,7 +327,8 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 
 	m_isParryEnable = IsReallyParryEnable;
 
-	Get_Component<CAudioSource>()->Slot("AttackSign.wav").Play();
+	if (isUsedSound)
+		Get_Component<CAudioSource>()->Slot("AttackSign.wav").Play();
 }
 
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
@@ -702,7 +703,7 @@ void CEnemy::Parried()
 	m_tStatus.iGroggyValue += 15.f;
 }
 
-void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable)
+void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable, _bool isUsedSound)
 {
 	SetOnAttack(true, eSide);
 	Active_AttackSign(ParryEnable);
