@@ -189,12 +189,14 @@ HRESULT CUI_TutorialGuide::Show_ResultBanner()
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
         });
 
+    const _uint iReward = 100000;
+
     _uint iDenny = {};
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
-    iDenny += 10000;
+    iDenny += iReward;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
     CUI_LotteryResultBanner::RESULT_DESC desc = {};
-    desc.iDenny = 10000;
+    desc.iDenny = iReward;  // 10¸¸ µ¥´Ï!
     pObj->UI_Active(&desc);
 
     return S_OK;
@@ -262,6 +264,7 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         m_isFaded = false;
         m_isPopupComplete = false;
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::CLEAR);
+        Get_Component<CAudioSource>()->Slot("UI_BlingPop.wav").Play();
         break;
     case STATE::INACTIVE:
         AdvanceTutorial(); 
