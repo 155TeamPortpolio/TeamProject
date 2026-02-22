@@ -188,6 +188,25 @@ PS_OUT PS_MAIN_UI(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_ULTIMATE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.001f)
+        discard;
+       
+    vector vMaskDesc = MaskTexture.Sample(DefaultSampler, In.vTexcoord);
+   
+    if (length(vMaskDesc.rgb) > 0.01)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 1.f);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Opaque
@@ -228,6 +247,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_UI();
+    }
+
+    pass UITIMATE
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_WriteOnly, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_CUSTOM();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_ULTIMATE();
     }
 }
 

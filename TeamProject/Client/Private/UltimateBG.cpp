@@ -59,7 +59,7 @@ HRESULT CUltimateBG::Initialize(INIT_DESC* pArg)
 void CUltimateBG::Awake()
 {
     auto pMaterial = Get_Component<CMaterial>();
-    auto pMaterialInstance = CMaterialInstance::Create_Handle("Ultimate", "UI", GameInstance()->Get_Device());
+    auto pMaterialInstance = CMaterialInstance::Create_Handle("Ultimate", "UITIMATE", GameInstance()->Get_Device());
 
     pMaterial->Insert_MaterialInstance(pMaterialInstance, 0);
 
@@ -93,13 +93,13 @@ void CUltimateBG::Ready_RT()
 
     {
         SHADER_PARAM param = {};
-        auto pSRV = RenderSystem()->Get_EngineTargetSRV("Target_Skinned_Depth");
+        auto pSRV = RenderSystem()->Get_EngineTargetSRV("Target_Skinned_Diffuse");
         param.pData = pSRV;
         param.typeName = "Texture2D";
         param.iSize = 0;
         pMtrlInst->Set_Param("MaskTexture", param);
     }
-}
+}  
 
 CGameObject* CUltimateBG::Create()
 {
