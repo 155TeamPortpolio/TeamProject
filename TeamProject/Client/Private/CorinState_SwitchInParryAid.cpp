@@ -105,8 +105,9 @@ void CCorinState_SwitchInParryAid_Start::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
+    if (m_fStateTime > 0.75f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
     {
+        pOwner->Pop_Invincible();
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }
 }
@@ -138,7 +139,6 @@ void CCorinState_SwitchInParryAid_L_Loop::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_SwitchInParryAid_L_End::Enter(CCorin* pOwner)
 {
-    pOwner->Pop_Invincible();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_L_End")
         .Loop(false)
         .Speed(1.2f)
