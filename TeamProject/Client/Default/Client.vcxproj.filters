@@ -1557,6 +1557,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\WipeoutOverlay">
       <UniqueIdentifier>{49cfe856-c353-43a0-843d-34cf5f398ecb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\Logo\Video">
+      <UniqueIdentifier>{9e77a21a-95de-404c-a2b8-89c9aa0be765}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -3032,6 +3035,9 @@
     <ClInclude Include="..\Public\UI_WipeoutOverlay.h">
       <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_LogoVideo.h">
+      <Filter>02. GameObject\UI\01. 2D\Logo\Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -4459,6 +4465,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_WipeoutOverlay.cpp">
       <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_LogoVideo.cpp">
+      <Filter>02. GameObject\UI\01. 2D\Logo\Video</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
