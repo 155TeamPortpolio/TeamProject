@@ -205,8 +205,8 @@ void CZero_Level::Ready_Prototype()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Giant", CGiant::Create());
 
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
