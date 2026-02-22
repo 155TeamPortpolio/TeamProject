@@ -79,6 +79,9 @@ public:
 	void Show_Switch();
 	void Show_Clear();
 	void Show_Wipeout();
+	void Show_WipeoutOverlay();
+	/* wipeout overlay가 없으면 이미 종료된 것으로 간주하고, 존재하면 애니메이션 완료 여부를 반환 */
+	_bool Is_WipeoutOverlayFinished();
 
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
