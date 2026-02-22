@@ -84,7 +84,7 @@ struct OrbitInput
 struct OrbitProfile
 {
     _float distMin = 0.7f;
-    _float distMax = 5.f;
+    _float distMax = 4.5f;
 
     _float pitchLimitMinDeg = -40.f;
     _float pitchLimitMaxDeg = 50.f;
@@ -138,14 +138,29 @@ struct OrbitProfile
     _float hardGroundPadding = 0.03f;
     _float hardGroundRadiusScale = 0.95f;
 };
+struct OrbitLockEnterPreset
+{
+    _bool   active = false;
+
+    Vector2 rotGoalDeg{};
+    Vector2 rotCurDeg{};
+
+    _float  distWanted = 0.f;
+    _float  distGoal = 0.f;
+    _float  distCur = 0.f;
+
+    Vector3 pivotInternalOffset{};
+    Vector3 pivotExternalOffset{};
+};
 struct OrbitSnapshot
 {
-    OrbitPose       pose{};
-    OrbitLockState  lock{};
-    OrbitBlendState lockBlend{};
-    OrbitAutoYaw    autoYaw{};
-    OrbitSwitch     sw{};
-    OBJECT_HANDLE   target{};
+    OrbitPose            pose{};
+    OrbitLockState       lock{};
+    OrbitBlendState      lockBlend{};
+    OrbitAutoYaw         autoYaw{};
+    OrbitSwitch          sw{};
+    OrbitLockEnterPreset lockEnterPreset{};
+    OBJECT_HANDLE        target{};
 };
 struct OrbitPivotStabilizer
 {
@@ -187,6 +202,19 @@ struct OrbitLockAirStabState
 
     _bool   hasFilteredTargetPivot = false;
     Vector3 filteredTargetPivot = Vector3::Zero;
+};
+struct ExternalHandoffRuntime
+{
+    _bool  active = false;
+
+    _float elapsed = 0.f;
+    _float pivotRecoverSec = 0.f;
+
+    _float collisionGraceRemain = 0.f;
+    _float lockDistGraceRemain = 0.f;
+
+    Vector3 pivotInternalFrom{};
+    Vector3 pivotInternalTo{};
 };
 
 NS_END

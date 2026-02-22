@@ -182,5 +182,6 @@ void CTutorial_Level::Free()
 
     m_pPlayer->Clear_Characters();
     m_pGameInstance->DestroyInstance();
+    BattleSystem()->SetActive(false);
     Safe_Release(m_pBGM);
 }

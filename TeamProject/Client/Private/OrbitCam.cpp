@@ -147,6 +147,7 @@ HRESULT COrbitCam::Initialize_Prototype()
     m_freeze = 0.f;
 
     ClampTargets();
+    ExternalHandoff_Reset();
     return S_OK;
 }
 
@@ -225,6 +226,7 @@ void COrbitCam::ClearTarget()
     Switch_Reset();
 
     m_pivotStab = {};
+    ExternalHandoff_Reset();
 }
 
 void COrbitCam::SetLockOn(OBJECT_HANDLE h)
@@ -251,8 +253,6 @@ void COrbitCam::ClearLockOn()
 
     Lock_Exit();
     AutoYaw_OnInput();
-
-    CamDirector()->RequestSequence("ReturnPreset/Back");
 }
 
 void COrbitCam::Lock_ReenterBlend(_float blendInSec)
@@ -525,8 +525,10 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
 
     lockRes = EvalLock(dt, m_pose.rotGoalDeg.x, m_pose.distWanted);
 
+    if (ExternalHandoff_LockDistGraceOn())
+        lockRes.hasDist = false;
+
     m_pose.rotGoalDeg.x += lockRes.yawAddDeg;
-    if (lockRes.hasDist) m_pose.distWanted = lockRes.dist;
 
     return lockRes;
 }
@@ -546,7 +548,7 @@ void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
 void COrbitCam::Priority_Update(_float dt)
 {
     if (Freeze_SkipUpdate(dt)) return;
-
+    ExternalHandoff_Update(dt);
     UpdateSwitch(dt);
 
     const Vector3 rawPivot = GetPivotTargetPos();
@@ -557,6 +559,10 @@ void COrbitCam::Priority_Update(_float dt)
     const OrbitLockEval lockRes = ApplyLock(dt);
 
     ClampTargets();
+
+    _float evalDistWanted = m_pose.distWanted;
+    if (lockRes.hasDist) evalDistWanted = lockRes.dist;
+    evalDistWanted = clamp(evalDistWanted, m_prof.distMin, m_prof.distMax);
 
     const float rotA = ExpAlphaSpeed(m_prof.rotSmooth, dt);
     const float pivotA = ExpAlphaSpeed(m_prof.pivotSmooth, dt);
@@ -592,17 +598,19 @@ void COrbitCam::Priority_Update(_float dt)
 
     OrbitCollideEval colRes{};
 
-    if (m_dialogueMode)
+    const _bool handoffCollisionGrace = ExternalHandoff_CollisionGraceOn();
+
+    if (m_dialogueMode || handoffCollisionGrace)
     {
         m_hitDist = false;
         m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
         m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
 
-        m_pose.distGoal = clamp(m_pose.distWanted, m_prof.distMin, m_prof.distMax);
+        m_pose.distGoal = clamp(evalDistWanted, m_prof.distMin, m_prof.distMax);
     }
     else
     {
-        colRes = EvalCollideDist(dt, m_prof, pivotCurNext, m_pose.distWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
+        colRes = EvalCollideDist(dt, m_prof, pivotCurNext, evalDistWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
 
         m_hitDist = colRes.hit;
         m_yawDeltaCapDeg = colRes.yawDeltaCapDeg;
@@ -851,6 +859,21 @@ Vector3 COrbitCam::GetFoot() const
 Vector3 COrbitCam::GetBasePivotTargetPos(OBJECT_HANDLE h) const
 {
     return BasePivotPos(h, m_prof.offsetY);
+}
+
+void COrbitCam::Lock_CaptureEnterPreset()
+{
+    m_lockEnterPreset.active = true;
+
+    m_lockEnterPreset.rotGoalDeg = m_pose.rotGoalDeg;
+    m_lockEnterPreset.rotCurDeg = m_pose.rotCurDeg;
+
+    m_lockEnterPreset.distWanted = m_pose.distWanted;
+    m_lockEnterPreset.distGoal = m_pose.distGoal;
+    m_lockEnterPreset.distCur = m_pose.distCur;
+
+    m_lockEnterPreset.pivotInternalOffset = m_pose.pivotInternalOffset;
+    m_lockEnterPreset.pivotExternalOffset = m_pose.pivotExternalOffset;
 }
 
 void COrbitCam::AutoYaw_OnTarget()
@@ -1104,10 +1127,14 @@ void COrbitCam::Lock_Reset()
     m_lockFocus = {};
     m_hasLockFocus = false;
     m_lockAir = {};
+    Lock_ClearEnterPreset();
+    ExternalHandoff_Reset();
 }
 
 void COrbitCam::Lock_Enter(OBJECT_HANDLE h, _float curDist)
 {
+    Lock_CaptureEnterPreset();
+
     m_lock.active = true;
     m_lock.handle = h;
     m_lock.savedDist = curDist;
@@ -1159,6 +1186,8 @@ void COrbitCam::Lock_BlendUpdate(_float dt)
             m_lock = {};
             m_lockFocus = {};
             m_hasLockFocus = false;
+            m_lockAir = {};
+            Lock_ClearEnterPreset();
         }
         return;
     }
@@ -1578,6 +1607,23 @@ OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPi
     return out;
 }
 
+_bool COrbitCam::GetStableOrbitBeginPose(Vector3& outPivotWorld, Vector2& outRotDeg, _float& outDist) const
+{
+    if (Lock_On() && m_lockEnterPreset.active && m_target.isValid())
+    {
+        const Vector3 basePivot = GetBasePivotTargetPos(m_target);
+        outPivotWorld = basePivot + m_lockEnterPreset.pivotInternalOffset + m_lockEnterPreset.pivotExternalOffset;
+        outRotDeg = m_lockEnterPreset.rotCurDeg;
+        outDist = clamp(m_lockEnterPreset.distWanted, m_prof.distMin, m_prof.distMax);
+        return true;
+    }
+
+    outPivotWorld = m_pose.pivotCurWorld;
+    outRotDeg = m_pose.rotCurDeg;
+    outDist = m_pose.distCur;
+    return false;
+}
+
 _bool COrbitCam::QueryGroundMinCamY_BySweep(const Vector3& candidateCamPos, _float& outMinCamY)
 {
     auto scene = PhysicsSystem()->Get_Scene();
@@ -1624,6 +1670,78 @@ _bool COrbitCam::HardClampCameraPosToGround(Vector3& inOutCamPos)
 
     inOutCamPos.y = minCamY;
     return true;
+}
+
+void COrbitCam::ExternalHandoff_Reset()
+{
+    m_externalHandoff = {};
+}
+
+void COrbitCam::CommitExternalHandoff(const Vector3& pivotWorld, const Vector3& camPosWorld, const Quaternion& camRot, const Vector3& lookAtWorld, _float pivotRecoverSec, _float collisionGraceSec, _float lockDistGraceSec)
+{
+    const _float dist = (pivotWorld - camPosWorld).Length();
+
+    SnapFromExternalPose(pivotWorld, camPosWorld, camRot, dist);
+
+    m_returnPreset = {};
+    m_switch = {};
+
+    m_pose.rotGoalDeg = m_pose.rotCurDeg;
+    m_pose.distWanted = m_pose.distCur;
+    m_pose.distGoal = m_pose.distCur;
+    m_pose.pivotGoalWorld = m_pose.pivotCurWorld;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    m_lockFocus = lookAtWorld;
+    m_hasLockFocus = true;
+
+    AutoYaw_OnInput();
+
+    m_freeze = max(m_freeze, 0.02f);
+    if (m_freezeMode == FreezeMode::Parry)
+        m_freezeMode = FreezeMode::None;
+
+    m_externalHandoff.active = true;
+    m_externalHandoff.elapsed = 0.f;
+    m_externalHandoff.pivotRecoverSec = max(pivotRecoverSec, 0.0001f);
+    m_externalHandoff.collisionGraceRemain = max(collisionGraceSec, 0.f);
+    m_externalHandoff.lockDistGraceRemain = max(lockDistGraceSec, 0.f);
+    m_externalHandoff.pivotInternalFrom = m_pose.pivotInternalOffset;
+    m_externalHandoff.pivotInternalTo = Vector3::Zero;
+
+    ClampTargets();
+}
+
+void COrbitCam::ExternalHandoff_Update(_float dt)
+{
+    if (!m_externalHandoff.active) return;
+
+    if (m_externalHandoff.collisionGraceRemain > 0.f)
+        m_externalHandoff.collisionGraceRemain = max(0.f, m_externalHandoff.collisionGraceRemain - dt);
+
+    if (m_externalHandoff.lockDistGraceRemain > 0.f)
+        m_externalHandoff.lockDistGraceRemain = max(0.f, m_externalHandoff.lockDistGraceRemain - dt);
+
+    m_externalHandoff.elapsed += dt;
+
+    const _float u = clamp(m_externalHandoff.elapsed / m_externalHandoff.pivotRecoverSec, 0.f, 1.f);
+    const _float t = Math::ApplyEase(EaseType::InOutSine, u);
+
+    m_pose.pivotInternalOffset = Vector3::Lerp(m_externalHandoff.pivotInternalFrom, m_externalHandoff.pivotInternalTo, t);
+
+    if (u >= 1.f && m_externalHandoff.collisionGraceRemain <= 0.f && m_externalHandoff.lockDistGraceRemain <= 0.f)
+        m_externalHandoff.active = false;
+}
+
+_bool COrbitCam::ExternalHandoff_CollisionGraceOn() const
+{
+    return m_externalHandoff.collisionGraceRemain > 0.f;
+}
+
+_bool COrbitCam::ExternalHandoff_LockDistGraceOn() const
+{
+    return m_externalHandoff.lockDistGraceRemain > 0.f;
 }
 
 void COrbitCam::DrawDebugPivot()

@@ -208,6 +208,10 @@ private:
         _bool         savedLockWasOn = false;
         OBJECT_HANDLE savedLockHandle{};
 
+        _bool         preParryLockPoseValid = false;
+        Vector3       preParryLockPivotWorld{};
+        Vector3       preParryLockCamPosWorld{};
+
         _bool         lookInit = false;
         _float        lookYawPrev = 0.f;
         _float        lookPitchPrev = 0.f;
@@ -216,6 +220,13 @@ private:
         Vector3       lookPrevPivotWorld{};
         Vector3       lookPrevCamPosWorld{};
         Vector3       lookPrevLookAtWorld{};
+
+        _bool         finalPoseValid = false;
+        Vector3       finalPivotWorld{};
+        Vector3       finalCamPosWorld{};
+        Vector3       finalLookAtWorld{};
+        Quaternion    finalCamRot{};
+        _float        finalDist = 0.f;
     };
 
 private:

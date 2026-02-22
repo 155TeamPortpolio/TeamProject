@@ -814,6 +814,10 @@ void CamParryController::Reset()
     exit.savedLockWasOn = false;
     exit.savedLockHandle.Reset();
 
+    exit.preParryLockPoseValid = false;
+    exit.preParryLockPivotWorld = Vector3::Zero;
+    exit.preParryLockCamPosWorld = Vector3::Zero;
+
     exit.lookInit = false;
     exit.lookYawPrev = 0.f;
     exit.lookPitchPrev = 0.f;
@@ -822,6 +826,13 @@ void CamParryController::Reset()
     exit.lookPrevPivotWorld = Vector3::Zero;
     exit.lookPrevCamPosWorld = Vector3::Zero;
     exit.lookPrevLookAtWorld = Vector3::Zero;
+
+    exit.finalPoseValid = false;
+    exit.finalPivotWorld = Vector3::Zero;
+    exit.finalCamPosWorld = Vector3::Zero;
+    exit.finalLookAtWorld = Vector3::Zero;
+    exit.finalCamRot = Quaternion::Identity;
+    exit.finalDist = 0.f;
 }
 
 void CamParryController::Begin()
@@ -830,9 +841,13 @@ void CamParryController::Begin()
 
     const _bool continuingChain = core.active && core.state == State::WaitEnd && IsChainReentryOpen() && core.beginWasChain;
     const _float prevChainRefDist = core.chainRefDist;
-        
+
     const _bool prevSavedLockWasOn = exit.savedLockWasOn;
     const OBJECT_HANDLE prevSavedLockHandle = exit.savedLockHandle;
+
+    const _bool prevPreParryLockPoseValid = exit.preParryLockPoseValid;
+    const Vector3 prevPreParryLockPivotWorld = exit.preParryLockPivotWorld;
+    const Vector3 prevPreParryLockCamPosWorld = exit.preParryLockCamPosWorld;
 
     Reset();
 
@@ -841,6 +856,15 @@ void CamParryController::Begin()
 
     core.attacker = CamDirector()->GetCurHandle();
     auto orbit = CamDirector()->GetOrbitCam();
+
+    Vector3 beginRefPivotWorld{};
+    Vector2 beginRefRotDeg{};
+    _float beginRefDist = 0.f;
+    orbit->GetStableOrbitBeginPose(beginRefPivotWorld, beginRefRotDeg, beginRefDist);
+    beginRefDist = ClampParryDist(beginRefDist);
+
+    const Quaternion qBeginRef = YawPitchRollQuatDeg(beginRefRotDeg.x, beginRefRotDeg.y, 0.f);
+    const Vector3 beginRefCamPosWorld = OrbitPos(beginRefPivotWorld, qBeginRef, beginRefDist);
 
     CamDirector()->SetTarget(core.attacker);
 
@@ -856,11 +880,27 @@ void CamParryController::Begin()
     {
         exit.savedLockWasOn = prevSavedLockWasOn;
         exit.savedLockHandle = prevSavedLockHandle;
+
+        exit.preParryLockPoseValid = prevPreParryLockPoseValid;
+        exit.preParryLockPivotWorld = prevPreParryLockPivotWorld;
+        exit.preParryLockCamPosWorld = prevPreParryLockCamPosWorld;
     }
     else
     {
         exit.savedLockWasOn = preLockOn;
         exit.savedLockHandle = preSnap.lock.handle;
+
+        exit.preParryLockPoseValid = false;
+        exit.preParryLockPivotWorld = Vector3::Zero;
+        exit.preParryLockCamPosWorld = Vector3::Zero;
+
+        if (preLockOn)
+        {
+            const Quaternion qPre = YawPitchRollQuatDeg(preSnap.pose.rotCurDeg.x, preSnap.pose.rotCurDeg.y, 0.f);
+            exit.preParryLockPoseValid = true;
+            exit.preParryLockPivotWorld = preSnap.pose.pivotCurWorld;
+            exit.preParryLockCamPosWorld = OrbitPos(preSnap.pose.pivotCurWorld, qPre, preSnap.pose.distCur);
+        }
     }
 
     const _float offsetY = orbit->GetOffsetY();
@@ -878,9 +918,38 @@ void CamParryController::Begin()
 
     side.dirXZ = attackerFwd;
 
-    ComputeSideFromCam();
+    {
+        Vector3 fwd, right;
+        BuildBasis(fwd, right);
 
-    CaptureCurAsFrom();
+        Vector3 rel = beginRefCamPosWorld - BasePivotWorld();
+        rel.y = 0.f;
+
+        side.isLeft = (rel.Dot(right) < 0.f);
+        side.sideSign = side.isLeft ? -1 : 1;
+    }
+
+    {
+        Vector3 fwd, right;
+        BuildBasis(fwd, right);
+
+        ShotGoal from{};
+
+        from.pivotExt = ExtFromPivotWorld(beginRefPivotWorld);
+
+        const _float attackerYaw = YawFromDirXZ(fwd);
+        from.yawDeg = Math::WrapDeg(beginRefRotDeg.x - attackerYaw);
+
+        from.pitchDeg = beginRefRotDeg.y;
+        from.rollDeg = 0.f;
+
+        from.dist = beginRefDist;
+        from.yawWeight = 1.f;
+
+        ClampAboveGround(from);
+
+        shot.shotFrom = from;
+    }
 
     const _float startDist = shot.shotFrom.dist;
 
@@ -909,7 +978,7 @@ void CamParryController::Begin()
         shot.shotTo.yawDeg = Math::WrapDeg(shot.shotTo.yawDeg + (_float)lookSign * startYawExtra);
     }
 
-    piv.enterCamY = CurCamPosWorld().y;
+    piv.enterCamY = beginRefCamPosWorld.y;
 
     if (chain)
     {
@@ -972,16 +1041,45 @@ void CamParryController::End()
     OBJECT_HANDLE lockHandle = snap.lock.handle;
     const _bool lockOn = IsEffectiveLockOn(snap);
 
-    exit.returnLockHandle = lockOn ? lockHandle : OBJECT_HANDLE{};
-    exit.returnLockBlend = lockOn && exit.returnLockHandle.isValid();
+    exit.returnLockHandle = OBJECT_HANDLE{};
+    exit.returnLockBlend = false;
 
-    if (exit.returnLockBlend)
+    _bool useExitBlend = false;
+
+    const _bool hasSavedPreParryLockPose = exit.savedLockWasOn && exit.preParryLockPoseValid;
+
+    if (hasSavedPreParryLockPose)
     {
-        orbit->SetLockOn(exit.returnLockHandle);
+        exit.exitPivotWorld = exit.preParryLockPivotWorld;
+        exit.exitCamPosTo = exit.preParryLockCamPosWorld;
+        useExitBlend = true;
 
-        exit.exitPivotWorld = BasePivotWorld();
-        exit.exitCamPosTo = BuildReturnPresetCamPos();
+        const _bool sameLockAsSaved = lockOn && exit.savedLockHandle.isValid() && (lockHandle == exit.savedLockHandle);
+        if (sameLockAsSaved)
+        {
+            exit.returnLockHandle = exit.savedLockHandle;
+            exit.returnLockBlend = true;
+            orbit->SetLockOn(exit.returnLockHandle);
+        }
+    }
+    else if (lockOn)
+    {
+        exit.returnLockHandle = lockHandle;
+        exit.returnLockBlend = lockHandle.isValid();
 
+        if (exit.returnLockBlend)
+        {
+            orbit->SetLockOn(exit.returnLockHandle);
+
+            exit.exitPivotWorld = BasePivotWorld();
+            exit.exitCamPosTo = BuildReturnPresetCamPos();
+
+            useExitBlend = true;
+        }
+    }
+
+    if (useExitBlend)
+    {
         exit.exitTo = BuildExitShot_FromCamPos(exit.exitPivotWorld, exit.exitCamPosTo);
 
         exit.exitPivotFrom = snap.pose.pivotCurWorld;
@@ -992,7 +1090,8 @@ void CamParryController::End()
 
         exit.exitSec = 1.f;
 
-        orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
+        if (exit.returnLockBlend)
+            orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
 
         exit.lookInit = true;
         exit.lookYawPrev = snap.pose.rotCurDeg.x;
@@ -1002,6 +1101,13 @@ void CamParryController::End()
         exit.lookPrevPivotWorld = Vector3::Zero;
         exit.lookPrevCamPosWorld = Vector3::Zero;
         exit.lookPrevLookAtWorld = Vector3::Zero;
+
+        exit.finalPoseValid = false;
+        exit.finalPivotWorld = Vector3::Zero;
+        exit.finalCamPosWorld = Vector3::Zero;
+        exit.finalLookAtWorld = Vector3::Zero;
+        exit.finalCamRot = Quaternion::Identity;
+        exit.finalDist = 0.f;
 
         core.state = State::ExitBlend;
         core.elapsed = 0.f;
@@ -1192,12 +1298,25 @@ void CamParryController::Update(_float dt)
         exit.lookHasPrevPos = true;
 
         const Quaternion qRot = YawPitchRollQuatDeg(yawFinal, pitchFinal, g.rollDeg);
+
+        exit.finalPoseValid = true;
+        exit.finalPivotWorld = pivotWorld;
+        exit.finalCamPosWorld = camPosWorld;
+        exit.finalLookAtWorld = lookAt;
+        exit.finalCamRot = qRot;
+        exit.finalDist = g.dist;
+
         orbit->SnapFromOrbitPose(pivotWorld, camPosWorld, qRot, g.dist);
 
         if (u >= 1.f)
         {
-            orbit->ResumeSync();
-            orbit->ParryMode_End();
+            if (exit.finalPoseValid)
+                orbit->CommitExternalHandoff(exit.finalPivotWorld, exit.finalCamPosWorld, exit.finalCamRot, exit.finalLookAtWorld, 0.18f, 0.10f, 0.10f);
+            else
+            {
+                orbit->ResumeSync();
+                orbit->ParryMode_End();
+            }
 
             core.state = State::WaitEnd;
             core.elapsed = 0.f;
@@ -1206,7 +1325,6 @@ void CamParryController::Update(_float dt)
             wait.seqKey.clear();
             wait.seqStarted = true;
         }
-        return;
     }
 
     if (core.state == State::WaitEnd)

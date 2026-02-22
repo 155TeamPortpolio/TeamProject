@@ -63,8 +63,18 @@ public:
     void          Lock_BlendUpdate_External(_float dt) { Lock_BlendUpdate(dt); }
     OrbitLockEval Lock_Eval_External(_float dt, _float curYawDeg, _float curDist) { return EvalLock(dt, curYawDeg, curDist); }
     OrbitLockEval EvalLock_PlayerPivot(_float dt, const Vector3& playerPivot, _float curYawDeg, _float curDist);
+    _bool         GetStableOrbitBeginPose(Vector3& outPivotWorld, Vector2& outRotDeg, _float& outDist) const;
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
+
+public:
+    void CommitExternalHandoff(const Vector3& pivotWorld, const Vector3& camPosWorld, const Quaternion& camRot, const Vector3& lookAtWorld, _float pivotRecoverSec = 0.18f, _float collisionGraceSec = 0.10f, _float lockDistGraceSec = 0.10f);
+
+private:
+    void ExternalHandoff_Reset();
+    void ExternalHandoff_Update(_float dt);
+    _bool ExternalHandoff_CollisionGraceOn() const;
+    _bool ExternalHandoff_LockDistGraceOn() const;
 
 public:
     void  DialogueMode_Begin() { m_dialogueMode = true; }
@@ -128,6 +138,8 @@ private:
     void          Lock_Exit();
     void          Lock_BlendStart(_bool entering);
     void          Lock_BlendUpdate(_float dt);
+    void          Lock_CaptureEnterPreset();
+    void          Lock_ClearEnterPreset() { m_lockEnterPreset = {}; }
 
     OrbitLockEval EvalLock(_float dt, _float curYawDeg, _float curDist);
 
@@ -176,6 +188,8 @@ private:
     OrbitDialogueYaw      m_dialogueYaw{};
     OrbitReturnPreset     m_returnPreset{};
     OrbitLockAirStabState m_lockAir{};
+    OrbitLockEnterPreset  m_lockEnterPreset{};
+    ExternalHandoffRuntime m_externalHandoff{};
 
 public:
     static  COrbitCam* Create();
