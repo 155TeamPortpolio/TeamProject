@@ -401,12 +401,14 @@ void CBattleFXFlow::StartVfx_Ultimate()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::ULTIMATE)];
 	AddParallelTimeScale(BATTLE_OBJ_TYPE::MONSTER, preset.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::MONSTER)]);
 	AddCall([this]() {
+		UIDirector()->Hide_HUD(CUIDirector::BATTLE);
 		string nowLevel = LevelManager()->Get_NowLevelKey();
 		if(auto layer = ObjectManager()->Get_Layer({nowLevel, m_layerTag[ENUM(BATTLE_OBJ_TYPE::MONSTER)]}))
 			layer->Set_RenderState(false);
 		});
 	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
+		UIDirector()->Show_HUD(CUIDirector::BATTLE);
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {}; 
 		m_BattleVFX.isRunning = false;
