@@ -43,6 +43,7 @@ private:
     _bool               m_isShoot = { false };
     _float3             m_vDir = {};
     _float              m_fSpeed = {20.f};
+    _float2             m_vLifeTime = { 3.f,0.f };
 
     _bool               m_isCollisionCooltime = { false };
     _float2             m_vCollisionCooltime = { 0.05f, 0.f };
