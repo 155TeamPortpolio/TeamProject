@@ -63,7 +63,7 @@ void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
-    pOwner->Look_Target();
+    //pOwner->Look_Target();
     __super::Update(pOwner, dt);
 }
 
@@ -104,8 +104,9 @@ void CJaneDoeState_SwitchInParryAid_Start::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.f)
+    if (m_fStateTime > 0.75f)
     {
+        pOwner->Pop_Invincible();
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }
 }

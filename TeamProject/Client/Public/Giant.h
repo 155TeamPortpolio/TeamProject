@@ -22,7 +22,6 @@ public:
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
     virtual void Parried() override;
-    virtual void SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE) override;
 
 public:
     static CGiant* Create();

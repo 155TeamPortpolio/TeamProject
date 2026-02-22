@@ -23,9 +23,14 @@
       "ClipTag": "Giant_Ani_Attack_01",
       "Events": [
         {
+          "EventTime": 0.05999999865889549,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack1_FULL.wav"
+        },
+        {
           "EventTime": 0.7797271013259888,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithOutSound"
         },
         {
           "EventTime": 1.1695905923843384,
@@ -48,9 +53,14 @@
       "ClipTag": "Giant_Ani_Attack_02",
       "Events": [
         {
+          "EventTime": 0.2199999988079071,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack2_FULL.wav"
+        },
+        {
           "EventTime": 0.8999999761581421,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithOutSound"
         },
         {
           "EventTime": 1.2288498878479004,
@@ -143,9 +153,14 @@
       "ClipTag": "Giant_Ani_Attack_02_01",
       "Events": [
         {
+          "EventTime": 0.019999999552965164,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack2_1_FULL.wav"
+        },
+        {
           "EventTime": 1.2553606033325195,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithOutSound"
         },
         {
           "EventTime": 1.4346978664398193,
@@ -168,9 +183,14 @@
       "ClipTag": "Giant_Ani_Attack_02_Explode",
       "Events": [
         {
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack2_Explode_FULL.wav"
+        },
+        {
           "EventTime": 0.3844054639339447,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithOutSound"
         },
         {
           "EventTime": 0.5653020739555359,
@@ -195,7 +215,7 @@
         {
           "EventTime": 1.0051982402801514,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithOutSound"
         },
         {
           "EventTime": 1.392917513847351,
@@ -226,6 +246,11 @@
           "EventTime": 3.5756335258483887,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack3_FULL.wav"
         }
       ]
     },
@@ -239,7 +264,7 @@
         {
           "EventTime": 0.6299999952316284,
           "EventType": "Notify",
-          "EventTag": "UnleashAttack"
+          "EventTag": "UnleashAttack_WithOutSound"
         },
         {
           "EventTime": 1.030994176864624,
@@ -265,6 +290,11 @@
           "EventTime": 1.9362574815750122,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.019999999552965164,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack4_FULL.wav"
         }
       ]
     },
@@ -290,6 +320,11 @@
           "EventTime": 0.949707567691803,
           "EventType": "Notify",
           "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.2199999988079071,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack5.wav"
         }
       ]
     },
@@ -311,7 +346,13 @@
     },
     {
       "ClipTag": "Giant_Ani_Born",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "giant_Spawn.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Giant_Ani_Chaos",
@@ -331,7 +372,13 @@
     },
     {
       "ClipTag": "Giant_Ani_Dodge",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.0,
+          "EventType": "Sound",
+          "EventTag": "giant_Evade.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Giant_Ani_Hit_H_Back",
@@ -367,11 +414,28 @@
     },
     {
       "ClipTag": "Giant_Ani_Run_loop",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.14000000059604645,
+          "EventType": "Sound",
+          "EventTag": "giant_Step.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Giant_Ani_Run_Start",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.23000000417232513,
+          "EventType": "Sound",
+          "EventTag": "giant_Step.wav"
+        },
+        {
+          "EventTime": 1.25,
+          "EventType": "Sound",
+          "EventTag": "giant_Step.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Giant_Ani_SideStep_L",
