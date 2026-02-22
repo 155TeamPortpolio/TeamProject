@@ -131,7 +131,7 @@ void CWaterWave::Update(_float dt)
 
 void CWaterWave::Late_Update(_float dt)
 {
-	if (m_fAccTime >= m_CycleTime - 1.f) {
+	if (m_fAccTime >= m_CycleTime - 1.3f) {
 		CameraManager()->AddImpact(ENUM(CamShakeType::EarthquakeShort), 
 			ENUM(CamZoomType::EarthquakeShort),1.3f);
 

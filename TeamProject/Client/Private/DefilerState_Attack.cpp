@@ -23,9 +23,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
-	blackBoard.patternTransition.clear();
-	Type = 15;
-	switch (Type)
+	switch (13)
 	{
 	case 0 :
 	{
@@ -115,7 +113,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 13 :
 	{
-		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Opposite",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack_Barrier",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "RePos_Front",0.f,1.f });
@@ -165,7 +163,7 @@ void CDefilerState_Attack::ReadySubState()
 	m_pSubStateMachine->Register_State("RePos_Back",				CDefilerState_RePos_Back::Create());
 	m_pSubStateMachine->Register_State("RePos_Target",				CDefilerState_RePos_Target::Create());
 	m_pSubStateMachine->Register_State("Attack_Barrier",			CDefilerState_Attack_Barrier::Create());
-	m_pSubStateMachine->Register_State("RePos_Opposite",		CDefilerState_Attack_ReposByPos::Create());
+	m_pSubStateMachine->Register_State("RePos_Opposite",			CDefilerState_Attack_ReposByPos::Create());
 }
 
 void CDefilerState_Attack::Enter(CDefiler* pOwner)
@@ -879,7 +877,6 @@ void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 		.Speed(1.f)
 		.Loop(false)
 		.Apply();
-
 	pOwner->Stop_Effect("Defiler_Wave_Charge");
 	pOwner->GetDissolve().DisAppear(.5f);
 	pOwner->HideHUD(true);
@@ -887,6 +884,9 @@ void CDefilerState_Attack_09_End::Enter(CDefiler* pOwner)
 
 void CDefilerState_Attack_09_End::Update(CDefiler* pOwner, _float dt)
 {
+	if (IsCrossAnimProgress(0.58f))
+		pOwner->Get_Component<CAudioSource>()->Slot("VO_Poison.wav").Attribute3D(true).Volume(0.6f).Play();
+
 	ComboTransition(pOwner);
 	Update_Effects(pOwner);
 }
