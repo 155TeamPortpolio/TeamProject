@@ -12,6 +12,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -77,6 +78,10 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugAssaulter/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
+
 
 	m_isUseGroggyRimLight = true;
 
@@ -145,7 +150,7 @@ void CThugAssaulter::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 7.f }, true);
 
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -317,6 +322,11 @@ void CThugAssaulter::Parried()
 
 	m_pStateMachine->Change_State("Parried");
 	SetOnAttack(false, ATTACK_SIDE::NONE);
+	SetBattleColliderObject("Weapon", BATTLE_COLTYPE::ATTACK, false);
+
+	Get_Component<CAudioSource>()->Set_SlotStop("assaulter_Attack1_FULL.wav");
+	Get_Component<CAudioSource>()->Set_SlotStop("assaulter_Attack4_FULL.wav");
+
 }
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
@@ -522,6 +532,7 @@ void CThugAssaulter::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);
