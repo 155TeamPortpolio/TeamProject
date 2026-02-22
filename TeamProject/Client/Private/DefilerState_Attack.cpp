@@ -165,7 +165,7 @@ void CDefilerState_Attack::ReadySubState()
 	m_pSubStateMachine->Register_State("RePos_Back",				CDefilerState_RePos_Back::Create());
 	m_pSubStateMachine->Register_State("RePos_Target",				CDefilerState_RePos_Target::Create());
 	m_pSubStateMachine->Register_State("Attack_Barrier",			CDefilerState_Attack_Barrier::Create());
-	m_pSubStateMachine->Register_State("RePos_Opposite",		CDefilerState_Attack_ReposByTarget::Create());
+	m_pSubStateMachine->Register_State("RePos_Opposite",		CDefilerState_Attack_ReposByPos::Create());
 }
 
 void CDefilerState_Attack::Enter(CDefiler* pOwner)
@@ -1099,7 +1099,7 @@ void CDefilerState_Attack_Barrier::Update_Effects(CDefiler* pOwner)
 	}
 }
 
-void CDefilerState_Attack_ReposByTarget::Enter(CDefiler* pOwner)
+void CDefilerState_Attack_ReposByPos::Enter(CDefiler* pOwner)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	auto& targetInfo = pOwner->GetTargetingInfo();
@@ -1130,10 +1130,10 @@ void CDefilerState_Attack_ReposByTarget::Enter(CDefiler* pOwner)
 
 	blackBoard.isRequestNext = true;
 }
-void CDefilerState_Attack_ReposByTarget::Update(CDefiler* pOwner, _float dt)
+void CDefilerState_Attack_ReposByPos::Update(CDefiler* pOwner, _float dt)
 {
 }
 
-void CDefilerState_Attack_ReposByTarget::Exit(CDefiler* pOwner)
+void CDefilerState_Attack_ReposByPos::Exit(CDefiler* pOwner)
 {
 }
