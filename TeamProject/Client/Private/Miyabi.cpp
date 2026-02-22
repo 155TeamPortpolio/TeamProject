@@ -70,8 +70,8 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Weapon()))
 		return E_FAIL;
 
-	//if (FAILED(Initialize_Effects()))
-	//	return E_FAIL;
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
 
 	if (FAILED(Initialize_Sound()))
 		return E_FAIL;
@@ -314,6 +314,7 @@ void CMiyabi::On_ChainParry()
 
 	if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
 	{
+		Push_Invincible();
 		// 이미 SwitchIn이면 서브만 리셋
 		IHState<CMiyabi>* pSwitchIn = dynamic_cast<IHState<CMiyabi>*>(
 			m_pStateMachine->Get_CurrentState());

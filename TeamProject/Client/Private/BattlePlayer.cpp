@@ -31,7 +31,7 @@ CBattlePlayer::CBattlePlayer()
 HRESULT CBattlePlayer::Initialize()
 {
     if (m_BattleCharacters.empty()) {
-        SetBattleCharacters({ CHARACTER::Miyabi/*, CHARACTER::Corin, CHARACTER::JaneDoe*/ });
+        SetBattleCharacters({ CHARACTER::Miyabi, CHARACTER::Corin, CHARACTER::JaneDoe });
     }
     return S_OK;
 }
