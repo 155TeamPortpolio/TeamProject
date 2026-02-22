@@ -34,14 +34,15 @@ HRESULT CLogoLevel::Awake()
 
 void CLogoLevel::Update()
 {
-	if (InputDevice()->Key_Tap('Y')) {
-		LevelManager()->Request_ChangeLevel("Scott_Level", true);
-	}
+	
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	vector<PreloadCompleted> completed;
 	pRcsMgr->PumpPreloads(completed);
 	_uint done = 0, total = 0;
 	ResourceManager()->GetPreloadProgress(done, total);
+	if (InputDevice()->Key_Tap('Y')&& ResourceManager()->isLoadComplete()) {
+		LevelManager()->Request_ChangeLevel("Scott_Level", true);
+	}
 }
 
 HRESULT CLogoLevel::Render()
