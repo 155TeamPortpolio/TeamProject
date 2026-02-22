@@ -1182,11 +1182,6 @@
           "EventTime": 0.24567902088165283,
           "EventType": "Sound",
           "EventTag": "Miyabi_Walk_R.wav"
-        },
-        {
-          "EventTime": 0.549382746219635,
-          "EventType": "Sound",
-          "EventTag": "Miyabi_Walk_L.wav"
         }
       ]
     },

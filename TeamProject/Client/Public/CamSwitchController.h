@@ -13,27 +13,26 @@ public:
     {
         struct Common
         {
-            _float   zoomInSec = 0.5f;
-            _float   zoomInDeg = 30.f;
-            EaseType zoomInEase = EaseType::OutCubic;
+            _float   enterSec = 0.5f;
+            _float   holdFov = 30.f;
+            EaseType enterEase = EaseType::OutCubic;
 
-            _float   faceYOffsetMul = 0.6f;
-
-            _float   maxVictimDist = 12.f;
-
+            _float   maxVictimDist = 10.f;
             _float   pivotFollowLerpSpeed = 18.f;
 
             _float   cancelFovSec = 0.5f;
             EaseType cancelFovEase = EaseType::OutCubic;
         } common;
 
-        struct Goal
+        struct SwitchGoal
         {
-            _float pivotAddY = 0.f;
             _float behindYawAddDeg = 180.f;
 
-            _float pairYawAddDeg = 0.f;
-            _float pivotForward = 0.35f;
+            _bool  chooseNearerSidePreset = true;
+
+            _float lookOffset = -3.25f;
+            _float rightOffset = 1.f;
+            _float upOffset = -0.2f;
 
             _float distBaseAdd = 0.f;
             _float distRatio = 0.12f;
@@ -42,14 +41,22 @@ public:
 
         struct Switch
         {
-            _float   blendSec = 1.0f;
-            EaseType blendEase = EaseType::OutCubic;
+            _float   camPosBlendSec = 0.4f;
+            EaseType camPosBlendEase = EaseType::OutCubic;
 
-            _float   fovBlendSec = 0.1f;
-            EaseType fovBlendEase = EaseType::OutCubic;
+            _float   pivotBlendSec = 0.4f;
+            EaseType pivotBlendEase = EaseType::OutCubic;
 
-            _float   recoverPoseSec = 0.5f;
-            EaseType recoverPoseEase = EaseType::OutCubic;
+            _float   fovBlendSec = 0.5f;
+            EaseType fovBlendEase = EaseType::OutSine;
+            _float   fovSwitchRecoverTarget = 40.f;
+
+            _float   recoverPoseSec = 1.f;
+            EaseType recoverPoseEase = EaseType::InOutSine;
+            _float   recoverCamPosAddY = 2.f;
+
+            _float   recoverFovSec = 1.f;
+            EaseType recoverFovEase = EaseType::InOutSine;
         } sw;
 
         struct PivotFilter
@@ -58,7 +65,7 @@ public:
             _float rawTau = 0.10f;
             _float outlierDist = 0.75f;
             _float outlierVel = 15.f;
-        } pivot;
+        } filter;
     } tune;
 
     struct Pose
@@ -81,7 +88,16 @@ public:
         _float fovSaved = 0.f;
         _float fovFrom = 0.f;
         _float holdDesiredFov = 0.f;
+
+        _float fovCommanded = 0.f;
+        _bool  hasFovCommanded = false;
     } lens;
+
+    struct BeginOrbitBaseline
+    {
+        Pose   pose{};
+        _bool  valid = false;
+    } beginOrbit;
 
     struct PivotStab
     {
@@ -99,52 +115,57 @@ public:
     struct HoldData
     {
         OBJECT_HANDLE target{};
-        Pose  pose{};
-        PivotStab pivotStab{};
-        _bool valid = false;
+        Pose          pose{};
+        PivotStab     pivotStab{};
     } hold;
-
-    struct PivotSample
-    {
-        Vector3 basePivot{};
-        Vector3 facePivot{};
-        _bool   valid = false;
-    };
 
     struct PairData
     {
         OBJECT_HANDLE attacker{};
         OBJECT_HANDLE victim{};
 
-        Vector3 aBase{};
-        Vector3 aFace{};
+        Vector3 aCenter{};
         _bool   aValid = false;
 
-        Vector3 vBase{};
-        Vector3 vFace{};
+        Vector3 vCenter{};
         _bool   vValid = false;
     } pair;
 
     struct SwitchData
     {
         OBJECT_HANDLE target{};
-        Pose from{};
-        Pose switchTo{};
-        Pose goal{};
-        Pose recoverFrom{};
-        Pose recoverTo{};
+
+        Pose    fromPose{};
+        Vector3 fromCamPos{};
+        Vector3 fromPivot{};
+
+        Vector3 switchCamPosGoal{};
+        Vector3 switchPivotGoal{};
+
+        Vector3 recoverCamPosFrom{};
+        Vector3 recoverPivotFrom{};
+
+        Pose    recoverTo{};
+        Pose    recoverLookBasis{};
+
         PivotStab pivotStab{};
-        _bool active = false;
+        _bool     active = false;
+        _bool     hasRecoverLookBasis = false;
+
+        _int sideSign = 1;
 
         _float fovFrom = 0.f;
         _float fovTo = 0.f;
+
+        _float recoverFovFrom = 0.f;
+        _float recoverFovTo = 0.f;
     } sw;
 
     struct CancelData
     {
-        _float fovFrom = 0.f;
-        _float fovTo = 0.f;
-        _float dur = 0.f;
+        _float   fovFrom = 0.f;
+        _float   fovTo = 0.f;
+        _float   dur = 0.f;
         EaseType ease = EaseType::OutCubic;
     } cancel;
 
@@ -160,6 +181,7 @@ private:
     void BeginCancelRecover();
 
 private:
+    void CaptureBeginOrbitBaseline();
     void CaptureHoldPose();
     void FollowHoldPivot(_float dt);
     Pose CaptureCurPose() const;
@@ -169,13 +191,19 @@ private:
 
     _float EvalCancelFov(_float tSec) const;
     _float EvalSwitchFov(_float tSec) const;
+    _float EvalRecoverFov(_float tSec) const;
 
     _float CalcBehindYawDeg(OBJECT_HANDLE target) const;
 
 private:
-    PivotSample SamplePivots(OBJECT_HANDLE h, _float offsetY, _float faceYOffsetMul) const;
-    void UpdatePairPivots(_float dt);
-    Pose BuildGoalPose_SimplePair() const;
+    Vector3 CalcCenterPivot(OBJECT_HANDLE h) const;
+    void    UpdatePairPivots(_float dt);
+
+    Vector3 BuildSwitchPivotGoal_EnemyCenter() const;
+    Vector3 BuildSwitchCamPosGoal_PlayerPreset(_int sideSign) const;
+    _int    ChooseSwitchSideSign() const;
+    Pose    BuildRecoverPose_PlayerCenter() const;
+    Pose    BuildPoseFromPivotAndCamPos(const Vector3& pivotWorld, const Vector3& camPos, const Pose& fallback) const;
 };
 
 NS_END

@@ -306,6 +306,7 @@ void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_02_Explode")
             .Loop(false)
             .Apply();
+        pOwner->Take_Explode(DAMAGE_TYPE::HARD);
         break;
     }
     pSubStateMachine->Set_Int("EndEntryMode", iEntryMode);

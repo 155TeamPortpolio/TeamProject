@@ -33,20 +33,11 @@ HRESULT CUIDirector::Register(CUI_Object* pObj)
 	return S_OK;
 }
 
-void CUIDirector::Create_Fade()
-{
-	auto pFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" }).Build("fade");
-	if (!pFade)
-		return;
-
-	UIManager()->Add_UIObject(pFade, G_GlobalLevelKey);
-	m_hFade = pFade->Get_Handle();
-}
-
-void CUIDirector::FadeIn_Screen(_float fDuration)
+void CUIDirector::FadeIn_Screen(_float fDuration, function<void()> onFinished)
 {
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
+	desc.onFinished = onFinished;
 
 	if (!m_hFade.isValid())
 		return;
@@ -55,16 +46,27 @@ void CUIDirector::FadeIn_Screen(_float fDuration)
 	//UI_Active("screen_fade", &desc);
 }
 
-void CUIDirector::FadeOut_Screen(_float fDuration)
+void CUIDirector::FadeOut_Screen(_float fDuration, function<void()> onFinished)
 {
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
+	desc.onFinished = onFinished;
 
 	if (!m_hFade.isValid())
 		return;
 
 	m_hFade.Get()->UI_DeActive(&desc);
 	//UI_DeActive("screen_fade", &desc);
+}
+
+void CUIDirector::Create_Fade()
+{
+	auto pFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" }).Build("fade");
+	if (!pFade)
+		return;
+
+	UIManager()->Add_UIObject(pFade, G_GlobalLevelKey);
+	m_hFade = pFade->Get_Handle();
 }
 
 void CUIDirector::Show_SceneFrame()

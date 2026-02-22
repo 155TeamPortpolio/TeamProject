@@ -185,7 +185,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -234,7 +234,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -272,7 +272,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -302,7 +302,7 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc, BATTLE_OBJ_TYPE type)
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();

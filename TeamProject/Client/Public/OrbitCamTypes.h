@@ -13,12 +13,13 @@ struct OrbitLockState
 };
 struct OrbitBlendState
 {
-    _bool    active   = false;
+    _bool    active = false;
     _bool    entering = true;
-    _float   elapsed  = 0.f;
+    _float   elapsed = 0.f;
     _float   duration = 0.f;
-    EaseType ease     = EaseType::InOutSine;
-    _float   weight   = 0.f;
+    EaseType ease = EaseType::InOutSine;
+    _float   weight = 0.f;
+    _bool    holdFirstFrame = false;
 };
 struct OrbitLockEval
 {
@@ -163,6 +164,25 @@ struct OrbitReturnPreset
     Vector3 pivotWorld{};
     Vector3 camPosFrom{};
     Vector3 camPosTo{};
+};
+struct OrbitLockSuspendState
+{
+    _bool   active = false;
+    _float  timer = 0.f;
+    _float  cooldown = 0.f;
+
+    _bool   hasPrevTargetPivot = false;
+    Vector3 prevTargetPivot{};
+};
+struct OrbitLockAirStabState
+{
+    _bool   overheadActive = false;
+
+    _bool   hasLastGoodFlatDir = false;
+    Vector3 lastGoodFlatDir = Vector3::Zero;
+
+    _bool   hasFilteredTargetPivot = false;
+    Vector3 filteredTargetPivot = Vector3::Zero;
 };
 
 NS_END

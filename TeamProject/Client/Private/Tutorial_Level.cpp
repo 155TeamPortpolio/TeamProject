@@ -96,6 +96,9 @@ HRESULT CTutorial_Level::Awake()
     desc.eState = TUTORIAL_STATE::INFO;
     EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
 
+    // 페이드인
+    UIDirector()->FadeIn_Screen();
+
     return S_OK;
 }
 
