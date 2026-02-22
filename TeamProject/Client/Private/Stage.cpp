@@ -161,6 +161,7 @@ void CStage::Active_Portal()
 		if (zeroPortal) {
 			zeroPortal->Set_Alive(true);
 			zeroPortal->SetChoiceIndex(this,i);
+			zeroPortal->Get_Component<CCollider>()->Set_CompActive(true);
 		}
 	}
 }
@@ -200,6 +201,7 @@ HRESULT CStage::ReadyPortalPoint(const vector<BATTLE_POINT_DATA>& point)
 
 		portal->Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::INTERACTABLE);
 		portal->Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::PLAYER));
+		portal->Get_Component<CCollider>()->Set_CompActive(false);
 
 		ObjectManager()->Add_Object(m_pPortals[i], { "Zero_Level","InteractableObject_Layer" });
 	}

@@ -665,7 +665,11 @@ void CBattlePlayer::Update_Input(_float dt)
         m_bLockOn = !m_bLockOn;
         m_fLockOnTimer = LOCKON_COOLDOWN;
 
-        if (!m_TargetHandle.isValid()) return;
+        m_TargetHandle = {};
+        if (m_bLockOn)
+        {
+            Update_Target(true);
+        }
 
         TARGET_LOCK_DESC desc;
         desc.bLock = m_bLockOn;
@@ -698,6 +702,7 @@ void CBattlePlayer::Process_Attack()
 {
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
     {
+        Update_Target(true);
         m_pCurrentCharacter->On_Attack();
     }
 }
@@ -764,6 +769,7 @@ void CBattlePlayer::Process_Ultimate()
     {
         if (m_pCurrentCharacter->Can_Ultimate())
         {
+            Update_Target(true);
             m_pCurrentCharacter->On_Ultimate();
         }
     }
@@ -773,6 +779,7 @@ void CBattlePlayer::Process_Energy()
 {
     if (InputDevice()->Key_Down('E'))
     {
+        Update_Target(true);
         m_pCurrentCharacter->On_Special();
     }
 }
@@ -801,6 +808,10 @@ void CBattlePlayer::Process_ComboSelect(_float dt)
         Cancel_ComboAttack();
         return;
     }
+
+    // ComboSwitch Input막기 : 0.5초간
+    if (m_fComboSelectTimer < 0.5f)
+        return;
 
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
     {
@@ -945,18 +956,21 @@ _int CBattlePlayer::Find_SwitchIndex(_bool bNext) const
     return -1;
 }
 
-void CBattlePlayer::Update_Target()
+void CBattlePlayer::Update_Target(_bool bRefresh)
 {
     // 현재 타겟이 유효하고 사거리 내면 유지
-    if (m_TargetHandle.isValid() && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+    if (!bRefresh)
     {
-        _float fMaxDistance = (m_TargetHandle.Get()->Get_Tag() == "Boss")
-            ? TARGET_BOSS_MAXDISTANCE
-            : TARGET_MAXDISTANCE;
+        if (m_TargetHandle.isValid() && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+        {
+            _float fMaxDistance = (m_TargetHandle.Get()->Get_Tag() == "Boss")
+                ? TARGET_BOSS_MAXDISTANCE
+                : TARGET_MAXDISTANCE;
 
-        if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
-            < fMaxDistance)
-            return;
+            if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+                < fMaxDistance)
+                return;
+        }
     }
 
     // 가장 가까운 몬스터 탐색
@@ -965,13 +979,14 @@ void CBattlePlayer::Update_Target()
         return;
 
     _float fminDistance = FLT_MAX;
+    OBJECT_HANDLE hNearest;
 
     for (auto& monster : Monsters)
     {
         if (!monster.hObject.isValid()
             || !BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, monster.hObject))
             continue;
-        
+
         _vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();
         _float fDistance = vToMonster.Length();
 
@@ -982,11 +997,15 @@ void CBattlePlayer::Update_Target()
         if (fDistance < fDetectDistance && fDistance < fminDistance)
         {
             fminDistance = fDistance;
-            m_TargetHandle = monster.hObject;
+            hNearest = monster.hObject;
         }
     }
 
-    m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+    if (hNearest.isValid())
+    {
+        m_TargetHandle = hNearest;
+        m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+    }
 }
 
 void CBattlePlayer::Update_Status()
