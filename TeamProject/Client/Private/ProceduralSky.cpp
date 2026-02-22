@@ -85,6 +85,8 @@ HRESULT CProceduralSky::Initialize(INIT_DESC* pArg)
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "cloud_noise.png", TEXTURE_TYPE::DIFFUSE);
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "Eff_Noise_092.png", TEXTURE_TYPE::NORMALS);
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "Eff_Noise_146.png", TEXTURE_TYPE::AMBIENT);
+		MaterialDat->Link_Texture(G_GlobalLevelKey, "moon_bright.png", TEXTURE_TYPE::SPECULAR);
+		MaterialDat->Link_Texture(G_GlobalLevelKey, "moon_glow.png", TEXTURE_TYPE::METALNESS);
 	}
 
 	return S_OK;

@@ -13,6 +13,8 @@ CRoom_Party::CRoom_Party(const ROOM_DESC& desc)
 
 void CRoom_Party::Enter()
 {
+    //UIDirector()->FadeIn_Screen(1.f, []()
+    //    {UIDirector()->Show_Party(CDataBase::GetInstance()->Get_EnableCharacters());});
     auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
     pFieldPlayer->Lock_Input();
     pFieldPlayer->DeActive_Field();
@@ -21,6 +23,7 @@ void CRoom_Party::Enter()
 
 void CRoom_Party::Exit()
 {
+    UIDirector()->FadeOut_Screen(0.2f);
     auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
     pFieldPlayer->Active_Field();
     pFieldPlayer->UnLock_Input();

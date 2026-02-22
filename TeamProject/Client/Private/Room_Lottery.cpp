@@ -15,6 +15,7 @@ CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
 
 void CRoom_Lottery::Enter()
 {
+	UIDirector()->FadeIn_Screen(0.2f);
 	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
 	pFieldPlayer->Lock_Input();
 	pFieldPlayer->DeActive_Field();
@@ -30,6 +31,7 @@ void CRoom_Lottery::Enter()
 
 void CRoom_Lottery::Exit()
 {
+	UIDirector()->FadeOut_Screen(0.2f);
 	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
 	pFieldPlayer->Active_Field();
 	pFieldPlayer->UnLock_Input();
