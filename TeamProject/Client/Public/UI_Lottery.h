@@ -29,7 +29,7 @@ private:
 	enum class REWARD { REWARD1, REWARD2, REWARD3, REWARD4, REWARD5, END };
 	inline static const string REWARD_TEXTURES[ENUM(REWARD::END)] = { "ScratchCardRewardIcon01.png", "ScratchCardRewardIcon02.png",
 	"ScratchCardRewardIcon03.png", "ScratchCardRewardIcon04.png", "ScratchCardRewardIcon05.png" };
-	inline static const _uint REWARD_DENY[ENUM(REWARD::END)] = { 5888, 8888, 15888, 28888, 52888 };
+	inline static const _uint REWARD_DENY[ENUM(REWARD::END)] = { 8888, 18888, 28888, 58888, 88888 };
 
 private:
 	CUI_Lottery() {}
