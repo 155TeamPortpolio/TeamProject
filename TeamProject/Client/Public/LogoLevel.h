@@ -21,10 +21,15 @@ public:
 
 private:
     HRESULT Create_LogoVideo();
-
+    void PreLoadLevel(const string& levelKey);
+    ResourceType CheckResourceType(const string& filePath, const string& fileName);
+    _bool isSRGB(const string& filePath);
+    _bool isEffect(const string& filePath);
+    _bool isAnim(const string& filePath);
 private:
     CGameInstance* m_pGameInstance{};
-
+    string m_NextLevel = {};
+    unordered_map<ResourceType, queue<PreloadKey>> m_LoadQue;
 public:
     static CLogoLevel* Create(const string& LevelKey);
     virtual void Free() override;
