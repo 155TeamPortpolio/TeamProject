@@ -148,13 +148,13 @@ void CFieldSystem::DayTimer::Update_Timer(_float dt)
 		currentHour -= 24.f;
 
 	if (currentHour >= 6.0f && currentHour < 12.0f)
-		Set_DayPhase(DayPhase::LateNight);
+		Set_DayPhase(DayPhase::Morning);
 	else if (currentHour >= 12.0f && currentHour < 18.0f)
-		Set_DayPhase(DayPhase::LateNight);
+		Set_DayPhase(DayPhase::Afternoon);
 	else if (currentHour >= 18.0f && currentHour < 24.0f)
 		Set_DayPhase(DayPhase::LateNight);
 	else
-		Set_DayPhase(DayPhase::LateNight);
+		Set_DayPhase(DayPhase::EarlyMorning);
 }
 
 void CFieldSystem::DayTimer::Update_Transition(_float dt)

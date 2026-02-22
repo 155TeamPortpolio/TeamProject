@@ -35,11 +35,6 @@ HRESULT CElectricBoo::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("Exploreboo.model", "../Bin/Resources/MainCity/NPC/ElectricBoo/ExploreBoo/Exploreboo.model");
-	pResource->Add_ResourcePath("Exploreboo.mat", "../Bin/Resources/MainCity/NPC/ElectricBoo/ExploreBoo/Exploreboo.mat");
-	pResource->Add_ResourcePath("NPC_Bangboo_Exploreboo_Meta.json", "../Bin/Resources/MainCity/NPC/ElectricBoo/ExploreBoo/NPC_Bangboo_Exploreboo_Meta.json");
-
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "Exploreboo.model");
 	auto pMaterial = Get_Component<CMaterial>();
