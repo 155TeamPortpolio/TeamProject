@@ -173,7 +173,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Logo_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Logo_Level", false);
 } 
 
 CMainApp* CMainApp::Create()
@@ -250,6 +250,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	ResourceManager()->Add_ResourcePath("empty.png", "../Bin/Resources/Global/UI/Image/empty.png");
 	ResourceManager()->Add_ResourcePath("Run2.png", "../Bin/Resources/Global/UI/Image/Loading/Run2.png");
 	ResourceManager()->Add_ResourcePath("LoadingText.png", "../Bin/Resources/Global/UI/Image/Loading/LoadingText.png");
+	ResourceManager()->Add_ResourcePath("Logo_Mi2.png", "../Bin/Resources/Global/UI/Image/Logo/Logo_Mi2.png");
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Logo", CUI_Logo::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Loading", CUI_Loading::Create());

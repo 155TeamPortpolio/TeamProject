@@ -867,6 +867,16 @@ void CCharacter::Stop_Effect(const string& effectTag)
     static_cast<CEffectContainer*>(pEffect)->Stop();
 }
 
+void CCharacter::Stop_ComboSound()
+{
+    auto AudioSource = Get_Component<CAudioSource>();
+    if (AudioSource)
+    {
+        AudioSource->Slot("ComboSwitch")
+            .Stop();
+    }
+}
+
 void CCharacter::Update_Rotation(_float dt)
 {
     if (!m_bCanRotate) return;
