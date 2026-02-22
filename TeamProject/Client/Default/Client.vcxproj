@@ -370,6 +370,7 @@
     <ClInclude Include="..\Public\AttackSign.h" />
     <ClInclude Include="..\Public\BackgroundNpc.h" />
     <ClInclude Include="..\Public\BackGroundSpawner.h" />
+    <ClInclude Include="..\public\BangBoo.h" />
     <ClInclude Include="..\Public\BasicHitEffect.h" />
     <ClInclude Include="..\Public\BattleFXFlow.h" />
     <ClInclude Include="..\public\BattleStarter.h" />
@@ -903,6 +904,7 @@
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\Private\BackgroundNpc.cpp" />
     <ClCompile Include="..\Private\BackGroundSpawner.cpp" />
+    <ClCompile Include="..\private\BangBoo.cpp" />
     <ClCompile Include="..\Private\BasicHitEffect.cpp" />
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\private\BattleStarter.cpp" />
