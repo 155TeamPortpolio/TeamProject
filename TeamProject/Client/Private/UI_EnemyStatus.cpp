@@ -3,10 +3,11 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "EventListener.h"
+#include "EventListener.h" 
 
 #include "GaugeUI.h"
 #include "TextSlot.h"
+#include "Sprite2D.h"
 
 HRESULT CUI_EnemyStatus::Initialize_Prototype()
 {
@@ -31,7 +32,7 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     m_pMonsterStatus = pDesc->pMonsterStatus;
     m_tOwnerHandle = pDesc->tOwnerHandle;
 
-    Load_Json("enemy_status.json");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("enemy_status.json")));
     Cache_Children();
 
     // 타겟 락온 이벤트 등록
@@ -64,15 +65,28 @@ void CUI_EnemyStatus::Update(_float dt)
         Set_GaugeFill(CHILD::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
     Set_GroggyText(m_pMonsterStatus->iGroggyValue, 2);
 
+    if (m_eLastHitCharacter != m_pMonsterStatus->eLastHitCharacter)
+    {
+        if (m_pIcon)
+            m_pIcon->Change_Texture(0, G_GlobalLevelKey, Get_IconFilePath(m_pMonsterStatus->eLastHitCharacter));
+
+        m_eLastHitCharacter = m_pMonsterStatus->eLastHitCharacter;
+    }
+
     // 모든 하위 UI 업데이트
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_EnemyStatus::Load_Json(const string& resourceKey)
+string CUI_EnemyStatus::Get_IconFilePath(CHARACTER eCharacter)
 {
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath(resourceKey);
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+    switch (eCharacter)
+    {
+    case CHARACTER::Miyabi: return "IconFrost.png";
+    case CHARACTER::Corin:
+    case CHARACTER::JaneDoe: 
+    default:
+        return "IconPhysDmg.png";
+    }
 }
 
 void CUI_EnemyStatus::Cache_Children()
@@ -101,6 +115,10 @@ void CUI_EnemyStatus::Cache_Children()
     }
 
     m_pGroggyText = m_pChildren[ENUM(CHILD::TEXT_GROGGY)]->Get_Component<CTextSlot>();
+
+    auto pIcon = pContainer->Find_Descendant("attributeIcon");
+    if (pIcon)
+        m_pIcon = pIcon->Get_Component<CSprite2D>();
 }
 
 void CUI_EnemyStatus::Set_TargetLock(TARGET_LOCK_DESC& desc)
