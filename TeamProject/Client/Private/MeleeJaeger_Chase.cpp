@@ -84,7 +84,8 @@ void CMeleeJaeger_Run_Loop::Enter(CMeleeJaeger* pOwner)
 void CMeleeJaeger_Run_Loop::Update(CMeleeJaeger* pOwner, _float dt)
 {
 	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
-		m_pOwnerStateMachine->Change_State("Run_End");
+		pOwner->Idle();
+		/*m_pOwnerStateMachine->Change_State("Run_End");*/
 }
 
 void CMeleeJaeger_Run_Loop::Exit(CMeleeJaeger* pOwner)
