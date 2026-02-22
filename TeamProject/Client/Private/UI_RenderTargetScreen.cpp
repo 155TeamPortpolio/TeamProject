@@ -55,6 +55,8 @@ HRESULT CUI_RenderTargetScreen::Initialize(INIT_DESC* pArg)
 
     m_pTransform->Scale(_float3(m_vViewPortSize.x, m_vViewPortSize.y, 1.f));
 
+    SetRenderLayer(RENDER_LAYER::None);
+
 	return S_OK;
 }
 
