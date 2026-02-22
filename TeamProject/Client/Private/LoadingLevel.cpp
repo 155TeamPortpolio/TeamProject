@@ -41,6 +41,10 @@ HRESULT CLoadingLevel::Awake()
 	else
 		PreLoadLevel(m_NextLevel);
 
+	if (!m_bGlobal) {
+		PreLoadLevel("Global_Level");
+		m_bGlobal = true;
+	}
 	return S_OK;
 }
 void CLoadingLevel::Update()
