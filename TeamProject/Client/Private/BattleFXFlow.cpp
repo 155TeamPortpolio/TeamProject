@@ -633,7 +633,7 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
 		for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
 			ResetLayerTimeScale(BATTLE_OBJ_TYPE(typeIndex));
-	//UIDirector()->FadeOut_Screen(0.2f);
+		UIDirector()->FadeOut_Screen(0.2f);
 		});
 
 	Start(nullptr);
