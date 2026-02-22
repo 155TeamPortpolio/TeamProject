@@ -48,9 +48,19 @@
           "EventTag": "Start_Bubble"
         },
         {
+          "EventTime": 1.2612191438674927,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Overdrive1_Slash.wav"
+        },
+        {
           "EventTime": 1.4208627939224243,
           "EventType": "Notify",
           "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 2.609999895095825,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Overdrive1_Slash1.wav"
         },
         {
           "EventTime": 3.3038485050201416,
@@ -61,6 +71,11 @@
           "EventTime": 3.546985387802124,
           "EventType": "Notify",
           "EventTag": "End_Bubble"
+        },
+        {
+          "EventTime": 3.819999933242798,
+          "EventType": "Sound",
+          "EventTag": "Overdrive_Voice1.wav"
         }
       ]
     },
@@ -71,6 +86,11 @@
           "EventTime": 0.009999999776482582,
           "EventType": "Notify",
           "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 0.5799999833106995,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Overdrive2.wav"
         },
         {
           "EventTime": 3.536466598510742,
@@ -96,6 +116,11 @@
           "EventTime": 0.009999999776482582,
           "EventType": "Notify",
           "EventTag": "Start_Bubble"
+        },
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Overdrive3.wav"
         },
         {
           "EventTime": 3.410917282104492,
@@ -177,16 +202,6 @@
           "EventTag": "Start_Bubble"
         },
         {
-          "EventTime": 0.9145044684410095,
-          "EventType": "Notify",
-          "EventTag": "Start_Collider"
-        },
-        {
-          "EventTime": 1.1231968402862549,
-          "EventType": "Notify",
-          "EventTag": "End_Collider"
-        },
-        {
           "EventTime": 0.25702813267707825,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Hand_Appear.wav"
@@ -195,12 +210,27 @@
           "EventTime": 0.6700000166893005,
           "EventType": "Sound",
           "EventTag": "Sacrifice_Hand_Swing0.wav"
+        },
+        {
+          "EventTime": 0.9145044684410095,
+          "EventType": "Notify",
+          "EventTag": "Start_Collider"
+        },
+        {
+          "EventTime": 1.1231968402862549,
+          "EventType": "Notify",
+          "EventTag": "End_Collider"
         }
       ]
     },
     {
       "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_11",
       "Events": [
+        {
+          "EventTime": 0.5099999904632568,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Hand_Swing1.wav"
+        },
         {
           "EventTime": 0.7225412130355835,
           "EventType": "Notify",
@@ -215,17 +245,17 @@
           "EventTime": 1.3322014808654785,
           "EventType": "Notify",
           "EventTag": "End_Bubble"
-        },
-        {
-          "EventTime": 0.5099999904632568,
-          "EventType": "Sound",
-          "EventTag": "Sacrifice_Hand_Swing1.wav"
         }
       ]
     },
     {
       "ClipTag": "SacrificeBringerHand_Ani_P1_Attack_12",
       "Events": [
+        {
+          "EventTime": 0.7599999904632568,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_HitGround3.wav"
+        },
         {
           "EventTime": 0.77334064245224,
           "EventType": "Notify",
@@ -247,9 +277,9 @@
           "EventTag": "End_Bubble"
         },
         {
-          "EventTime": 0.7599999904632568,
+          "EventTime": 1.4800000190734863,
           "EventType": "Sound",
-          "EventTag": "Sacrifice_HitGround3.wav"
+          "EventTag": "Hand_HitGround.wav"
         }
       ]
     },

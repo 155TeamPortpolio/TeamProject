@@ -20,15 +20,15 @@
   },
   "Clips": [
     {
+      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Idle",
+      "Events": []
+    },
+    {
       "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Happy_Loop",
       "Events": []
     },
     {
       "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Happy_Start",
-      "Events": []
-    },
-    {
-      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Idle",
       "Events": []
     },
     {

@@ -183,7 +183,7 @@
       "ClipTag": "Giant_Ani_Attack_02_Explode",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "giant_Attack2_Explode_FULL.wav"
         },
@@ -248,7 +248,7 @@
           "EventTag": "FinishAll"
         },
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "giant_Attack3_FULL.wav"
         }
@@ -348,7 +348,7 @@
       "ClipTag": "Giant_Ani_Born",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "giant_Spawn.wav"
         }
@@ -374,7 +374,7 @@
       "ClipTag": "Giant_Ani_Dodge",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "giant_Evade.wav"
         }

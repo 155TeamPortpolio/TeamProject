@@ -35,8 +35,8 @@ HRESULT CAttackRange::Initialize(INIT_DESC* arg)
 		.Build("Attack_Range");
 	if (pEffect)
 	{
-		//pEffect->Set_Alive(false);
-		//pEffect->Stop();
+		pEffect->Set_Alive(false);
+		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect);
 	}
 

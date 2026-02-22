@@ -3,10 +3,10 @@
 #include "Json_Inc/json.hpp"
 
 namespace Client {
-	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float2, Float3, Float4, END };
+	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, WString, Float2, Float3, Float4, END };
 	struct SlotValue {
 		SLOT_DATA_TYPE type = SLOT_DATA_TYPE::END;
-		variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4> value;
+		variant<monostate, _int, _float, _bool, string, wstring, _float2, _float3, _float4> value;
 	};
 
 	static constexpr const char* MAP_DATA_TAGS[] = {
@@ -179,7 +179,7 @@ namespace Client {
 
 	/* Runtime CacheData */
 	enum class MAPOBJ_TYPE { PLACED, TRIGGER, INVWALL, ENTITY, BATTLE, LIGHT, END };
-	using MapSlotValue = variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4>;
+	using MapSlotValue = variant<monostate, _int, _float, _bool, string, wstring, _float2, _float3, _float4>;
 
 	typedef struct tagCachedMapObject {
 		_int			DataIndex;

@@ -87,6 +87,11 @@
       "ClipTag": "Monster_SacrificeBringer_Ani_P2_Attack_08",
       "Events": [
         {
+          "EventTime": 0.683634340763092,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Attack_Voice5.wav"
+        },
+        {
           "EventTime": 0.8371869921684265,
           "EventType": "Notify",
           "EventTag": "Start_Attack"
@@ -135,11 +140,6 @@
           "EventTime": 2.165996551513672,
           "EventType": "Notify",
           "EventTag": "End_Attack"
-        },
-        {
-          "EventTime": 0.683634340763092,
-          "EventType": "Sound",
-          "EventTag": "Sacrifice_Attack_Voice5.wav"
         }
       ]
     },
@@ -191,7 +191,13 @@
     },
     {
       "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Charge_Start_New",
-      "Events": []
+      "Events": [
+        {
+          "EventTime": 0.550000011920929,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Overdrive_Charge.wav"
+        }
+      ]
     },
     {
       "ClipTag": "Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01",
@@ -765,6 +771,16 @@
           "EventTime": 1.6019175052642822,
           "EventType": "Notify",
           "EventTag": "End_Attack"
+        },
+        {
+          "EventTime": 1.4299999475479126,
+          "EventType": "Sound",
+          "EventTag": "Whip0.wav"
+        },
+        {
+          "EventTime": 0.9700000286102295,
+          "EventType": "Sound",
+          "EventTag": "Sacrifice_Attack_Voice0.wav"
         }
       ]
     },
@@ -790,6 +806,11 @@
           "EventTime": 0.3195784091949463,
           "EventType": "Notify",
           "EventTag": "End_Attack"
+        },
+        {
+          "EventTime": 0.15287989377975464,
+          "EventType": "Sound",
+          "EventTag": "Whip1.wav"
         }
       ]
     },

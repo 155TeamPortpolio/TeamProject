@@ -1,15 +1,20 @@
 #pragma once
-#include "Npc.h"
+#include "ServiceNpc.h"
 
 NS_BEGIN(Client)
 
-class CBangBoo :
-    public CNpc
+template<typename Type>
+class CStateMachine;
+class CCecilia :
+    public CServiceNpc
 {
 private:
-    CBangBoo();
-    CBangBoo(const CBangBoo& rhs);
-    virtual ~CBangBoo() DEFAULT;
+    CCecilia();
+    CCecilia(const CCecilia& rhs);
+    virtual ~CCecilia() DEFAULT;
+
+public:
+    virtual void    Execute() {};
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -18,15 +23,12 @@ public:
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
-    
-public:
-    void Set_BangBoo_Model(const string& BangBooTag);
-    void Set_BangBoo_Animation(const string& AnimationTag);
-    void Set_BangBoo_Name(const wstring& NameTag);
-    void Set_BangBoo_Speech(const wstring& SpeechString);
+
+private:
+    virtual void    Success(_uint curSequenceID) {};
 
 public:
-    static CBangBoo* Create();
+    static CCecilia* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

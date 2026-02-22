@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine_Defines.h"
 #include "MapData_Defines.h"
+#include "Helper_Func.h"
 #include <limits>
 
 
@@ -13,6 +14,7 @@ namespace Client {
         if (tagType == "Float")  return SLOT_DATA_TYPE::Float;
         if (tagType == "Bool")   return SLOT_DATA_TYPE::Bool;
         if (tagType == "String") return SLOT_DATA_TYPE::String;
+        if (tagType == "WString") return SLOT_DATA_TYPE::WString;
         if (tagType == "Float2") return SLOT_DATA_TYPE::Float2;
         if (tagType == "Float3") return SLOT_DATA_TYPE::Float3;
         if (tagType == "Float4") return SLOT_DATA_TYPE::Float4;
@@ -51,6 +53,10 @@ namespace Client {
     {
         return TryGet<string>(obj, key, Out);
     }
+    inline bool TryGetWString(const json& obj, const _char* key, wstring& Out)
+    {
+        return TryGet<wstring>(obj, key, Out);
+    }
 
     inline const json* FindPtr(const json& obj, const _char* key)
     {
@@ -66,6 +72,15 @@ namespace Client {
         if (!p || !p->is_string()) 
             return false;
         out = p->get<std::string>();
+        return true;
+    }
+
+    inline bool TryReadWString(const json& obj, const _char* key, wstring& out)
+    {
+        const json* p = FindPtr(obj, key);
+        if (!p || !p->is_string())
+            return false;
+        out = p->get<std::wstring>();
         return true;
     }
 
@@ -213,6 +228,10 @@ namespace Client {
                 out.value = v.get<std::string>();
                 return true;
 
+            case SLOT_DATA_TYPE::WString:
+                out.value = Helper::ConvertToWideString(v.get<std::string>());
+                return true;
+
             case SLOT_DATA_TYPE::Float2: {
                 XMFLOAT2 f2{};
                 if (!TryParseFloat2(v, f2))
@@ -279,6 +298,7 @@ namespace Client {
     template<> struct SlotTypeTag<float> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float; };
     template<> struct SlotTypeTag<bool> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Bool; };
     template<> struct SlotTypeTag<std::string> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::String; };
+    template<> struct SlotTypeTag<std::wstring> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::WString; };
     template<> struct SlotTypeTag<DirectX::XMFLOAT2> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float2; };
     template<> struct SlotTypeTag<DirectX::XMFLOAT3> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float3; };
     template<> struct SlotTypeTag<DirectX::XMFLOAT4> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float4; };
@@ -292,6 +312,7 @@ namespace Client {
             std::is_same_v<T, _float> ||
             std::is_same_v<T, _bool> ||
             std::is_same_v<T, std::string> ||
+            std::is_same_v<T, std::wstring> ||
             std::is_same_v<T, _float2> ||
             std::is_same_v<T, _float3> ||
             std::is_same_v<T, _float4>,

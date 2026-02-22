@@ -24,50 +24,6 @@
           "y": 0.0
         }
       }
-    },
-    {
-      "iObjID": 1,
-      "TagName": "Count",
-      "defaultvalue": {
-        "type": "Float2",
-        "value": {
-          "x": 0.0,
-          "y": 0.0
-        }
-      }
-    },
-    {
-      "iObjID": 1,
-      "TagName": "Offset",
-      "defaultvalue": {
-        "type": "Float2",
-        "value": {
-          "x": 0.0,
-          "y": 0.0
-        }
-      }
-    },
-    {
-      "iObjID": 2,
-      "TagName": "Count",
-      "defaultvalue": {
-        "type": "Float2",
-        "value": {
-          "x": 0.0,
-          "y": 0.0
-        }
-      }
-    },
-    {
-      "iObjID": 2,
-      "TagName": "Offset",
-      "defaultvalue": {
-        "type": "Float2",
-        "value": {
-          "x": 0.0,
-          "y": 0.0
-        }
-      }
     }
   ]
 }

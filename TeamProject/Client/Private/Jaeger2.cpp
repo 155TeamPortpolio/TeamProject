@@ -28,9 +28,9 @@ HRESULT CJaeger2::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model("Scott_Level", "StrikeJaeger.model");
+	pModel->Link_Model(G_GlobalLevelKey, "StrikeJaeger.model");
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material("Scott_Level", "StrikeJaeger.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "StrikeJaeger.mat");
 
 	return S_OK;
 }
@@ -46,8 +46,8 @@ HRESULT CJaeger2::Initialize(INIT_DESC* pArg)
 void CJaeger2::Awake()
 {
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model("Scott_Level", "StrikeJaeger.model");
-	pAnimator->Link_MetaData("Scott_Level", "LightJaeger_Meta.json");
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "StrikeJaeger.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "LightJaeger_Meta.json");
 
 	m_strAnimName = "LightJaeger_Ani_";
 	m_strName = L"병사";

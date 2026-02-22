@@ -19,16 +19,16 @@
     "_44": 1.0
   },
   "Clips": [
+        {
+      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Idle",
+      "Events": []
+    },
     {
       "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Happy_Loop",
       "Events": []
     },
     {
       "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Happy_Start",
-      "Events": []
-    },
-    {
-      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Idle",
       "Events": []
     },
     {
