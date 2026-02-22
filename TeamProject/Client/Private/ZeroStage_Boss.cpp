@@ -10,6 +10,7 @@
 
 //component
 #include "AudioSource.h"
+#include "Light.h"
 
 /*PostRenderer*/
 #include "PostRenderer.h"
@@ -82,10 +83,12 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey) 
 	{
+		m_PrevShadowLight = m_pOwnerLevel->Get_ZeroShadow()->pShadowCam->Get_Component<CLight>()->Get_Desc();
+
 		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Hollow_Zero_1.wav", 0.9f);
 
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
-		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM2.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({
 			_float3{0.f, 0.f ,0.f},
 			_float3{0.f, 0.f ,0.f},
@@ -94,6 +97,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 			_float3{0.322f, 0.357f, 0.463f},
 			_float3{0.f, 0.f, 0.f},
 			0.91 });
+		m_pOwnerLevel->Get_ZeroFog()->Use_Fog(true);
 		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 			{
 				_float4{ 0.031f, 0.005f, 0.011f, 1.0f },
@@ -141,6 +145,7 @@ HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey)
 	{
+		m_pOwnerLevel->Get_ZeroShadow()->Set_Light(m_PrevShadowLight);
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").FadeOut(0.2f);
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").FadeOut(0.2f);
 	}

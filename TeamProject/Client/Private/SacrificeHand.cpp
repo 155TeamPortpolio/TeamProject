@@ -152,7 +152,7 @@ void CSacrificeHand::Route_AnimEvent()
 
 void CSacrificeHand::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Volume(0.7f).Attribute3D(false).Loop(false).Play();
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.4f).Attribute3D(false).Loop(false).Play();
 }
 
 CSacrificeHand* CSacrificeHand::Create()

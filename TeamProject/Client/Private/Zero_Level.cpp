@@ -78,6 +78,12 @@ HRESULT CZero_Level::Initialize()
 
 	/*ENV*/
 	//Cloud
+	auto pPost = RenderSystem()->GetPostRenderer();
+	auto pFogCommand = pPost->GetCommand<CFogCommand>();
+	m_PrevFog = pFogCommand->GetFogDesc();
+	m_bPrevFogUse = pFogCommand->IsEnabled();
+	/*pFogCommand->SetEnable(false);*/
+
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
 	//Fog
@@ -118,11 +124,7 @@ HRESULT CZero_Level::Awake()
 		return E_FAIL;
 
 	UIDirector()->FadeIn_Screen();
-	auto pPost = RenderSystem()->GetPostRenderer();
-	auto pFogCommand = pPost->GetCommand<CFogCommand>();
-	m_PrevFog = pFogCommand->GetFogDesc();
-	m_bPrevFogUse = pFogCommand->IsEnabled();
-	pFogCommand->SetEnable(false);
+
 	return S_OK;
 }
 
