@@ -117,7 +117,7 @@ HRESULT CZero_Level::Awake()
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
 
-	UIDirector()->FadeIn_Screen();
+	UIDirector()->FadeIn_Screen(1.f);
 
 	return S_OK;
 }
@@ -131,23 +131,6 @@ void CZero_Level::Update()
 	_float dt = GameInstance()->Get_TimeMgr()->Get_DeltaTime(G_EngineTimerID);
 	m_tZeroCloud.Update_Cloud(dt);
 	m_tZeroFog.Update_Fog(dt);
-
-	if (GetAsyncKeyState('N')) {
-		m_tZeroFog.Change_FogState(FOG_DESC{ _float4(1,1,1,1), 1.f }, 1.f, EaseType::Linear);
-	}
-
-	if (GetAsyncKeyState('M')) {
-		m_tZeroFog.RollBack_Fog(1.f, EaseType::Linear);
-	}
-
-	if (InputDevice()->Key_Tap('Z'))
-	{
-		auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackRange" })
-			.Position(_float3(0.f, 1.f, 0.f))
-			.Build("effect");
-
-		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
-	}
 }
 
 HRESULT CZero_Level::Render()
@@ -274,7 +257,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Rest);
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
