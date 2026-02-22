@@ -273,6 +273,7 @@ void CMeleeJaeger::Parried()
 
 	m_pStateMachine->Change_State("Parried");
 	SetOnAttack(false); 
+	SetBattleColliderObject("Weapon", BATTLE_COLTYPE::ATTACK, false);
 }
 
 HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)

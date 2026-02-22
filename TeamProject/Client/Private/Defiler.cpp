@@ -200,6 +200,7 @@ void CDefiler::Release_AttackCollider()
 void CDefiler::ChainParry(_bool OnStart)
 {
 	BattleSystem()->SetChainParryToPlayer(OnStart);
+		m_BlackBoard.isChainParry = OnStart;
 }
 void CDefiler::Control_TargetEnable(_bool On)
 {
@@ -589,6 +590,8 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
 			else if (instance.Tag == "EvadeSign")
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+			else if (instance.Tag == "Cam_HitHeavy")
+				CameraManager()->AddShakeType(ENUM(CamShakeType::HitHeavy), 2.f);
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
@@ -643,6 +646,10 @@ void CDefiler::Controll_Attack(const string& event)
 	{
 		m_isParryEnable = false;
 	}
+
+	if (m_BlackBoard.isChainParry) {
+		m_isParryEnable = true;
+	}
 	SetBattleColliderObject(AtkData.AtkBone, CEnemy::BATTLE_COLTYPE::ATTACK, AtkData.OnOff, HitDesc);
 }
 void CDefiler::Control_Summon(const string& event)
@@ -671,6 +678,7 @@ void CDefiler::Control_Summon(const string& event)
 	else if (event == "Tsunami") {
 		SummonWave();
 	}
+
 }
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
@@ -1432,7 +1440,7 @@ HRESULT CDefiler::Create_Colliders()
 		WeaponDesc.tagBone = "Root";
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		WeaponDesc.vAttackSize = _float3{ 5.f,3.f,5.f };
+		WeaponDesc.vAttackSize = _float3{ 10.f,3.f,10.f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;

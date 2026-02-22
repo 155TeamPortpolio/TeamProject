@@ -131,7 +131,6 @@ void CMiasmaBlade::Parried()
 		isParried = true;
 		_vector3 pos = m_pOwner->Get_BipedPos();
 		m_pTransform->LookAt(_vector3(pos));
-		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
 		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
 		m_vVelocity = {0,0,0};
 		m_ElapsedTime = 1;

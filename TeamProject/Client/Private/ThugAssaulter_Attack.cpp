@@ -15,6 +15,19 @@ void CThugAssaulter_Attack::Enter(CThugAssaulter* pOwner)
 		Register_Transitions();
 
 		__super::Enter(pOwner);
+
+		m_NormalHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_NormalHitDesc.eHitType = HIT_TYPE::ONCE;
+		m_NormalHitDesc.fDamage = 10.f;
+
+		m_HardHitDesc.eDamageType = DAMAGE_TYPE::HARD;
+		m_HardHitDesc.eHitType = HIT_TYPE::ONCE;
+		m_HardHitDesc.fDamage = 15.f;
+
+		m_Attack4HitDesc.eDamageType = DAMAGE_TYPE::HARD;
+		m_Attack4HitDesc.eHitType = HIT_TYPE::INTERVAL;
+		m_Attack4HitDesc.fDamage = 10.f;
+		m_Attack4HitDesc.fInterval = 0.4f;
 	}
 
 	auto pStateMachine = pOwner->GetStateMachine();
@@ -35,14 +48,55 @@ void CThugAssaulter_Attack::Enter(CThugAssaulter* pOwner)
 	}
 		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
 	AttackFromIndex(iAttackPatternIndex);
-	pOwner->UnleashAttack();
 	//pOwner->SetOnAttack(true);
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
 void CThugAssaulter_Attack::Update(CThugAssaulter* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+
+	for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		switch (Event.Type)
+		{
+		case Engine::CLIP_EVENT_TYPE::NOTIFY:
+		{
+			if (Event.Tag == "UnleashAttack")
+				pOwner->UnleashAttack();
+			if (Event.Tag == "UnleashAttack_WithOutSound")
+				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true, false);
+			else if (Event.Tag == "TurnOnAttackCol")
+			{
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_NormalHitDesc);
+			}
+			else if (Event.Tag == "TurnOnAttackCol_Hard")
+			{
+				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HardHitDesc);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+			}
+			else if (Event.Tag == "Attack4")
+			{
+				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_Attack4HitDesc);
+			}
+			else if (Event.Tag == "TurnOffAttackCol")
+				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);
+			else if (Event.Tag == "ParryDisable")
+				pOwner->SetParryEnable(false);
+			else if (Event.Tag == "FinishAll")
+				pOwner->SetOnAttack(false);
+
+			break;
+		}
+		case Engine::CLIP_EVENT_TYPE::EFFECT:
+			break;
+		case Engine::CLIP_EVENT_TYPE::SOUND:
+			break;
+		default:
+			break;
+		}
+	}
+
 
 	if (m_fAnimProgress >= 0.99f) 
 		pOwner->Idle();
@@ -51,7 +105,6 @@ void CThugAssaulter_Attack::Update(CThugAssaulter* pOwner, _float dt)
 
 void CThugAssaulter_Attack::Exit(CThugAssaulter* pOwner)
 {
-	//pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack::Register_States()
@@ -90,16 +143,17 @@ void CThugAssaulter_Attack1::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_01")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	////pOwner->Active_AttackSign();
+	//pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true, false);
 
-	HitDesc hitdesc = {};
-	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
-	hitdesc.eHitType = HIT_TYPE::ONCE;
-	hitdesc.fDamage = 10.f;
+	//HitDesc hitdesc = {};
+	//hitdesc.eDamageType = DAMAGE_TYPE::HARD;
+	//hitdesc.eHitType = HIT_TYPE::ONCE;
+	//hitdesc.fDamage = 10.f;
 
-	pOwner->SetAutoPlayBattleCollider("Weapon", 0.17f, 0.02f, hitdesc);
-	m_isFinish = false;
-	m_isParryEnable = false;
+	//pOwner->SetAutoPlayBattleCollider("Weapon", 0.17f, 0.02f, hitdesc);
+	//m_isFinish = false;
+	//m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
@@ -111,15 +165,17 @@ void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
 		qRot,
 		dt);
 
-	if (false == m_isParryEnable &&
-		m_fAnimProgress >= 0.17f)
-		pOwner->SetParryEnable(false);
-	
-	if (false == m_isFinish &&
-		m_fAnimProgress >= 0.19f)
-		pOwner->SetOnAttack(false);
-
 	Update_Effects(pOwner);
+	//if (m_isFinish == false)
+	//	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
+	//if (false == m_isParryEnable &&
+	//	m_fAnimProgress >= 0.17f)
+	//	pOwner->SetParryEnable(false);
+	//
+	//if (false == m_isFinish &&
+	//	m_fAnimProgress >= 0.19f)
+	//	pOwner->SetOnAttack(false);
 }
 
 void CThugAssaulter_Attack1::Exit(CThugAssaulter* pOwner)
@@ -137,17 +193,17 @@ void CThugAssaulter_Attack2::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_02")
 		.Apply();
-	//pOwner->Active_AttackSign();
-	
-	m_tHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
-	m_tHitDesc.eHitType = HIT_TYPE::ONCE;
-	m_tHitDesc.fDamage = 10.f;
+	//pOwner->UnleashAttack();
+	//
+	//m_tHitDesc.eDamageType = DAMAGE_TYPE::HARD;
+	//m_tHitDesc.eHitType = HIT_TYPE::ONCE;
+	//m_tHitDesc.fDamage = 10.f;
 
-	pOwner->SetAutoPlayBattleCollider("Weapon", 0.2f, 0.03f, m_tHitDesc);
-	m_isFirstAttack = false;
-	m_isSecondAttack = false;
-	m_isFinish = false;
-	m_isParryEnable = false;
+	//pOwner->SetAutoPlayBattleCollider("Weapon", 0.2f, 0.03f, m_tHitDesc);
+	//m_isFirstAttack = false;
+	//m_isSecondAttack = false;
+	//m_isFinish = false;
+	//m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
@@ -159,6 +215,9 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 		qRot,
 		dt);
 
+	/*if (m_isFinish == false)
+		pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
 	if (false == m_isFirstAttack &&
 		m_fAnimProgress > 0.24) {
 		pOwner->SetAutoPlayBattleCollider("Weapon", 0.31f, 0.03f, m_tHitDesc);
@@ -167,7 +226,7 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 
 	if (true == m_isFirstAttack &&
 		false == m_isSecondAttack &&
-		m_fAnimProgress > 0.24) {
+		m_fAnimProgress > 0.4) {
 		pOwner->SetAutoPlayBattleCollider("Weapon", 0.47f, 0.02f, m_tHitDesc);
 		m_isSecondAttack = true;
 	}
@@ -178,9 +237,9 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 
 	if (false == m_isFinish &&
 		m_fAnimProgress >= 0.49f)
-		pOwner->SetOnAttack(false);
+		pOwner->SetOnAttack(false);*/
 
-	Update_Effects(pOwner);
+	Update_Effects(pOwner);	
 }
 
 void CThugAssaulter_Attack2::Exit(CThugAssaulter* pOwner)
@@ -202,16 +261,16 @@ void CThugAssaulter_Attack3::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_03")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	//pOwner->UnleashAttack();
 
-	m_tHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
-	m_tHitDesc.eHitType = HIT_TYPE::ONCE;
-	m_tHitDesc.fDamage = 10.f;
+	//m_tHitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	//m_tHitDesc.eHitType = HIT_TYPE::ONCE;
+	//m_tHitDesc.fDamage = 10.f;
 
-	pOwner->SetAutoPlayBattleCollider("Weapon", 0.25f, 0.05f, m_tHitDesc);
-	m_isFirstAttack = false;
-	m_isFinish = false;
-	m_isParryEnable = false;
+	//pOwner->SetAutoPlayBattleCollider("Weapon", 0.25f, 0.05f, m_tHitDesc);
+	//m_isFirstAttack = false;
+	//m_isFinish = false;
+	//m_isParryEnable = false;
 }
 
 void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
@@ -223,18 +282,20 @@ void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
 		qRot,
 		dt);
 
-	if (false == m_isFirstAttack &&
-		m_fAnimProgress > 0.35) {
-		pOwner->SetAutoPlayBattleCollider("Weapon", 0.42f, 0.03f, m_tHitDesc);
-		m_isFirstAttack = true;
-	}
-	if (false == m_isParryEnable &&
-		m_fAnimProgress >= 0.25f)
-		pOwner->SetParryEnable(false);
-	if (false == m_isFinish &&
-		m_fAnimProgress >= 0.25f)
-		pOwner->SetOnAttack(false);
+	//if (m_isFinish == false)
+	//	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
+	//if (false == m_isFirstAttack &&
+	//	m_fAnimProgress > 0.35) {
+	//	pOwner->SetAutoPlayBattleCollider("Weapon", 0.42f, 0.03f, m_tHitDesc);
+	//	m_isFirstAttack = true;
+	//}
+	//if (false == m_isParryEnable &&
+	//	m_fAnimProgress >= 0.25f)
+	//	pOwner->SetParryEnable(false);
+	//if (false == m_isFinish &&
+	//	m_fAnimProgress >= 0.25f)
+	//	pOwner->SetOnAttack(false);
 	Update_Effects(pOwner);
 }
 
@@ -255,16 +316,17 @@ void CThugAssaulter_Attack4::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_04")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	/*pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true, false);
 
 	HitDesc hitdesc = {};
 	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
-	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.eHitType = HIT_TYPE::INTERVAL;
+	hitdesc.fInterval = 0.7f;
 	hitdesc.fDamage = 10.f;
 
 	pOwner->SetAutoPlayBattleCollider("Weapon", 0.23f, 0.35f, hitdesc);
 	m_isFinish = false;
-	m_isParryEnable = false;
+	m_isParryEnable = false;*/
 }
 
 void CThugAssaulter_Attack4::Update(CThugAssaulter* pOwner, _float dt)
@@ -276,13 +338,18 @@ void CThugAssaulter_Attack4::Update(CThugAssaulter* pOwner, _float dt)
 		qRot,
 		dt);
 
-	if (false == m_isParryEnable &&
-		m_fAnimProgress >= 0.23f)
-		pOwner->SetParryEnable(false);
-	
-	if (false == m_isFinish &&
-		m_fAnimProgress >= 0.58f)
-		pOwner->SetOnAttack(false);
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
+	//if (m_isFinish == false)
+	//	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
+	//if (false == m_isParryEnable &&
+	//	m_fAnimProgress >= 0.28f)
+	//	pOwner->SetParryEnable(false);
+	//
+	//if (false == m_isFinish &&
+	//	m_fAnimProgress >= 0.58f)
+	//	pOwner->SetOnAttack(false);
 
 	Update_Effects(pOwner);
 }

@@ -224,11 +224,12 @@ void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
     // 0.2 ~ 0.9 8Ÿ 0.1����
     if(IsCrossAnimProgress(m_fProgress + m_iCount * m_fInterval))
     {
-        BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 8.f, 6.f, -m_vLook, 15.f, HitDesc()
+        BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 8.f, 8.f, -m_vLook, 15.f, HitDesc()
             .Name(pOwner->Get_CharacterName())
             .Type(HIT_TYPE::ONCE)
             .Damage(pOwner->Get_AttackPower() * 0.604f * Helper::Get_Random_Float(1.f, 1.5f)
                 , m_eType)
+            .Charge(0.f, 10.f)
         );
         m_eType = DAMAGE_TYPE::NORMAL;
         m_iCount++;
@@ -364,6 +365,7 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 3.934f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge(0.f, 10.f)
             );
         }
         else if (Event.Tag == "KatanaAttackEnd")
@@ -379,6 +381,7 @@ void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
             .Type(HIT_TYPE::ONCE)
             .Damage(pOwner->Get_AttackPower() * 0.402f * Helper::Get_Random_Float(1.f, 1.5f)
                 , m_eType)
+            .Charge(0.f, 10.f)
         );
         m_eType = DAMAGE_TYPE::NORMAL;
         m_iCount++;
