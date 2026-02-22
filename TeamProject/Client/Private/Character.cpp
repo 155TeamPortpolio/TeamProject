@@ -63,6 +63,8 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
 
     Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
         {
+            if (desc.eState != TUTORIAL_STATE::PLAY)
+                return;
             if (desc.eType == TUTORIAL_TYPE::END)
                 return;
             else
