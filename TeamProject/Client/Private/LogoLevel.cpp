@@ -139,7 +139,7 @@ void CLogoLevel::PreLoadLevel(const string& levelKey)
 		LevelKey.erase(LevelKey.size() - suffix.size());
 	}
 
-	const string clientPath = "../Bin/Resources/Global";
+	const string clientPath = "../Bin/Resources/Global/UI";
 	filesystem::path directory = clientPath;
 
 	error_code ec;
