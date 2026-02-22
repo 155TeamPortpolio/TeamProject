@@ -31,6 +31,7 @@ HRESULT CLoadingLevel::Awake()
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
 	m_NextLevel=transDesc.nextLevelKey;
 	PreAddPath("");
+	PreLoadForTestLevel();
 	if(m_NextLevel == "Zero_Level")
 		PreLoadZero("Zero_Level");
 	else if (m_NextLevel == "MainCity_Level") {
