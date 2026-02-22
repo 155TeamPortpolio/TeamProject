@@ -115,13 +115,14 @@ public:
 	class CAudioSource* Get_ZeroBGM() { return m_pBGM; };
 	Zero_Fog* Get_ZeroFog() { return &m_tZeroFog; };
 	Zero_Cloud* Get_ZeroCloud() { return &m_tZeroCloud; };
-	void Get_ZeroShadow() { }
+	Zero_Shadow* Get_ZeroShadow() { return &m_tZeroShadow; };
 
 private:
 	class CAudioSource* m_pBGM = nullptr;
 	Zero_Fog	m_tZeroFog;
 	Zero_Cloud	m_tZeroCloud;
 	Zero_Shadow m_tZeroShadow;
+
 public:
 	static CZero_Level* Create(const string& LevelKey);
 	virtual void Free() override;
