@@ -40,6 +40,7 @@ void CUI_TutorialVideo::Play(TUTORIAL_TYPE eType)
     // 6) 새 디코드 스레드 시작(반드시 새 세션으로)
     VideoService()->StartDecode(m_PlayerID);
 
+    RenderSystem()->SetOn(false);
     m_pPlayer->Play();
     Set_Alive(true);
 }
@@ -101,6 +102,7 @@ void CUI_TutorialVideo::UI_Active(void* pArg)
 
 void CUI_TutorialVideo::UI_DeActive(void* pArg)
 {
+    RenderSystem()->SetOn(true);
     m_pPlayer->Stop();
     Set_Alive(false);
 }
