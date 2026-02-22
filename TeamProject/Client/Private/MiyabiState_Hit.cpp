@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "MiyabiState_Hit.h"
+
+#include "GameInstance.h"
+#include "BattleSystem.h"
+
 #include "Miyabi.h"
 
 #include "AudioSource.h"
@@ -88,6 +92,7 @@ void CMiyabiState_Hit::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Hit::Exit(CMiyabi* pOwner)
 {
+	BattleSystem()->LockPlayer(false);
 	pOwner->Set_ResetMove(true);
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
@@ -117,6 +122,13 @@ void CMiyabi_HitHard::Enter(CMiyabi* pOwner)
 	pOwner->Get_Component<CAudioSource>()->Sequence("HitHard")
 		.Attribute3D(true)
 		.PlayNext();
+	BattleSystem()->LockPlayer(true);
+}
+
+void CMiyabi_HitHard::Update(CMiyabi* pOwner, _float dt)
+{
+	if (IsCrossAnimProgress(0.25f))
+		BattleSystem()->LockPlayer(false);
 }
 
 void CMiyabi_HitKnockOut::Enter(CMiyabi* pOwner)
@@ -130,4 +142,11 @@ void CMiyabi_HitKnockOut::Enter(CMiyabi* pOwner)
 	pOwner->Get_Component<CAudioSource>()->Sequence("HitHard")
 		.Attribute3D(true)
 		.PlayNext();
+	BattleSystem()->LockPlayer(true);
+}
+
+void CMiyabi_HitKnockOut::Update(CMiyabi* pOwner, _float dt)
+{
+	if (IsCrossAnimProgress(0.25f))
+		BattleSystem()->LockPlayer(false);
 }

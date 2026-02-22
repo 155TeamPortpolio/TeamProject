@@ -79,7 +79,6 @@ void CMeleeJaeger_Attack::Enter(CMeleeJaeger* pOwner)
 		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 }
 
@@ -107,6 +106,7 @@ void CMeleeJaeger_Attack::Update(CMeleeJaeger* pOwner, _float dt)
 			{
 				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_HitDesc);
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::RIGHT);
+				pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 			}
 			else if (Event.Tag == "TurnOffAttackCol")
 				pOwner->SetBattleColliderObject("Weapon", CEnemy::BATTLE_COLTYPE::ATTACK, false);

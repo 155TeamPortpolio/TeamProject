@@ -56,9 +56,12 @@ void CBattlePlayer::Priority_Update(_float dt)
         return;
 
     m_pCurrentCharacter->Reset_Interact();
-    //if (GUISystem()->UsingUI())
-    //    m_pCurrentCharacter->Reset_InputInfo();
-    if (Can_Input())
+
+    _bool bUsingGUI = false;
+#ifdef _USING_GUI
+    bUsingGUI = GUISystem()->UsingUI();
+#endif
+    if (Can_Input() && !bUsingGUI)
         Update_Input(dt);
 
     Update_Target();
@@ -997,6 +1000,11 @@ void CBattlePlayer::Update_Target(_bool bRefresh)
                 < fMaxDistance)
                 return;
         }
+    }
+    else if (m_bLockOn && m_TargetHandle.isValid()
+        && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+    {
+        return;
     }
 
     // 가장 가까운 몬스터 탐색
