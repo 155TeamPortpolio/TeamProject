@@ -106,14 +106,6 @@ HRESULT CZero_Level::Initialize()
 	m_Context.isFirstIn = true;
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 	Ready_Stage();
-
-	{
-		auto pEnviromentEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_enviroment.json")
-			.Build("Enviroment_Particle");
-
-		ObjectManager()->Add_Object(pEnviromentEffect, { "Zero_Level","Effect_Layer" });
-	}
 	
 	return S_OK;
 }

@@ -114,6 +114,14 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 			{
 				lightDesc
 			});
+
+		{
+			auto pEnviromentEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+				.Asset("sacrifice_enviroment.json")
+				.Build("Enviroment_Particle");
+
+			ObjectManager()->Add_Object(pEnviromentEffect, { "Zero_Level","Effect_Layer" });
+		}
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
@@ -134,6 +142,15 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 				_float4{0.026f, 0.045f, 0.054f, 1.0f},
 				0.00319f
 			});
+
+		{
+			auto pFog = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+				.Asset("defiler_stage_fog.json")
+				.Position(_float3(0.f, -3.7f, 0.f))
+				.Build("Stage_Fog");
+
+			ObjectManager()->Add_Object(pFog, { "Zero_Level","Effect_Layer" });
+		}
 	}
 
 	return S_OK;
@@ -148,11 +165,15 @@ HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
 		m_pOwnerLevel->Get_ZeroShadow()->Set_Light(m_PrevShadowLight);
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").FadeOut(0.2f);
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").FadeOut(0.2f);
+
+		
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV.wav").FadeOut(0.2f);
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV2.wav").FadeOut(0.2f);
+
+		
 	}
 	//m_pOwnerLevel->Get_ZeroShadow().
 	return S_OK;
