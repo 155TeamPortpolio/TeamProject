@@ -289,8 +289,6 @@ HRESULT CMeleeJaeger::Ready_Children(INIT_DESC* pArg)
 		pShieldDesc->pHandBone = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, "Bip001_L_Hand");
 		pShieldDesc->iMaxHP = m_tStatus.iMaxHP * 0.25f;
 
-	
-
 		COLLIDER_DESC ShieldColliderDesc= {};
 		ShieldColliderDesc.eGroup = COLLISION_GROUP::MONSTER;
 		ShieldColliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);

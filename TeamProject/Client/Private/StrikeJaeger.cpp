@@ -442,8 +442,8 @@ HRESULT CStrikeJaeger::Ready_Rules()
 	m_tHysteriesis.fEvadeEnter = 1.f;
 	m_tHysteriesis.fComboEnter = 2.f;
 	m_tHysteriesis.fComboExit = 3.5f;
-	m_tHysteriesis.fChaseEnter = 7.f;
-	m_tHysteriesis.fChaseExit = 6.f;
+	m_tHysteriesis.fChaseEnter = 5.f;
+	m_tHysteriesis.fChaseExit = 4.f;
 
 	return S_OK;
 }

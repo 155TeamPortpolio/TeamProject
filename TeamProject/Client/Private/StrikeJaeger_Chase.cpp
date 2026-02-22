@@ -76,7 +76,8 @@ void CStrikeJaeger_Run_Loop::Update(CStrikeJaeger* pOwner, _float dt)
 {
 
 	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
-		m_pOwnerStateMachine->Change_State("Run_End");
+		pOwner->Idle();
+		// m_pOwnerStateMachine->Change_State("Run_End");
 }
 
 void CStrikeJaeger_Run_Loop::Exit(CStrikeJaeger* pOwner)
