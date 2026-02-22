@@ -177,6 +177,7 @@ void CZeroStage_Boss::Outro()
 void CZeroStage_Boss::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
+		CamDirector()->ExitBoss();
 		LevelManager()->Request_ChangeLevel("Scott_Level", true);
 	}
 }

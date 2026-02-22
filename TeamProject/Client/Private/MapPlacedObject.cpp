@@ -75,6 +75,7 @@ HRESULT CMapPlacedObject::Initialize(INIT_DESC* pArg)
 
 void CMapPlacedObject::Awake()
 {
+	Get_Component<CMaterial>()->SetBlendHasAlpha(AlphaCheckLevel::Fast, "Blend");
 }
 
 void CMapPlacedObject::Priority_Update(_float dt)

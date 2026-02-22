@@ -598,9 +598,6 @@
     <Filter Include="02. GameObject\Object\Gacha\GachaProps\GachaBack">
       <UniqueIdentifier>{e5c0363c-6e7d-497f-a9a3-598931dd3e38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Normal\EtherClayMore\State\Parry">
-      <UniqueIdentifier>{3654afe4-97aa-4a58-9ad0-1c8974d7bd98}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
     </Filter>
@@ -698,6 +695,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Swaebing">
       <UniqueIdentifier>{e06e79fe-0096-42d7-8216-0235c8562657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol">
+      <UniqueIdentifier>{0a6e0c5f-9379-4396-bede-fdeb577f7c12}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Gangta">
       <UniqueIdentifier>{93712aaf-87f8-46e7-8d80-8d430b09aa6f}</UniqueIdentifier>
@@ -1550,9 +1550,6 @@
     </Filter>
     <Filter Include="02. GameObject\Effect\AttackRange">
       <UniqueIdentifier>{7f4f46b8-b6c8-426d-a5b9-febe89cdec7e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\02. 3D\Plane\Damage_UI\Seoriyeol">
-      <UniqueIdentifier>{0a6e0c5f-9379-4396-bede-fdeb577f7c12}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\BangBoo">
       <UniqueIdentifier>{6c98ca37-6140-4d9b-8160-0dcaf301fef4}</UniqueIdentifier>
@@ -3029,6 +3026,9 @@
     <ClInclude Include="..\Public\AttackRange.h">
       <Filter>02. GameObject\Effect\AttackRange</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BangBoo.h">
+      <Filter>02. GameObject\Object\Npc\BangBoo</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_WipeoutOverlay.h">
       <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
     </ClInclude>
@@ -4453,6 +4453,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\AttackRange.cpp">
       <Filter>02. GameObject\Effect\AttackRange</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBoo.cpp">
+      <Filter>02. GameObject\Object\Npc\BangBoo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_WipeoutOverlay.cpp">
       <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
