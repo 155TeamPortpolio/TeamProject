@@ -156,6 +156,12 @@ void CSacrifice::Update(_float dt)
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 	Route_AnimEvent();
+
+	if (InputDevice()->Key_Tap('1'))
+		CustomHit(10.f);
+
+	if (InputDevice()->Key_Tap('2'))
+		CustomHit(20.f);
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -276,18 +282,16 @@ void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
 	_vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
 	_vector3 vTargetDir = vTargetPosition - vPosition;
+
+	vCurrDir.y = 0.f;
 	vCurrDir.Normalize();
-	vTargetDir.Normalize();
+	vTargetDir = Math::NormalizeSafeXZ(vTargetDir);
 
 	if (vCurrDir.Dot(vTargetDir) >= 0.99f)
 		return;
 
 	vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
-	if (vTargetDir.Length() <= 0.1f)
-		vTargetDir = vCurrDir;
-
-	vCurrDir.Normalize();
-	m_pTransform->Set_Look(vCurrDir);
+	m_pTransform->Set_Look(vTargetDir);
 }
 
 void CSacrifice::MoveByRootMotion(_float dt, _float moveScale)

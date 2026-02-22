@@ -106,6 +106,7 @@ protected:
     // 몬스터 Look 기준 플레이어가 어느 방향에 있는지 알려주는 함수
     DIR                 GetDIRToPlayer();
 
+    void CustomHit(_uint damage);
 protected:
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
     virtual void        Create_UIEnemyStatus(string boneTag);

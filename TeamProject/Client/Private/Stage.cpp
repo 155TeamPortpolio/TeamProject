@@ -329,6 +329,7 @@ void CStage::BaseIntro(StageContext& context)
 		}
 		else {
 	
+			m_introFlow.AddOnce(seqId, [this]() {AudioDevice()->Push_GroupVolume(SOUND_GROUP::SFX, 0.f, 0.01f); });
 			m_introFlow.AddOnce(seqId, [this]() {CamDirector()->AutoBattle(CamStartDir::Back); });
 			m_introFlow.AddWait(seqId, 0.2f);
 			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
@@ -341,6 +342,7 @@ void CStage::BaseIntro(StageContext& context)
 					->SetEnable(true);
 				});
 			m_introFlow.AddWait(seqId, 2.0f);
+			m_introFlow.AddOnce(seqId, [this]() {AudioDevice()->Pop_GroupVolume(SOUND_GROUP::SFX, 0.1f); });
 		}
 
 		m_introFlow.EndSequence(seqId);

@@ -84,8 +84,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	if ("Zero_Boss1" == context.mapKey) 
 	{
 		m_PrevShadowLight = m_pOwnerLevel->Get_ZeroShadow()->pShadowCam->Get_Component<CLight>()->Get_Desc();
-
-		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Hollow_Zero_1.wav", 0.9f);
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Hollow_Zero_1.wav").FadeOut(0.5f);
 
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
@@ -125,6 +124,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Hollow_Zero_2.wav").Stop();
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV.wav").Attribute3D(false).Loop(-1).Volume(0.3f).Play();
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV2.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({

@@ -94,10 +94,9 @@ HRESULT CZeroStage_Start::Enter_Stage(StageContext& context)
 	m_pOwnerLevel->Get_ZeroBGM()->Slot(BGMTag)
 		.Attribute3D(false)
 		.Group(SOUND_GROUP::BGM)
-		.Loop(true)
+		.Loop(-1)
 		.Volume(0.2f)
-		.Play();
-
+		.PlayUnique();
 	return S_OK;
 }
 

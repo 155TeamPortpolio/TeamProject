@@ -716,6 +716,7 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update_Effects(CSacr
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
 
 		//jae
+		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
 }
 
@@ -797,6 +798,7 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacr
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
 
 		//jae
+		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
 
 	/* Charge */
@@ -837,5 +839,6 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacr
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
 
 		//jae
+		CameraManager()->AddImpact(ENUM(CamShakeType::LandingCrush), ENUM(CamZoomType::LandingCrush), 2.5f);
 	}
 }
