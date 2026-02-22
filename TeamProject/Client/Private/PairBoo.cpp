@@ -29,11 +29,6 @@ HRESULT CPairBoo::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
 
-	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("Sumoboo.model", "../Bin/Resources/MainCity/NPC/ElectricBoo/Sumoboo/Sumoboo.model");
-	pResource->Add_ResourcePath("Sumoboo.mat", "../Bin/Resources/MainCity/NPC/ElectricBoo/Sumoboo/Sumoboo.mat");
-	pResource->Add_ResourcePath("NPC_Bangboo_Sumoboo_Meta.json", "../Bin/Resources/MainCity/NPC/ElectricBoo/Sumoboo/NPC_Bangboo_Sumoboo_Meta.json");
-
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "Sumoboo.model");
 	auto pMaterial = Get_Component<CMaterial>();

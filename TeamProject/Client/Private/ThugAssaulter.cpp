@@ -12,6 +12,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -26,6 +27,7 @@
 #include "ThugAssaulter_Parried.h"
 
 #include "AttackSign.h"
+#include "EffectContainer.h"
 
 CThugAssaulter::CThugAssaulter()
 	: CEnemyNormal()
@@ -77,6 +79,12 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugAssaulter/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
+
 
 	m_isUseGroggyRimLight = true;
 
@@ -145,7 +153,7 @@ void CThugAssaulter::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 4.f }, true);
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 7.f }, true);
 
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -310,13 +318,18 @@ void CThugAssaulter::OnPooledRelease()
 
 void CThugAssaulter::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() /*|| false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parried");
 	SetOnAttack(false, ATTACK_SIDE::NONE);
+	SetBattleColliderObject("Weapon", BATTLE_COLTYPE::ATTACK, false);
+
+	Get_Component<CAudioSource>()->Set_SlotStop("assaulter_Attack1_FULL.wav");
+	Get_Component<CAudioSource>()->Set_SlotStop("assaulter_Attack4_FULL.wav");
+
 }
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
@@ -491,6 +504,31 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 	return S_OK;
 }
 
+HRESULT CThugAssaulter::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("assaulter_slash0.json")
+			.Build("Assaulter_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("assaulter_spin.json")
+			.Build("Assaulter_Spin");
+		pEffect->Set_Alive(false);
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	return S_OK;
+}
+
 HRESULT CThugAssaulter::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
@@ -522,6 +560,7 @@ void CThugAssaulter::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);

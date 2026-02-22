@@ -20,6 +20,9 @@ public:
     virtual HRESULT Render()     override;
 
 private:
+    HRESULT Create_LogoVideo();
+
+private:
     CGameInstance* m_pGameInstance{};
 
 public:

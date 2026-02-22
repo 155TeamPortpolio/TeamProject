@@ -34,6 +34,7 @@ void CSacrificeState_Groggy::Enter(CSacrifice* pOwner)
 
 	pOwner->SetOnAttack(false);
 	pOwner->SetParryEnable(false);
+	pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
 }
 
 void CSacrificeState_Groggy::Update(CSacrifice* pOwner, _float dt)

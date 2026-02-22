@@ -15,6 +15,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -27,6 +28,8 @@
 #include "Giant_Move.h"
 #include "Giant_Chase.h"
 #include "Giant_Parried.h"
+
+#include "EffectContainer.h"
 
 CGiant::CGiant()
 	: CEnemyNormal()
@@ -81,7 +84,13 @@ HRESULT CGiant::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	Get_Component<CCharacterController>()->Set_StepOffset(0.01f);
+
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/Giant/Sound");
+	Get_Component<CAudioSource>()->Slot("giant_Spawn.wav").Attribute3D(true).Play();
 
 	return S_OK;
 }
@@ -89,11 +98,6 @@ HRESULT CGiant::Initialize(INIT_DESC* pArg)
 void CGiant::Awake()
 {
 	__super::Awake();
-	//auto instance = Get_Component<CMaterial>()->Find_MaterialInstanceByName("Giant_2");
-	//if (instance) {
-	//	instance->Set_Blended(true);
-	//	instance->Override_Pass("Blend");
-	//}
 }
 
 void CGiant::Priority_Update(_float dt)
@@ -256,7 +260,7 @@ void CGiant::Render_GUI()
 
 void CGiant::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName()/* || false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -267,13 +271,15 @@ void CGiant::Parried()
 	SetOnAttack(false, ATTACK_SIDE::NONE); 
 	SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, false);
 	SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, false);
-}
 
-void CGiant::SetOnAttack(_bool is, ATTACK_SIDE eSide)
-{
-	__super::SetOnAttack(is, eSide);
+	Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack1_FULL.wav");
+	//Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack2_FULL.wav");
+	//Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack2_1_FULL.wav");
+	//Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack2_Explode_FULL.wav");
+	Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack3_FULL.wav");
+	Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack4_FULL.wav");
+	//Get_Component<CAudioSource>()->Set_SlotStop("giant_Attack5_FULL.wav");
 
-	m_isParryDontStop = false;
 }
 
 HRESULT CGiant::Ready_Children(INIT_DESC* pArg)
@@ -433,6 +439,46 @@ HRESULT CGiant::Initialize_Transitions()
 	return S_OK;
 }
 
+HRESULT CGiant::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_hit_ground0.json")
+			.Build("Giant_HitGround0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_hit_ground1.json")
+			.Build("Giant_HitGround1_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	for (_uint i = 0; i < 2; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_slash0.json")
+			.Build("Giant_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_dash_trail.json")
+			.Build("Giant_Dash_Trail");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+
+	return S_OK;
+}
+
 HRESULT CGiant::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
@@ -464,6 +510,7 @@ void CGiant::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);

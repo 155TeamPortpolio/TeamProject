@@ -64,8 +64,19 @@ HRESULT CZeroStage_Start::Enter_Stage(StageContext& context)
 	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
 
-	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
-		{ _float4(0.577f, 0.615f, 0.641f, 1.0f) , 0.001f });
+	m_pOwnerLevel->Get_ZeroFog()->Use_Fog(false);
+
+	m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud(
+		{
+			_vector3{0.197f, 0.232f, 0.226f},
+			_vector3{0.028f, 0.03f, 0.031f},
+			_vector3{0.f, 0.f, 0.f},
+			0.61f,
+			_vector3{0.61f, 0.726f, 0.706f},
+			_vector3{0.f, 0.f, 0.f},
+			0.44f
+		}
+	);
 
 	_uint Boss_Process{};
 	RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process);

@@ -22,7 +22,6 @@ public:
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
     virtual void Parried() override;
-    virtual void SetOnAttack(_bool is, ATTACK_SIDE eSide = ATTACK_SIDE::NONE) override;
 
 public:
     static CGiant* Create();
@@ -52,6 +51,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     HRESULT Ready_Rules();
     void Update_States(const _float dt);
     void ControlState(const _float dt);

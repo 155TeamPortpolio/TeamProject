@@ -297,7 +297,7 @@ void CBattleFXFlow::StartVfx_Evade()
 
 			postRenderer->GetCommand<CSaturationCommand>()
 				->SetIntensity(1.f)
-				->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
+				->SetSaturationType(ENUM(SATURATIONTYPE::STATIC))
 				->SetDuration(totalDurationSeconds)
 				->SetEaseType(EaseType::InOutCubic)
 				->SetEnable(true);
@@ -624,7 +624,10 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	if (accumulatedTimeSec < timelineEndSec)
 		AddWait(timelineEndSec - accumulatedTimeSec);
-
+	//0.417
+	AddWait(0.2f);
+	AddCall([this]() {UIDirector()->Show_WipeoutOverlay(); });
+	AddWait(0.1f);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};

@@ -1,5 +1,5 @@
 {
-  "AnimPath" : "../Bin/Resources/MainCity/NPC/ElectricBoo/ExploreBoo/Anim/",
+  "AnimPath" : "../Bin/Resources/Global/NPC/BangBoos/SumoBoo/Anim/",
   "PreTransform": {
     "_11": -0.009999999776482582,
     "_12": 0.0,
@@ -20,23 +20,23 @@
   },
   "Clips": [
     {
-      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Happy_Loop",
+      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Happy_Loop",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Happy_Start",
+      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Happy_Start",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Idle",
+      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Idle",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Sad_Loop",
+      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Sad_Loop",
       "Events": []
     },
     {
-      "ClipTag": "NPC_Bangboo_Exploreboo_Ani_HSC_Sad_Start",
+      "ClipTag": "NPC_Bangboo_Sumoboo_Ani_HSC_Sad_Start",
       "Events": []
     }
   ]

@@ -59,6 +59,10 @@ public:
 public:
 	static CGiant_Attack1* Create() { return new CGiant_Attack1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
 };
 
 class CGiant_Attack2 : public IBaseState<CGiant>
@@ -71,6 +75,13 @@ public:
 public:
 	static CGiant_Attack2* Create() { return new CGiant_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
+	_float3 m_vLeftPosition{-0.3f,0.f,1.1f};
+	_float3 m_vRightPosition{ 0.7f,0.f,0.9f };
+
 };
 
 class CGiant_Attack2_1 : public IBaseState<CGiant>
@@ -83,6 +94,10 @@ public:
 public:
 	static CGiant_Attack2_1* Create() { return new CGiant_Attack2_1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
 };
 
 class CGiant_Attack2_Explode : public IBaseState<CGiant>
@@ -95,6 +110,10 @@ public:
 public:
 	static CGiant_Attack2_Explode* Create() { return new CGiant_Attack2_Explode(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
 };
 
 class CGiant_Attack3 : public IBaseState<CGiant>
@@ -107,6 +126,10 @@ public:
 public:
 	static CGiant_Attack3* Create() { return new CGiant_Attack3(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
 };
 
 class CGiant_Attack3_HitWall : public IBaseState<CGiant>
@@ -131,6 +154,10 @@ public:
 public:
 	static CGiant_Attack4* Create() { return new CGiant_Attack4(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
 };
 
 class CGiant_Attack5 : public IBaseState<CGiant>
@@ -143,6 +170,10 @@ public:
 public:
 	static CGiant_Attack5* Create() { return new CGiant_Attack5(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CGiant* pOwner);
+
 };
 
 class CGiant_Attack6_AttackBack : public IBaseState<CGiant>
