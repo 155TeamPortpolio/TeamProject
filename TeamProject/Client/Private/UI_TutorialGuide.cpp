@@ -189,12 +189,14 @@ HRESULT CUI_TutorialGuide::Show_ResultBanner()
         LevelManager()->Request_ChangeLevel("Scott_Level", true);
         });
 
+    const _uint iReward = 100000;
+
     _uint iDenny = {};
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
-    iDenny += 10000;
+    iDenny += iReward;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
     CUI_LotteryResultBanner::RESULT_DESC desc = {};
-    desc.iDenny = 100000;  // 10만 데니!
+    desc.iDenny = iReward;  // 10만 데니!
     pObj->UI_Active(&desc);
 
     return S_OK;
