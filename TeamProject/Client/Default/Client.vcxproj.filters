@@ -1556,9 +1556,18 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\UltimateBG">
       <UniqueIdentifier>{b9417264-ef5c-44bb-973c-2241ba2ecaec}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\UI\01. 2D\WipeoutOverlay">
       <UniqueIdentifier>{49cfe856-c353-43a0-843d-34cf5f398ecb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Sarah">
+      <UniqueIdentifier>{102f667a-a16e-4e4d-8d8d-b6eb30c73cc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\BettyBrenda">
+      <UniqueIdentifier>{88708340-2afa-44db-b32c-9c62d0499980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\Cecilia">
+      <UniqueIdentifier>{6c19022c-f4b3-4303-a85c-cf904b755558}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -3034,9 +3043,18 @@
     </ClInclude>
     <ClInclude Include="..\public\UltimateBG.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\UltimateBG</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_WipeoutOverlay.h">
       <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Cecilia.h">
+      <Filter>02. GameObject\Object\Npc\Service\Cecilia</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BettyBrenda.h">
+      <Filter>02. GameObject\Object\Npc\Service\BettyBrenda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sarah.h">
+      <Filter>02. GameObject\Object\Npc\Service\Sarah</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4465,9 +4483,18 @@
     </ClCompile>
     <ClCompile Include="..\private\UltimateBG.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\UltimateBG</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_WipeoutOverlay.cpp">
       <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Cecilia.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Cecilia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BettyBrenda.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\BettyBrenda</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sarah.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\Sarah</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

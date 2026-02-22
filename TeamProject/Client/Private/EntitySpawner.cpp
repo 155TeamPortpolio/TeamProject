@@ -25,6 +25,9 @@
 #include "SilverAnbi.h"
 #include "BackgroundNpc.h"
 #include "ScottCar.h"
+#include "Sarah.h"
+#include "BettyBrenda.h"
+#include "Cecilia.h"
 
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
@@ -65,8 +68,11 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
 	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } },
 	{ "ScottCar",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottCar", &CScottCar::Create } },
-	{ "Jaeger2",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger2", &CJaeger2::Create } },
-	{ "Jaeger3",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger3", &CJaeger3::Create } }
+	{ "Sarah",			Spawner::OBJ_SPEC{ "Proto_GameObject_CSarah", &CSarah::Create } },
+	{ "BettyBrenda",	Spawner::OBJ_SPEC{ "Proto_GameObject_BettyBrenda", &CBettyBrenda::Create } },
+	{ "Cecilia",		Spawner::OBJ_SPEC{ "Proto_GameObject_Cecilia", &CCecilia::Create } },
+	{ "Jaeger2",        Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger2", &CJaeger2::Create } },
+	{ "Jaeger3",        Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger3", &CJaeger3::Create } }
 };
 
 /* Maptool Type 1 */
