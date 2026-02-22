@@ -65,7 +65,7 @@ void CMiyabiState_SwitchInParryAid::Update(CMiyabi* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
-    pOwner->Look_Target();
+    //pOwner->Look_Target();
     __super::Update(pOwner, dt);
 }
 
