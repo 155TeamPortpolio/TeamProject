@@ -65,7 +65,7 @@ void CMiyabiState_SwitchInParryAid::Update(CMiyabi* pOwner, _float dt)
             pSwitchIn->Get_SubStateMachine()->Set_Trigger("Complete");
         }
     }
-    pOwner->Look_Target();
+    //pOwner->Look_Target();
     __super::Update(pOwner, dt);
 }
 
@@ -99,8 +99,9 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
+    if (m_fStateTime > 0.75f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
     {
+        pOwner->Pop_Invincible();
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }
 }

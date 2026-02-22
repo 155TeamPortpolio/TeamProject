@@ -281,6 +281,7 @@ void CJaneDoe::On_ChainParry()
 
     if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
     {
+        Push_Invincible();
         // 이미 SwitchIn이면 서브만 리셋
         IHState<CJaneDoe>* pSwitchIn = dynamic_cast<IHState<CJaneDoe>*>(
             m_pStateMachine->Get_CurrentState());
