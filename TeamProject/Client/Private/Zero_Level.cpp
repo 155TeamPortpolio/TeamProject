@@ -243,11 +243,10 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Elite].maps.push_back(Elite);
 
 	//Boss
-	Boss_Process = 2;
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Boss);
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
