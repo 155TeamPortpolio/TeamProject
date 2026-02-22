@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -28,6 +29,8 @@
 #include "MeleeJaeger_Move.h"
 #include "MeleeJaeger_Chase.h"
 #include "MeleeJaeger_Parried.h"
+
+#include "EffectContainer.h"
 
 CMeleeJaeger::CMeleeJaeger()
 	: CEnemyNormal()
@@ -79,7 +82,13 @@ HRESULT CMeleeJaeger::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
 	m_isUseGroggyRimLight = true;
+
+	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
+
 
 	return S_OK;
 }
@@ -262,7 +271,7 @@ void CMeleeJaeger::OnPooledRelease()
 
 void CMeleeJaeger::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() /*|| false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -480,6 +489,22 @@ HRESULT CMeleeJaeger::Initialize_Transitions()
 	return S_OK;
 }
 
+HRESULT CMeleeJaeger::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("melee_jaeger_slash0.json")
+			.Build("Melee_Jaeger_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	return S_OK;
+}
+
 HRESULT CMeleeJaeger::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
@@ -508,6 +533,7 @@ void CMeleeJaeger::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);

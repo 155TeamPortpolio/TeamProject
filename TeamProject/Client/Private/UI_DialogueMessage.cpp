@@ -76,9 +76,9 @@ void CUI_DialogueMessage::UI_Active(void* pArg)
     m_hasChoice = pDesc->hasChoice;                 // 선택지 존재 여부 저장
 
     if (pDesc->strName == L"전류감별부" || pDesc->strName == L"충전부")
-        Get_Component<CAudioSource>()->Slot("BangBoo_Sequence" + to_string(pDesc->SequenceID) + ".wav").PlayUnique();
+        Get_Component<CAudioSource>()->Slot("BangBoo_Sequence" + to_string(pDesc->SequenceID) + ".wav").Play();
     else if (pDesc->strName == L"냥냥이 치안관")
-        Get_Component<CAudioSource>()->Slot("Meow_Sequence" + to_string(pDesc->SequenceID) + ".wav").PlayUnique();
+        Get_Component<CAudioSource>()->Slot("Meow_Sequence" + to_string(pDesc->SequenceID) + ".wav").Volume(0.2f).Play();
 }
 
 void CUI_DialogueMessage::UI_DeActive(void* pArg)

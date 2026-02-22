@@ -54,6 +54,7 @@ HRESULT CUI_GachaVideo::Initialize(INIT_DESC* pArg)
 
 void CUI_GachaVideo::Awake()
 {
+    RenderSystem()->SetOn(false);
     m_pPlayer->Play();
     Get_Component<CAudioSource>()->Slot("GachaTV.wav").Play();
 }
@@ -64,6 +65,7 @@ void CUI_GachaVideo::Update(_float dt)
     {
         if (m_isFinished)   // 끝나고 한 프레임 뒤에 재생하게
         {
+            RenderSystem()->SetOn(true);
             m_pPlayer->Stop();
             Set_Alive(false);
             return;

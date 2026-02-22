@@ -327,10 +327,9 @@ void CStage::BaseIntro(StageContext& context)
 				});
 		}
 		else {
+			m_introFlow.AddOnce(seqId, [this]() {CamDirector()->AutoBattle(CamStartDir::Back); });
 			m_introFlow.AddWait(seqId, 0.2f);
 			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
-			m_introFlow.AddWait(seqId, 0.2f);
-			//m_introFlow.AddOnce(seqId, [this]() {RenderSystem()->Apply_RadialBlur(2.f); });
 			m_introFlow.AddWait(seqId, 2.0f);
 		}
 

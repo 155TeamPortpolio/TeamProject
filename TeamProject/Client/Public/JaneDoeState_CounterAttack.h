@@ -44,6 +44,10 @@ public:
 public:
     static CJaneDoeState_Counter_02* Create() { return new CJaneDoeState_Counter_02(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Counter_03 : public IBaseState<CJaneDoe>
@@ -56,6 +60,9 @@ public:
 public:
     static CJaneDoeState_Counter_03* Create() { return new CJaneDoeState_Counter_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
 };
 
 class CJaneDoeState_Counter_End : public IBaseState<CJaneDoe>

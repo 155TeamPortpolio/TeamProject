@@ -393,7 +393,7 @@
                 1.0,
                 1.0,
                 1.0,
-                1.0
+                0.0
             ],
             "stencilMode": 0,
             "pass": "Opaque",
@@ -585,7 +585,8 @@
                     "animClips": [],
                     "children": [],
                     "typeTag": "Mask",
-                    "maskTextureKey": "BtnCommon.png"
+                    "maskTextureKey": "BtnCommon.png",
+                    "maskThreshold": 0.10000000149011612
                 },
                 {
                     "alive": true,

@@ -165,6 +165,7 @@ void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
 		qRot,
 		dt);
 
+	Update_Effects(pOwner);
 	//if (m_isFinish == false)
 	//	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
@@ -179,6 +180,12 @@ void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
 
 void CThugAssaulter_Attack1::Exit(CThugAssaulter* pOwner)
 {
+}
+
+void CThugAssaulter_Attack1::Update_Effects(CThugAssaulter* pOwner)
+{
+	if (IsCrossAnimProgress(0.18f))
+		pOwner->Play_Effect("Assaulter_Slash0_0", _vector3(0.f, 1.3f, 0.f), _quaternion(-0.01f, 0.69f, 0.72f, 0.f));
 }
 
 /*============================================================================*/
@@ -231,10 +238,22 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 	if (false == m_isFinish &&
 		m_fAnimProgress >= 0.49f)
 		pOwner->SetOnAttack(false);*/
+
+	Update_Effects(pOwner);	
 }
 
 void CThugAssaulter_Attack2::Exit(CThugAssaulter* pOwner)
 {
+}
+
+void CThugAssaulter_Attack2::Update_Effects(CThugAssaulter* pOwner)
+{
+	if (IsCrossAnimProgress(0.21f))
+		pOwner->Play_Effect("Assaulter_Slash0_0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.61f, 0.4f, 0.32f, 0.6f));
+	if (IsCrossAnimProgress(0.32f))
+		pOwner->Play_Effect("Assaulter_Slash0_1", _vector3(0.2f, 1.2f, 0.f), _quaternion(0.24f, 0.68f, 0.49f, 0.49f));
+	if (IsCrossAnimProgress(0.47f))
+		pOwner->Play_Effect("Assaulter_Slash0_2", _vector3(0.f, 1.1f, 0.f), _quaternion(0.16f, 0.68f, 0.65f, 0.3f));
 }
 
 /*============================================================================*/
@@ -277,10 +296,19 @@ void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
 	//if (false == m_isFinish &&
 	//	m_fAnimProgress >= 0.25f)
 	//	pOwner->SetOnAttack(false);
+	Update_Effects(pOwner);
 }
 
 void CThugAssaulter_Attack3::Exit(CThugAssaulter* pOwner)
 {
+}
+
+void CThugAssaulter_Attack3::Update_Effects(CThugAssaulter* pOwner)
+{
+	if (IsCrossAnimProgress(0.27f))
+		pOwner->Play_Effect("Assaulter_Slash0_0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.68f, -0.13f, -0.12f, 0.71f));
+	if (IsCrossAnimProgress(0.43f))
+		pOwner->Play_Effect("Assaulter_Slash0_0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.68f, -0.13f, -0.12f, 0.71f));
 }
 
 /*============================================================================*/
@@ -323,9 +351,18 @@ void CThugAssaulter_Attack4::Update(CThugAssaulter* pOwner, _float dt)
 	//	m_fAnimProgress >= 0.58f)
 	//	pOwner->SetOnAttack(false);
 
-
+	Update_Effects(pOwner);
 }
 
 void CThugAssaulter_Attack4::Exit(CThugAssaulter* pOwner)
 {
+	pOwner->Stop_Effect("Assaulter_Spin");
+}
+
+void CThugAssaulter_Attack4::Update_Effects(CThugAssaulter* pOwner)
+{
+	if (IsCrossAnimProgress(0.26f))
+		pOwner->Play_Effect("Assaulter_Spin", _vector3(0.f, 1.1f, 0.f), _quaternion(0.71f, 0.f, 0.f, 0.71f));
+	if (IsCrossAnimProgress(0.55f))
+		pOwner->Stop_Effect("Assaulter_Spin");
 }

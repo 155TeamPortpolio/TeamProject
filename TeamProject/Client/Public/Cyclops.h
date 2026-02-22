@@ -52,7 +52,7 @@ private:
     void Update_States(const _float dt);
     void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
-
+    HRESULT Initialize_Effects();
 private:
     CStateMachine<CCyclops>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
@@ -65,6 +65,9 @@ private:
     /*For.Idle*/
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
+
+    /* For Effect */
+    _uint               m_iShotCount{};
 
 };
 
