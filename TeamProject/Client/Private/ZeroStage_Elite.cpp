@@ -129,7 +129,7 @@ void CZeroStage_Elite::End()
 		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
 
 		//ReCycle
-		m_pOwnerLevel->Get_Router()->BuildGraph(2, StageType::Rest, StageType::Boss);
+		m_pOwnerLevel->Get_Router()->BuildGraph(3, StageType::Rest, StageType::Boss);
 		m_pOwnerLevel->ChangeStage(StageType::Rest);
 	}
 }
