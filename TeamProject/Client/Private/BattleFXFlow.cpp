@@ -297,7 +297,7 @@ void CBattleFXFlow::StartVfx_Evade()
 
 			postRenderer->GetCommand<CSaturationCommand>()
 				->SetIntensity(1.f)
-				->SetSaturationType(ENUM(SATURATIONTYPE::FULL))
+				->SetSaturationType(ENUM(SATURATIONTYPE::STATIC))
 				->SetDuration(totalDurationSeconds)
 				->SetEaseType(EaseType::InOutCubic)
 				->SetEnable(true);

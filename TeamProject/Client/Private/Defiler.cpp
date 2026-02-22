@@ -590,6 +590,8 @@ void CDefiler::Route_AnimEvent(CAnimator3D* animator)
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
 			else if (instance.Tag == "EvadeSign")
 				UnleashAttack(CEnemy::ATTACK_SIDE::NONE, false);
+			else if (instance.Tag == "Cam_HitHeavy")
+				CameraManager()->AddShakeType(ENUM(CamShakeType::HitHeavy), 2.f);
 			else if (instance.Tag == "TargetLockOn")
 				m_BlackBoard.LockTarget = true;
 			else if (instance.Tag == "TargetLockOff")
@@ -676,6 +678,7 @@ void CDefiler::Control_Summon(const string& event)
 	else if (event == "Tsunami") {
 		SummonWave();
 	}
+
 }
 
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
