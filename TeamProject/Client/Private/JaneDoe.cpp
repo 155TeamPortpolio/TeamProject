@@ -87,8 +87,9 @@ void CJaneDoe::Awake()
     m_eCharacterName = CHARACTER::JaneDoe;
 
     Initialize_Stat();
-    m_fCurrentHP = 300.f;
-    m_tEnergy.fCurrentEnergy = 75;
+    m_fCurrentHP = m_fMaxHP;
+    m_tEnergy.fCurrentEnergy = 0.f;
+    m_fCurrentDecibel = 0.f;
 
     m_fPassionStream = 100.f;
     Increase_Passion(1.f);
