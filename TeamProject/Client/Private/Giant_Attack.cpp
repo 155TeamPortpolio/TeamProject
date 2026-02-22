@@ -31,7 +31,7 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 		m_Attack3HitDesc.eDamageType = DAMAGE_TYPE::HARD;
 		m_Attack3HitDesc.eHitType = HIT_TYPE::INTERVAL;
 		m_Attack3HitDesc.fDamage = 10.f;
-		m_Attack3HitDesc.fInterval = 0.5f;
+		m_Attack3HitDesc.fInterval = 0.3f;
 
 		pOwner->AddAttackHistoryFront(0);
 	}
@@ -45,8 +45,6 @@ void CGiant_Attack::Enter(CGiant* pOwner)
 		return;
 	}
 	blackboard.isRequestNext = true;
-
-
 }
 
 void CGiant_Attack::Update(CGiant* pOwner, _float dt)
@@ -69,6 +67,8 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 		{
 			if (Event.Tag == "UnleashAttack")
 				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true);
+			else if (Event.Tag == "UnleashAttack_WithOutSound")
+				pOwner->UnleashAttack(CEnemy::ATTACK_SIDE::NONE, true, false);
 			else if (Event.Tag == "TurnOnAttackCol_L")
 			{
 				pOwner->SetOnAttack(true, CEnemy::ATTACK_SIDE::LEFT);
@@ -115,7 +115,10 @@ void CGiant_Attack::Update(CGiant* pOwner, _float dt)
 				pOwner->SetBattleColliderObject("Weapon_R", CEnemy::BATTLE_COLTYPE::ATTACK, true, m_Attack3HitDesc);
 			}
 			else if (Event.Tag == "FinishAll")
+			{
 				pOwner->SetOnAttack(false);
+				pOwner->SetParryDontStop(false);
+			}
 			else if (Event.Tag == "ParryDisable")
 				pOwner->SetParryEnable(false);
 
@@ -340,7 +343,7 @@ void CGiant_Attack2::Update(CGiant* pOwner, _float dt)
 			{
 				auto TargetingInfo = pOwner->GetTargetingInfo();
 				auto Hysteriesis = pOwner->GetHysteriesis();
-				if (Hysteriesis.fComboEnter <= TargetingInfo.fDistance &&
+				if (Hysteriesis.fComboEnter <= 6.f &&
 					Hysteriesis.fComboExit >= TargetingInfo.fDistance)
 					m_pOwnerStateMachine->Change_State("Attack2_Explode");
 			}

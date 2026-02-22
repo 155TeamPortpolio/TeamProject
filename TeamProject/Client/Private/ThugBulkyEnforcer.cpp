@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -86,6 +87,9 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 	return S_OK;
 }
@@ -372,7 +376,7 @@ void CThugBulkyEnforcer::OnPooledRelease()
 
 void CThugBulkyEnforcer::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName()/* || false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -661,6 +665,11 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	ManageAttackHistory();
 	CheckDistanceFromPlayer();
 	RotateToPlayer(dt);
+
+	// 사운드 재생
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
 
 	//================================
 	ControlState(dt);
