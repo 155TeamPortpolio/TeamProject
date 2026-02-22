@@ -173,7 +173,7 @@ void CMainApp::Set_Levels()
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level", true);
 } 
 
 CMainApp* CMainApp::Create()
@@ -282,6 +282,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	ResourceManager()->Add_ResourcePath("cloud_noise.png", "../Bin/Resources/Global/Shader/cloud_noise.png");
 	ResourceManager()->Add_ResourcePath("Eff_Noise_092.png", "../Bin/Resources/Global/Shader/Eff_Noise_092.png");
 	ResourceManager()->Add_ResourcePath("Eff_Noise_146.png", "../Bin/Resources/Global/Shader/Eff_Noise_146.png");
+	ResourceManager()->Add_ResourcePath("moon_bright.png", "../Bin/Resources/Global/Shader/moon_bright.png");
+	ResourceManager()->Add_ResourcePath("moon_glow.png", "../Bin/Resources/Global/Shader/moon_glow.png");
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Cloud", CProceduralSky::Create());
 

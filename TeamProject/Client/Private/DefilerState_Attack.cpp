@@ -24,7 +24,9 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
+
 	Type = 9;
+
 	switch (Type)
 	{
 	case 0 :
@@ -96,14 +98,14 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 10 :
 	{
-		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Opposite",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });//ÃÑÀìÀÌ
 		blackBoard.patternTransition.push_back({ "Attack01_02",0.f,1.f });
 		break;
 	}
 	case 11 :
 	{
-		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "RePos_Opposite",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack07",0.f,1.f });//ÀÌ¾ßÁî¸¶
 		blackBoard.patternTransition.push_back({ "Attack04",0.f,1.f });//³»¸®Âï
 		break;
@@ -115,6 +117,8 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 13 :
 	{
+		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "Attack_Summon",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack_Barrier",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "RePos_Front",0.f,1.f });
 		blackBoard.patternTransition.push_back({ "Attack09_Start",0.f,1.f });
@@ -163,6 +167,7 @@ void CDefilerState_Attack::ReadySubState()
 	m_pSubStateMachine->Register_State("RePos_Back",				CDefilerState_RePos_Back::Create());
 	m_pSubStateMachine->Register_State("RePos_Target",				CDefilerState_RePos_Target::Create());
 	m_pSubStateMachine->Register_State("Attack_Barrier",			CDefilerState_Attack_Barrier::Create());
+	m_pSubStateMachine->Register_State("RePos_Opposite",		CDefilerState_Attack_ReposByPos::Create());
 }
 
 void CDefilerState_Attack::Enter(CDefiler* pOwner)
@@ -706,9 +711,10 @@ void CDefilerState_Attack_08_01_Loop::Update(CDefiler* pOwner, _float dt)
 		blackBoard.isRequestNext = true;
 	}
 
-	if (m_Interval >= 1.f) {
+	if (m_Interval >= 1.f&& m_Count<5){
 		pOwner->Control_Summon("Heavy");
 		m_Interval = 0.f;
+		m_Count++;
 	}
 }
 
@@ -716,7 +722,7 @@ void CDefilerState_Attack_08_01_Loop::Exit(CDefiler* pOwner)
 {
 	m_Interval = 0.f;
 	m_Elapsed = 0.f;
-	pOwner->ChainParry(false);
+	m_Count = 0;
 	pOwner->Get_Component<CAudioSource>()->Slot("DefilerChargeLoop.wav").FadeOut(0.5f);
 }
 
@@ -739,6 +745,7 @@ void CDefilerState_Attack_08_01_End::Update(CDefiler* pOwner, _float dt)
 
 void CDefilerState_Attack_08_01_End::Exit(CDefiler* pOwner)
 {
+	pOwner->ChainParry(false);
 	pOwner->Control_TargetEnable(true);
 }
 
@@ -1092,4 +1099,43 @@ void CDefilerState_Attack_Barrier::Update_Effects(CDefiler* pOwner)
 	if (IsCrossAnimProgress(0.60f)) {
 		pOwner->ControlEnv(ENVTYPE::REDSKY, false);
 	}
+}
+
+void CDefilerState_Attack_ReposByPos::Enter(CDefiler* pOwner)
+{
+	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto& targetInfo = pOwner->GetTargetingInfo();
+
+	auto nextQueue = blackBoard.patternTransition;
+	blackBoard.patternTransition.clear();
+
+	const _vector3 posFront = { -15.f, -1.f,  0.f };
+	const _vector3 posBack = { 15.f, -1.f,  0.f };
+
+	_vector3 playerPos = targetInfo.vTargetPos;
+
+	_vector3 a = posFront;
+	_vector3 b = posBack;
+	a.y = playerPos.y;
+	b.y = playerPos.y;
+
+	const _float distSqFront = (a - playerPos).LengthSquared();
+	const _float distSqBack = (b - playerPos).LengthSquared();
+
+	if (distSqFront >= distSqBack)
+		blackBoard.patternTransition.push_back({ "RePos_Front",0.f,1.f });
+	else
+		blackBoard.patternTransition.push_back({ "RePos_Back",0.f,1.f });
+
+	for (auto pattern : nextQueue)
+		blackBoard.patternTransition.push_back(pattern);
+
+	blackBoard.isRequestNext = true;
+}
+void CDefilerState_Attack_ReposByPos::Update(CDefiler* pOwner, _float dt)
+{
+}
+
+void CDefilerState_Attack_ReposByPos::Exit(CDefiler* pOwner)
+{
 }

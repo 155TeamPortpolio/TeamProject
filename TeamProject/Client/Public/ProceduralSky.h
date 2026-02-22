@@ -14,6 +14,7 @@ private:
 public:
     void Set_CloudInfo(CLOUD_DESC Desc);
     CLOUD_DESC Get_CloudInfo();
+    void SetMoon(_bool bmoon) { m_bUseMoon = bmoon; };
 
 public:
     virtual HRESULT Initialize_Prototype()      override;
@@ -36,6 +37,7 @@ private:
     _float          m_fCloudCoverage = 0.45;
     _float3         m_vHazeColor = _float3(0.f, 0.f, 0.f);
 
+    _bool           m_bUseMoon = false;
 
     Matrix          m_MatProjectionInv;
     Matrix          m_MatViewInv;

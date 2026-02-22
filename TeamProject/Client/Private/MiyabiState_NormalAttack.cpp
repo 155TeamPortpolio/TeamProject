@@ -167,6 +167,7 @@ void CMiyabiState_Attack_01::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
     }
@@ -219,6 +220,7 @@ void CMiyabiState_Attack_02::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.269f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
     }
@@ -273,6 +275,7 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.628f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
         else if (Event.Tag == "KatanaStart")
@@ -281,6 +284,7 @@ void CMiyabiState_Attack_03::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.628f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
         else if (Event.Tag == "KatanaEnd")
@@ -344,6 +348,7 @@ void CMiyabiState_Attack_04::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 0.965f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
     }
@@ -412,6 +417,7 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
         else if (Event.Tag == "AreaAttackHard")
@@ -423,6 +429,7 @@ void CMiyabiState_Attack_05::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.29f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::HARD)
+                .Charge()
             );
         }
     }

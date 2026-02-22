@@ -17,7 +17,7 @@ void CCyclops_Attack::Enter(CCyclops* pOwner)
 
 		__super::Enter(pOwner);
 
-		m_HitDesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		m_HitDesc.eDamageType = DAMAGE_TYPE::HARD;
 		m_HitDesc.eHitType = HIT_TYPE::ONCE;
 		m_HitDesc.fDamage = 10.f;
 	}
@@ -35,7 +35,7 @@ void CCyclops_Attack::Enter(CCyclops* pOwner)
 		AttackFromIndex(iAttackPatternIndex);
 	}
 	else {
-		if (targetinginfo.fDistance <= hysteriesis.fEvadeEnter) // 가까울때
+		if (targetinginfo.fDistance <= 2.5f/*hysteriesis.fEvadeEnter*/) // 가까울때
 		{
 			_int i = Helper::Get_Random_Int(0, 3);
 			if (0 == i)

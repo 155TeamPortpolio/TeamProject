@@ -74,7 +74,8 @@ void CSpriteAnimationUI::UI_DeActive(void* pArg)
 
 _bool CSpriteAnimationUI::Is_AnimFinished()
 {
-    return m_isPlaying;
+    //return m_isPlaying;
+    return !m_isPlaying;
 }
 
 void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)

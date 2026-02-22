@@ -95,8 +95,9 @@ void CMiyabi::Awake()
 	m_eCharacterName = CHARACTER::Miyabi;
 
 	Initialize_Stat();
-	m_fCurrentHP = 312.f;
-	m_tEnergy.fCurrentEnergy = 75;
+	m_fCurrentHP = m_fMaxHP;
+	m_tEnergy.fCurrentEnergy = 0.f;
+	m_fCurrentDecibel = 0.f;
 	m_iFrost = 0;
 
 	if (FAILED(Attach_ParryCollider()))
