@@ -223,7 +223,7 @@ void CZero_Level::Ready_Stage()
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
 	//BuildGraph
-	m_pRouter->BuildGraph(5, StageType::Start, StageType::Elite);
+	m_pRouter->BuildGraph(1, StageType::Start, StageType::Elite);
 
 	//Start
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start1" };
@@ -236,7 +236,6 @@ void CZero_Level::Ready_Stage()
 	_uint Boss_Process{};
 	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
 		Boss_Process = 1; //Start BossMap Index;
-	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
 
 	//Elite
 	string Elite{};
@@ -245,6 +244,8 @@ void CZero_Level::Ready_Stage()
 
 	//Boss
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
+
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
 	
 	ChangeStage(StageType::Start);
 }
