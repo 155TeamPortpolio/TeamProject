@@ -61,6 +61,10 @@ private:
     Vector2     m_baseAnchorChild[ENUM(CHILD::END)]{};
     _bool       m_rippleStarted = false;
 
+    OBJECT_HANDLE m_followHandle{};
+    Vector3       m_followOffset{};
+    _float3       m_worldPos{};
+
 public:
     static CUI_Gangta* Create();
     CGameObject* Clone(INIT_DESC* pArg = {}) override;

@@ -83,6 +83,7 @@ HRESULT CCyclops::Initialize(INIT_DESC* pArg)
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/Cyclops/Sound");
 	Get_Component<CAudioSource>()->Slot("cyclops_Spawn.wav").Attribute3D(true).Play();
 
+	m_isUseGroggyRimLight = true;
 
 	return S_OK;
 }
@@ -284,7 +285,7 @@ HRESULT CCyclops::Ready_Children(INIT_DESC* pArg)
 	WeaponDesc.isAttachBone = true;
 	WeaponDesc.tagBone = "Bn_Head";
 	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponDesc.vAttackSize = { 0.5f,0.f,0.f };
+	WeaponDesc.vAttackSize = { 0.7f,0.f,0.f };
 
 	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 		return E_FAIL;
@@ -488,7 +489,7 @@ HRESULT CCyclops::Initialize_Transitions()
 HRESULT CCyclops::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 3.f;
 	m_tHysteriesis.fComboEnter = 5.0f;
@@ -569,9 +570,3 @@ void CCyclops::CheckDistanceFromPlayer()
 		m_pStateMachine->Set_Bool("Chase", false);
 }
 
-void CCyclops::PlaySoundFromMeta()
-{
-	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
-		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
-			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
-}

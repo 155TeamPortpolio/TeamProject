@@ -36,7 +36,7 @@ void CamDebugInput::UpdateInput(_float dt)
 
     if (cam.IsFinished(CamEventType::UltimateFinished))
         cam.RequestSequence("Battle/Back");
-
+    
 
     DebugInput(dt);
 }
@@ -51,7 +51,7 @@ void CamDebugInput::DebugInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-        cam.EndSwitch();
+        auto gangta = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"});
     }
 
     if (InputDevice()->Key_Tap(VK_F4))

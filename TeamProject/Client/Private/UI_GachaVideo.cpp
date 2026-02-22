@@ -9,30 +9,6 @@
 
 #include "UI_IconButton.h"
 
-void CUI_GachaVideo::Play_Video(GachaGrade eGrade)
-{
-    if (!m_pPlayer)
-        return;
-
-    m_pPlayer->Stop();
-    m_pPlayer->Close();
-
-    CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = Get_VideoPath(eGrade);
-    desc.loop = false;
-    m_pPlayer->Open(desc);
-
-    VideoService()->StartDecode(m_PlayerID);
-    m_pPlayer->Play();
-
-    UI_Active();
-}
-
-void CUI_GachaVideo::Set_OnVideoFinished(function<void()> onVideoFinished)
-{
-    m_onVideoFinished = onVideoFinished;
-}
-
 HRESULT CUI_GachaVideo::Initialize_Prototype()
 {
     if (FAILED(__super::Initialize_Prototype()))
@@ -50,6 +26,9 @@ HRESULT CUI_GachaVideo::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
+    VIDEO_DESC* pDesc = static_cast<VIDEO_DESC*>(pArg);
+    m_onVideoFinished = pDesc->onVideoFinished;
+
     /*비디오를 읽는 디코더를 우선 생성*/
     m_pDecoder = CMFVideoDecoderBackend::Create();
 
@@ -59,7 +38,7 @@ HRESULT CUI_GachaVideo::Initialize(INIT_DESC* pArg)
 
     /*비디오 플레이어에게 플레이할 영상을 알려줌*/
     CVideoPlayer::VIDEO_PLAYER_DESC desc;
-    desc.filePath = "../Bin/Resources/Video/GachaNormal.mp4";
+    desc.filePath = Get_VideoPath(pDesc->eGrade);
     desc.loop = false;
     m_pPlayer->Open(desc);
 
@@ -69,14 +48,14 @@ HRESULT CUI_GachaVideo::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("VideoPlay");
     m_vSize = { m_WinSize };
-
-    UI_DeActive();
-
+     
     return S_OK;
 }
 
 void CUI_GachaVideo::Awake()
 {
+    m_pPlayer->Play();
+    Get_Component<CAudioSource>()->Slot("GachaTV.wav").Play();
 }
 
 void CUI_GachaVideo::Update(_float dt)
@@ -104,9 +83,6 @@ void CUI_GachaVideo::Update(_float dt)
 
 void CUI_GachaVideo::UI_Active(void* pArg)
 { 
-    Set_Alive(true);
-    m_isFinished = false;
-    Get_Component<CAudioSource>()->Slot("GachaTV.wav").Play();
 }
 
 void CUI_GachaVideo::UI_DeActive(void* pArg)

@@ -5,6 +5,7 @@
 #include "EnemyNormal.h"
 
 #include "AudioSource.h"
+#include "Animator3D.h"
 #include "CharacterController.h"
 
 CEnemyNormal::CEnemyNormal()
@@ -150,25 +151,36 @@ void CEnemyNormal::RotateToDir(_float dt)
 
 void CEnemyNormal::GUI_DebugButton()
 {
-	if (ImGui::Button(u8"원점 이동##DebugButton"))
-		Get_Component<CCharacterController>()->Set_Position(XMVectorSet(-0.18f, 2.f, 1.59f, 1.f));
+	if (ImGui::TreeNode("DebugButton##DebugButton"))
+	{
+		if (ImGui::Button(u8"원점 이동##DebugButton"))
+			Get_Component<CCharacterController>()->Set_Position(XMVectorSet(-0.18f, 2.f, 1.59f, 1.f));
 
-	if (ImGui::Button(u8"그로기 수치 증가##DebugButton"))
-		m_tStatus.iGroggyValue += 30;
+		if (ImGui::Button(u8"그로기 수치 증가##DebugButton"))
+			m_tStatus.iGroggyValue += 30;
 
-	if (ImGui::Button("Hit##DebugButton"))
-		TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
+		if (ImGui::Button("Hit##DebugButton"))
+			TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
 
-	if (ImGui::Button(u8"패링 (공격 시)##DebugButton"))
-		Parried();
+		if (ImGui::Button(u8"패링 (공격 시)##DebugButton"))
+			Parried();
 
-	if (ImGui::Button(u8"즉사##DebugButton"))
-		m_tStatus.iNowHP -= m_tStatus.iMaxHP;
+		if (ImGui::Button(u8"즉사##DebugButton"))
+			m_tStatus.iNowHP -= m_tStatus.iMaxHP;
 
-	if (ImGui::Button(u8"몬스터 HP 회복##DebugButton"))
-		m_tStatus.iNowHP = m_tStatus.iMaxHP;
+		if (ImGui::Button(u8"몬스터 HP 회복##DebugButton"))
+			m_tStatus.iNowHP = m_tStatus.iMaxHP;
 
-	if (ImGui::Button(u8"몬스터 정지(디버그용)##DebugButton"))
-		m_isStop = !m_isStop;
+		if (ImGui::Button(u8"몬스터 정지(디버그용)##DebugButton"))
+			m_isStop = !m_isStop;
+		
+		ImGui::TreePop();
+	}
 }
 
+void CEnemyNormal::PlaySoundFromMeta()
+{
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
+}

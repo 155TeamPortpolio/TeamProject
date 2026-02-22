@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -84,6 +85,12 @@ HRESULT CThugPoacher::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
+
+	m_isUseGroggyRimLight = true;
+
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugPoacher/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
+
 
 	return S_OK;
 }
@@ -382,7 +389,7 @@ void CThugPoacher::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugPoacher_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
@@ -520,7 +527,7 @@ HRESULT CThugPoacher::Initialize_Effects()
 HRESULT CThugPoacher::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 3.f;
 	m_tHysteriesis.fComboEnter = 3.5f;
@@ -545,6 +552,7 @@ void CThugPoacher::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);

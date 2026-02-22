@@ -676,15 +676,32 @@ void CDefiler::Control_Summon(const string& event)
 void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	BattleSystem()->HitVFX(eDamageType);
-	Get_Component<CAudioSource>()->Slot(
-		eDamageType==DAMAGE_TYPE::NORMAL? 
-		"DefilerHitLight.wav" : "DefilerHitHeavy.wav").Volume(0.5f).Play();
+	Get_Component<CAudioSource>()->
+		Slot(eDamageType==DAMAGE_TYPE::NORMAL? "DefilerHitLight.wav" : "DefilerHitHeavy.wav")
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.4f:0.5f).Play();
 
+	if (eDamageType == DAMAGE_TYPE::SWITCH) {
+		m_BlackBoard.ForceIDLE = true;
+		m_pStateMachine->Change_State("Idle");
+	}
+
+	_bool	isPropertiesAttack = false;
 	_float fTakeDamage = fDamage;
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;
 	else
 		m_tStatus.iGroggyValue += .5f;
+
+	{
+		// 속성 공격 가중치(강타, 서리열 등
+		m_tStatus.fPropertiesValue += fTakeDamage * 1.5f;
+		if (m_tStatus.fPropertiesValue >= 100.f)
+		{
+			isPropertiesAttack = true;
+			fTakeDamage *= 2.f;				// 이때 더 쌔게 때린다는 느낌 ㄱㄱ
+			m_tStatus.fPropertiesValue = 0.f;
+		}
+	}
 
 	m_tStatus.iNowHP -= fTakeDamage;
 
@@ -730,7 +747,6 @@ void CDefiler::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER cha
 	_vector3 vWorldPosition = Get_BipedPos("Bip001");
 	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
 		.Position(vWorldPosition)
-		.FromPool()
 		.Build("BasicHit");
 
 	if (eDamageType == DAMAGE_TYPE::NORMAL) {
@@ -766,7 +782,7 @@ void CDefiler::Update_States(_float dt)
 		m_pStateMachine->Change_State("Groggy");
 }
 
-void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
+void CDefiler::Send_DamageText(_float damage, CHARACTER charaName, _bool isSpecial)
 {
 	DAMAGE_DESC desc{};
 	damage = Helper::Get_Random_Int(1000, 10000); // �ӽ�
@@ -775,6 +791,7 @@ void CDefiler::Send_DamageText(_float damage, CHARACTER charaName)
 	desc.followOffset = Calc_WorldOffsetWithBip();
 	desc.isEnemy = true;
 	desc.charaName = charaName;
+	desc.isSpecial = isSpecial;
 	UIDirector()->Request_DamageText(desc);
 }
 
@@ -794,13 +811,24 @@ void CDefiler::ControlEnv(ENVTYPE type, _bool set)
 			zero->Get_ZeroFog()->RollBack_Fog(1.f, EaseType::InOutCirc);
 		}
 	}
+	if (type == ENVTYPE::SURGE) {
+		if (set) {
+			FOG_DESC desc;
+			desc.fogColor = { 0.135f, 0.f, 0.f,1.f };
+			desc.fogDensity = 0.078;
+			zero->Get_ZeroFog()->Change_FogState(desc, 10.f, EaseType::InExpo);
+		}
+		else {
+			zero->Get_ZeroFog()->RollBack_Fog(1.f, EaseType::InOutCirc);
+		}
+	}
 }
 
 void CDefiler::ControlBGM()
 {
 	auto level = LevelManager()->Get_CurrentLevel();
 	if (auto zero = dynamic_cast<CZero_Level*>(level)) {
-		zero->Get_ZeroBGM()->Slot("TheDefilerBossTheme.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
+		zero->Get_ZeroBGM()->Slot("TheDefilerBossTheme.wav").Attribute3D(false).Loop(-1).Volume(0.25f).Play();
 	}
 }
 

@@ -27,10 +27,8 @@ void CUI_GachaPage::Select_Channel(class CUI_GachaChannel* pSelected)
     m_pSelectedChannel = pSelected;
     m_pSelectedChannel->UI_Active();
 
-    if (m_pIntro) {
+    if (m_pIntro) 
         m_pIntro->Play_Video(m_pSelectedChannel->Get_Channel());
-        m_pIntro->UI_Active();// Play_Video(m_pSelectedChannel->Get_Channel());// m_pIntro->UI_Active();
-    }
 }
 
 HRESULT CUI_GachaPage::Initialize_Prototype()
@@ -55,7 +53,9 @@ HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
     if (FAILED(__super::Initialize(pArg)))
         return E_FAIL;
 
-    //Create_CharacterIntro();
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("fullScreenBlack.json")));
+
+    Create_CharacterIntro();
 
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha.json")));
 
@@ -81,10 +81,11 @@ void CUI_GachaPage::Update(_float dt)
 
 void CUI_GachaPage::UI_Active(void* pArg)
 {
+    UIDirector()->FadeIn_Screen(0.2f);
+    UIDirector()->Show_Mouse();
     Select_Channel(m_pFirstChannel);
     Set_Alive(true);        
-    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play();
-    UIDirector()->Show_Mouse();
+    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play(); 
 }
 
 void CUI_GachaPage::UI_DeActive(void* pArg)
@@ -201,19 +202,27 @@ void CUI_GachaPage::Deactive_SelectedChannel()
 
 void CUI_GachaPage::OnClick_Conversion()
 {
+    UIDirector()->Hide_Mouse();
+    UIDirector()->FadeOut_Screen(0.2f, [this]() {
+        LevelManager()->Request_ChangeLevel("Gacha_Level", LEVEL_TRANS_DESC{ "Gacha_Level", false ,true });
+        });
+
     _uint iDenny = {};
     RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
 
-    if (iDenny < 10000)
-    {
-        MSG_BOX("µ· ºÎÁ·ÇÔ!");
-        return;
-    } 
-
-    iDenny -= 10000;
+    //if (iDenny < 10000)
+    //{
+    //    MSG_BOX("µ· ºÎÁ·ÇÔ!");
+    //    return;
+    //} 
+    
+    iDenny = (iDenny - 10000 <= 0) ? 0 : iDenny - 10000;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
 
-    LevelManager()->Request_ChangeLevel("Gacha_Level", false);
+    //LevelManager()->Request_ChangeLevel("Gacha_Level", false);
+
+    if (m_pIntro)
+        m_pIntro->UI_DeActive();
 }
 
 CGameObject* CUI_GachaPage::Create()

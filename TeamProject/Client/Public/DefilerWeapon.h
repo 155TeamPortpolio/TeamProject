@@ -45,7 +45,7 @@ private:
     _bool m_isFinalThrow = false;
 
     _float m_ElapsedTime = {};
-    _float m_fMoveSpeed = { 120 };
+    _float m_fMoveSpeed = { 60 };
     _float   m_groundY = 0.f;
 
     _vector3 m_vTargetVelocity = {};

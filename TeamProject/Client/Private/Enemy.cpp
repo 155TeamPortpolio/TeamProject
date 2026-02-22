@@ -307,7 +307,7 @@ void CEnemy::Set_Alive(_bool alive)
 
 }
 
-void CEnemy::Active_AttackSign(_bool parryEnable)
+void CEnemy::Active_AttackSign(_bool parryEnable, _bool isUsedSound)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
 
@@ -327,12 +327,14 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 
 	m_isParryEnable = IsReallyParryEnable;
 
-	Get_Component<CAudioSource>()->Slot("AttackSign.wav").Play();
+	if (isUsedSound)
+		Get_Component<CAudioSource>()->Slot("AttackSign.wav").Play();
 }
 
 void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	_float fTakeDamage = fDamage;
+	_float	fTakeDamage = fDamage;
+	_bool	isPropertiesAttack = false;
 	BattleSystem()->HitVFX(eDamageType);
 
 	if (m_tStatus.isGroggy)
@@ -340,31 +342,56 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	else
 		m_tStatus.iGroggyValue += 2;
 
+	// 속성 공격 가중치
+	m_tStatus.fPropertiesValue += fTakeDamage * 1.5f;
+	if (m_tStatus.fPropertiesValue >= 100.f)
+	{
+		isPropertiesAttack = true;
+		fTakeDamage *= 2.f;
+		m_tStatus.fPropertiesValue = 0.f;
+	}
+
 	m_tStatus.iNowHP -= fTakeDamage;
 
 	if (0 >= m_tStatus.iNowHP)
 		m_tStatus.iNowHP = 0.f;
 
-	DAMAGE_DESC desc{};
-	//desc.damage        = (_int)fTakeDamage;
-	_int damage = Helper::Get_Random_Int(1000, 10000); // 임시
+	if (charaName != CHARACTER::END)
+		m_tStatus.eLastHitCharacter = charaName;
 
-	desc.damage        = damage;
-	desc.followHandle  = Get_Handle();
-	desc.followOffset  = Vector3(0.f, 1.3f, 0.f);
-	desc.isEnemy       = true;
-	desc.charaName     = charaName;
+	{
+		DAMAGE_DESC desc{};
+		//desc.damage        = (_int)fTakeDamage;
+		_int damage = Helper::Get_Random_Int(1000, 10000); // 임시
 
-	/* Effect */
-	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
-	vWorldPosition.y += 1.2f;
-	auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
-		.Position(vWorldPosition)
-		.Build("BasicHit");
+		desc.damage = damage;
+		desc.followHandle = Get_Handle();
+		desc.followOffset = Vector3(0.f, 1.3f, 0.f);
+		desc.isEnemy = true;
+		desc.charaName = charaName;
+		desc.isSpecial = isPropertiesAttack;
 
-	ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
+		UIDirector()->Request_DamageText(desc);
+	}
 
-	UIDirector()->Request_DamageText(desc);
+	{
+		/* Effect */
+		_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+		vWorldPosition.y += 1.2f;
+		auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_BasicHitEffect" })
+			.Position(vWorldPosition)
+			.Build("BasicHit");
+
+		ObjectManager()->Add_Object(pEffect, { Get_Level(),"Effect_Layer" });
+	}
+}
+
+void CEnemy::SetLastHitCharacter(CHARACTER charaName)
+{
+	if (charaName == CHARACTER::END)
+		return;
+
+	m_tStatus.eLastHitCharacter = charaName;
 }
 
 void CEnemy::Create_UIEnemyStatus(string boneTag)
@@ -580,6 +607,12 @@ void CEnemy::ManageGroggy(const _float dt)
 		// UI 효과용
 		m_tStatus.isGroggyStay = true;
 		Reset_ComboCount();
+
+		if (m_isUseGroggyRimLight)
+		{
+			m_vRimLightColor = m_tGroggyRimLight.vColors[ENUM(m_tStatus.eLastHitCharacter)];
+			m_tGroggyRimLight.vTime.y = 0.f;
+		}
 	}
 
 	if (true == m_tStatus.isGroggy)
@@ -613,7 +646,34 @@ void CEnemy::ManageGroggy(const _float dt)
 				m_tStatus.isGroggy = false;
 			}
 		}
+
+		if (m_isUseGroggyRimLight)
+		{
+			m_tGroggyRimLight.vTime.y += dt;
+			
+			if (m_tGroggyRimLight.vTime.x <= m_tGroggyRimLight.vTime.y)
+				m_tGroggyRimLight.vTime.y = 0.f;
+
+			_float T = clamp(m_tGroggyRimLight.vTime.y / m_tGroggyRimLight.vTime.x, 0.f, 1.f);
+
+			_float fPingPong = (T < 0.5f)
+				? (T * 2.f)          // 0~0.5  -> 0~1
+				: ((1.f - T) * 2.f); // 0.5~1  -> 1~0
+
+			_float EaseT = Math::ApplyEase(EaseType::InOutQuad, fPingPong);
+
+			m_fRimLightPower = m_tGroggyRimLight.vPower.x + (m_tGroggyRimLight.vPower.y - m_tGroggyRimLight.vPower.x) * EaseT;
+
+			if (m_tStatus.isGroggy == false)
+			{
+				m_tGroggyRimLight.vTime.y = 0.f;
+				m_vRimLightColor = {};
+				m_fRimLightPower = 0.f;
+			}
+		}
 	}
+
+
 }
 
 DIR CEnemy::GetDIRToPlayer()
@@ -643,7 +703,7 @@ void CEnemy::Parried()
 	m_tStatus.iGroggyValue += 15.f;
 }
 
-void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable)
+void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable, _bool isUsedSound)
 {
 	SetOnAttack(true, eSide);
 	Active_AttackSign(ParryEnable);
