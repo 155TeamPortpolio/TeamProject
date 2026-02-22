@@ -194,7 +194,7 @@ HRESULT CUI_TutorialGuide::Show_ResultBanner()
     iDenny += 10000;
     RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
     CUI_LotteryResultBanner::RESULT_DESC desc = {};
-    desc.iDenny = 10000;
+    desc.iDenny = 100000;  // 10¸¸ µ¥´Ï!
     pObj->UI_Active(&desc);
 
     return S_OK;
