@@ -56,9 +56,12 @@ void CBattlePlayer::Priority_Update(_float dt)
         return;
 
     m_pCurrentCharacter->Reset_Interact();
-    //if (GUISystem()->UsingUI())
-    //    m_pCurrentCharacter->Reset_InputInfo();
-    if (Can_Input() && !GUISystem()->UsingUI())
+
+    _bool bUsingGUI = false;
+#ifdef _USING_GUI
+    bUsingGUI = GUISystem()->UsingUI();
+#endif
+    if (Can_Input() && !bUsingGUI)
         Update_Input(dt);
 
     Update_Target();
