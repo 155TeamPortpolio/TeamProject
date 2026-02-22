@@ -490,6 +490,7 @@
     <ClInclude Include="..\Public\UI_Banner.h" />
     <ClInclude Include="..\Public\UI_GachaCharacterIntro.h" />
     <ClInclude Include="..\public\Tutorial_Level.h" />
+    <ClInclude Include="..\public\UI_LogoVideo.h" />
     <ClInclude Include="..\Public\UI_Mouse.h" />
     <ClInclude Include="..\Public\UI_SpeechBubble.h" />
     <ClInclude Include="..\Public\UI_TutorialGuide.h" />
@@ -1024,6 +1025,7 @@
     <ClCompile Include="..\Private\UI_Banner.cpp" />
     <ClCompile Include="..\Private\UI_GachaCharacterIntro.cpp" />
     <ClCompile Include="..\private\Tutorial_Level.cpp" />
+    <ClCompile Include="..\private\UI_LogoVideo.cpp" />
     <ClCompile Include="..\Private\UI_Mouse.cpp" />
     <ClCompile Include="..\Private\UI_SpeechBubble.cpp" />
     <ClCompile Include="..\Private\UI_TutorialGuide.cpp" />
