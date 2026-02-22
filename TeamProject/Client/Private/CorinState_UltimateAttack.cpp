@@ -35,6 +35,7 @@ CCorinState_UltimateAttack* CCorinState_UltimateAttack::Create()
 void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 {
     pOwner->Push_Invincible();
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
     pOwner->Lock_Move();
 
     __super::Enter(pOwner);
@@ -89,8 +90,16 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
     pOwner->Pop_Invincible();
     __super::Exit(pOwner);
+}
+
+_bool CCorinState_UltimateAttack::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+    if (strState == "Hit")
+        return false;
+    return true;
 }
 
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
