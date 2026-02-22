@@ -13,14 +13,21 @@ CRoom_Party::CRoom_Party(const ROOM_DESC& desc)
 
 void CRoom_Party::Enter()
 {
+    UIDirector()->FadeOut_Screen(0.4f, []()
+        {
+            UIDirector()->Show_Party(CDataBase::GetInstance()->Get_EnableCharacters());
+            UIDirector()->FadeIn_Screen();
+            FieldSystem()->PlayBGM("PartyBGM.wav", 0.15f);
+        });
     auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
     pFieldPlayer->Lock_Input();
     pFieldPlayer->DeActive_Field();
-    UIDirector()->Show_Party(CDataBase::GetInstance()->Get_EnableCharacters());
+    //UIDirector()->Show_Party(CDataBase::GetInstance()->Get_EnableCharacters());
 }
 
 void CRoom_Party::Exit()
 {
+    FieldSystem()->FadeOutBGM();
     auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
     pFieldPlayer->Active_Field();
     pFieldPlayer->UnLock_Input();

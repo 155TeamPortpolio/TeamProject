@@ -211,7 +211,7 @@ vector<GACHA_RESULT_DESC> CDataBase::GetGachaGroup()
 	}
 
 	if (m_iCurrentGachaOrder >= m_iMaxGachaOrder)
-		m_iCurrentGachaOrder = 0;
+		m_iCurrentGachaOrder = m_iMaxGachaOrder -1;
 
 	return Results;
 }

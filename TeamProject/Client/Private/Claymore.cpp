@@ -380,7 +380,8 @@ void CClaymore::Parried()
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parried");
-	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetOnAttack(false, ATTACK_SIDE::NONE); 	
+	SetBattleColliderObject("Weapon", BATTLE_COLTYPE::ATTACK, false);
 }
 
 HRESULT CClaymore::Ready_Children(INIT_DESC* pArg)

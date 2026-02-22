@@ -1559,6 +1559,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\UltimateBG">
       <UniqueIdentifier>{b9417264-ef5c-44bb-973c-2241ba2ecaec}</UniqueIdentifier>
+          </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\WipeoutOverlay">
+      <UniqueIdentifier>{49cfe856-c353-43a0-843d-34cf5f398ecb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -3031,6 +3034,9 @@
     </ClInclude>
     <ClInclude Include="..\public\UltimateBG.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\UltimateBG</Filter>
+          </ClInclude>
+    <ClInclude Include="..\Public\UI_WipeoutOverlay.h">
+      <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -4456,6 +4462,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UltimateBG.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\UltimateBG</Filter>
+          </ClCompile>
+    <ClCompile Include="..\Private\UI_WipeoutOverlay.cpp">
+      <Filter>02. GameObject\UI\01. 2D\WipeoutOverlay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -73,6 +73,7 @@ public:
 		void Set_BaseCloud(CLOUD_DESC CloudDesc);
 		void Change_CloudState(CLOUD_DESC CloudDesc, _float fTime, EaseType eEaseType);
 		void RollBack_Cloud(_float fTime, EaseType eEaseType);
+		void Set_Moon(_bool b);
 		void Use_Cloud(_bool b);
 	};
 

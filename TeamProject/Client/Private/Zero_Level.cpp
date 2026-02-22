@@ -246,7 +246,6 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	
 	ChangeStage(StageType::Start);
 }
 
@@ -456,6 +455,12 @@ void CZero_Level::Zero_Cloud::RollBack_Cloud(_float fTime, EaseType eEaseType)
 	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
 	if (pCloud)
 		tTargetCloud = pCloud->Get_CloudInfo();
+}
+
+void CZero_Level::Zero_Cloud::Set_Moon(_bool b)
+{
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud) pCloud->SetMoon(b);
 }
 
 void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
