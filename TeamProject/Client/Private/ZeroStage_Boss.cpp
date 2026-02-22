@@ -104,6 +104,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 			_float3{0.322f, 0.357f, 0.463f},
 			_float3{0.f, 0.f, 0.f},
 			0.91 });
+		m_pOwnerLevel->Get_ZeroCloud()->Set_Moon(true);
 		m_pOwnerLevel->Get_ZeroShadow()->Set_ShadowPos({ -266.f,117.f,50.f });
 		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 			{

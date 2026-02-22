@@ -458,6 +458,12 @@ void CZero_Level::Zero_Cloud::RollBack_Cloud(_float fTime, EaseType eEaseType)
 		tTargetCloud = pCloud->Get_CloudInfo();
 }
 
+void CZero_Level::Zero_Cloud::Set_Moon(_bool b)
+{
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud) pCloud->SetMoon(b);
+}
+
 void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
 {
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
