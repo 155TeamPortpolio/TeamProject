@@ -1198,8 +1198,18 @@ void CamParryController::Update(_float dt)
 
         Vector3 pivotWorldRaw = basePivot + right * g.pivotExt.x + Vector3::Up * g.pivotExt.y + fwd * g.pivotExt.z;
 
+        OrbitSnapshot lockSnap{};
+        orbit->CaptureSnapshot(lockSnap);
+
+        Vector3 lockPivotTarget = basePivot;
+        if (exit.returnLockBlend && lockSnap.lockBlend.active && lockSnap.lockBlend.entering)
+        {
+            const _float lockW = clamp(lockSnap.lockBlend.weight, 0.f, 1.f);
+            lockPivotTarget = Vector3::Lerp(pivotWorldRaw, basePivot, lockW);
+        }
+
         constexpr _float kExitPivotConvergeStartU = 0.80f;
-        constexpr _float kExitPivotConvergeMaxWeight = 0.65f;
+        constexpr _float kExitPivotConvergeMaxWeight = 1.0f;
 
         _float pivotConvergeW = 0.f;
         if (u > kExitPivotConvergeStartU)
@@ -1209,7 +1219,8 @@ void CamParryController::Update(_float dt)
             pivotConvergeW = tailT * kExitPivotConvergeMaxWeight;
         }
 
-        const Vector3 pivotWorld = Vector3::Lerp(pivotWorldRaw, basePivot, pivotConvergeW);
+        Vector3 pivotWorld = Vector3::Lerp(pivotWorldRaw, lockPivotTarget, pivotConvergeW);
+        if (u >= 1.f) pivotWorld = lockPivotTarget;
 
         const _float attackerYaw = YawFromDirXZ(fwd);
         const _float yawWorldPivot = attackerYaw + g.yawDeg;
@@ -1217,15 +1228,8 @@ void CamParryController::Update(_float dt)
         const Quaternion qPos = YawPitchRollQuatDeg(yawWorldPivot, g.pitchDeg, 0.f);
         const Vector3 camPosWorld = OrbitPos(pivotWorld, qPos, g.dist);
 
-        OrbitSnapshot lockSnap{};
-        orbit->CaptureSnapshot(lockSnap);
-
         Vector3 lockPlayerPivot = basePivot;
-        if (lockSnap.lockBlend.active && lockSnap.lockBlend.entering)
-        {
-            const _float lockW = clamp(lockSnap.lockBlend.weight, 0.f, 1.f);
-            lockPlayerPivot = Vector3::Lerp(pivotWorld, basePivot, lockW);
-        }
+        if (exit.returnLockBlend) lockPlayerPivot = lockPivotTarget;
 
         OrbitLockEval lockRes = orbit->EvalLock_PlayerPivot(dt, lockPlayerPivot, yawWorldPivot, g.dist);
 
@@ -1301,7 +1305,8 @@ void CamParryController::Update(_float dt)
         {
             if (exit.finalPoseValid)
             {
-                orbit->CommitExternalHandoff(exit.finalPivotWorld, exit.finalCamPosWorld, exit.finalCamRot, exit.finalLookAtWorld, 0.18f, 0.10f, 0.10f);
+                //orbit->CommitExternalHandoff(exit.finalPivotWorld, exit.finalCamPosWorld, exit.finalCamRot, exit.finalLookAtWorld, 0.18f, 0.10f, 0.10f);
+                orbit->CommitExternalHandoff(exit.finalPivotWorld, exit.finalCamPosWorld, exit.finalCamRot, exit.finalLookAtWorld, 0.f, 0.0f, 0.0f);
 
                 if (exit.returnLockBlend)
                     orbit->Lock_SetSavedDist(exit.finalDist);
