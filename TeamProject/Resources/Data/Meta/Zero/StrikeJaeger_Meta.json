@@ -221,7 +221,7 @@
       "ClipTag": "StrikeJaeger_Ani_Dodge",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "striker_Evade.wav"
         }
@@ -231,7 +231,7 @@
       "ClipTag": "StrikeJaeger_Ani_Dodge_L",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "striker_Evade.wav"
         }
@@ -241,7 +241,7 @@
       "ClipTag": "StrikeJaeger_Ani_Dodge_R",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "striker_Evade.wav"
         }
@@ -417,7 +417,7 @@
       "ClipTag": "StrikeJaeger_Ani_Run_Loop",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "striker_FootStepL.wav"
         },

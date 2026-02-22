@@ -36,6 +36,7 @@ private:
 
 private:
 	_bool m_isSequenceEnd = {};
+	LIGHT_DESC m_PrevShadowLight{};
 
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);

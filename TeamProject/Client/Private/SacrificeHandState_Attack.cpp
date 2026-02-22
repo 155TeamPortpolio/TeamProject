@@ -779,9 +779,6 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Exit(CSacrificeHand*
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacrificeHand* pOwner)
 {
-	if (IsCrossAnimProgress(0.16f))
-		pOwner->Play_Effect("Attack_Range", _vector3(0.f, 0.f, 10.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
-
 	/* Flare1 */
 	if (IsCrossAnimProgress(0.21f))
 	{
@@ -819,7 +816,7 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacr
 		effectTransform->Set_Look(vLook);
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
 
-		pOwner->Play_Effect("Attack_Range", _vector3(0.f, 0.f, 10.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+		pOwner->Play_Effect("Attack_Range", _vector3(0.f, 0.1f, 10.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 	}
 
 	/* Flare2 */

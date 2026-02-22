@@ -375,11 +375,13 @@
     <ClInclude Include="..\Public\BattleFXFlow.h" />
     <ClInclude Include="..\public\BattleStarter.h" />
     <ClInclude Include="..\Public\BattleSystem_Panel.h" />
+    <ClInclude Include="..\public\BettyBrenda.h" />
     <ClInclude Include="..\public\CamDebugInput.h" />
     <ClInclude Include="..\public\CamParryController.h" />
     <ClInclude Include="..\public\CamPortalController.h" />
     <ClInclude Include="..\public\CamSwitchController.h" />
     <ClInclude Include="..\public\CamWipeOutController.h" />
+    <ClInclude Include="..\public\Cecilia.h" />
     <ClInclude Include="..\public\Claymore.h" />
     <ClInclude Include="..\public\Claymore_Attack.h" />
     <ClInclude Include="..\public\Claymore_Born.h" />
@@ -485,6 +487,7 @@
     <ClInclude Include="..\public\ProceduralSky.h" />
     <ClInclude Include="..\public\Room_Party.h" />
     <ClInclude Include="..\public\Room_Scott.h" />
+    <ClInclude Include="..\public\Sarah.h" />
     <ClInclude Include="..\public\ScottCar.h" />
     <ClInclude Include="..\public\ScottScreen.h" />
     <ClInclude Include="..\Public\UI_Banner.h" />
@@ -912,11 +915,13 @@
     <ClCompile Include="..\Private\BattleFXFlow.cpp" />
     <ClCompile Include="..\private\BattleStarter.cpp" />
     <ClCompile Include="..\Private\BattleSystem_Panel.cpp" />
+    <ClCompile Include="..\private\BettyBrenda.cpp" />
     <ClCompile Include="..\private\CamDebugInput.cpp" />
     <ClCompile Include="..\private\CamParryController.cpp" />
     <ClCompile Include="..\private\CamPortalController.cpp" />
     <ClCompile Include="..\private\CamSwitchController.cpp" />
     <ClCompile Include="..\private\CamWipeOutController.cpp" />
+    <ClCompile Include="..\private\Cecilia.cpp" />
     <ClCompile Include="..\private\Claymore.cpp" />
     <ClCompile Include="..\private\Claymore_Attack.cpp" />
     <ClCompile Include="..\private\Claymore_Born.cpp" />
@@ -1020,6 +1025,7 @@
     <ClCompile Include="..\private\ProceduralSky.cpp" />
     <ClCompile Include="..\private\Room_Party.cpp" />
     <ClCompile Include="..\private\Room_Scott.cpp" />
+    <ClCompile Include="..\private\Sarah.cpp" />
     <ClCompile Include="..\private\ScottCar.cpp" />
     <ClCompile Include="..\private\ScottScreen.cpp" />
     <ClCompile Include="..\Private\UI_Banner.cpp" />

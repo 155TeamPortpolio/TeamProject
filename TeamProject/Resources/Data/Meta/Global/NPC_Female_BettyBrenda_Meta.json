@@ -1,0 +1,139 @@
+{
+  "AnimPath": "../Bin/Resources/Global/NPC/BettyBrenda_Bin/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "NPC_Female_Size02_BettyBrenda_Ani_Maincity_Talk",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size02_BettyBrenda_Ani_Maincity_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Surprise_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Surprise_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Surprise_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Sad_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Sad_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Think",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Surprise",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Shy",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Sad",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Angry_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Angry_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Angry_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Excited_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Excited_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Excited_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Angry",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Angry",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Happy",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Sad",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Shy",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Surprise",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Blink_Think",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Happy",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_BettyBrenda_Ani_Galgame_Facial_Idle",
+      "Events": []
+    }
+  ]
+}

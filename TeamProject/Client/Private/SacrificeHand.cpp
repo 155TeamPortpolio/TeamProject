@@ -79,9 +79,9 @@ HRESULT CSacrificeHand::Initialize_Effects()
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("attack_range.json")
-			.Scale(_float3(6.f,6.f,6.f))
 			.Build("Attack_Range");
 
+		pEffect->Get_Component<CTransform>()->Scale(_float3(8.f, 8.f, 8.f));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
@@ -152,7 +152,7 @@ void CSacrificeHand::Route_AnimEvent()
 
 void CSacrificeHand::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Volume(0.7f).Attribute3D(false).Loop(false).Play();
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.4f).Attribute3D(false).Loop(false).Play();
 }
 
 CSacrificeHand* CSacrificeHand::Create()

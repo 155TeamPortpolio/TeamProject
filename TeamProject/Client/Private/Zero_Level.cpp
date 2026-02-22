@@ -78,6 +78,12 @@ HRESULT CZero_Level::Initialize()
 
 	/*ENV*/
 	//Cloud
+	auto pPost = RenderSystem()->GetPostRenderer();
+	auto pFogCommand = pPost->GetCommand<CFogCommand>();
+	m_PrevFog = pFogCommand->GetFogDesc();
+	m_bPrevFogUse = pFogCommand->IsEnabled();
+	/*pFogCommand->SetEnable(false);*/
+
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
 	//Fog
@@ -100,14 +106,6 @@ HRESULT CZero_Level::Initialize()
 	m_Context.isFirstIn = true;
 	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
 	Ready_Stage();
-
-	{
-		auto pEnviromentEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_enviroment.json")
-			.Build("Enviroment_Particle");
-
-		ObjectManager()->Add_Object(pEnviromentEffect, { "Zero_Level","Effect_Layer" });
-	}
 	
 	return S_OK;
 }
@@ -117,12 +115,8 @@ HRESULT CZero_Level::Awake()
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
 
-	UIDirector()->FadeIn_Screen();
-	auto pPost = RenderSystem()->GetPostRenderer();
-	auto pFogCommand = pPost->GetCommand<CFogCommand>();
-	m_PrevFog = pFogCommand->GetFogDesc();
-	m_bPrevFogUse = pFogCommand->IsEnabled();
-	pFogCommand->SetEnable(false);
+	UIDirector()->FadeIn_Screen(1.f);
+
 	return S_OK;
 }
 
@@ -135,23 +129,6 @@ void CZero_Level::Update()
 	_float dt = GameInstance()->Get_TimeMgr()->Get_DeltaTime(G_EngineTimerID);
 	m_tZeroCloud.Update_Cloud(dt);
 	m_tZeroFog.Update_Fog(dt);
-
-	if (GetAsyncKeyState('N')) {
-		m_tZeroFog.Change_FogState(FOG_DESC{ _float4(1,1,1,1), 1.f }, 1.f, EaseType::Linear);
-	}
-
-	if (GetAsyncKeyState('M')) {
-		m_tZeroFog.RollBack_Fog(1.f, EaseType::Linear);
-	}
-
-	if (InputDevice()->Key_Tap('Z'))
-	{
-		auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackRange" })
-			.Position(_float3(0.f, 1.f, 0.f))
-			.Build("effect");
-
-		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
-	}
 }
 
 HRESULT CZero_Level::Render()
@@ -236,7 +213,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
-	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1", "Zero_3_1", "Zero_Spec3_2", "Zero_1_2", "Zero_8_1", "Zero_3_2", "Zero_Spec3_1"};
+	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1",  "Zero_3_2", "Zero_Spec3_1", "Zero_1_2", "Zero_3_1", "Zero_8_1", "Zero_Spec3_2"};
 	//Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
 	_uint Normal_Progress{};
@@ -277,7 +254,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

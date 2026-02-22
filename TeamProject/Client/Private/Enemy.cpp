@@ -716,7 +716,7 @@ void CEnemy::Parried()
 void CEnemy::UnleashAttack(ATTACK_SIDE eSide, _bool ParryEnable, _bool isUsedSound)
 {
 	SetOnAttack(true, eSide);
-	Active_AttackSign(ParryEnable);
+	Active_AttackSign(ParryEnable, isUsedSound);
 }
 
 void CEnemy::Create_MeshPyramid()
