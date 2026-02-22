@@ -114,6 +114,7 @@ void CMiyabiState_Counter_Start::Update(CMiyabi* pOwner, _float dt)
 				.Type(HIT_TYPE::ONCE)
 				.Damage(pOwner->Get_AttackPower() * 0.491f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::NORMAL)
+				.Charge()
 			);
 		}
 		else if (Event.Tag == "KatanaEnd")
@@ -127,6 +128,7 @@ void CMiyabiState_Counter_Start::Update(CMiyabi* pOwner, _float dt)
 				.Type(HIT_TYPE::ONCE)
 				.Damage(pOwner->Get_AttackPower() * 0.491f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::NORMAL)
+				.Charge()
 			);
 		}
 		else if (Event.Tag == "AreaAttackHard")
@@ -136,6 +138,7 @@ void CMiyabiState_Counter_Start::Update(CMiyabi* pOwner, _float dt)
 				.Type(HIT_TYPE::ONCE)
 				.Damage(pOwner->Get_AttackPower() * 0.491f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::HARD)
+				.Charge()
 			);
 		}
 	}
