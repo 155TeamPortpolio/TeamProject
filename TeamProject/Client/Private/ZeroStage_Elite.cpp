@@ -64,6 +64,13 @@ HRESULT CZeroStage_Elite::Enter_Stage(StageContext& context)
 	m_PlayerHandle = context.hPlayer;
 	BaseIntro(context);
 	Active_Player(CStage::PlayerPoint::Typical);
+
+	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+		{
+			_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
+			0.02f
+		});
+
 	return S_OK;
 }
 
