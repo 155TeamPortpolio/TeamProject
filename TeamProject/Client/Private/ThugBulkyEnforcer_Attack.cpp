@@ -313,11 +313,19 @@ void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack1::Exit(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->FinishWeaponCollider();
+}
+
+void CThugBulkyEnforcer_Attack1::Update_Effects(CThugBulkyEnforcer* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Bulky_Punch", _vector3(-0.1f, 1.f, 2.1f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/
@@ -372,11 +380,21 @@ void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack2::Exit(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->FinishWeaponCollider();
+}
+
+void CThugBulkyEnforcer_Attack2::Update_Effects(CThugBulkyEnforcer* pOwner)
+{
+	if (IsCrossAnimProgress(0.19f))
+		pOwner->Play_Effect("Bulky_Slash0_0", _vector3(0.f, 1.1f, 0.f), _quaternion(0.8f, 0.13f, -0.08f, -0.58f));
+	if (IsCrossAnimProgress(0.25f))
+		pOwner->Play_Effect("Bulky_Slash0_1", _vector3(0.f, 1.1f, 0.f), _quaternion(0.15f, -0.38f, 0.89f, -0.2f));
 }
 
 /*============================================================================*/
@@ -431,11 +449,21 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack3::Exit(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->FinishWeaponCollider();
+}
+
+void CThugBulkyEnforcer_Attack3::Update_Effects(CThugBulkyEnforcer* pOwner)
+{
+	if (IsCrossAnimProgress(0.16f))
+		pOwner->Play_Effect("Bulky_KneeKick", _vector3(0.f, 2.3f, 1.2f), _quaternion(-0.24f, 0.f, 0.f, 0.97f), false);
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Bulky_HitGround0", _vector3(0.f, 0.f, 1.2f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/
@@ -473,11 +501,19 @@ void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack4::Exit(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->FinishWeaponCollider();
+}
+
+void CThugBulkyEnforcer_Attack4::Update_Effects(CThugBulkyEnforcer* pOwner)
+{
+	if (IsCrossAnimProgress(0.19f))
+		pOwner->Play_Effect("Bulky_HitGround1", _vector3(0.f, 0.f, 0.9f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/
@@ -517,11 +553,19 @@ void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack5_1::Exit(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->FinishWeaponCollider();
+}
+
+void CThugBulkyEnforcer_Attack5_1::Update_Effects(CThugBulkyEnforcer* pOwner)
+{
+	if (IsCrossAnimProgress(0.24f))
+		pOwner->Play_Effect("Bulky_Slash0_0", _vector3(0.f, 1.5f, 0.f), _quaternion(0.62f, -0.39f, 0.36f, -0.57f));
 }
 
 /*============================================================================*/
@@ -578,11 +622,21 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack5_2::Exit(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->FinishWeaponCollider();
+}
+
+void CThugBulkyEnforcer_Attack5_2::Update_Effects(CThugBulkyEnforcer* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Bulky_Slash0_0", _vector3(0.f, 1.5f, 0.f), _quaternion(-0.48f, -0.45f, 0.53f, 0.53f));
+	if (IsCrossAnimProgress(0.26f))
+		pOwner->Play_Effect("Bulky_Slash0_1", _vector3(0.f, 1.8f, 0.f), _quaternion(0.69f, -0.2f, 0.2f, -0.67f));
 }
 
 /*============================================================================*/

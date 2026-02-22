@@ -62,6 +62,7 @@ HRESULT CDefilerWall::Initialize(INIT_DESC* pArg)
 	m_bAwake = true;
 	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear(desc.isEndTsunami);});
 	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {Play_Effect(desc.isHitGround); });
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 
 	Initialize_Effects();
 
@@ -129,7 +130,6 @@ void CDefilerWall::DisAppear(_bool isDisappear)
 {
 	if (!isDisappear)
 		return;
-
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	m_ElapsedTime = 0.f;
@@ -153,6 +153,8 @@ void CDefilerWall::Play_Effect(_bool isPlayEffect)
 	if (pEffect)
 		static_cast<CEffectContainer*>(pEffect)->Play();
 
+	Get_Component<CAudioSource>()->Slot("DefilerExplode01.wav").Volume(0.3f).Play();
+	Get_Component<CAudioSource>()->Slot("DefilerExplode02.wav").Volume(0.5f).Play();
 	m_bPlayEffect = true;
 }
 

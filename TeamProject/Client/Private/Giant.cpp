@@ -28,6 +28,8 @@
 #include "Giant_Chase.h"
 #include "Giant_Parried.h"
 
+#include "EffectContainer.h"
+
 CGiant::CGiant()
 	: CEnemyNormal()
 {
@@ -79,6 +81,9 @@ HRESULT CGiant::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	Get_Component<CCharacterController>()->Set_StepOffset(0.01f);
@@ -429,6 +434,46 @@ HRESULT CGiant::Initialize_Transitions()
 		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CGiant>::CONDITION_TRIGGER, "Idle_To_Hit");
+
+	return S_OK;
+}
+
+HRESULT CGiant::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_hit_ground0.json")
+			.Build("Giant_HitGround0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_hit_ground1.json")
+			.Build("Giant_HitGround1_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	for (_uint i = 0; i < 2; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_slash0.json")
+			.Build("Giant_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("giant_dash_trail.json")
+			.Build("Giant_Dash_Trail");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
 
 	return S_OK;
 }

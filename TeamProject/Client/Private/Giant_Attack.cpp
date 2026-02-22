@@ -315,10 +315,17 @@ void CGiant_Attack1::Enter(CGiant* pOwner)
 
 void CGiant_Attack1::Update(CGiant* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack1::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack1::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.31f))
+		pOwner->Play_Effect("Giant_Slash0_0", _vector3(0.f, 0.5f, 0.f), _quaternion(0.56f, 0.59f, -0.41f, -0.41f));
 }
 
 /*============================================================================*/
@@ -345,10 +352,30 @@ void CGiant_Attack2::Update(CGiant* pOwner, _float dt)
 					m_pOwnerStateMachine->Change_State("Attack2_Explode");
 			}
 
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack2::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack2::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Giant_HitGround0_0", _vector3(m_vLeftPosition), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.28f))
+		pOwner->Play_Effect("Giant_HitGround0_1", _vector3(m_vRightPosition), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.35f))
+		pOwner->Play_Effect("Giant_HitGround0_2", _vector3(m_vLeftPosition), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.42f))
+		pOwner->Play_Effect("Giant_HitGround0_0", _vector3(m_vRightPosition), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.5f))
+		pOwner->Play_Effect("Giant_HitGround0_1", _vector3(m_vLeftPosition), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+	if (IsCrossAnimProgress(0.58f))
+		pOwner->Play_Effect("Giant_HitGround0_2", _vector3(m_vRightPosition), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
+	if (IsCrossAnimProgress(0.7f))
+		pOwner->Play_Effect("Giant_HitGround0_0", _vector3(-0.2f, 0.f, 1.9f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/
@@ -362,10 +389,17 @@ void CGiant_Attack2_1::Enter(CGiant* pOwner)
 
 void CGiant_Attack2_1::Update(CGiant* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack2_1::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack2_1::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.35f))
+		pOwner->Play_Effect("Giant_HitGround1_0", _vector3(0.f, 0.f, 1.9f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/
@@ -379,10 +413,17 @@ void CGiant_Attack2_Explode::Enter(CGiant* pOwner)
 
 void CGiant_Attack2_Explode::Update(CGiant* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack2_Explode::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack2_Explode::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.22f))
+		pOwner->Play_Effect("Giant_HitGround1_0", _vector3(0.f, 0.f, 1.9f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/
@@ -395,10 +436,23 @@ void CGiant_Attack3::Enter(CGiant* pOwner)
 void CGiant_Attack3::Update(CGiant* pOwner, _float dt)
 {
 	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack3::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack3::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.21f))
+		pOwner->Play_Effect("Giant_Dash_Trail", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f));
+	if (IsCrossAnimProgress(0.44f))
+		pOwner->Stop_Effect("Giant_Dash_Trail");
+
+	if (IsCrossAnimProgress(0.46f))
+		pOwner->Play_Effect("Giant_Slash0_0", _vector3(0.3f, 1.6f, -1.1f), _quaternion(-0.56f, 0.74f, -0.24f, 0.29f));
+
 }
 
 /*============================================================================*/
@@ -425,10 +479,19 @@ void CGiant_Attack4::Enter(CGiant* pOwner)
 
 void CGiant_Attack4::Update(CGiant* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack4::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack4::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.26f))
+		pOwner->Play_Effect("Giant_Slash0_0", _vector3(0.f, 1.6f, 0.f), _quaternion(0.6f, 0.67f, -0.32f, -0.29f));
+	if (IsCrossAnimProgress(0.42f))
+		pOwner->Play_Effect("Giant_Slash0_1", _vector3(0.f, 1.5f, 0.f), _quaternion(-0.58f, 0.61f, -0.4f, 0.38f));
 }
 
 /*============================================================================*/
@@ -442,10 +505,17 @@ void CGiant_Attack5::Enter(CGiant* pOwner)
 
 void CGiant_Attack5::Update(CGiant* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CGiant_Attack5::Exit(CGiant* pOwner)
 {
+}
+
+void CGiant_Attack5::Update_Effects(CGiant* pOwner)
+{
+	if (IsCrossAnimProgress(0.19f))
+		pOwner->Play_Effect("Giant_HitGround0_0", _vector3(1.3f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 /*============================================================================*/

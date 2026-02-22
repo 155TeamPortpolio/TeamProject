@@ -97,6 +97,8 @@ public:
     void Set_Hitable(_bool hit) { m_IsHitable = hit; }
 
 private:
+    void Create_UIEnemyStatus(string boneTag) override;
+    void Create_UIBossHUD() override;
     void Create_Children();
     HRESULT Create_Colliders();
     HRESULT Initialize_StateMachine();
@@ -106,6 +108,10 @@ private:
     void Update_States(_float dt);
     void Route_AnimEvent();
     void Control_Sound(const string& event);
+
+public:
+    void Control_TargetEnable(_bool on);
+    void HideHUD(_bool hide);
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};
@@ -133,5 +139,7 @@ private:
     _bool m_IsHitable = true;
     _float m_fOverDriveElapsedTime{};
     _float m_fOverDriveDuration = 20.f;
+
+    UI_HANDLE m_BoneHUD;
 };
 NS_END
