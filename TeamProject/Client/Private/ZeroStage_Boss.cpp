@@ -82,6 +82,9 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey) 
 	{
+		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Hollow_Zero_1.wav", 0.9f);
+
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM2.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({
 			_float3{0.f, 0.f ,0.f},
@@ -97,6 +100,16 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 				0.03f
 			});
 
+		LIGHT_DESC lightDesc{};
+		lightDesc.vLightDirection = _float4(-0.894f, -0.447f, 0.f, 0.f);
+		lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+		lightDesc.vLightAmbient = _float4(95.f / 255.f, 95.f / 255.f, 95.f / 255.f, 1.f);
+		lightDesc.vLightSpecular = _float4(12.f / 255.f, 12.f / 255.f, 12.f / 255.f, 1.f);
+		lightDesc.fLightIntensity = 0.03f;
+		m_pOwnerLevel->Get_ZeroShadow()->Set_Light(
+			{
+				lightDesc
+			});
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
@@ -127,7 +140,10 @@ HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
 	__super::Exit_Stage(context);
 
 	if ("Zero_Boss1" == context.mapKey)
-		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Sacrifice_BGM.wav", 0.9f);
+	{
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").FadeOut(0.2f);
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").FadeOut(0.2f);
+	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV.wav").FadeOut(0.2f);

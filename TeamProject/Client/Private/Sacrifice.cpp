@@ -210,6 +210,11 @@ void CSacrifice::Free()
 void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
+
+	Get_Component<CAudioSource>()->
+		Slot(eDamageType == DAMAGE_TYPE::NORMAL ? "HitLight.wav" : "HitHeavy.wav")
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.4f : 0.5f).Play();
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -938,7 +943,8 @@ HRESULT CSacrifice::Initialize_Effects()
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_cloud.json")
 			.Build("Sacrifice_Cloud");
-
+		
+		pEffect->Set_Alive(false);
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}

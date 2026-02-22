@@ -79,9 +79,9 @@ HRESULT CSacrificeHand::Initialize_Effects()
 	{
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("attack_range.json")
-			.Scale(_float3(6.f,6.f,6.f))
 			.Build("Attack_Range");
 
+		pEffect->Get_Component<CTransform>()->Scale(_float3(8.f, 8.f, 8.f));
 		pEffect->Stop();
 		pObjectContainer->Add_Child(pEffect, false);
 	}
