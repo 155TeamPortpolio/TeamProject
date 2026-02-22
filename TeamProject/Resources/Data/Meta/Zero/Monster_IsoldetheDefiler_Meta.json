@@ -326,6 +326,11 @@
           "EventTime": 6.432748317718506,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 5.30706262588501,
+          "EventType": "Notify",
+          "EventTag": "Cam_HitHeavy"
         }
       ]
     },
@@ -541,6 +546,11 @@
           "EventTime": 4.823001861572266,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 3.3194282054901123,
+          "EventType": "Notify",
+          "EventTag": "Cam_HitHeavy"
         }
       ]
     },
@@ -786,6 +796,11 @@
           "EventTime": 2.7431447505950928,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.6628329753875732,
+          "EventType": "Notify",
+          "EventTag": "Cam_HitHeavy"
         }
       ]
     },
@@ -846,6 +861,11 @@
           "EventTime": 2.7482781410217285,
           "EventType": "Notify",
           "EventTag": "TargetLockOff"
+        },
+        {
+          "EventTime": 1.899935007095337,
+          "EventType": "Notify",
+          "EventTag": "Cam_HitHeavy"
         }
       ]
     },
@@ -1156,6 +1176,11 @@
           "EventTime": 1.0214425325393677,
           "EventType": "Notify",
           "EventTag": "M_Type_Off"
+        },
+        {
+          "EventTime": 0.5692007541656494,
+          "EventType": "Notify",
+          "EventTag": "Cam_HitHeavy"
         }
       ]
     },
@@ -1221,6 +1246,11 @@
           "EventTime": 1.8200000524520874,
           "EventType": "Notify",
           "EventTag": "M_Type_Off"
+        },
+        {
+          "EventTime": 0.9444444179534912,
+          "EventType": "Notify",
+          "EventTag": "Cam_HitHeavy"
         }
       ]
     },
@@ -1228,9 +1258,19 @@
       "ClipTag": "Monster_IsoldetheDefiler_Ani_Attack_09_End",
       "Events": [
         {
-          "EventTime": 1.159999966621399,
+          "EventTime": 1.7400000095367432,
           "EventType": "Sound",
-          "EventTag": "VO_Poison.wav"
+          "EventTag": "Defiler_Entrance.wav"
+        },
+        {
+          "EventTime": 3.0999999046325684,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
+        },
+        {
+          "EventTime": 4.78000020980835,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Entrance.wav"
         }
       ]
     },
@@ -1435,6 +1475,11 @@
           "EventTag": "VO_Blaster.wav"
         },
         {
+          "EventTime": 1.5199999809265137,
+          "EventType": "Sound",
+          "EventTag": "Defiler_Change (2).wav"
+        },
+        {
           "EventTime": 1.600000023841858,
           "EventType": "Sound",
           "EventTag": "Defiler_Miasma.wav"
@@ -1445,19 +1490,14 @@
           "EventTag": "Defiler_Change.wav"
         },
         {
-          "EventTime": 2.009999990463257,
-          "EventType": "Sound",
-          "EventTag": "Defiler_Crash01.wav"
-        },
-        {
           "EventTime": 2.077777862548828,
           "EventType": "Notify",
           "EventTag": "ShowMesh_Pro"
         },
         {
-          "EventTime": 1.5199999809265137,
+          "EventTime": 2.0799999237060547,
           "EventType": "Sound",
-          "EventTag": "Defiler_Change (2).wav"
+          "EventTag": "Defiler_Crash01.wav"
         }
       ]
     },
