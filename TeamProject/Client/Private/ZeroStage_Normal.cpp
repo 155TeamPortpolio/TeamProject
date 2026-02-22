@@ -68,6 +68,10 @@ HRESULT CZeroStage_Normal::Enter_Stage(StageContext& context)
 	Active_Player(CStage::PlayerPoint::Typical);
 	BaseIntro(context);
 
+	m_pOwnerLevel->Get_ZeroFog()->Use_Fog(true);
+	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+		{ _float4(0.577f, 0.615f, 0.641f, 1.0f) , 0.001f });
+
 	return S_OK;
 }
 

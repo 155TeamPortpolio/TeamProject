@@ -117,6 +117,8 @@ HRESULT CZero_Level::Awake()
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
 
+	UIDirector()->FadeIn_Screen();
+
 	return S_OK;
 }
 
@@ -230,10 +232,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
-	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1", "Zero_Spec3_2", "Zero_3_1", "Zero_1_2", "Zero_8_1", "Zero_3_2", "Zero_Spec3_1"};
-	//Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
-		//Normal
-	m_mapCycle[StageType::Normal].maps = { "Zero_1_1", "Zero_Spec3_2", "Zero_3_1", "Zero_1_2", "Zero_8_1", "Zero_3_2", "Zero_Spec3_1" };
+	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1", "Zero_3_1", "Zero_Spec3_2", "Zero_1_2", "Zero_8_1", "Zero_3_2", "Zero_Spec3_1"};
 	//Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
 	_uint Normal_Progress{};
@@ -260,32 +259,6 @@ void CZero_Level::Ready_Stage()
 		"Normal_Progress",
 		Normal_Progress
 	);
-
-	_uint Normal_Progress{};
-	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Normal_Progress", Normal_Progress))
-		Normal_Progress = 0;
-
-	auto& normalMaps = m_mapCycle[StageType::Normal].maps;
-	vector<string> selected;
-
-	for (int i = 0; i < 4; ++i)
-	{
-		if(Normal_Progress < normalMaps.size())
-			selected.push_back(normalMaps[Normal_Progress++]);
-		else {
-			Normal_Progress = 0;
-			selected.push_back(normalMaps[Normal_Progress]);
-		}
-	}
-
-	m_mapCycle[StageType::Normal].maps = selected;
-
-	RuntimeBucket().Int64.Set(
-		PersistScope::SaveSlot,
-		"Normal_Progress",
-		Normal_Progress
-	);
-
 
 
 	_uint Boss_Process{};
