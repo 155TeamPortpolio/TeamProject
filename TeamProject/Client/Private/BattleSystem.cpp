@@ -58,7 +58,7 @@ void CBattleSystem::Update()
 
 	if(InputDevice()->Key_Tap(VK_SHIFT))
 	{
-		StartGimmick(BATTLE_VFX_TYPE::WIPEOUT);
+		m_pFXFlow->Start_Ultimate(2.6f);
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
@@ -539,6 +539,11 @@ void CBattleSystem::StartSwitch(CHARACTER eLeft, CHARACTER eRight)
 void CBattleSystem::EndSwitch()
 {
 	m_pFXFlow->Cancle_Switch();
+}
+
+void CBattleSystem::StartUltimate(_float duration)
+{
+	m_pFXFlow->Start_Ultimate(duration);
 }
 
 void CBattleSystem::LockPlayer(_bool Lock)
