@@ -75,13 +75,13 @@ void CCorinState_Walk_Start::Update(CCorin* pOwner, _float dt)
     auto& sound = *pOwner->Get_Component<CAudioSource>();
 
     if (IsCrossAnimProgress(0.14f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 
     if (IsCrossAnimProgress(0.47f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 
     if (IsCrossAnimProgress(0.70f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 }
 
 void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
@@ -100,10 +100,10 @@ void CCorinState_Walk_Loop::Update(CCorin* pOwner, _float dt)
     auto& sound = *pOwner->Get_Component<CAudioSource>();
 
     if (IsCrossAnimProgress(0.01f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 
     if (IsCrossAnimProgress(0.44f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 }
 
 void CCorinState_Walk_End::Enter(CCorin* pOwner)

@@ -51,11 +51,11 @@ void CamDebugInput::DebugInput(_float dt)
 
     if (InputDevice()->Key_Tap(VK_F3))
     {
-        auto gangta = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"});
+        cam.GetOrbitCam()->Lock_Input();
     }
 
     if (InputDevice()->Key_Tap(VK_F4))
     {
-       // cam.ExitBoss();
+        cam.GetOrbitCam()->Unlock_Input();
     }
 }

@@ -33,9 +33,8 @@ void CCorinState_RushAttack::Enter(CCorin* pOwner)
 
     pOwner->Play_Effect("Corin_Saw_Slash1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Slot("Corin_RushAttack_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
-    sound.Sequence("NormalAttackHeavy_Voice").Attribute3D(true).Loop(false).PlayNext();
+    pOwner->Control_SFX("Corin_RushAttack_01_SFX.wav");
+    pOwner->Control_VoiceSequence("NormalAttackHeavy_Voice");
 }
 
 void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
@@ -61,8 +60,7 @@ void CCorinState_RushAttack::Exit(CCorin* pOwner)
     pOwner->Set_ResetMove(true);
     __super::Exit(pOwner);
 
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Slot("Corin_RushAttack_01_SFX.wav").FadeOut(0.2f);
+    pOwner->Control_FadeOut("Corin_RushAttack_01_SFX.wav");
 }
 
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)

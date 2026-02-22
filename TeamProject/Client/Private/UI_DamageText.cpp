@@ -13,8 +13,6 @@ namespace
     static const string kAtlasTexKey = "DamageText.png";
     static const string kColorAtlasTexKey = "DamageTextColor.png";
 
-    constexpr _float kSpecialWordChance = 0.01f;
-
     constexpr _uint  kColorIdx_JaneDoe = 0;
     constexpr _uint  kColorIdx_Corin = 3;
     constexpr _uint  kColorIdx_Miyabi = 2;
@@ -207,10 +205,8 @@ void CUI_DamageText::Update(_float dt)
 void CUI_DamageText::UI_Active(void* arg)
 {
     auto desc = static_cast<DAMAGE_DESC*>(arg);
-
     {
-        const _float roll = Helper::Get_Random_Float(0.f, 1.f);
-        if (roll < kSpecialWordChance)
+        if (desc->isSpecial)
         {
             const string* protoKey = nullptr;
             string instName;

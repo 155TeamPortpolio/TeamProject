@@ -41,9 +41,8 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
     //Jehyun
     CamDirector()->RequestSequence(CamSeqType::Ultimate);
    
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Sequence("Ultimate_Voice").Attribute3D(true).Loop(false).PlayNext();
-    sound.Slot("Corin_Ultimate_SFX_02.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    pOwner->Control_VoiceSequence("Ultimate_Voice");
+    pOwner->Control_SFX("Corin_Ultimate_SFX_02.wav");
 }
 
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)

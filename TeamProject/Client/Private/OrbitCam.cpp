@@ -618,8 +618,18 @@ void COrbitCam::Priority_Update(_float dt)
 
     if (!m_dialogueMode && m_hitDist)
     {
-        if (m_pose.distCur > colRes.allowedDist) m_pose.distCur = colRes.allowedDist;
-        if (m_pose.distGoal > colRes.allowedDist) m_pose.distGoal = colRes.allowedDist;
+        const _float clampDist = colRes.allowedDist;
+
+        if (colRes.hitType == OrbitHitType::Ground)
+        {
+            if (m_pose.distCur > clampDist) m_pose.distCur = clampDist;
+            if (m_pose.distGoal > clampDist) m_pose.distGoal = clampDist;
+        }
+        else
+        {
+            if (m_pose.distCur > clampDist) m_pose.distCur = clampDist;
+            if (m_pose.distGoal > clampDist) m_pose.distGoal = clampDist;
+        }
     }
 
     ApplyPose(dt, lockRes);
@@ -956,18 +966,27 @@ OrbitInputEval COrbitCam::EvalInput(_float dt, _float lockW)
 
 OrbitCollideEval COrbitCam::EvalCollideDist(_float dt, const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg, _float distGoal)
 {
-    OrbitCollideEval out{};
+    OrbitCollideEval out = CalcAllowDist(prof, pivotWorld, distWanted, rotCurDeg, rotGoalDeg);
 
-    const _float allowed = CalcAllowDist(prof, pivotWorld, distWanted, rotCurDeg, rotGoalDeg);
+    out.rawAllowedDist = out.allowedDist;
+    out.hit = (out.rawAllowedDist < distWanted - 0.001f);
 
-    out.allowedDist = allowed;
-    out.hit = (allowed < distWanted - 0.001f);
+    if (!out.hit)
+        out.hitType = OrbitHitType::None;
 
     out.yawDeltaCapDeg = out.hit ? prof.yawHitDeltaCapDeg : prof.yawDeltaCapDeg;
     out.pitchDeltaCapDeg = out.hit ? prof.pitchHitDeltaCapDeg : prof.pitchDeltaCapDeg;
 
-    const _float targetDist = min(distWanted, allowed);
-    const _float zoomSpeed = (targetDist < distGoal) ? prof.zoomInCollide : prof.zoomOutCollide;
+    if (out.hit && out.hitType == OrbitHitType::Common)
+        out.allowedDist = clamp(out.rawAllowedDist + prof.commonSoftSlack, prof.distMin, distWanted);
+
+    const _float targetDist = min(distWanted, out.allowedDist);
+
+    _float zoomInSpeed = prof.zoomInCollide;
+    if (out.hit && out.hitType == OrbitHitType::Common)
+        zoomInSpeed *= prof.commonZoomInMul;
+
+    const _float zoomSpeed = (targetDist < distGoal) ? zoomInSpeed : prof.zoomOutCollide;
 
     _float nextGoal = Math::MoveTowards(distGoal, targetDist, zoomSpeed * dt);
     nextGoal = clamp(nextGoal, prof.distMin, prof.distMax);
@@ -976,14 +995,19 @@ OrbitCollideEval COrbitCam::EvalCollideDist(_float dt, const OrbitProfile& prof,
     return out;
 }
 
-_float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg)
+OrbitCollideEval COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg)
 {
+    OrbitCollideEval out{};
+    out.allowedDist = distWanted;
+    out.rawAllowedDist = distWanted;
+    out.hitType = OrbitHitType::None;
+
     const _float camRadius = Get_Component<CCharacterController>()->Get_Radius();
     const _float padding = 0.1f;
     const _float stepDeg = 4.f;
 
     auto scene = PhysicsSystem()->Get_Scene();
-    if (!scene) return distWanted;
+    if (!scene) return out;
 
     const _float startYaw = rotCurDeg.x;
     const _float startPitch = rotCurDeg.y;
@@ -996,7 +1020,7 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWo
 
     const _float maxAbs = max(fabsf(deltaYaw), fabsf(deltaPitch));
     _int steps = (_int)ceilf(maxAbs / stepDeg);
-    if (steps < 1)  steps = 1;
+    if (steps < 1) steps = 1;
     if (steps > 12) steps = 12;
 
     PxSphereGeometry geom(camRadius);
@@ -1005,8 +1029,6 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWo
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND), false);
-
-    _float minAllowed = distWanted;
 
     for (_int i = 1; i <= steps; ++i)
     {
@@ -1033,10 +1055,39 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWo
         _float allowed = hit.block.distance - padding;
         allowed = clamp(allowed, prof.distMin, distWanted);
 
-        if (allowed < minAllowed) minAllowed = allowed;
+        OrbitHitType stepHitType = OrbitHitType::Common;
+
+        if (hit.block.shape)
+        {
+            const PxFilterData shapeFilter = hit.block.shape->getQueryFilterData();
+            const PxU32 shapeGroup = shapeFilter.word0;
+
+            const _bool isGround = (shapeGroup & ENUM(COLLISION_GROUP::GROUND)) != 0;
+            const _bool isCommon = (shapeGroup & ENUM(COLLISION_GROUP::COMMON)) != 0;
+
+            if (isGround) stepHitType = OrbitHitType::Ground;
+            else if (isCommon) stepHitType = OrbitHitType::Common;
+        }
+
+        if (allowed < out.allowedDist)
+        {
+            out.allowedDist = allowed;
+            out.hitType = stepHitType;
+        }
+        else if (fabsf(allowed - out.allowedDist) <= 0.001f)
+        {
+            if (stepHitType == OrbitHitType::Ground)
+                out.hitType = OrbitHitType::Ground;
+        }
     }
 
-    return minAllowed;
+    out.rawAllowedDist = out.allowedDist;
+    out.hit = (out.allowedDist < distWanted - 0.001f);
+
+    if (!out.hit)
+        out.hitType = OrbitHitType::None;
+
+    return out;
 }
 
 void COrbitCam::Lock_Reset()

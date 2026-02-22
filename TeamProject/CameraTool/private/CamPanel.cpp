@@ -2895,7 +2895,7 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
         ImGui::TableSetColumnIndex(1);
 
         _vector3 center = d.center;
-        if (DragVec3XYZ("oa_center", center, 0.05f, -99999.f, 99999.f, "%.1f", vecW, gap))
+        if (DragVec3XYZ("oa_center", center, 0.05f, -99999.f, 99999.f, "%.2f", vecW, gap))
         {
             d.center = center;
             ioChangedOrbit = true;

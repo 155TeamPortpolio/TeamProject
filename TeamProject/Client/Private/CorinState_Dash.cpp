@@ -18,8 +18,7 @@ void CCorinState_Dash::Enter(CCorin* pOwner)
     if (vDir.Length() > 0.01f)
         pOwner->Rotate(vDir);
 
-    // Jehyun
-    pOwner->Get_Component<CAudioSource>()->Slot("Corin_Dash_02_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    pOwner->Control_SFX("Corin_Dash_02_SFX.wav");
 }
 
 void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
@@ -70,8 +69,6 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
     {   // Idle
         pSubMachine->Set_Int("ExitMode", 0);
         pSubMachine->Set_Trigger("Complete");
-
-        //pOwner->Get_Component<CAudioSource>()->Slot("Corin_Dash_02_SFX.wav").Pause(true);
     }
 
     Update_Effects(pOwner);

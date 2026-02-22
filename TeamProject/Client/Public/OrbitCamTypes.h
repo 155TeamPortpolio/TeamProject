@@ -5,6 +5,8 @@ class CGameObject; class CCharacterController;
 NS_END
 
 NS_BEGIN(Client)
+enum class OrbitHitType { None, Common, Ground};
+
 struct OrbitLockState
 {
     OBJECT_HANDLE handle{};
@@ -37,9 +39,11 @@ struct OrbitAutoYaw
 };
 struct OrbitCollideEval
 {
-    _float allowedDist = 0.f;
-    _float goalDist    = 0.f;
-    _bool  hit         = false;
+    _float       allowedDist = 0.f;
+    _float       rawAllowedDist = 0.f;
+    _float       goalDist = 0.f;
+    _bool        hit = false;
+    OrbitHitType hitType = OrbitHitType::None;
 
     _float yawDeltaCapDeg = 0.f;
     _float pitchDeltaCapDeg = 0.f;
@@ -101,6 +105,9 @@ struct OrbitProfile
 
     _float zoomInCollide = 12.f;
     _float zoomOutCollide = 6.f;
+
+    _float commonSoftSlack = 0.06f;
+    _float commonZoomInMul = 0.75f;
 
     _float switchBlendSec = 1.f;
     EaseType switchEase = EaseType::OutCubic;
