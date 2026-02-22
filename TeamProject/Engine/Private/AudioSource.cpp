@@ -556,6 +556,21 @@ void CAudioSource::Update_Audio(AUDIO_SLOT& slot)
 	}
 }
 
+void CAudioSource::FadeOutAll(_float Durationfactor)
+{
+	for (auto& pair : m_Audios)
+	{
+		AUDIO_SLOT& slot = pair.second;
+
+		if (!slot.pChannels.empty())
+		{
+			FadeOut_Volume(slot.Key, Durationfactor);
+		}
+		slot.pChannels.clear();
+		Safe_Release(slot.pSound);
+	}
+}
+
 CAudioSource::SequenceBuilder CAudioSource::Sequence(const string& seqKey)
 {
 	auto& seq = m_Sequences[seqKey];
