@@ -214,10 +214,10 @@ public:
 	virtual void Exit(CDefiler* pOwner) override;
 
 private:
-	_float m_Duration = 5.f;
+	_float m_Duration = 6.f;
 	_float m_Elapsed = 0.f;
 	_float  m_Interval = 0.f;
-
+	_int m_Count = { 0 };
 public:
 	static CDefilerState_Attack_08_01_Loop* Create() { return new CDefilerState_Attack_08_01_Loop(); }
 	virtual void Free() override { __super::Free(); }
@@ -396,6 +396,22 @@ public:
 
 private:
 	void Update_Effects(CDefiler* pOwner);
+
+};
+
+class CDefilerState_Attack_ReposByPos:  public CDefilerState_Attack
+{
+public:
+	virtual void Enter(CDefiler* pOwner) override;
+	virtual void Update(CDefiler* pOwner, _float dt) override;
+	virtual void Exit(CDefiler* pOwner) override;
+
+public:
+	static CDefilerState_Attack_ReposByPos* Create() { return new CDefilerState_Attack_ReposByPos(); }
+	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CDefiler* pOwner) {};
 
 };
 
