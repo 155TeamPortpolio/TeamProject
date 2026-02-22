@@ -998,6 +998,11 @@ void CBattlePlayer::Update_Target(_bool bRefresh)
                 return;
         }
     }
+    else if (m_bLockOn && m_TargetHandle.isValid()
+        && BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, m_TargetHandle))
+    {
+        return;
+    }
 
     // 가장 가까운 몬스터 탐색
     auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
