@@ -129,7 +129,7 @@ wstring CUI_Loading::Get_RandomText(const string& strNextLevelKey)
         switch (index)
         {
         case 0:
-            return L"메인시티에서는 각종 상점과 시설을 이용할 수\n있습니다. 의뢰 수주 및 에이전트 육성을\n진행하세요.";
+            return L"메인시티에서는 각종 상점과 시설을 이용할\n수 있습니다. 의뢰 수주 및 에이전트 육성을\n진행하세요.";
         case 1:
             return L"아우의 복권은 하루 한 번 무료로 이용할 수\n있으며 페니를 획득할 수 있습니다.";
         case 2:

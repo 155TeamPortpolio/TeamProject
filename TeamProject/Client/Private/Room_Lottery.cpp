@@ -15,35 +15,40 @@ CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
 
 void CRoom_Lottery::Enter()
 {
-	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
-	pFieldPlayer->Lock_Input();
-	pFieldPlayer->DeActive_Field();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Show_Lottery();
+			UIDirector()->FadeIn_Screen();
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->Lock_Input();
+			pFieldPlayer->DeActive_Field();
 
-	CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
-	CamDirector()->RequestSequence("Field/Howl");
+			CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
+			CamDirector()->RequestSequence("Field/Howl");
 
-	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
-	UIDirector()->Show_Lottery();
-
-	FieldSystem()->PlayBGM("LotteryBGM.wav", 0.2f);
+			FieldSystem()->PlayBGM("LotteryBGM.wav", 0.2f);
+		});
 }
 
 void CRoom_Lottery::Exit()
 {
-	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
-	pFieldPlayer->Active_Field();
-	pFieldPlayer->UnLock_Input();
-
-	auto NpcHandle = FieldSystem()->GetInteractHandle();
-	if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset();
-
-	CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
-	CamDirector()->RequestSequence("Field/Back");
-	
-	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
-	UIDirector()->Hide_Lottery();
-
 	FieldSystem()->FadeOutBGM();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->Active_Field();
+			pFieldPlayer->UnLock_Input();
+			UIDirector()->FadeIn_Screen();
+			auto NpcHandle = FieldSystem()->GetInteractHandle();
+			if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset();
+
+			CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
+			CamDirector()->RequestSequence("Field/Back");
+
+			UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Hide_Lottery();
+		});
 }
 
 void CRoom_Lottery::Update()

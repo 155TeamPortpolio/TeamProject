@@ -73,6 +73,7 @@ HRESULT CProceduralSky::Initialize(INIT_DESC* pArg)
 	customInstance->Set_Param("g_CloudDark", { &m_vCloudDark, "float3", sizeof(_float3) });
 	customInstance->Set_Param("g_CloudCoverage_Param", { &m_fCloudCoverage, "float", sizeof(_float) });
 	customInstance->Set_Param("g_HazeColor", { &m_vHazeColor, "float3", sizeof(_float3) });
+	customInstance->Set_Param("bMoon", { &m_bUseMoon, "bool", sizeof(_bool) });
 	
 	customInstance->Set_Param("matProjInv", { &m_MatProjectionInv, "matrix", sizeof(_float4x4) });
 	customInstance->Set_Param("matViewInv", { &m_MatViewInv, "matrix", sizeof(_float4x4) });
@@ -85,6 +86,8 @@ HRESULT CProceduralSky::Initialize(INIT_DESC* pArg)
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "cloud_noise.png", TEXTURE_TYPE::DIFFUSE);
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "Eff_Noise_092.png", TEXTURE_TYPE::NORMALS);
 		MaterialDat->Link_Texture(G_GlobalLevelKey, "Eff_Noise_146.png", TEXTURE_TYPE::AMBIENT);
+		MaterialDat->Link_Texture(G_GlobalLevelKey, "moon_bright.png", TEXTURE_TYPE::SPECULAR);
+		MaterialDat->Link_Texture(G_GlobalLevelKey, "moon_glow.png", TEXTURE_TYPE::METALNESS);
 	}
 
 	return S_OK;

@@ -193,6 +193,18 @@ void CJaneDoeState_Counter_02::Update(CJaneDoe* pOwner, _float dt)
 			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
 		}
 	}
+
+	Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Counter_02::Update_Effects(CJaneDoe* pOwner)
+{
+	if (IsCrossAnimProgress(0.04f))
+		pOwner->Play_Effect("JaneDoe_Normal_Slash0", _vector3(0.f, 1.6f, 0.f), _quaternion(0.28f, 0.66f, 0.68f, 0.13f));
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("JaneDoe_Normal_Slash1", _vector3(0.f, 1.8f, 0.f), _quaternion(-0.21f, 0.67f, 0.64f, -0.32f));
+	if (IsCrossAnimProgress(0.48f))
+		pOwner->Play_Effect("JaneDoe_Normal_Slash2", _vector3(0.f, 0.2f, 0.f), _quaternion(-0.65f, 0.25f, 0.25f, 0.67f));
 }
 
 void CJaneDoeState_Counter_03::Enter(CJaneDoe* pOwner)
@@ -217,6 +229,20 @@ void CJaneDoeState_Counter_03::Update(CJaneDoe* pOwner, _float dt)
 			EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
 		}
 	}
+
+	Update_Effects(pOwner);
+}
+
+void CJaneDoeState_Counter_03::Update_Effects(CJaneDoe* pOwner)
+{
+	if (IsCrossAnimProgress(0.07f))
+		pOwner->Play_Effect("JaneDoe_Normal_Slash0", _vector3(0.f, 0.6f, 0.f), _quaternion(0.07f, 0.7f, 0.7f, -0.07f));
+	if (IsCrossAnimProgress(0.14f))
+		pOwner->Play_Effect("JaneDoe_Wide_Slash0", _vector3(0.f, 0.6f, 0.f), _quaternion(0.15f, 0.69f, 0.69f, -0.15f));
+	if (IsCrossAnimProgress(0.25f))
+		pOwner->Play_Effect("JaneDoe_Wide_Slash1", _vector3(0.f, 2.1f, 0.f), _quaternion(-0.38f, 0.59f, 0.7f, -0.14f));
+	if(IsCrossAnimProgress(0.4f))
+		pOwner->Play_Effect("JaneDoe_Wide_Slash2", _vector3(0.f, 1.7f, 0.f), _quaternion(0.18f, 0.73f, 0.61f, 0.25f));
 }
 
 void CJaneDoeState_Counter_End::Enter(CJaneDoe* pOwner)

@@ -82,15 +82,21 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey) 
 	{
-		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
-
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM2.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
+		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({
+			_float3{0.f, 0.f ,0.f},
+			_float3{0.f, 0.f ,0.f},
+			_float3{0.f, 0.f ,0.f},
+			1.f,
+			_float3{0.322f, 0.357f, 0.463f},
+			_float3{0.f, 0.f, 0.f},
+			0.91 });
 		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 			{
-				_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
-				0.02f
+				_float4{ 0.031f, 0.005f, 0.011f, 1.0f },
+				0.03f
 			});
 
-		m_pOwnerLevel->Get_ZeroCloud()->Use_Cloud(false);
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
@@ -104,6 +110,7 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 			_float3{0.322f, 0.357f, 0.463f},
 			_float3{0.f, 0.f, 0.f},
 			0.91 });
+		m_pOwnerLevel->Get_ZeroCloud()->Set_Moon(true);
 		m_pOwnerLevel->Get_ZeroShadow()->Set_ShadowPos({ -266.f,117.f,50.f });
 		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 			{
@@ -176,6 +183,7 @@ void CZeroStage_Boss::Outro()
 void CZeroStage_Boss::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
+		CamDirector()->ExitBoss();
 		LevelManager()->Request_ChangeLevel("Scott_Level", true);
 	}
 }

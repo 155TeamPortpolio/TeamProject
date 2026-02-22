@@ -36,6 +36,10 @@ public:
 public:
 	static CMeleeJaeger_Attack1* Create() { return new CMeleeJaeger_Attack1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CMeleeJaeger* pOwner);
+
 };
 
 class CMeleeJaeger_Attack2 : public IBaseState<CMeleeJaeger>
@@ -48,6 +52,10 @@ public:
 public:
 	static CMeleeJaeger_Attack2* Create() { return new CMeleeJaeger_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CMeleeJaeger* pOwner);
+
 };
 
 class CMeleeJaeger_Attack3 : public IBaseState<CMeleeJaeger>
@@ -60,6 +68,10 @@ public:
 public:
 	static CMeleeJaeger_Attack3* Create() { return new CMeleeJaeger_Attack3(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CMeleeJaeger* pOwner);
+
 };
 
 class CMeleeJaeger_Attack4: public IBaseState<CMeleeJaeger>
@@ -72,6 +84,10 @@ public:
 public:
 	static CMeleeJaeger_Attack4* Create() { return new CMeleeJaeger_Attack4(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CMeleeJaeger* pOwner);
+
 };
 
 class CMeleeJaeger_Attack5 : public IBaseState<CMeleeJaeger>
@@ -84,6 +100,10 @@ public:
 public:
 	static CMeleeJaeger_Attack5* Create() { return new CMeleeJaeger_Attack5(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CMeleeJaeger* pOwner);
+
 };
 
 

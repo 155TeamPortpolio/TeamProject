@@ -15,6 +15,7 @@
 #include "UI_Party.h"
 #include "UI_Switch.h"
 #include "UI_TutorialInfo.h"
+#include "UltimateBG.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
@@ -67,6 +68,23 @@ void CUIDirector::Create_Fade()
 
 	UIManager()->Add_UIObject(pFade, G_GlobalLevelKey);
 	m_hFade = pFade->Get_Handle();
+}
+
+void CUIDirector::Create_Ultimate()
+{
+	ResourceManager()->Add_ResourcePath("UltimateBg_Miyabi.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_Miyabi.png");
+	ResourceManager()->Add_ResourcePath("UltimateBg_JaneDoe.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_JaneDoe.png");
+	ResourceManager()->Add_ResourcePath("UltimateBg_Corin.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_Corin.png");
+
+	if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ultimate", CUltimateBG::Create())))
+		return;
+
+	auto pUltimate = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Ultimate" }).Build("Ultimate");
+	if (!pUltimate)
+		return;
+	ObjectManager()->Add_Object(pUltimate, { G_GlobalLevelKey, "UI_Layer" });
+
+	m_pUltimate = dynamic_cast<CUltimateBG*>(pUltimate);
 }
 
 void CUIDirector::Show_SceneFrame()
@@ -137,6 +155,11 @@ void CUIDirector::Hide_Switch()
 {
 	UI_DeActive("switch");
 	UI_DeActive("switchRT");
+}
+
+void CUIDirector::Show_Ultimate(CHARACTER eCharacter, _float duration)
+{
+	m_pUltimate->Show_Ultimate(eCharacter, duration);
 }
 
 void CUIDirector::Show_Lottery()
@@ -225,6 +248,20 @@ void CUIDirector::Show_Wipeout()
 	UI_Active("wipeoutRT");
 }
 
+void CUIDirector::Show_WipeoutOverlay()
+{
+	UI_Active("wipeout_overlay");
+}
+
+_bool CUIDirector::Is_WipeoutOverlayFinished()
+{
+	auto handle = Find_Handle("wipeout_overlay");
+	if (!handle)
+		return true;
+
+	return handle->Get()->Is_AnimFinished();
+}
+
 void CUIDirector::Initialize()
 {
 	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록
@@ -235,6 +272,7 @@ void CUIDirector::Initialize()
 
 	// 페이드인 글로벌 레벨에 생성
 	Create_Fade();
+	Create_Ultimate();
 }
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)

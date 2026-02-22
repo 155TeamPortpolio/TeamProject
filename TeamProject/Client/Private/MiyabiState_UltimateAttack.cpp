@@ -6,6 +6,7 @@
 #include "Miyabi.h"
 
 #include "CamDirector.h"
+#include "UIDirector.h"
 #include "AudioSource.h"
 #include "ObjectContainer.h"
 
@@ -67,6 +68,7 @@ void CMiyabiState_UltimateAttack::Exit(CMiyabi* pOwner)
 void CMiyabiState_UltimateAttack_Start::Enter(CMiyabi* pOwner)
 {
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
+    UIDirector()->Show_Ultimate(CHARACTER::Miyabi, 2.f);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         .Apply();
     pOwner->Get_Component<CAudioSource>()->Sequence("Ultimate")

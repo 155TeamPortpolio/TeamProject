@@ -30,6 +30,8 @@
 #include "Claymore_Chase.h"
 #include "Claymore_Parried.h"
 
+#include "EffectContainer.h"
+
 CClaymore::CClaymore()
 	: CEnemyNormal()
 {
@@ -81,6 +83,9 @@ HRESULT CClaymore::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 	
 	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey() , "../Bin/Resources/Zero/Enemy/Claymore/Sound");
@@ -380,7 +385,8 @@ void CClaymore::Parried()
 	__super::Parried();
 
 	m_pStateMachine->Change_State("Parried");
-	SetOnAttack(false, ATTACK_SIDE::NONE); 
+	SetOnAttack(false, ATTACK_SIDE::NONE); 	
+	SetBattleColliderObject("Weapon", BATTLE_COLTYPE::ATTACK, false);
 }
 
 HRESULT CClaymore::Ready_Children(INIT_DESC* pArg)
@@ -565,6 +571,22 @@ HRESULT CClaymore::Initialize_Transitions()
 		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Groggy");
 	m_pStateMachine->Register_Transition("Idle", "Hit",
 		CStateMachine<CClaymore>::CONDITION_TRIGGER, "Idle_To_Hit");
+
+	return S_OK;
+}
+
+HRESULT CClaymore::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("claymore_slash0.json")
+			.Build("Claymore_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
 
 	return S_OK;
 }
