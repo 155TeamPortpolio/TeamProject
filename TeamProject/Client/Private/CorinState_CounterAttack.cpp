@@ -54,7 +54,7 @@ void CCorinState_CounterAttack::Update(CCorin* pOwner, _float dt)
 				.Type(HIT_TYPE::INTERVAL)
 				.Damage(pOwner->Get_AttackPower() * 0.271f * Helper::Get_Random_Float(1.f, 1.5f)
 					, m_eType)
-				.Interval(0.05f)
+				.Interval(0.08f)
 				.Charge(5.f, 50.f)
 			);
 		}
