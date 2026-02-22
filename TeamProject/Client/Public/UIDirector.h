@@ -23,6 +23,7 @@ private:
 
 public:
 	HRESULT Register(class CUI_Object* pObj);
+	HRESULT Register_EnemyHUD(class CUI_Object* pObj);
 
 public:
 	//==================== Common ===============
@@ -44,6 +45,11 @@ public:
 	void Show_HUD(HUD hud, _bool isFade = true);
 	/* HUD¸¦ È­¸é¿¡¼­ ¼û±è */
 	void Hide_HUD(HUD hud);
+
+	/* Enemy, Boss HUD¸¦ È­¸é¿¡ Ç¥½Ã */
+	void Show_EnemyHUD();
+	/* Enemy, Boss HUD¸¦ È­¸é¿¡¼­ ¼û±è */
+	void Hide_EnemyHUD();
 
 	//==================== Scott ===============
 	void Show_Party(vector<CHARACTER> characters);
@@ -113,6 +119,8 @@ private:
 	unordered_map<string, UI_HANDLE>	m_handles = {};
 	UI_HANDLE		m_hFade = {};
 	class CUltimateBG*	m_pUltimate = nullptr;
+
+	vector<UI_HANDLE>	m_hEnemyHUDs;
 
 public:
 	virtual void Free() override;

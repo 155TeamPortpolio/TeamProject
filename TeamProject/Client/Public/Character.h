@@ -233,6 +233,9 @@ public: // 이펙트
     void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
     void Stop_Effect(const string& effectTag);
 
+public:
+    void Stop_ComboSound();
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);

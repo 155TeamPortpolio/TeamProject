@@ -34,6 +34,16 @@ HRESULT CUIDirector::Register(CUI_Object* pObj)
 	return S_OK;
 }
 
+HRESULT CUIDirector::Register_EnemyHUD(CUI_Object* pObj)
+{
+	if (!pObj)
+		return E_FAIL;
+
+	m_hEnemyHUDs.push_back(pObj->Get_Handle());
+
+	return S_OK;
+}
+
 void CUIDirector::FadeIn_Screen(_float fDuration, function<void()> onFinished)
 {
 	CUI_ScreenFade::FADE_DESC desc = {};
@@ -115,6 +125,28 @@ void CUIDirector::Show_HUD(HUD hud, _bool isFade)
 void CUIDirector::Hide_HUD(HUD hud)
 {
 	Hide_HUD(Get_HUDName(hud));
+}
+
+void CUIDirector::Show_EnemyHUD()
+{
+	for (auto& handle : m_hEnemyHUDs)
+	{
+		if (!handle.isValid())
+			continue;
+
+		handle.Get()->UI_Active();
+	}
+}
+
+void CUIDirector::Hide_EnemyHUD()
+{
+	for (auto& handle : m_hEnemyHUDs)
+	{
+		if (!handle.isValid())
+			continue;
+
+		handle.Get()->UI_DeActive();
+	}
 }
 
 void CUIDirector::Show_Party(vector<CHARACTER> characters)
@@ -277,7 +309,9 @@ void CUIDirector::Initialize()
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)
 {
+	// 핸들 정리
 	m_handles.clear();
+	m_hEnemyHUDs.clear();
 
 	m_levelKey = levelKey;
 	// 레벨에 프로토타입 등록
@@ -429,4 +463,5 @@ void CUIDirector::Free()
 	__super::Free();
 
 	m_handles.clear();
+	m_hEnemyHUDs.clear();
 }

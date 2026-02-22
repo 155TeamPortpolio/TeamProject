@@ -86,7 +86,7 @@ HRESULT CStrikeJaeger::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	m_isUseGroggyRimLight = true;
 
-	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/StrikeJaeger/Sound");
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/StrikeJaeger/Sound");
 	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 	return S_OK;
