@@ -424,6 +424,7 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 
 	// UI Mgr에 등록
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
+	UIDirector()->Register_EnemyHUD(pEnemyStatus);	// UIDirector에 핸들 캐싱
 
 	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
 }
@@ -442,6 +443,7 @@ void CEnemy::Create_UIBossHUD()
 
 	// UI Mgr에 등록
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
+	UIDirector()->Register_EnemyHUD(pBossHUD);	// UIDirector에 핸들 캐싱
 
 	m_hUIEnemyStatus = pBossHUD->Get_Handle();
 }
