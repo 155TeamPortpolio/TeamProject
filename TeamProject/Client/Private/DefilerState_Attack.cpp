@@ -25,7 +25,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 	blackBoard.patternTransition.clear();
 
-	Type = 9;
+	Type = 14;
 
 	switch (Type)
 	{
@@ -130,6 +130,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	case 14:
 	{
 		// 제현 전용
+		blackBoard.patternTransition.push_back({"RePos_Opposite", 0.f, 1.f});
 		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});//미야즈마
 		break;
 	}

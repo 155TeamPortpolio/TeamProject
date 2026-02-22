@@ -98,7 +98,7 @@ void CMiasmaBlade::Update(_float dt)
 		_float4 pos =  Get_Position();
 		_vector3 ownPos = { pos.x,pos.y,pos.z};
 
-		if ((target_Pos - ownPos).Length() < 3.f){
+		if ((target_Pos - ownPos).Length() < 4.f){
 			m_pOwner->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
 			BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, Get_Handle());
 			ObjectManager()->Remove_Object(this);
@@ -131,8 +131,7 @@ void CMiasmaBlade::Parried()
 		isParried = true;
 		_vector3 pos = m_pOwner->Get_BipedPos();
 		m_pTransform->LookAt(_vector3(pos));
-		Get_Component<CCollider>()->Set_CollisionMask(ENUM(COLLISION_GROUP::MONSTER));
-		Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::PLAYER_ATTACK);
+		Get_Component<CCollider>()->Set_CompActive(false);
 		m_vVelocity = {0,0,0};
 		m_ElapsedTime = 1;
 		m_vTargetVelocity = m_pTransform->Dir(STATE::LOOK) * m_fMoveSpeed;
