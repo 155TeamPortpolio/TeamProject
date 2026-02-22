@@ -6,6 +6,13 @@ NS_BEGIN(Client)
 class CBangBoo :
     public CNpc
 {
+public:
+    typedef struct tagBangBooDesc : public Engine::GAMEOBJECT_DESC {
+        string BangBooTag{};
+        string Name{};
+        string Speech{};
+    }BANGBOO_DESC;
+
 private:
     CBangBoo();
     CBangBoo(const CBangBoo& rhs);
