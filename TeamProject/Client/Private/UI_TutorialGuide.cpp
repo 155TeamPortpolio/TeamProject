@@ -264,6 +264,7 @@ void CUI_TutorialGuide::Change_State(STATE eState)
         m_isFaded = false;
         m_isPopupComplete = false;
         BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::CLEAR);
+        Get_Component<CAudioSource>()->Slot("UI_BlingPop.wav").Play();
         break;
     case STATE::INACTIVE:
         AdvanceTutorial(); 
