@@ -251,6 +251,8 @@ void COrbitCam::ClearLockOn()
 
     Lock_Exit();
     AutoYaw_OnInput();
+
+    CamDirector()->RequestSequence("ReturnPreset/Back");
 }
 
 void COrbitCam::Lock_ReenterBlend(_float blendInSec)

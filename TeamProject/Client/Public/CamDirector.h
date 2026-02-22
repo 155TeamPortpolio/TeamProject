@@ -89,8 +89,6 @@ public:
     // Switch
     void          EnterSwitch() { m_switch.Begin(); }
     void          EndSwitch() { m_switch.Switch(); }
-    auto          GetSwitch() const { return m_switch; }
-
     // Portal
     void          EnterPortal(OBJECT_HANDLE portalHandle) { m_portal.Begin(portalHandle); }
     void          ExitPortal() { m_portal.End(); }
@@ -100,6 +98,7 @@ public:
 private:
     string        ResolveSeqKey(CamSeqType type) const;
     void          UpdatePlayer();
+    void          UpdateLevel();
       
     _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
     _uint         RequestSequence(const string& key, const CamSeqReqDesc& req);
@@ -129,6 +128,9 @@ private:
     string                 m_lastEndedKey{};
     _bool                  m_seqInputLocked = false;
     _bool                  m_dialogueUnlockPending = false;
+
+    string                 m_lastLevelKey{};
+    _bool                  m_levelInit = false;
 
     inline static const string kEmpty{};
 }; 

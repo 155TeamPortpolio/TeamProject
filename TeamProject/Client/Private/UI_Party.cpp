@@ -271,6 +271,7 @@ void CUI_Party::Create_EnterButton()
         if (auto pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))))
         {
             pPlayer->Unlock_Input();
+            CamDirector()->GetOrbitCam()->Unlock_Input();
         }
         });
     Get_Component<CObjectContainer>()->Add_Child(pObj);

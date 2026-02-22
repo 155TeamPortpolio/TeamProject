@@ -112,7 +112,7 @@ namespace
             return req;
         }
 
-        if (StartsWith(key, "Parry"))
+        if (StartsWith(key, "Parry/"))
         {
             req.blendInSec  = 1.3f;
             req.blendOutSec = 0.f;
@@ -122,9 +122,19 @@ namespace
             return req;
         }
 
-        if (StartsWith(key, "Switch"))
+        if (StartsWith(key, "Switch/"))
         {
             req.blendInSec  = 1.5f;
+            req.blendOutSec = 0.f;
+            req.resetTime   = true;
+            req.returnMode  = CamReturnMode::SnapToEnd;
+            req.blendInEase = EaseType::InOutSine;
+            return req;
+        }
+
+        if (StartsWith(key, "ReturnPreset/"))
+        {
+            req.blendInSec  = 0.1f;
             req.blendOutSec = 0.f;
             req.resetTime   = true;
             req.returnMode  = CamReturnMode::SnapToEnd;

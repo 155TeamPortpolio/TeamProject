@@ -65,6 +65,7 @@ public:
 public:
     void     SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) override;
     void     SetFov(_float d0, _float s0, EaseType e0, _float d1, _float s1, EaseType e1);
+    void     SetFinalFov(_float finalFovDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear, _bool clearZoom = true) override;
 
     _float   GetFov() const override { return m_outputPose.lens.fov; }
 
@@ -181,6 +182,7 @@ private:
     vector<OverrideEntry> m_overrides{};
     _uint                 m_nextHandle = 1u;
 
+
 private:
     _bool         m_isBlending = false;
     _float        m_blendTime{};
@@ -201,6 +203,7 @@ private:
     _float   m_fovOffsetFrom = 0.f;
     _float   m_fovOffsetTo = 0.f;
     EaseType m_fovOffsetEaseType = EaseType::Linear;
+    _float   m_zoomOffsetCur = 0.f;
 
     vector<FovStep> m_fovQueue{};
     _uint           m_fovQueueHead = 0u;
