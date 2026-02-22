@@ -4,6 +4,7 @@
 
 NS_BEGIN(Engine)
 class CTextSlot;
+class CSprite2D;
 NS_END
 
 NS_BEGIN(Client)
@@ -28,8 +29,8 @@ public:
 	}ENEMYSTATUS_DESC;
 
 private:
-	enum class CHILD { LOCKON, GAUGE_HP_BACK, GAUGE_HP_FRONT, GAUGE_GROGGY, TEXT_GROGGY, END };
-	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "lockOn", "hpBack", "hpFront", "groggy", "groggyText" };
+	enum class CHILD { LOCKON, GAUGE_HP_BACK, GAUGE_HP_FRONT, GAUGE_GROGGY, TEXT_GROGGY, GROUP2, ATTRIBUTE_GAUGE_BG, ATTRIBUTE_GAUGE, ATTRIBUTE_ICON_BG, END };
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "lockOn", "hpBack", "hpFront", "groggy", "groggyText", "group2", "attributeGaugeBg", "attributeGauge", "attributeIconBg" };
 
 private:
 	CUI_EnemyStatus() {}
@@ -39,16 +40,19 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
-	virtual void	Awake()							 override {}
+	virtual void	Awake()							 override;
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	CUI_Object*				m_pChildren[ENUM(CHILD::END)];
+	CUI_Object*				m_pChildren[ENUM(CHILD::END)] = {};
 	class CGaugeUI*			m_pGauges[ENUM(CHILD::END)] = {};
 	class CTextSlot*		m_pGroggyText = { nullptr };
+	class CSprite2D*		m_pIcon = {};
+
+	CHARACTER				m_eLastHitCharacter = { CHARACTER::END };
 
 	const _float4x4*		m_pParentWorld = { nullptr };
 	const _float4x4*		m_pBoneLocal = { nullptr };
@@ -67,7 +71,6 @@ private:
 	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
 private:
-	void Load_Json(const string& resourceKey);
 	void Cache_Children();
 
 	void Set_TargetLock(TARGET_LOCK_DESC& desc);
@@ -76,6 +79,10 @@ private:
 
 	void Update_HPBackGauge(_float fRatio, _float dt);
 	void Apply_Blink(_float fRatio, _float dt);
+
+	void Update_Anormaly();
+	string Get_IconFilePath(CHARACTER eCharacter);
+	void Apply_CharacterColor(CHARACTER eCharacter);
 
 	void Set_ChildAlive(CHILD child, _bool isAlive);
 	void Set_ChildColor(CHILD child, _float4 vColor);
