@@ -1,5 +1,9 @@
 #include "pch.h"
 #include "JaneDoeState_Hit.h"
+
+#include "GameInstance.h"
+#include "BattleSystem.h"
+
 #include "JaneDoe.h"
 
 CJaneDoeState_Hit* CJaneDoeState_Hit::Create()
@@ -87,6 +91,7 @@ void CJaneDoeState_Hit::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Hit::Exit(CJaneDoe* pOwner)
 {
+	BattleSystem()->LockPlayer(false);
 	pOwner->Set_ResetMove(true);
 	pOwner->Unlock_Move();
 	__super::Exit(pOwner);
@@ -110,6 +115,13 @@ void CJaneDoe_HitHard::Enter(CJaneDoe* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.6f)
 		.Apply();
+	BattleSystem()->LockPlayer(true);
+}
+
+void CJaneDoe_HitHard::Update(CJaneDoe* pOwner, _float dt)
+{
+	if (IsCrossAnimProgress(0.2f))
+		BattleSystem()->LockPlayer(false);
 }
 
 void CJaneDoe_HitKnockOut::Enter(CJaneDoe* pOwner)
@@ -120,4 +132,11 @@ void CJaneDoe_HitKnockOut::Enter(CJaneDoe* pOwner)
 		.Speed(1.5f)
 		.EndAt(0.7f)
 		.Apply();
+	BattleSystem()->LockPlayer(true);
+}
+
+void CJaneDoe_HitKnockOut::Update(CJaneDoe* pOwner, _float dt)
+{
+	if (IsCrossAnimProgress(0.2f))
+		BattleSystem()->LockPlayer(false);
 }

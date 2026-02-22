@@ -45,7 +45,7 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
                 .Type(HIT_TYPE::INTERVAL)
                 .Damage(pOwner->Get_AttackPower() * 2.225f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::SWITCH)
-                .Interval(0.07f)
+                .Interval(0.14f)
             );
         }
         else if (Event.Tag == "SawEnd")

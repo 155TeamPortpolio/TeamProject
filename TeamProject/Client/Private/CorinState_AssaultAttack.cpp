@@ -60,7 +60,7 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 				.Type(HIT_TYPE::INTERVAL)
 				.Damage(pOwner->Get_AttackPower() * 0.684f * Helper::Get_Random_Float(1.f,1.5f)
 					, DAMAGE_TYPE::HARD)
-				.Interval(0.05f)
+				.Interval(0.08f)
 			);
 		}
 		else if (Event.Tag == "SawIntervalHard")
@@ -70,7 +70,7 @@ void CCorinState_AssaultAttack::Update(CCorin* pOwner, _float dt)
 				.Type(HIT_TYPE::INTERVAL)
 				.Damage(pOwner->Get_AttackPower() * 0.684f * Helper::Get_Random_Float(1.f, 1.5f)
 					, DAMAGE_TYPE::HARD)
-				.Interval(0.1f)
+				.Interval(0.12f)
 			);
 		}
 		else if (Event.Tag == "SawEnd")
