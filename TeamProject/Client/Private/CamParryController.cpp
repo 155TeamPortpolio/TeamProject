@@ -531,9 +531,8 @@ CamParryController::ShotGoal CamParryController::BuildImpactShot(_int sideSign, 
     }
     else
     {
-        _float punch = tune.impact.punchDistDelta;
-        const _float distEndPunch = max(kMinParryDist, distStart - punch);
-        distEnd = ClampParryDist(distEndPunch);
+        distEnd = ClampParryDist(tune.impact.finalDist);
+        if (distEnd > distStart) distEnd = distStart;
     }
 
     g.dist = Math::Lerp(distStart, distEnd, close01 * chainImpactScale);

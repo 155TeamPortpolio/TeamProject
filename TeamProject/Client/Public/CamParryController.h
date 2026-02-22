@@ -57,7 +57,7 @@ public:
 
         struct Impact
         {
-            _float punchDistDelta = 1.3f;
+            _float finalDist = 1.55f;
             _float chainFinalDist = 3.f;
 
             _float rollMaxDeg = 30.f;
@@ -83,7 +83,7 @@ public:
             _float fovBiasDeg = 4.f;
 
             _float impactStartYawExtraDeg = 30.f;
-            _float chainImpactStartYawExtraDeg = 30.f;
+            _float chainImpactStartYawExtraDeg = 25.f;
 
             _float chainImpactScale = 0.70f;
             _float chainRollScale = 0.55f;
