@@ -81,6 +81,9 @@ HRESULT CStrikeJaeger::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
 	return S_OK;
 }
 

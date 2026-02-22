@@ -212,8 +212,8 @@ void CStrikeJaeger_Attack5::Update_Effects(CStrikeJaeger* pOwner)
 	if (IsCrossAnimProgress(0.17f))
 		pOwner->Play_Effect("Strike_Slash0_0", _vector3(0.f, 1.f, 0.3f), _quaternion(0.66f, -0.28f, -0.25f, 0.65f));
 	if (IsCrossAnimProgress(0.25f))
-		pOwner->Play_Effect("Strike_Slash0_1", _vector3(0.f, 1.f, 0.3f), _quaternion(-0.12f, -0.7f, 0.69f, -0.14f));
-	if (IsCrossAnimProgress(0.17f)) 
+		pOwner->Play_Effect("Strike_Slash0_1", _vector3(0.f, 1.f, 0.3f), _quaternion(-0.39f, 0.56f, 0.69f, 0.27f));
+	if (IsCrossAnimProgress(0.49f)) 
 	{
 		pOwner->Play_Effect("Strike_Slash0_2", _vector3(-0.3f, 1.1f, 0.3f), _quaternion(-0.25f, 0.67f, 0.65f, -0.27f));
 		pOwner->Play_Effect("Strike_Slash0_3", _vector3(0.3f, 1.1f, 0.3f), _quaternion(-0.08f, 0.72f, 0.5f, 0.47f));
