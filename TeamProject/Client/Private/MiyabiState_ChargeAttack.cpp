@@ -251,6 +251,7 @@ void CMiyabiState_Charge_Attack01::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 4.547f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
         else
@@ -259,6 +260,7 @@ void CMiyabiState_Charge_Attack01::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 8.581f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::NORMAL)
+                .Charge()
             );
         }
     }
@@ -334,6 +336,7 @@ void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.07055f * Helper::Get_Random_Float(1.f, 1.5f)
                     , eDamageType)
+                .Charge()
             );
 
         }

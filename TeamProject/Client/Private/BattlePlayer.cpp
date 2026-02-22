@@ -1097,7 +1097,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     case CHARACTER::Corin:
     {
         characterCCT.fHeight = 0.75f;
-        characterCCT.fRadius = 0.27f;
+        characterCCT.fRadius = 0.35f;
         auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)

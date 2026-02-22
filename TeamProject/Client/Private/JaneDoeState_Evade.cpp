@@ -53,7 +53,7 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    if (m_fAnimProgress < 0.12f && m_fAnimProgress >= 0.02f)
+    if (m_fAnimProgress < 0.15f && m_fAnimProgress >= 0.01f)
     {  
         if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
