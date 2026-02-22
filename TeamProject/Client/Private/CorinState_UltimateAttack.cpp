@@ -96,7 +96,7 @@ void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
 {
     //BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
-    //UIDirector()->Show_Ultimate(CHARACTER::Corin, 2.f);
+    UIDirector()->Show_Ultimate(CHARACTER::Corin, 2.f);
     BattleSystem()->StartUltimate(2.f);
     
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")

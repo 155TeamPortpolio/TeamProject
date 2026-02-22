@@ -947,7 +947,7 @@ void CCharacter::Update_Decibel(_float dt)
         m_fPrevDecibel = MAX_DECIBEL;
         return;
     }
-    m_fCurrentDecibel += dt * 50.f;
+    m_fCurrentDecibel += dt * 10.f;
 
     if (InputDevice()->Key_Tap('U'))
         m_fCurrentDecibel = MAX_DECIBEL;
