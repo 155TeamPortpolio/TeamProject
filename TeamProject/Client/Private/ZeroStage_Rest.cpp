@@ -102,6 +102,7 @@ void CZeroStage_Rest::Active_Portal()
 		if (zeroPortal) {
 			zeroPortal->Set_Alive(true);
 			zeroPortal->SetChoiceIndex(this, i);
+			zeroPortal->Get_Component<CCollider>()->Set_CompActive(true);
 		}
 	}
 }

@@ -8,10 +8,10 @@
 #include "GameInstance.h"
 #include "Material.h"
 #include "Texture.h"
-
+enum class FOUR_DIR { FRONT, LEFT, RIGHT, BACK };
 NS_BEGIN(Client)
 /*실제 위치 계산*/
-enum class FOUR_DIR { FRONT, LEFT, RIGHT, BACK };
+
 /*상태간 타겟 추적 모드*/
 enum class TraceFlag : _uint
 {

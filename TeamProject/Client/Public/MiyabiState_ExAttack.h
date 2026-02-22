@@ -58,7 +58,7 @@ private:
     _vector3 m_vLook = {};
     _int     m_iCount = {0};
     _float   m_fProgress = { 0.2f };
-    _float   m_fInterval = { 0.1f };
+    _float   m_fInterval = { 0.06f };
     _uint    m_iMask = { 0xFFFFFFFF }; // 충돌마스크 복구용
     DAMAGE_TYPE m_eType = DAMAGE_TYPE::HARD;
 
