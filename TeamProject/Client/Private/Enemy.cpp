@@ -338,7 +338,7 @@ void CEnemy::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER chara
 	BattleSystem()->HitVFX(eDamageType);
 	Get_Component<CAudioSource>()->
 		Slot(eDamageType == DAMAGE_TYPE::NORMAL ? "EnemyHitLight.wav" : "EnemyHitHeavy.wav")
-		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.4f : 0.5f).Play();
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.2f : 0.25f).Play();
 
 	if (m_tStatus.isGroggy)
 		fTakeDamage *= 1.5f;

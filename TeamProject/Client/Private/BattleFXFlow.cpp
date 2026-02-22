@@ -470,9 +470,10 @@ void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 			m_BattleVFX.isRunning = false;
 		});
 
-	Start([]() {
+	Start([this]() {
 		UIDirector()->Hide_Switch();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+		Cancle_Switch();
 		});
 }
 

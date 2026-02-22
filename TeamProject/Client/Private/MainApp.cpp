@@ -138,6 +138,8 @@ HRESULT CMainApp::Initialize()
 
 	m_cursorController.Initialize();
 
+	ShowCursor(false);
+
 	return S_OK;
 }
 

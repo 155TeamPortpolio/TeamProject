@@ -35,6 +35,10 @@ public: // 행동 이벤트
 
 public: // 편의 함수
     void Take_Explode(DAMAGE_TYPE eType);
+    void Control_Voice(const string& key);
+    void Control_SFX(const string& key);
+    void Control_VoiceSequence(const string& seqKey);
+    void Control_FadeOut(const string& key);
 
 private: // 초기화
     HRESULT Initialize_StateMachine();

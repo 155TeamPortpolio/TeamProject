@@ -241,7 +241,6 @@ void CZero_Level::Ready_Stage()
 		Normal_Progress
 	);
 
-
 	_uint Boss_Process{};
 	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
 		Boss_Process = 1; //Start BossMap Index;

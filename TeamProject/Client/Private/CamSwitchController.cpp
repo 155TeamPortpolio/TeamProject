@@ -535,6 +535,7 @@ _float CamSwitchController::CalcBehindYawDeg(OBJECT_HANDLE target) const
 Vector3 CamSwitchController::CalcCenterPivot(OBJECT_HANDLE h) const
 {
     auto obj = ObjectManager()->Request_Object(h);
+    if (!obj) return Vector3{};
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector3 foot = cc->Get_FootPosition();

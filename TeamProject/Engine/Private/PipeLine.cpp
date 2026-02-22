@@ -460,7 +460,7 @@ _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 	const _uint offsetCount = 1;
 
 	if (m_ObjectOffset + offsetCount > g_iMaxTransform) {
-		MSG_BOX("To Many Transform");
+		//MSG_BOX("To Many Transform");
 		return UINT_MAX; // ÃÊ°ú
 	}
 

@@ -1117,7 +1117,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
         (ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK));
     characterCCT.bAutoFit = false;
     characterCCT.fHeight = 1.13;
-    characterCCT.fRadius = 0.3f;
+    characterCCT.fRadius = 0.3f * 1.5f;
     characterCCT.vPos = { 0.f, 1.5f, 0.f };
     //characterCCT.fStepOffset = 0.001f;
     string nowLevelKey = LevelManager()->Get_NowLevelKey();
@@ -1135,7 +1135,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     case CHARACTER::Corin:
     {
         characterCCT.fHeight = 0.75f;
-        characterCCT.fRadius = 0.35f;
+        characterCCT.fRadius = 0.35f * 1.5f;
         auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)
@@ -1146,7 +1146,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
     case CHARACTER::Miyabi:
     {
         characterCCT.fHeight = 1.15f;
-        characterCCT.fRadius = 0.26f;
+        characterCCT.fRadius = 0.26f * 1.5f;
         auto Miyabi = Builder::Create_Object({ G_GlobalLevelKey , "Proto_GameObject_Miyabi" })
             .Position(_float3(3.f, 0.f, 0.f))
             .CharacterController(characterCCT)

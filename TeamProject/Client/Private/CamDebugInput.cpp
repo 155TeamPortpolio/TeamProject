@@ -43,19 +43,9 @@ void CamDebugInput::UpdateInput(_float dt)
 
 void CamDebugInput::DebugInput(_float dt)
 {
-    //CMonitorGate gate;
-    //if (!gate.Pass()) return;
-
     auto& cam = *CamDirector();
     auto& mgr = *CameraManager();
 
     if (InputDevice()->Key_Tap(VK_F3))
-    {
-        auto gangta = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_Gangta"});
-    }
-
-    if (InputDevice()->Key_Tap(VK_F4))
-    {
-       // cam.ExitBoss();
-    }
+        CameraManager()->SetFinalFov(60.f, 0.f, EaseType::Linear);
 }

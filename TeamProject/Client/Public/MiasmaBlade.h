@@ -8,7 +8,7 @@ public:
     struct BladeDesc : GAMEOBJECT_DESC {
         _uint iCount = {};
         _float3 vTargetPos = {};
-        class CDefiler* pOwner = { nullptr };
+        class CDefiler* pOwner = {nullptr};
     };
 
 private:
@@ -27,7 +27,6 @@ public:
 
 public:
     virtual void Parried() override;
-
 private:
     _bool   Try_Hit(CGameObject* pTarget);
     void Initialize_Effects(_uint count);

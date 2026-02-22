@@ -50,9 +50,8 @@ void CCorinState_SwitchIn::Enter(CCorin* pOwner)
     m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Int("ExitMode", 0);
 
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Sequence("Switch_Voice").Attribute3D(true).Loop(false).PlayNext();
-    sound.Slot("Corin_Switch_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.5f).Play();
+    pOwner->Control_VoiceSequence("Switch_Voice");
+    pOwner->Control_SFX("Corin_Switch_01_SFX.wav");
 
     __super::Enter(pOwner);
 }
@@ -110,8 +109,7 @@ void CCorinState_SwitchIn::Exit(CCorin* pOwner)
     pOwner->Pop_Invincible();
     pOwner->Reset_Switch();
 
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Slot("Corin_Switch_01_SFX.wav").FadeOut(0.2f);
+    pOwner->Control_FadeOut("Corin_Switch_01_SFX.wav");
 
     __super::Exit(pOwner);
 }

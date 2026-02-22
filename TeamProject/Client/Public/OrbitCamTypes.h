@@ -5,6 +5,8 @@ class CGameObject; class CCharacterController;
 NS_END
 
 NS_BEGIN(Client)
+enum class OrbitHitType { None, Common, Ground};
+
 struct OrbitLockState
 {
     OBJECT_HANDLE handle{};
@@ -37,9 +39,11 @@ struct OrbitAutoYaw
 };
 struct OrbitCollideEval
 {
-    _float allowedDist = 0.f;
-    _float goalDist    = 0.f;
-    _bool  hit         = false;
+    _float       allowedDist = 0.f;
+    _float       rawAllowedDist = 0.f;
+    _float       goalDist = 0.f;
+    _bool        hit = false;
+    OrbitHitType hitType = OrbitHitType::None;
 
     _float yawDeltaCapDeg = 0.f;
     _float pitchDeltaCapDeg = 0.f;
@@ -80,35 +84,38 @@ struct OrbitInput
 struct OrbitProfile
 {
     _float distMin = 0.7f;
-    _float distMax = 5.f;
+    _float distMax = 4.5f;
 
     _float pitchLimitMinDeg = -40.f;
     _float pitchLimitMaxDeg = 50.f;
 
-    _float rotSmooth   = 14.f;
-    _float distSmooth  = 12.f;
+    _float rotSmooth = 14.f;
+    _float distSmooth = 12.f;
     _float pivotSmooth = 12.f;
 
-    _float offsetY     = 0.f;
+    _float offsetY = 0.f;
 
-    _float startDist     = 4.8f;
+    _float startDist = 4.8f;
     _float startPitchDeg = -20.f;
-    _float startHeight   = 0.85f;
+    _float startHeight = 0.85f;
 
-    _bool  autoYaw      = true;
+    _bool  autoYaw = true;
     _float autoYawSpeed = 0.4f;
     _float autoYawDelay = 0.6f;
 
-    _float zoomInCollide  = 12.f;
+    _float zoomInCollide = 12.f;
     _float zoomOutCollide = 6.f;
 
+    _float commonSoftSlack = 0.06f;
+    _float commonZoomInMul = 0.75f;
+
     _float switchBlendSec = 1.f;
-    EaseType switchEase   = EaseType::OutCubic;
+    EaseType switchEase = EaseType::OutCubic;
 
     _float lockYawSpeed = 22.f;
 
     _float lockFocusNear = 0.35f;
-    _float lockFocusFar  = 0.70f;
+    _float lockFocusFar = 0.70f;
     _float lockFocusDist = 2.5f;
 
     _bool  lockAutoZoom = true;
@@ -124,15 +131,36 @@ struct OrbitProfile
 
     _float yawHitDeltaCapDeg = 200.f;
     _float pitchHitDeltaCapDeg = 180.f;
+
+    _bool  hardGroundClamp = true;
+    _float hardGroundProbeUp = 1.25f;
+    _float hardGroundProbeDown = 4.0f;
+    _float hardGroundPadding = 0.03f;
+    _float hardGroundRadiusScale = 0.95f;
+};
+struct OrbitLockEnterPreset
+{
+    _bool   active = false;
+
+    Vector2 rotGoalDeg{};
+    Vector2 rotCurDeg{};
+
+    _float  distWanted = 0.f;
+    _float  distGoal = 0.f;
+    _float  distCur = 0.f;
+
+    Vector3 pivotInternalOffset{};
+    Vector3 pivotExternalOffset{};
 };
 struct OrbitSnapshot
 {
-    OrbitPose       pose{};
-    OrbitLockState  lock{};
-    OrbitBlendState lockBlend{};
-    OrbitAutoYaw    autoYaw{};
-    OrbitSwitch     sw{};
-    OBJECT_HANDLE   target{};
+    OrbitPose            pose{};
+    OrbitLockState       lock{};
+    OrbitBlendState      lockBlend{};
+    OrbitAutoYaw         autoYaw{};
+    OrbitSwitch          sw{};
+    OrbitLockEnterPreset lockEnterPreset{};
+    OBJECT_HANDLE        target{};
 };
 struct OrbitPivotStabilizer
 {
@@ -165,15 +193,6 @@ struct OrbitReturnPreset
     Vector3 camPosFrom{};
     Vector3 camPosTo{};
 };
-struct OrbitLockSuspendState
-{
-    _bool   active = false;
-    _float  timer = 0.f;
-    _float  cooldown = 0.f;
-
-    _bool   hasPrevTargetPivot = false;
-    Vector3 prevTargetPivot{};
-};
 struct OrbitLockAirStabState
 {
     _bool   overheadActive = false;
@@ -183,6 +202,19 @@ struct OrbitLockAirStabState
 
     _bool   hasFilteredTargetPivot = false;
     Vector3 filteredTargetPivot = Vector3::Zero;
+};
+struct ExternalHandoffRuntime
+{
+    _bool  active = false;
+
+    _float elapsed = 0.f;
+    _float pivotRecoverSec = 0.f;
+
+    _float collisionGraceRemain = 0.f;
+    _float lockDistGraceRemain = 0.f;
+
+    Vector3 pivotInternalFrom{};
+    Vector3 pivotInternalTo{};
 };
 
 NS_END

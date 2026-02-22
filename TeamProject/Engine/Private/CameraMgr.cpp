@@ -223,8 +223,8 @@ _float CCameraMgr::EvalFovOffset(_float dt)
 void CCameraMgr::ApplyFov(_float dt, _float baseFov)
 {
     const _float fovOffset = EvalFovOffset(dt);
-    const _float zoomOffset = m_zoom.Apply(dt);
-    m_outputPose.lens.fov = baseFov + fovOffset + zoomOffset;
+    m_zoomOffsetCur = m_zoom.Apply(dt);
+    m_outputPose.lens.fov = baseFov + fovOffset + m_zoomOffsetCur;
 }
 
 void CCameraMgr::SetZNear(_float zNear, _float blendSec, EaseType easeType)
@@ -522,6 +522,44 @@ Vector4 CCameraMgr::GetRight() const
     return GetActiveCamObj().Get()->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 }
 
+void CCameraMgr::SetFinalFov(_float finalFovDeg, _float blendSec, EaseType easeType, _bool clearZoom)
+{
+    if (clearZoom)
+    {
+        m_zoom.Clear(0.f);
+        m_zoomOffsetCur = 0.f;
+    }
+
+    _float baseFov = 60.f;
+
+    if (m_isBlending)
+        baseFov = m_outputPose.lens.fov - m_fovOffsetCur - m_zoomOffsetCur;
+    else
+    {
+        auto activeCam = Get_ActiveCam();
+        if (activeCam) baseFov = activeCam->Get_FOV();
+        else baseFov = m_outputPose.lens.fov - m_fovOffsetCur - m_zoomOffsetCur;
+    }
+
+    const _float targetOffset = finalFovDeg - baseFov - m_zoomOffsetCur;
+
+    m_fovQueue.clear();
+    m_fovQueueHead = 0u;
+
+    if (blendSec <= 0.f)
+    {
+        m_fovOffsetBlending = false;
+        m_fovOffsetTime = 0.f;
+        m_fovOffsetDuration = 0.f;
+        m_fovOffsetCur = targetOffset;
+        m_fovOffsetFrom = targetOffset;
+        m_fovOffsetTo = targetOffset;
+        return;
+    }
+
+    BeginFovBlend(m_fovOffsetCur, targetOffset, blendSec, easeType);
+}
+
 void CCameraMgr::Free()
 {
     m_overrides.clear();
@@ -544,6 +582,8 @@ void CCameraMgr::Free()
     m_fovOffsetFrom = 0.f;
     m_fovOffsetTo = 0.f;
     m_fovOffsetEaseType = EaseType::Linear;
+
+    m_zoomOffsetCur = 0.f;
 
     m_fovQueue.clear();
     m_fovQueueHead = 0u;

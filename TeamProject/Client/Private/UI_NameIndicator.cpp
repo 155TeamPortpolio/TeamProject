@@ -30,6 +30,7 @@ HRESULT CUI_NameIndicator::Initialize(INIT_DESC* pArg)
     m_pCCT = pDesc->pCCT;
     m_vPosition = pDesc->vPosition;
 
+    Safe_AddRef(m_pCCT);
     Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("name_indicator.json")));
     Cache_Children();
 
@@ -213,4 +214,10 @@ CGameObject* CUI_NameIndicator::Clone(INIT_DESC* pArg)
         Safe_Release(pInstance);
     }
     return pInstance;
+}
+
+void CUI_NameIndicator::Free()
+{
+    __super::Free();
+    Safe_Release(m_pCCT);
 }

@@ -864,6 +864,26 @@ void CCorin::Process_EndState(const string& strCurrentState)
     }
 }
 
+void CCorin::Control_Voice(const string& key)
+{
+    Get_Component<CAudioSource>()->Slot(key).Attribute3D(true).Loop(0).Volume(0.5f).Play();
+}
+
+void CCorin::Control_SFX(const string& key)
+{
+    Get_Component<CAudioSource>()->Slot(key).Attribute3D(true).Loop(0).Volume(0.7f).Play();
+}
+
+void CCorin::Control_VoiceSequence(const string& seqKey)
+{
+    Get_Component<CAudioSource>()->Sequence(seqKey).Attribute3D(true).Loop(0).Volume(0.5f).PlayNext();
+}
+
+void CCorin::Control_FadeOut(const string& key)
+{
+    Get_Component<CAudioSource>()->Slot(key).FadeOut(0.2f);
+}
+
 CCorin* CCorin::Create()
 {
     CCorin* pInstance = new CCorin();

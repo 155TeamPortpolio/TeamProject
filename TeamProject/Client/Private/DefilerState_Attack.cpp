@@ -23,6 +23,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 {
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
+
 	switch (Type)
 	{
 	case 0 :

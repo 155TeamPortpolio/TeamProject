@@ -147,6 +147,7 @@ HRESULT COrbitCam::Initialize_Prototype()
     m_freeze = 0.f;
 
     ClampTargets();
+    ExternalHandoff_Reset();
     return S_OK;
 }
 
@@ -156,9 +157,14 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 
     Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
         {
+            if (!desc.bLock)
+            {
+                ClearLockOn();
+                return;
+            }
+
             if (!desc.tHandle.isValid()) return;
-            if (desc.bLock) SetLockOn(desc.tHandle);
-            else ClearLockOn();
+            SetLockOn(desc.tHandle);
         });
 
     return S_OK;
@@ -220,6 +226,7 @@ void COrbitCam::ClearTarget()
     Switch_Reset();
 
     m_pivotStab = {};
+    ExternalHandoff_Reset();
 }
 
 void COrbitCam::SetLockOn(OBJECT_HANDLE h)
@@ -228,7 +235,7 @@ void COrbitCam::SetLockOn(OBJECT_HANDLE h)
 
     if (!Lock_Active())
     {
-        Lock_Enter(h, m_pose.distGoal);
+        Lock_Enter(h, m_pose.distCur);
         return;
     }
 
@@ -253,6 +260,13 @@ void COrbitCam::Lock_ReenterBlend(_float blendInSec)
     Lock_ReenterBlend(blendInSec, m_prof.lockBlendInEase);
 }
 
+void COrbitCam::Lock_SetSavedDist(_float dist)
+{
+    if (!m_lock.handle.isValid()) return;
+
+    m_lock.savedDist = clamp(dist, m_prof.distMin, m_prof.distMax);
+}
+
 void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
 {
     if (!m_lock.active) return;
@@ -271,6 +285,7 @@ void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
     m_lockFocus = m_pose.pivotCurWorld;
     m_hasLockFocus = true;
 }
+
 
 void COrbitCam::ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease)
 {
@@ -311,6 +326,7 @@ void COrbitCam::CaptureSnapshot(OrbitSnapshot& out) const
     out.lockBlend = m_lockBlend;
     out.autoYaw = m_autoYaw;
     out.sw = m_switch;
+    out.lockEnterPreset = m_lockEnterPreset;
     out.target = m_target;
 }
 
@@ -324,11 +340,22 @@ void COrbitCam::RestoreSnapshot(const OrbitSnapshot& s)
     m_lockBlend = s.lockBlend;
     m_autoYaw = s.autoYaw;
     m_switch = s.sw;
+    m_lockEnterPreset = s.lockEnterPreset;
 
     m_lockFocus = {};
     m_hasLockFocus = false;
 
-    SyncPivot();
+    m_lockAir = {};
+    m_returnPreset = {};
+    ExternalHandoff_Reset();
+
+    m_hitDist = false;
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    ClampTargets();
 
     Lock_BlendUpdate(0.f);
 
@@ -518,8 +545,10 @@ OrbitLockEval COrbitCam::ApplyLock(_float dt)
 
     lockRes = EvalLock(dt, m_pose.rotGoalDeg.x, m_pose.distWanted);
 
+    if (ExternalHandoff_LockDistGraceOn())
+        lockRes.hasDist = false;
+
     m_pose.rotGoalDeg.x += lockRes.yawAddDeg;
-    if (lockRes.hasDist) m_pose.distWanted = lockRes.dist;
 
     return lockRes;
 }
@@ -538,6 +567,7 @@ void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
 
 void COrbitCam::Priority_Update(_float dt)
 {
+    ExternalHandoff_Update(dt);
     if (Freeze_SkipUpdate(dt)) return;
 
     UpdateSwitch(dt);
@@ -550,6 +580,10 @@ void COrbitCam::Priority_Update(_float dt)
     const OrbitLockEval lockRes = ApplyLock(dt);
 
     ClampTargets();
+
+    _float evalDistWanted = m_pose.distWanted;
+    if (lockRes.hasDist) evalDistWanted = lockRes.dist;
+    evalDistWanted = clamp(evalDistWanted, m_prof.distMin, m_prof.distMax);
 
     const float rotA = ExpAlphaSpeed(m_prof.rotSmooth, dt);
     const float pivotA = ExpAlphaSpeed(m_prof.pivotSmooth, dt);
@@ -583,23 +617,33 @@ void COrbitCam::Priority_Update(_float dt)
         rotCurNext = m_pose.rotCurDeg + (rotGoalLocal - m_pose.rotCurDeg) * rotA;
     }
 
-    if (m_dialogueMode)
+    OrbitCollideEval colRes{};
+
+    const _bool handoffCollisionGrace = ExternalHandoff_CollisionGraceOn();
+
+    if (m_dialogueMode || handoffCollisionGrace)
     {
         m_hitDist = false;
         m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
         m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
 
-        m_pose.distGoal = clamp(m_pose.distWanted, m_prof.distMin, m_prof.distMax);
+        m_pose.distGoal = clamp(evalDistWanted, m_prof.distMin, m_prof.distMax);
     }
     else
     {
-        const OrbitCollideEval colRes = EvalCollideDist(dt, m_prof, pivotCurNext, m_pose.distWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
+        colRes = EvalCollideDist(dt, m_prof, pivotCurNext, evalDistWanted, m_pose.rotCurDeg, rotCurNext, m_pose.distGoal);
 
         m_hitDist = colRes.hit;
         m_yawDeltaCapDeg = colRes.yawDeltaCapDeg;
         m_pitchDeltaCapDeg = colRes.pitchDeltaCapDeg;
 
         m_pose.distGoal = colRes.goalDist;
+
+        if (colRes.hit)
+        {
+            if (m_pose.distGoal > colRes.allowedDist) m_pose.distGoal = colRes.allowedDist;
+            if (m_pose.distCur > colRes.allowedDist) m_pose.distCur = colRes.allowedDist;
+        }
     }
 
     const float distA = ExpAlphaSpeed(m_prof.distSmooth, dt);
@@ -607,6 +651,22 @@ void COrbitCam::Priority_Update(_float dt)
     m_pose.rotCurDeg = rotCurNext;
     m_pose.pivotCurWorld = pivotCurNext;
     m_pose.distCur = m_pose.distCur + (m_pose.distGoal - m_pose.distCur) * distA;
+
+    if (!m_dialogueMode && m_hitDist)
+    {
+        const _float clampDist = colRes.allowedDist;
+
+        if (colRes.hitType == OrbitHitType::Ground)
+        {
+            if (m_pose.distCur > clampDist) m_pose.distCur = clampDist;
+            if (m_pose.distGoal > clampDist) m_pose.distGoal = clampDist;
+        }
+        else
+        {
+            if (m_pose.distCur > clampDist) m_pose.distCur = clampDist;
+            if (m_pose.distGoal > clampDist) m_pose.distGoal = clampDist;
+        }
+    }
 
     ApplyPose(dt, lockRes);
     EvalOcclusion();
@@ -789,6 +849,8 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
         }
     }
 
+    const _bool hardGroundClamped = HardClampCameraPosToGround(camPos);
+
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
 
@@ -798,6 +860,12 @@ void COrbitCam::ApplyPose(_float dt, const OrbitLockEval& lockRes)
     {
         Vector3 lookAt = Vector3::Lerp(pivot, lockRes.focusPos, lockRes.weight);
         m_pTransform->LookAt(Vector4(lookAt.x, lookAt.y, lookAt.z, 1.f));
+        return;
+    }
+
+    if (hardGroundClamped)
+    {
+        m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
         return;
     }
 
@@ -812,6 +880,21 @@ Vector3 COrbitCam::GetFoot() const
 Vector3 COrbitCam::GetBasePivotTargetPos(OBJECT_HANDLE h) const
 {
     return BasePivotPos(h, m_prof.offsetY);
+}
+
+void COrbitCam::Lock_CaptureEnterPreset()
+{
+    m_lockEnterPreset.active = true;
+
+    m_lockEnterPreset.rotGoalDeg = m_pose.rotGoalDeg;
+    m_lockEnterPreset.rotCurDeg = m_pose.rotCurDeg;
+
+    m_lockEnterPreset.distWanted = m_pose.distWanted;
+    m_lockEnterPreset.distGoal = m_pose.distGoal;
+    m_lockEnterPreset.distCur = m_pose.distCur;
+
+    m_lockEnterPreset.pivotInternalOffset = m_pose.pivotInternalOffset;
+    m_lockEnterPreset.pivotExternalOffset = m_pose.pivotExternalOffset;
 }
 
 void COrbitCam::AutoYaw_OnTarget()
@@ -934,18 +1017,27 @@ OrbitInputEval COrbitCam::EvalInput(_float dt, _float lockW)
 
 OrbitCollideEval COrbitCam::EvalCollideDist(_float dt, const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg, _float distGoal)
 {
-    OrbitCollideEval out{};
+    OrbitCollideEval out = CalcAllowDist(prof, pivotWorld, distWanted, rotCurDeg, rotGoalDeg);
 
-    const _float allowed = CalcAllowDist(prof, pivotWorld, distWanted, rotCurDeg, rotGoalDeg);
+    out.rawAllowedDist = out.allowedDist;
+    out.hit = (out.rawAllowedDist < distWanted - 0.001f);
 
-    out.allowedDist = allowed;
-    out.hit = (allowed < distWanted - 0.001f);
+    if (!out.hit)
+        out.hitType = OrbitHitType::None;
 
     out.yawDeltaCapDeg = out.hit ? prof.yawHitDeltaCapDeg : prof.yawDeltaCapDeg;
     out.pitchDeltaCapDeg = out.hit ? prof.pitchHitDeltaCapDeg : prof.pitchDeltaCapDeg;
 
-    const _float targetDist = min(distWanted, allowed);
-    const _float zoomSpeed = (targetDist < distGoal) ? prof.zoomInCollide : prof.zoomOutCollide;
+    if (out.hit && out.hitType == OrbitHitType::Common)
+        out.allowedDist = clamp(out.rawAllowedDist + prof.commonSoftSlack, prof.distMin, distWanted);
+
+    const _float targetDist = min(distWanted, out.allowedDist);
+
+    _float zoomInSpeed = prof.zoomInCollide;
+    if (out.hit && out.hitType == OrbitHitType::Common)
+        zoomInSpeed *= prof.commonZoomInMul;
+
+    const _float zoomSpeed = (targetDist < distGoal) ? zoomInSpeed : prof.zoomOutCollide;
 
     _float nextGoal = Math::MoveTowards(distGoal, targetDist, zoomSpeed * dt);
     nextGoal = clamp(nextGoal, prof.distMin, prof.distMax);
@@ -954,14 +1046,19 @@ OrbitCollideEval COrbitCam::EvalCollideDist(_float dt, const OrbitProfile& prof,
     return out;
 }
 
-_float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg)
+OrbitCollideEval COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWorld, _float distWanted, const Vector2& rotCurDeg, const Vector2& rotGoalDeg)
 {
+    OrbitCollideEval out{};
+    out.allowedDist = distWanted;
+    out.rawAllowedDist = distWanted;
+    out.hitType = OrbitHitType::None;
+
     const _float camRadius = Get_Component<CCharacterController>()->Get_Radius();
     const _float padding = 0.1f;
     const _float stepDeg = 4.f;
 
     auto scene = PhysicsSystem()->Get_Scene();
-    if (!scene) return distWanted;
+    if (!scene) return out;
 
     const _float startYaw = rotCurDeg.x;
     const _float startPitch = rotCurDeg.y;
@@ -974,7 +1071,7 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWo
 
     const _float maxAbs = max(fabsf(deltaYaw), fabsf(deltaPitch));
     _int steps = (_int)ceilf(maxAbs / stepDeg);
-    if (steps < 1)  steps = 1;
+    if (steps < 1) steps = 1;
     if (steps > 12) steps = 12;
 
     PxSphereGeometry geom(camRadius);
@@ -983,8 +1080,6 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWo
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::COMMON) + ENUM(COLLISION_GROUP::GROUND), false);
-
-    _float minAllowed = distWanted;
 
     for (_int i = 1; i <= steps; ++i)
     {
@@ -1011,10 +1106,39 @@ _float COrbitCam::CalcAllowDist(const OrbitProfile& prof, const Vector3& pivotWo
         _float allowed = hit.block.distance - padding;
         allowed = clamp(allowed, prof.distMin, distWanted);
 
-        if (allowed < minAllowed) minAllowed = allowed;
+        OrbitHitType stepHitType = OrbitHitType::Common;
+
+        if (hit.block.shape)
+        {
+            const PxFilterData shapeFilter = hit.block.shape->getQueryFilterData();
+            const PxU32 shapeGroup = shapeFilter.word0;
+
+            const _bool isGround = (shapeGroup & ENUM(COLLISION_GROUP::GROUND)) != 0;
+            const _bool isCommon = (shapeGroup & ENUM(COLLISION_GROUP::COMMON)) != 0;
+
+            if (isGround) stepHitType = OrbitHitType::Ground;
+            else if (isCommon) stepHitType = OrbitHitType::Common;
+        }
+
+        if (allowed < out.allowedDist)
+        {
+            out.allowedDist = allowed;
+            out.hitType = stepHitType;
+        }
+        else if (fabsf(allowed - out.allowedDist) <= 0.001f)
+        {
+            if (stepHitType == OrbitHitType::Ground)
+                out.hitType = OrbitHitType::Ground;
+        }
     }
 
-    return minAllowed;
+    out.rawAllowedDist = out.allowedDist;
+    out.hit = (out.allowedDist < distWanted - 0.001f);
+
+    if (!out.hit)
+        out.hitType = OrbitHitType::None;
+
+    return out;
 }
 
 void COrbitCam::Lock_Reset()
@@ -1023,17 +1147,18 @@ void COrbitCam::Lock_Reset()
     m_lockBlend = {};
     m_lockFocus = {};
     m_hasLockFocus = false;
-    m_lockSuspend = {};
     m_lockAir = {};
+    Lock_ClearEnterPreset();
+    ExternalHandoff_Reset();
 }
 
 void COrbitCam::Lock_Enter(OBJECT_HANDLE h, _float curDist)
 {
+    Lock_CaptureEnterPreset();
+
     m_lock.active = true;
     m_lock.handle = h;
     m_lock.savedDist = curDist;
-
-    m_lockSuspend = {};
     m_lockAir = {};
 
     Lock_BlendStart(true);
@@ -1043,9 +1168,6 @@ void COrbitCam::Lock_Exit()
 {
     if (!Lock_On()) return;
 
-    m_lockSuspend.active = false;
-    m_lockSuspend.timer = 0.f;
-    m_lockSuspend.hasPrevTargetPivot = false;
     m_lockAir = {};
 
     if (!m_lockBlend.active)
@@ -1059,32 +1181,6 @@ void COrbitCam::Lock_Exit()
 
 void COrbitCam::Lock_BlendUpdate(_float dt)
 {
-    constexpr _float kSuspendReenterBlendSec = 0.12f;
-
-    if (m_lockSuspend.cooldown > 0.f)
-    {
-        m_lockSuspend.cooldown -= dt;
-        if (m_lockSuspend.cooldown < 0.f) m_lockSuspend.cooldown = 0.f;
-    }
-
-    if (m_lockSuspend.active)
-    {
-        m_lockSuspend.timer -= dt;
-        if (m_lockSuspend.timer < 0.f) m_lockSuspend.timer = 0.f;
-
-        m_lockBlend.active = false;
-        m_lockBlend.weight = 0.f;
-
-        if (m_lockSuspend.timer > 0.f) return;
-
-        m_lockSuspend.active = false;
-
-        if (m_lock.active && m_lock.handle.isValid())
-            Lock_ReenterBlend(kSuspendReenterBlendSec, m_prof.lockBlendInEase);
-
-        return;
-    }
-
     if (!m_lockBlend.active)
     {
         m_lockBlend.weight = m_lock.active ? 1.f : 0.f;
@@ -1111,7 +1207,8 @@ void COrbitCam::Lock_BlendUpdate(_float dt)
             m_lock = {};
             m_lockFocus = {};
             m_hasLockFocus = false;
-            m_lockSuspend = {};
+            m_lockAir = {};
+            Lock_ClearEnterPreset();
         }
         return;
     }
@@ -1145,6 +1242,7 @@ void COrbitCam::Lock_BlendStart(_bool entering)
     m_lockBlend.active = true;
     m_lockBlend.entering = entering;
     m_lockBlend.elapsed = 0.f;
+    m_lockBlend.holdFirstFrame = false;
 
     if (entering)
     {
@@ -1308,57 +1406,7 @@ OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPi
     constexpr _float kTargetPivotTauXZ = 0.10f;
     constexpr _float kTargetPivotTauY = 0.20f;
 
-    constexpr _float kTeleportJumpDist = 2.2f;
-    constexpr _float kTeleportJumpY = 1.8f;
-    constexpr _float kTeleportSpeed = 22.f;
-    constexpr _float kTeleportMinDistForSpeed = 0.9f;
-
-    constexpr _float kLockSuspendSec = 0.10f;
-    constexpr _float kLockSuspendCooldownSec = 0.25f;
-
     const Vector3 rawTargetPivot = LockPivotPos(m_lock.handle, m_prof.offsetY);
-
-    if (m_lockSuspend.active)
-    {
-        m_lockSuspend.prevTargetPivot = rawTargetPivot;
-        m_lockSuspend.hasPrevTargetPivot = true;
-        out.weight = 0.f;
-        return out;
-    }
-
-    if (m_lockSuspend.hasPrevTargetPivot && m_lockSuspend.cooldown <= 0.f)
-    {
-        const Vector3 targetDelta = rawTargetPivot - m_lockSuspend.prevTargetPivot;
-        const _float jumpDist = targetDelta.Length();
-        const _float jumpSpeed = jumpDist / max(dt, kEps);
-
-        _bool jumpByDist = jumpDist >= kTeleportJumpDist;
-        _bool jumpByY = fabsf(targetDelta.y) >= kTeleportJumpY;
-        _bool jumpBySpeed = (jumpDist >= kTeleportMinDistForSpeed) && (jumpSpeed >= kTeleportSpeed);
-
-        if (jumpByDist || jumpByY || jumpBySpeed)
-        {
-            m_lockSuspend.active = true;
-            m_lockSuspend.timer = kLockSuspendSec;
-            m_lockSuspend.cooldown = kLockSuspendCooldownSec;
-            m_lockSuspend.prevTargetPivot = rawTargetPivot;
-            m_lockSuspend.hasPrevTargetPivot = true;
-
-            m_lockBlend.active = false;
-            m_lockBlend.weight = 0.f;
-
-            m_lockAir.hasFilteredTargetPivot = false;
-            m_lockAir.overheadActive = false;
-
-            out.weight = 0.f;
-            out.yawAddDeg = 0.f;
-            out.focusPos = m_hasLockFocus ? m_lockFocus : playerPivot;
-            return out;
-        }
-    }
-
-    m_lockSuspend.prevTargetPivot = rawTargetPivot;
-    m_lockSuspend.hasPrevTargetPivot = true;
 
     if (!m_lockAir.hasFilteredTargetPivot)
     {
@@ -1579,6 +1627,143 @@ OrbitLockEval COrbitCam::EvalLock_PlayerPivot(_float dt, const Vector3& playerPi
     }
 
     return out;
+}
+
+_bool COrbitCam::GetStableOrbitBeginPose(Vector3& outPivotWorld, Vector2& outRotDeg, _float& outDist) const
+{
+    if (Lock_On() && m_lockEnterPreset.active && m_target.isValid())
+    {
+        const Vector3 basePivot = GetBasePivotTargetPos(m_target);
+        outPivotWorld = basePivot + m_lockEnterPreset.pivotInternalOffset + m_lockEnterPreset.pivotExternalOffset;
+        outRotDeg = m_lockEnterPreset.rotCurDeg;
+        outDist = clamp(m_lockEnterPreset.distWanted, m_prof.distMin, m_prof.distMax);
+        return true;
+    }
+
+    outPivotWorld = m_pose.pivotCurWorld;
+    outRotDeg = m_pose.rotCurDeg;
+    outDist = m_pose.distCur;
+    return false;
+}
+
+_bool COrbitCam::QueryGroundMinCamY_BySweep(const Vector3& candidateCamPos, _float& outMinCamY)
+{
+    auto scene = PhysicsSystem()->Get_Scene();
+    if (!scene) return false;
+
+    const _float ccRadius = Get_Component<CCharacterController>()->Get_Radius();
+    const _float probeRadius = max(0.01f, ccRadius * m_prof.hardGroundRadiusScale);
+
+    const _float probeUp = max(0.01f, m_prof.hardGroundProbeUp);
+    const _float probeDown = max(0.01f, m_prof.hardGroundProbeDown);
+    const _float padding = max(0.f, m_prof.hardGroundPadding);
+
+    const Vector3 startPos = candidateCamPos + Vector3(0.f, probeUp, 0.f);
+    const _float sweepDist = probeUp + probeDown;
+
+    PxSphereGeometry geom(probeRadius);
+    PxTransform posePx(PxVec3(startPos.x, startPos.y, startPos.z));
+
+    PxQueryFilterData filterData;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
+
+    CRaycastFilterCallback filterCallback(ENUM(COLLISION_GROUP::GROUND), false);
+
+    PxSweepBuffer hit;
+    PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL;
+
+    const PxVec3 dirPx(0.f, -1.f, 0.f);
+
+    const _bool ok = scene->sweep(geom, posePx, dirPx, sweepDist, hit, hitFlags, filterData, &filterCallback);
+    if (!ok || !hit.hasBlock) return false;
+
+    const _float impactCenterY = startPos.y - (_float)hit.block.distance;
+    outMinCamY = impactCenterY + padding;
+    return true;
+}
+
+_bool COrbitCam::HardClampCameraPosToGround(Vector3& inOutCamPos)
+{
+    if (!m_prof.hardGroundClamp) return false;
+
+    _float minCamY = 0.f;
+    if (!QueryGroundMinCamY_BySweep(inOutCamPos, minCamY)) return false;
+    if (inOutCamPos.y >= minCamY) return false;
+
+    inOutCamPos.y = minCamY;
+    return true;
+}
+
+void COrbitCam::ExternalHandoff_Reset()
+{
+    m_externalHandoff = {};
+}
+
+void COrbitCam::CommitExternalHandoff(const Vector3& pivotWorld, const Vector3& camPosWorld, const Quaternion& camRot, const Vector3& lookAtWorld, _float pivotRecoverSec, _float collisionGraceSec, _float lockDistGraceSec)
+{
+    const _float dist = (pivotWorld - camPosWorld).Length();
+
+    SnapFromExternalPose(pivotWorld, camPosWorld, camRot, dist);
+
+    m_returnPreset = {};
+    m_switch = {};
+
+    m_pose.rotGoalDeg = m_pose.rotCurDeg;
+    m_pose.distWanted = m_pose.distCur;
+    m_pose.distGoal = m_pose.distCur;
+    m_pose.pivotGoalWorld = m_pose.pivotCurWorld;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    m_lockFocus = lookAtWorld;
+    m_hasLockFocus = true;
+
+    AutoYaw_OnInput();
+
+    m_freeze = max(m_freeze, 0.02f);
+    if (m_freezeMode == FreezeMode::Parry)
+        m_freezeMode = FreezeMode::None;
+
+    m_externalHandoff.active = true;
+    m_externalHandoff.elapsed = 0.f;
+    m_externalHandoff.pivotRecoverSec = max(pivotRecoverSec, 0.0001f);
+    m_externalHandoff.collisionGraceRemain = max(collisionGraceSec, 0.f);
+    m_externalHandoff.lockDistGraceRemain = max(lockDistGraceSec, 0.f);
+    m_externalHandoff.pivotInternalFrom = m_pose.pivotInternalOffset;
+    m_externalHandoff.pivotInternalTo = Vector3::Zero;
+
+    ClampTargets();
+}
+
+void COrbitCam::ExternalHandoff_Update(_float dt)
+{
+    if (!m_externalHandoff.active) return;
+
+    if (m_externalHandoff.collisionGraceRemain > 0.f)
+        m_externalHandoff.collisionGraceRemain = max(0.f, m_externalHandoff.collisionGraceRemain - dt);
+
+    if (m_externalHandoff.lockDistGraceRemain > 0.f)
+        m_externalHandoff.lockDistGraceRemain = max(0.f, m_externalHandoff.lockDistGraceRemain - dt);
+
+    m_externalHandoff.elapsed += dt;
+
+    const _float u = clamp(m_externalHandoff.elapsed / m_externalHandoff.pivotRecoverSec, 0.f, 1.f);
+    const _float t = Math::ApplyEase(EaseType::InOutSine, u);
+
+    m_pose.pivotInternalOffset = Vector3::Lerp(m_externalHandoff.pivotInternalFrom, m_externalHandoff.pivotInternalTo, t);
+
+    if (u >= 1.f && m_externalHandoff.collisionGraceRemain <= 0.f && m_externalHandoff.lockDistGraceRemain <= 0.f)
+        m_externalHandoff.active = false;
+}
+
+_bool COrbitCam::ExternalHandoff_CollisionGraceOn() const
+{
+    return m_externalHandoff.collisionGraceRemain > 0.f;
+}
+
+_bool COrbitCam::ExternalHandoff_LockDistGraceOn() const
+{
+    return m_externalHandoff.lockDistGraceRemain > 0.f;
 }
 
 void COrbitCam::DrawDebugPivot()

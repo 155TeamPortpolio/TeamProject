@@ -213,7 +213,7 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER c
 
 	Get_Component<CAudioSource>()->
 		Slot(eDamageType == DAMAGE_TYPE::NORMAL ? "HitLight.wav" : "HitHeavy.wav")
-		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.4f : 0.5f).Play();
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.2f : 0.25f).Play();
 
 	if (0 >= m_tStatus.iNowHP)
 		return;
@@ -282,7 +282,10 @@ void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 	if (vCurrDir.Dot(vTargetDir) >= 0.99f)
 		return;
 
-	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
+	vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
+	if (vTargetDir.Length() <= 0.1f)
+		vTargetDir = vCurrDir;
+
 	vCurrDir.Normalize();
 	m_pTransform->Set_Look(vCurrDir);
 }
@@ -1036,7 +1039,7 @@ void CSacrifice::Route_AnimEvent()
 
 void CSacrifice::Control_Sound(const string& event)
 {
-	Get_Component<CAudioSource>()->Slot(event).Volume(0.3f).Attribute3D(false).Loop(false).Play();
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.6f).Attribute3D(false).Loop(false).Play();
 }
 
 void CSacrifice::Control_TargetEnable(_bool on)

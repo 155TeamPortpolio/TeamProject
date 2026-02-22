@@ -92,13 +92,15 @@ void CCamDirector::EnterBoss()
 
 void CCamDirector::ExitBoss()
 {
-    CameraManager()->SetFov(-10.f, 2.f, EaseType::InOutCubic);
+    CameraManager()->SetFov(-10.f, 0.f, EaseType::InOutCubic);
     CameraManager()->SetZFar(500.f, 2.f, EaseType::InOutCubic);
 }
 
 void CCamDirector::AutoTarget()
 {
     auto handle = GetCurHandle();
+
+    const string& instanceName = handle.Get()->Get_InstanceName();
 
     if (handle.isValid())
         SetTarget(handle);
@@ -138,6 +140,7 @@ void CCamDirector::Update(_float dt)
     m_events.BeginFrame();
 
     UpdatePlayer();
+    UpdateLevel();
 
     if (IsFreeCamActive() && m_playing.active)
         AbortSequence_NoCam(true);
@@ -481,4 +484,20 @@ void CCamDirector::StopAll(_float blendOutSec)
 {
     if (!m_playing.active) return;
     StopRequest(m_playing.handle, blendOutSec, true);
+}
+
+void CCamDirector::UpdateLevel()
+{
+    const string curLevelKey = LevelManager()->Get_NowLevelKey();
+
+    if (!m_levelInit)
+    {
+        m_levelInit = true;
+        m_lastLevelKey = curLevelKey;
+        return;
+    }
+
+    if (curLevelKey == m_lastLevelKey) return;
+
+    m_lastLevelKey = curLevelKey;
 }

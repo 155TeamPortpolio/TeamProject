@@ -31,6 +31,9 @@ public:
     static CBettyBrenda* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
+
+private:
+    CUI_Object* m_pNameIndicator = {nullptr};
 };
 
 NS_END

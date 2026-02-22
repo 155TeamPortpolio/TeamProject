@@ -44,9 +44,7 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     m_pSubStateMachine->Set_Bool("Extreme", false);
     m_pSubStateMachine->Set_Int("ExitMode", 0);
 
-    //Jehyun
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Sequence("Evade_Voice").Attribute3D(true).Loop(false).PlayNext();
+    pOwner->Control_VoiceSequence("Evade_Voice");
 
     __super::Enter(pOwner);
 

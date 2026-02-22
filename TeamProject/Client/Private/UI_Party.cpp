@@ -17,6 +17,7 @@
 #include "BattleSystem.h"
 #include "Player.h"
 #include "CamDirector.h"
+#include "FieldSystem.h"
 
 HRESULT CUI_Party::Initialize_Prototype()
 {
@@ -147,7 +148,11 @@ void CUI_Party::Create_BackButton()
 
     if (!pObj)
         return;
-
+    
+    pObj->Set_OnClick([]() {
+        FieldSystem()->RequestExitTop();
+        CamDirector()->GetOrbitCam()->Unlock_Input();
+        });
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 }
 

@@ -12,7 +12,7 @@ void CCorinState_Backstep::Enter(CCorin* pOwner)
         .Speed(1.f)
 		.Apply();
 
-    pOwner->Get_Component<CAudioSource>()->Slot("Corin_BackStep_01_SFX.wav").Attribute3D(true).Loop(false).Volume(0.35f).Play();
+    pOwner->Control_SFX("Corin_BackStep_01_SFX.wav");
 
     pOwner->Stop_Effect("Corin_Saw_Slash0");
     pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");

@@ -83,8 +83,7 @@ void CCorinState_Run_Loop::Enter(CCorin* pOwner)
         pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.f);
     }
 
-    auto& sound = *pOwner->Get_Component<CAudioSource>();
-    sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+    pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 }
 
 void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
@@ -108,10 +107,10 @@ void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
 
     auto& sound = *pOwner->Get_Component<CAudioSource>();
     if (IsCrossAnimProgress(0.40f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 
     if (IsCrossAnimProgress(0.8f))
-        sound.Slot("Corin_FootStep_SFX_01.wav").Attribute3D(true).Loop(0).Volume(1.f).Play();
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 }
 
 void CCorinState_Run_End::Enter(CCorin* pOwner)

@@ -21,6 +21,7 @@ public:
 
 private:
     HRESULT Create_LogoVideo();
+    void PreLoadLeveleff(const string& levelKey);
     void PreLoadLevel(const string& levelKey);
     ResourceType CheckResourceType(const string& filePath, const string& fileName);
     _bool isSRGB(const string& filePath);
