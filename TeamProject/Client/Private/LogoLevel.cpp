@@ -27,6 +27,7 @@ HRESULT CLogoLevel::Awake()
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Logo_Level");
 	m_NextLevel = "Global_Level";
+	PreLoadLeveleff("Global_Level");
 	PreLoadLevel("Global_Level");
 	Create_LogoVideo();
 	return S_OK;
@@ -57,6 +58,73 @@ HRESULT CLogoLevel::Create_LogoVideo()
 		.Build("video");
 	UIManager()->Add_UIObject(pObj, "Logo_Level");
 	return S_OK;
+}
+
+void CLogoLevel::PreLoadLeveleff(const string& levelKey)
+{
+	string LevelKey = levelKey;
+
+	const std::string suffix = "_Level";
+	if (LevelKey.size() >= suffix.size() &&
+		LevelKey.compare(LevelKey.size() - suffix.size(), suffix.size(), suffix) == 0)
+	{
+		LevelKey.erase(LevelKey.size() - suffix.size());
+	}
+
+	const string clientPath = "../Bin/Resources/Global/Effect";
+	filesystem::path directory = clientPath;
+
+	error_code ec;
+	if (!filesystem::exists(directory, ec) || ec) return;
+	if (!filesystem::is_directory(directory, ec) || ec) return;
+
+	auto* resourceManager = ResourceManager();
+	if (!resourceManager) return;
+
+	filesystem::recursive_directory_iterator iter(
+		directory,
+		filesystem::directory_options::skip_permission_denied,
+		ec
+	);
+	filesystem::recursive_directory_iterator endIter;
+
+	for (; iter != endIter; iter.increment(ec))
+	{
+		if (ec) { ec.clear(); continue; }
+
+		const auto& entry = *iter;
+
+		if (!entry.is_regular_file(ec) || ec) { ec.clear(); continue; }
+
+		const filesystem::path filePathObj = entry.path();
+		const string filePath = filePathObj.string();
+		const string fileName = filePathObj.filename().string();
+
+		resourceManager->Add_ResourcePath(fileName, filePath);
+
+		const ResourceType type = CheckResourceType(filePath, fileName);
+		if (type == ResourceType::None)
+			continue;
+
+		PreloadKey key{};
+		key.type = type;
+		key.levelKey = m_NextLevel;
+		key.resourceKey = fileName;
+		key.options.isSRGB = isSRGB(filePath);
+
+		m_LoadQue[type].push(key);
+	}
+
+	// 큐에 쌓인 것들 전부 프리로드 요청
+	for (auto& queuePerType : m_LoadQue)
+	{
+		while (!queuePerType.second.empty())
+		{
+			resourceManager->RequestPreload(queuePerType.second.front());
+			queuePerType.second.pop();
+		}
+	}
+
 }
 
 
