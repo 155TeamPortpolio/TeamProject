@@ -127,12 +127,14 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.567f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::ULTIMATE)
+                .Charge(1.f)
             );
             BattleSystem()->TakeAllDamage(HitDesc()
                 .Name(pOwner->Get_CharacterName())
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 1.567f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::ULTIMATE)
+                .Charge(1.f)
             );
         }
 
@@ -169,6 +171,7 @@ void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
                 .Type(HIT_TYPE::ONCE)
                 .Damage(pOwner->Get_AttackPower() * 3.135f * Helper::Get_Random_Float(1.f, 1.5f)
                     , DAMAGE_TYPE::ULTIMATE)
+                .Charge(1.f)
             );
         }
     }
