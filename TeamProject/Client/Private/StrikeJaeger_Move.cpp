@@ -32,7 +32,15 @@ void CStrikeJaeger_Move::Enter(CStrikeJaeger* pOwner)
 
 		// 거리기반 행동판단해야함
 		if (fDistance <= hysteriesis.fEvadeEnter)
-			iMovePatternIndex = MOVEINDEX::Walk_Back;
+		{
+			_int i = Helper::Get_Random_Int(1, 3);
+
+			if (i == 1)
+				iMovePatternIndex = MOVEINDEX::Dodge;
+			else
+				iMovePatternIndex = MOVEINDEX::Walk_Back;
+
+		}
 		else if (fDistance <= hysteriesis.fComboExit)
 			iMovePatternIndex = Helper::Get_Random_Int(3, 7);
 		else

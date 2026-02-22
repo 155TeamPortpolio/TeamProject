@@ -20,6 +20,8 @@ void CStrikeJaeger_Chase::Enter(CStrikeJaeger* pOwner)
 
 void CStrikeJaeger_Chase::Update(CStrikeJaeger* pOwner, _float dt)
 {
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
+
 	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
 	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
@@ -72,7 +74,6 @@ void CStrikeJaeger_Run_Loop::Enter(CStrikeJaeger* pOwner)
 
 void CStrikeJaeger_Run_Loop::Update(CStrikeJaeger* pOwner, _float dt)
 {
-	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 
 	if (false == pOwner->GetStateMachine()->Get_Bool("Chase"))
 		m_pOwnerStateMachine->Change_State("Run_End");

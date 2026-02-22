@@ -86,7 +86,7 @@ HRESULT CStrikeJaeger::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	m_isUseGroggyRimLight = true;
 
-	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/StrikeJaeger/Sound");
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/StrikeJaeger/Sound");
 	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 	return S_OK;
@@ -437,13 +437,13 @@ HRESULT CStrikeJaeger::Initialize_Effects()
 HRESULT CStrikeJaeger::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.1f, 0.f };
 
 	m_tHysteriesis.fEvadeEnter = 1.f;
 	m_tHysteriesis.fComboEnter = 2.f;
 	m_tHysteriesis.fComboExit = 3.5f;
-	m_tHysteriesis.fChaseEnter = 5.f;
-	m_tHysteriesis.fChaseExit = 4.f;
+	m_tHysteriesis.fChaseEnter = 7.f;
+	m_tHysteriesis.fChaseExit = 6.f;
 
 	return S_OK;
 }
