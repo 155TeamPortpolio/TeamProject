@@ -23,7 +23,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_01",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_Attack1_FULL.wav"
         },
@@ -58,7 +58,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_02",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Notify",
           "EventTag": "UnleashAttack_WithoutSound"
         },
@@ -153,7 +153,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_04",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Notify",
           "EventTag": "UnleashAttack"
         },
@@ -188,12 +188,12 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_05_01",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_Attack5_1_FULL.wav"
         },
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Notify",
           "EventTag": "UnleashAttack_WithoutSound"
         },
@@ -223,12 +223,12 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Attack_05_02",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_Attack5_2_FULL.wav"
         },
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Notify",
           "EventTag": "UnleashAttack_WithoutSound"
         },
@@ -300,7 +300,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Evade",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_Evade.wav"
         }
@@ -483,7 +483,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_SideStep_L",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_SideStep.wav"
         }
@@ -493,7 +493,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_SideStep_R",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_SideStep.wav"
         }
@@ -562,7 +562,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Walk_F",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_FootStep_L.wav"
         },
@@ -581,7 +581,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Walk_FL_RFoot",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_FootStep_L.wav"
         },
@@ -596,7 +596,7 @@
       "ClipTag": "ThugBulkyEnforcer_Ani_Walk_FR_RFoot",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "bulky_FootStep_L.wav"
         },

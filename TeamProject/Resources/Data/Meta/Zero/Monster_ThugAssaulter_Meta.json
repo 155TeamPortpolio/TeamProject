@@ -276,7 +276,7 @@
       "ClipTag": "ThugAssaulter_Ani_Evade",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "assaulter_Evade.wav"
         }
@@ -482,7 +482,7 @@
       "ClipTag": "ThugAssaulter_Ani_Run_Loop",
       "Events": [
         {
-          "EventTime": 0.0,
+          "EventTime": 0.001,
           "EventType": "Sound",
           "EventTag": "assaulter_FootStepR.wav"
         },
