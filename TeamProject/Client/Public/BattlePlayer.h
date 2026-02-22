@@ -126,7 +126,7 @@ private: // 캐릭터 전환
     void    Reset_SwitchCoolDown() { m_fSwitchCoolDown = SWITCH_COOLDOWN; }
 
 private: // 타겟팅
-    void    Update_Target();
+    void    Update_Target(_bool bRefresh = false);
 
 private: // UI 동기화
     void    Update_Status();
