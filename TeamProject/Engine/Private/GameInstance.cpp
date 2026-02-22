@@ -102,12 +102,14 @@ _float CGameInstance::Get_EngineTimeScale()
 	return m_pTimeManager->Get_TimeScale(G_EngineTimerID);
 }
 
-void CGameInstance::Clear_LevelResource(const string& levelKey)
+void CGameInstance::Clear_LevelResource(const string& levelKey, _bool ResourceKeep)
 {
 	if (levelKey.empty()) return;
 
-	m_pPrototypeManager->Clear(levelKey);
-	m_pResourceManager->Clear_Resource(levelKey);
+	if (!ResourceKeep) {
+		m_pPrototypeManager->Clear(levelKey);
+		m_pResourceManager->Clear_Resource(levelKey);
+	}
 	m_pObjectManager->Clear(levelKey);
 	m_pUIManager->Clear(levelKey);
 

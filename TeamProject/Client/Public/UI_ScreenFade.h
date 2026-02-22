@@ -8,6 +8,7 @@ class CUI_ScreenFade final : public CUI_Object
 public:
 	typedef struct tagFadeDesc {
 		_float fDuration = { 0.5f };
+		function<void()> onFinished = {};
 	}FADE_DESC;
 
 private:
@@ -31,6 +32,11 @@ private:
 	_int			m_iFadeOutIndex = { -1 };
 
 	static constexpr _float m_fInitDuration = { 0.5f }; 
+
+	_int			m_iLastAnimIndex = { -1 };
+
+	function<void()> m_onFadeInFinished = {};
+	function<void()> m_onFadeOutFinished = {};
 
 private:
 	void Ready_FadeIn();

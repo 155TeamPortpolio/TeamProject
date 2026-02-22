@@ -50,6 +50,10 @@ private:
 
     _float              m_fLifeTime = {};
 
+    SPIT                m_eSpitType = { SPIT::ARC_CENTER };
+    HitDesc             m_HardHitDesc = {};
+    HitDesc		        m_KnockOutHitDesc = {};
+
     /* Arc */
     _float3             m_vVelocity{};   // 현재 속도(벡터)
     _float              m_fArcSpeed = 5.f;   // 전방 속도
@@ -58,7 +62,10 @@ private:
     _float              m_fRampTime = 0.12f;  // 중력 램프업 시간(0.08~0.2 추천)
 
     _bool               m_isCollisionCooltime = { false };
-    _float2             m_vCollisionCooltime = { 0.1f, 0.f };
+    _float2             m_vCollisionCooltime = { 0.05f, 0.f };
+
+    _bool               m_isSound = { false };
+    _float2             m_vSoundTime = { 2.f, 0.f };
 
 
 public:

@@ -184,7 +184,6 @@ Vector3 CamParryController::BuildReturnPresetCamPos() const
     return camPos;
 }
 
-
 CamParryController::ShotGoal CamParryController::BuildExitShot_FromCamPos(const Vector3& pivotWorld, const Vector3& camPosWorld) const
 {
     ShotGoal g{};
@@ -216,7 +215,6 @@ CamParryController::ShotGoal CamParryController::BuildExitShot_FromCamPos(const 
 
     return g;
 }
-
 
 void CamParryController::ApplyGoalPose_Snap(const ShotGoal& g)
 {
@@ -822,8 +820,6 @@ void CamParryController::Begin()
 {
     if (core.active && core.state != State::WaitEnd) return;
 
-    if (IsChainParry()) return;
-
     const _bool continuingChain = core.active && core.state == State::WaitEnd && IsChainReentryOpen() && core.beginWasChain;
     const _float prevChainRefDist = core.chainRefDist;
         
@@ -980,8 +976,7 @@ void CamParryController::End()
 
         exit.exitSec = 1.f;
 
-        if (restoringLock)
-            orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
+        orbit->Lock_ReenterBlend(exit.exitSec, EaseType::InOutSine);
 
         exit.lookInit = true;
         exit.lookYawPrev = snap.pose.rotCurDeg.x;
@@ -1097,7 +1092,7 @@ void CamParryController::Update(_float dt)
         const Quaternion qPos = YawPitchRollQuatDeg(yawWorldPivot, g.pitchDeg, 0.f);
         const Vector3 camPosWorld = OrbitPos(pivotWorld, qPos, g.dist);
 
-        OrbitLockEval lockRes = orbit->EvalLock_PlayerPivot(dt, basePivot, yawWorldPivot, g.dist);
+        OrbitLockEval lockRes = orbit->EvalLock_PlayerPivot(dt, pivotWorld, yawWorldPivot, g.dist);
 
         const _float lookW = clamp(lockRes.weight, 0.f, 1.f);
         Vector3 lookAt = Vector3::Lerp(pivotWorld, lockRes.focusPos, lookW);
@@ -1163,6 +1158,7 @@ void CamParryController::Update(_float dt)
         {
             orbit->ResumeSync();
             orbit->ParryMode_End();
+            orbit->FreezeFor(0.016f);
 
             core.state = State::WaitEnd;
             core.elapsed = 0.f;

@@ -353,6 +353,35 @@
             0.0,
             1.0
           ]
+        },
+        {
+          "iObjID": 12,
+          "TagModelResourceKey": "Stage_Zero_Abyss_3_1_BackGround_Groupout.model",
+          "TagMaterialResourceKey": "Stage_Zero_Abyss_3_1_BackGround_Groupout.mat",
+          "vRight": [
+            -0.5671068429946899,
+            0.0,
+            0.8236543536186218,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.8236543536186218,
+            0.0,
+            -0.5671068429946899,
+            0.0
+          ],
+          "vPos": [
+            -21.6363468170166,
+            11.430992126464844,
+            -19.308088302612305,
+            1.0
+          ]
         }
       ]
     }

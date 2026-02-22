@@ -4,6 +4,7 @@
 #include "Miyabi.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 #include "MiyabiState_Dash.h"
 #include "MiyabiState_Backstep.h"
@@ -48,6 +49,9 @@ void CMiyabiState_Evade::Update(CMiyabi* pOwner, _float dt)
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
             pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+            pOwner->Get_Component<CAudioSource>()->Slot("PerfectEvade")
+                .Attribute3D(true)
+                .Play();
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }
     }

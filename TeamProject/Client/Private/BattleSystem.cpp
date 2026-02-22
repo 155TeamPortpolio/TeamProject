@@ -185,7 +185,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -234,7 +234,7 @@ void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -272,7 +272,7 @@ void CBattleSystem::TakeBoxDamage(const _float3& vCenter, const _float3& vHalfEx
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -302,7 +302,7 @@ void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc, BATTLE_OBJ_TYPE type)
 			if ((hitDesc.eDamageType == DAMAGE_TYPE::HARD || hitDesc.eDamageType == DAMAGE_TYPE::SWITCH || hitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
 				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
 			{
-				if (!pCharacter->Is_ReserveCombo())
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
 				{
 					pEnemy->Decrease_ComboCount();
 					pCharacter->Reserve_ComboAttack();
@@ -538,6 +538,23 @@ void CBattleSystem::StartSwitch(CHARACTER eLeft, CHARACTER eRight)
 void CBattleSystem::EndSwitch()
 {
 	m_pFXFlow->Cancle_Switch();
+}
+
+void CBattleSystem::LockPlayer(_bool Lock)
+{
+	if (m_pBattlePlayer) {
+		if (Lock) {
+			m_pBattlePlayer->Lock_Input();
+		}
+		else{
+			m_pBattlePlayer->UnLock_Input();
+		}
+	}
+}
+
+void CBattleSystem::LockBattleTime(_bool Lock)
+{
+	m_pFXFlow->LockBattleTime(Lock);
 }
 
 void CBattleSystem::Free()

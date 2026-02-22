@@ -17,7 +17,7 @@ HRESULT CRoomDirector::Initialize()
 
 void CRoomDirector::Update()
 {
-	if (!m_pendingEnterKeys.empty()) {
+	while (!m_pendingEnterKeys.empty()) {
 		auto pendingKey = m_pendingEnterKeys.front();
 		string key = pendingKey.first;
 		_bool overlay = pendingKey.second;

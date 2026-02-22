@@ -51,7 +51,9 @@ public:
 	void	HitVFX(DAMAGE_TYPE eDamageType);
 	void	StartSwitch(CHARACTER eLeft, CHARACTER eRight);
 	void	EndSwitch();
-
+public:
+	void	LockPlayer(_bool Lock);
+	void	LockBattleTime(_bool Lock);
 public:
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc);
 	void	TakeAreaDamage(const _float3& vCenter, _float fRadius, const _float3& vDir, _float fAngle, const HitDesc& hitDesc);

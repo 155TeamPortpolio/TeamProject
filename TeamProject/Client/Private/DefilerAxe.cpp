@@ -40,6 +40,7 @@ HRESULT CDefilerAxe::Initialize_Prototype()
 	Add_Component<CMaterial>()->Link_Material("Zero_Level", "Defile_Axe.mat");
 	Add_Component<CCharacterController>();
 	Add_Component<CEventListener>();
+	Add_Component<CAudioSource>();
 
 	return S_OK;
 }
@@ -51,6 +52,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear(); });
 	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
 	m_pTransform->Set_Look(desc->vLook);
 	m_vSlide = desc->vLook;
 	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
@@ -64,7 +66,7 @@ HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
 
 void CDefilerAxe::Awake()
 {
-
+	Get_Component<CAudioSource>()->Slot("DefilerHitGround4.wav").Volume(0.7f).Play();
 }
 
 void CDefilerAxe::Priority_Update(_float dt)
@@ -125,6 +127,19 @@ void CDefilerAxe::Render_GUI()
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	BattleSystem()->HitVFX(eDamageType);
+	if(eDamageType == DAMAGE_TYPE::NORMAL){
+	_bool  soundpick = Helper::Get_Random_Bool(0.4f);
+	Get_Component<CAudioSource>()->Slot(
+		soundpick ?
+		"DefilerHitLight.wav" : 
+		"DefilerHitHeavy.wav"
+	).Volume(0.5f).Play();
+	}
+	else {
+		_bool  soundpick = Helper::Get_Random_Bool(0.4f);
+		Get_Component<CAudioSource>()->Slot("HitProp.wav").Volume(0.6f).Play();
+	}
+
 	_float fTakeDamage = fDamage;
 	m_tStatus.iNowHP -= fTakeDamage;
 
@@ -173,6 +188,7 @@ void CDefilerAxe::SummonWall()
 		.Collider(ColDesc)
 		.Build("Wall");
 	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+	Get_Component<CAudioSource>()->Slot("Defiler_Crash01.wav").Volume(0.4f).Play();
 	DisAppear();
 }
 

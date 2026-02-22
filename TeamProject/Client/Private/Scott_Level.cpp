@@ -99,6 +99,10 @@ HRESULT CScott_Level::Awake()
 	}
 
 	AudioDevice()->Set_Listener(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::FreeCam))->Get_Component<CTransform>());
+
+	// 페이드인
+	UIDirector()->FadeIn_Screen();
+
 	return S_OK;
 }
 

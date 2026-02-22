@@ -10,14 +10,16 @@ NS_BEGIN(Client)
 
 class CUI_GachaVideo final : public CUI_Object
 {
+public:
+	typedef struct tagVideoDesc : UI_DESC {
+		GachaGrade eGrade = { GachaGrade::A	};
+		function<void()> onVideoFinished = {};
+	}VIDEO_DESC;
+
 private:
 	CUI_GachaVideo() {}
 	CUI_GachaVideo(const CUI_GachaVideo& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_GachaVideo() DEFAULT;
-
-public:
-	void Play_Video(GachaGrade eGrade);
-	void Set_OnVideoFinished(function<void()> onVideoFinished);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

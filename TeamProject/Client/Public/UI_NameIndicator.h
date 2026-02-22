@@ -47,7 +47,7 @@ private:
 	_float3				m_vPosition = {};
 
 	STATE_VISIBLE		m_eVisible = { STATE_VISIBLE::INVISIBLE };
-	STATE_INTERACT		m_eInteract = { STATE_INTERACT::END };
+	STATE_INTERACT		m_eInteract = { STATE_INTERACT::NOTINTERACTABLE };
 
 	static constexpr _float	m_fRadius = { 4.f };// { 6.f };
 	static constexpr _float m_fPadding = { 20.f };

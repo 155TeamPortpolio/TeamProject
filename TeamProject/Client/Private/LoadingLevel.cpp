@@ -25,6 +25,7 @@ HRESULT CLoadingLevel::Awake()
 {
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->FadeIn_Screen();
 	uiDirector->Load_LevelObjects("Loading_Level");
 
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
@@ -39,6 +40,7 @@ HRESULT CLoadingLevel::Awake()
 		PreLoadForTestLevel();
 		m_bGlobal = true;
 	}
+
 	return S_OK;
 }
 void CLoadingLevel::Update()
@@ -56,6 +58,7 @@ void CLoadingLevel::Update()
 	if (ResourceManager()->isLoadComplete() &&(m_leastTime>1.f))
 	{
 		LevelManager()->Notify_LoadComplete();
+		//UIDirector()->FadeOut_Screen(1.f);
 	}
 
 }

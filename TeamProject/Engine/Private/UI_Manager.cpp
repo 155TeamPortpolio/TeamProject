@@ -19,6 +19,14 @@ CUI_Manager::~CUI_Manager()
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
 	CleanUp();
+	auto glLevel = m_UIObjects.find(G_GlobalLevelKey);
+	if (glLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : glLevel->second)
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
+			uiObj->Pre_EngineUpdate(dt);
+
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
@@ -34,6 +42,13 @@ void CUI_Manager::Post_EngineUpdate(_float dt)
 {
 	Reset_StencilAllocator();
 	Sort_UI();
+	auto glLevel = m_UIObjects.find(G_GlobalLevelKey);
+	if (glLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : glLevel->second)
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
+			uiObj->Post_EngineUpdate(dt);
 
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
 	if (itLevel == m_UIObjects.end())
@@ -45,6 +60,14 @@ void CUI_Manager::Post_EngineUpdate(_float dt)
 
 void CUI_Manager::Priority_Update(_float dt)
 {
+	auto glLevel = m_UIObjects.find(G_GlobalLevelKey);
+	if (glLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : glLevel->second)
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
+			uiObj->Priority_Update(dt);
+
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
 	if (itLevel == m_UIObjects.end())
 		return;
@@ -56,6 +79,14 @@ void CUI_Manager::Priority_Update(_float dt)
 
 void CUI_Manager::Update(_float dt)
 {
+	auto glLevel = m_UIObjects.find(G_GlobalLevelKey);
+	if (glLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : glLevel->second)
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
+			uiObj->Update(dt);
+
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
 	if (itLevel == m_UIObjects.end())
 		return;
@@ -67,6 +98,13 @@ void CUI_Manager::Update(_float dt)
 
 void CUI_Manager::Late_Update(_float dt)
 {
+	auto glLevel = m_UIObjects.find(G_GlobalLevelKey);
+	if (glLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : glLevel->second)
+		if (uiObj && uiObj->Is_Alive() && uiObj->Is_Root())
+			uiObj->Late_Update(dt);
 
 	auto itLevel = m_UIObjects.find(m_nowLevelKey);
 	if (itLevel == m_UIObjects.end())

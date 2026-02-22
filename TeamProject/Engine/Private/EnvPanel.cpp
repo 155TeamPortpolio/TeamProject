@@ -226,7 +226,7 @@ void CEnvPanel::Render_FogDesc()
 
 
     _float density = fogDesc.fogDensity;
-    if (ImGui::SliderFloat("Density", &density, 0.0f, 0.05f, "%.5f"))
+    if (ImGui::SliderFloat("Density", &density, 0.0f, 1.f, "%.5f"))
     {
         fogDesc.fogDensity = density;
         changed = true;

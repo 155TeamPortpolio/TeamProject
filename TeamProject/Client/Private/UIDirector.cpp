@@ -33,20 +33,40 @@ HRESULT CUIDirector::Register(CUI_Object* pObj)
 	return S_OK;
 }
 
-void CUIDirector::FadeIn_Screen(_float fDuration)
+void CUIDirector::FadeIn_Screen(_float fDuration, function<void()> onFinished)
 {
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
+	desc.onFinished = onFinished;
 
-	UI_Active("screen_fade", &desc);
+	if (!m_hFade.isValid())
+		return;
+
+	m_hFade.Get()->UI_Active(&desc);
+	//UI_Active("screen_fade", &desc);
 }
 
-void CUIDirector::FadeOut_Screen(_float fDuration)
+void CUIDirector::FadeOut_Screen(_float fDuration, function<void()> onFinished)
 {
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
+	desc.onFinished = onFinished;
 
-	UI_DeActive("screen_fade", &desc);
+	if (!m_hFade.isValid())
+		return;
+
+	m_hFade.Get()->UI_DeActive(&desc);
+	//UI_DeActive("screen_fade", &desc);
+}
+
+void CUIDirector::Create_Fade()
+{
+	auto pFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" }).Build("fade");
+	if (!pFade)
+		return;
+
+	UIManager()->Add_UIObject(pFade, G_GlobalLevelKey);
+	m_hFade = pFade->Get_Handle();
 }
 
 void CUIDirector::Show_SceneFrame()
@@ -212,6 +232,9 @@ void CUIDirector::Initialize()
 
 	// json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장
 	Load_UILevelData("levelData.json");
+
+	// 페이드인 글로벌 레벨에 생성
+	Create_Fade();
 }
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)

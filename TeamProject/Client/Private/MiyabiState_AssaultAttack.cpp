@@ -2,6 +2,7 @@
 #include "MiyabiState_AssaultAttack.h"
 #include "BattleSystem.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
 #include "BattlePlayer.h"
 #include "Miyabi.h"
 
@@ -82,6 +83,14 @@ void CMiyabiState_Assault_Start::Enter(CMiyabi* pOwner)
 		.ReserveSpeed(0.55f, 0.8f, 2.5f, EaseType::OutQuad)
 		.ReserveSpeed(0.8f, 1.f, 0.7f, EaseType::OutQuart)
 		.Apply();
+
+	pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_AssaultAttack_SFX")
+		.Attribute3D(true)
+		.Play();
+
+	pOwner->Get_Component<CAudioSource>()->Sequence("AssaultAttack")
+		.Attribute3D(true)
+		.PlayNext();
 
 	m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
 	pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));

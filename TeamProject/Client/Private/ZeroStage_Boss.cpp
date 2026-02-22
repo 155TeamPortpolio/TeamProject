@@ -6,6 +6,7 @@
 #include "StageRouter.h"
 #include "EffectContainer.h"
 #include "CamDirector.h"
+#include "BattlePlayer.h"
 
 //component
 #include "AudioSource.h"
@@ -88,9 +89,13 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 				_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
 				0.02f
 			});
+
+		m_pOwnerLevel->Get_ZeroCloud()->Use_Cloud(false);
 	}
 	else if ("Zero_Boss2" == context.mapKey)
 	{
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV.wav").Attribute3D(false).Loop(-1).Volume(0.3f).Play();
+		m_pOwnerLevel->Get_ZeroBGM()->Slot("DefilerStage_ENV2.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({
 			_float3{0.f, 0.f ,0.f},
 			_float3{0.f, 0.f ,0.f},
@@ -99,7 +104,6 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 			_float3{0.322f, 0.357f, 0.463f},
 			_float3{0.f, 0.f, 0.f},
 			0.91 });
-		auto slot = m_pOwnerLevel->Get_ZeroBGM()->Slot("TheDefilerBossTheme.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 			{
 				_float4{0.026f, 0.045f, 0.054f, 1.0f},
@@ -116,8 +120,7 @@ HRESULT CZeroStage_Boss::Exit_Stage(StageContext& context)
 
 	if ("Zero_Boss1" == context.mapKey)
 		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("Sacrifice_BGM.wav", 0.9f);
-	else if ("Zero_Boss2" == context.mapKey)
-		m_pOwnerLevel->Get_ZeroBGM()->FadeOut_Volume("TheDefilerBossTheme.wav", 0.9f);
+	
 	return S_OK;
 }
 
@@ -125,6 +128,7 @@ void CZeroStage_Boss::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
 		if (!HasBattleStarter())
 			m_eStageState = StageState::BattleStart;
 	}

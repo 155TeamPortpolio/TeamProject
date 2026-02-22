@@ -112,6 +112,9 @@ void CShadowCam::Update_LightByTime(DAYPHASE_DESC Desc)
 void CShadowCam::Update_LightTransition(_float dt)
 {
     if (!m_bIsTransition) return;
+    if (LevelManager()->Get_NowLevelKey() != "Scott_Level" 
+        && LevelManager()->Get_NowLevelKey() != "MainCity_Level")
+        return;
 
     m_fTransitionTime += dt;
     _float lightTime = min(m_fTransitionTime / m_fTransitionDuration, 1.0f);

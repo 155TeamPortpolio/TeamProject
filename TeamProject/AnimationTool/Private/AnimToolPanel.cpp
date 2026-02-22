@@ -429,59 +429,60 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 
 void CAnimToolPanel::Draw_EventListUI()
 {
-	ImGui::BeginTable("##EventTable", 4,
+	if (ImGui::BeginTable("##EventTable", 4,
 		ImGuiTableFlags_RowBg |
 		ImGuiTableFlags_ScrollY |
-		ImGuiTableFlags_BordersInnerV);
+		ImGuiTableFlags_BordersInnerV)) 
+	{
+		ImGui::TableSetupColumn("TrackPos", ImGuiTableColumnFlags_WidthFixed, 70.f);
+		ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
+		ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
+		ImGui::TableHeadersRow();
 
-	ImGui::TableSetupColumn("TrackPos", ImGuiTableColumnFlags_WidthFixed, 70.f);
-	ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
-	ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
-	ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
-	ImGui::TableHeadersRow();
-	
-	//클립이 없거나 선택을 하지 않으면 렌더하지 않음
-	if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
-		auto& Events = m_AnimClip[m_iCurClipIndex].Events;
-		for (size_t i = 0; i < Events.size(); ++i)
-		{
-			ANIM_EVENT& e = Events[i];
-			ImGui::PushID((int)i);
-
-			ImGui::TableNextRow();
-
-			// Time
-			ImGui::TableNextColumn();
-			ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
-
-			// Type
-			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
-			int type = (int)e.EventType;
-			ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
-			e.EventType = (CLIP_EVENT_TYPE)type;
-
-			// Tag
-			ImGui::TableNextColumn();
-			char tagBuf[64];
-			strcpy_s(tagBuf, e.EventTag.c_str());
-			if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
-				e.EventTag = tagBuf;
-
-			// Delete
-			ImGui::TableNextColumn();
-			if (ImGui::SmallButton("X"))
+		//클립이 없거나 선택을 하지 않으면 렌더하지 않음
+		if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
+			auto& Events = m_AnimClip[m_iCurClipIndex].Events;
+			for (size_t i = 0; i < Events.size(); ++i)
 			{
-				Events.erase(Events.begin() + i);
+				ANIM_EVENT& e = Events[i];
+				ImGui::PushID((int)i);
+
+				ImGui::TableNextRow();
+
+				// Time
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
+
+				// Type
+				ImGui::TableNextColumn();
+				ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
+				int type = (int)e.EventType;
+				ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
+				e.EventType = (CLIP_EVENT_TYPE)type;
+
+				// Tag
+				ImGui::TableNextColumn();
+				char tagBuf[64];
+				strcpy_s(tagBuf, e.EventTag.c_str());
+				if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
+					e.EventTag = tagBuf;
+
+				// Delete
+				ImGui::TableNextColumn();
+				if (ImGui::SmallButton("X"))
+				{
+					Events.erase(Events.begin() + i);
+					ImGui::PopID();
+					break;
+				}
+
 				ImGui::PopID();
-				break;
 			}
-
-			ImGui::PopID();
 		}
-	}
 
-	ImGui::EndTable();
+		ImGui::EndTable();
+	}
 }
 
 void CAnimToolPanel::GUI_Preview(_float fChildHeight)

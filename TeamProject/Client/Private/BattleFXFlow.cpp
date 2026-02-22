@@ -51,7 +51,7 @@ void CBattleFXFlow::Initialize_Preset()
 		SwitchCancle.bCanIntersect = false;
 		SwitchCancle.fVFXDuration = duration;
 		SwitchCancle.fBlurDuration = .2f;
-		SwitchCancle.SetTimeData({ duration, 0.4f, 0.35f, 0.35f, EaseType::InOutBack });
+		SwitchCancle.SetTimeData({ duration, 0.3f, 0.3f, 0.3f, EaseType::InOutBack });
 		SwitchCancle.BattleTimeScale[ENUM(BATTLE_OBJ_TYPE::CAMERA)] = TIME_SCALE_DATA{ duration, 1.0f, 0.3f, .0f, EaseType::OutQuint };
 	}
 	{
@@ -609,14 +609,17 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	if (accumulatedTimeSec < totalDuration)
 		AddWait(totalDuration - accumulatedTimeSec);
+	
+	//AddWait(0.05f);
+	//AddCall([]() {UIDirector()->FadeOut_Screen(0.f); });
 
-	AddWait(preset.fVFXDuration);
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
 		m_BattleVFX.vNowColor = {};
 		m_BattleVFX.isRunning = false;
 		CamDirector()->EndWipeOut();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+		UIDirector()->FadeOut_Screen(0.2f);
 		});
 
 	Start(nullptr);
@@ -898,6 +901,17 @@ _bool CBattleFXFlow::IsValidTimeScale(const TIME_SCALE_DATA& timeScale)
 	return true;
 }
 
+void CBattleFXFlow::LockBattleTime(_bool Lock)
+{
+	if (Lock) {
+		for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+			SetLayerTimeScale(BATTLE_OBJ_TYPE(typeIndex), 0.f);
+	}
+	else {
+		for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+			ResetLayerTimeScale(BATTLE_OBJ_TYPE(typeIndex));
+	}
+}
 CBattleFXFlow* CBattleFXFlow::Create()
 {
 	CBattleFXFlow* instance = new CBattleFXFlow();

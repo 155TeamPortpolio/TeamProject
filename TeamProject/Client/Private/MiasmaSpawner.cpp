@@ -143,10 +143,20 @@ void CMiasmaSpawner::SpawnBlade(_float3 Target, _float3 Owner, CDefiler* pDefile
     desc->iCount = m_MiasmaBladeCount;
     desc->pOwner = pDefiler;
     desc->vTargetPos = Target;
+
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eGroup = COLLISION_GROUP::MONSTER;
+    ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER_ATTACK);
+    ColDesc.bTrigger = false;
+    ColDesc.bAutoFit = false;
+    ColDesc.eType = COLLIDER_TYPE::BOX;
+    ColDesc.vSize = { 3.f,3.f, 3.f };
+
     auto pBlade =
     Builder::Create_Object({ "Zero_Level","Proto_GameObject_MiasmaBlade" })
     .Position(Owner)
     .Add_ObjDesc(desc)
+    .Collider(ColDesc)
     .Build("MiasmaBlade");
     ObjectManager()->Add_Object(pBlade, { levelKey ,"Enemy_Layer" });
     BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, pBlade->Get_Handle());

@@ -99,6 +99,7 @@ void CCamDirector::ExitBoss()
 void CCamDirector::AutoTarget()
 {
     auto handle = GetCurHandle();
+
     if (handle.isValid())
         SetTarget(handle);
 }

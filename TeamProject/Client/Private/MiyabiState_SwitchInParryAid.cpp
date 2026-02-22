@@ -7,6 +7,8 @@
 #include "Miyabi.h"
 #include "Enemy.h"
 
+#include "AudioSource.h"
+
 #include "CamDirector.h"
 #include "ObjectContainer.h"
 #include "EffectContainer.h"
@@ -97,7 +99,7 @@ void CMiyabiState_SwitchInParryAid_Start::Update(CMiyabi* pOwner, _float dt)
         ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
         ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fStateTime > 1.5f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
+    if (m_fStateTime > 1.f)  // 1.5ÃÊ Å¸ÀÓ¾Æ¿ô
     {
         m_pOwnerStateMachine->Set_Trigger("ParryFail");
     }
@@ -108,6 +110,9 @@ void CMiyabiState_SwitchInParryAid_L_Loop::Enter(CMiyabi* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "ParryAid_L")
         .ReserveSpeed(0.f, 1.f, 2.f, EaseType::OutExpo)
         .Apply();
+    pOwner->Get_Component<CAudioSource>()->Sequence("ParryAid")
+        .Attribute3D(true)
+        .PlayNext();
 
     auto pos = CamDirector()->GetParryPoint();
     auto pParryEffect = pOwner->Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");

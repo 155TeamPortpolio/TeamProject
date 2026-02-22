@@ -61,7 +61,7 @@
 #include "PostRenderer.h"
 #include "PostProcessCommand.h"
 #include "ProceduralSky.h"
-
+#include "Light.h"
 #include "AudioSource.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
@@ -77,18 +77,21 @@ HRESULT CZero_Level::Initialize()
 	CUIDirector::GetInstance()->Load_LevelObjects("Zero_Level");
 
 	/*ENV*/
+	//Cloud
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
-
+	//Fog
 	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
 		->SetColor(_float4(0.08f, 0.02f, 0.02f, 1.0f))
 		->SetDensity(0.02f)
 		->SetEnable(true);
-	
+	//ShadowCam
+	m_tZeroShadow.pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+
 	/* BGM */
 	m_pBGM = CAudioSource::Create();
 	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/BGM");
-
+	
 	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
@@ -211,7 +214,7 @@ void CZero_Level::Ready_Stage()
 {
 	/*Stage*/
 	m_pRouter = Add_LevelObject<CStageRouter>();Safe_AddRef(m_pRouter);
-	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level","Router_Layer" });
+	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level", "Router_Layer" });
 
 	m_StageContainer.emplace(StageType::Start, CZeroStage_Start::Create(this));
 	m_StageContainer.emplace(StageType::Rest, CZeroStage_Start::Create(this));
@@ -220,28 +223,30 @@ void CZero_Level::Ready_Stage()
 	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 
 	//BuildGraph
-	m_pRouter->BuildGraph(2, StageType::Start, StageType::Elite);
+	m_pRouter->BuildGraph(5, StageType::Start, StageType::Elite);
 
 	//Start
 	m_mapCycle[StageType::Start].maps	= { "Zero_Start1" };
 	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
- 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_2_1", "Zero_5_1" };
+ 	m_mapCycle[StageType::Normal].maps	= { "Zero_1_1",	"Zero_1_2", "Zero_3_1", "Zero_3_2", "Zero_Spec3_1", "Zero_Spec3_2", "Zero_8_1"};
 	Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
+	_uint Boss_Process{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
+		Boss_Process = 1; //Start BossMap Index;
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
+
 	//Elite
-	m_mapCycle[StageType::Elite].maps	= { "Zero_1_1", "Zero_2_1" };
-	Shuffle_MapCycle(m_mapCycle[StageType::Elite].maps);
+	string Elite{};
+	Boss_Process == 1 ? Elite = "Zero_Com26_1" : Elite = "Zero_8_2";
+	m_mapCycle[StageType::Elite].maps.push_back(Elite);
 
 	//Boss
-	_uint Boss_Process{};
-	if(!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 2; //Start BossMap Index;
-
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
-	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <=2)? Boss_Process : 1);
-	ChangeStage(StageType::Boss);
+	
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
@@ -332,7 +337,6 @@ void CZero_Level::Zero_Fog::Update_Fog(_float dt)
 		->GetCommand<CFogCommand>()
 		->SetFogDesc(tCurFog)
 		->SetEnable(true);
-
 }
 
 void CZero_Level::Zero_Fog::Set_BaseFog(FOG_DESC FogDesc)
@@ -460,3 +464,17 @@ void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
 }
 
 #pragma endregion
+
+void CZero_Level::Zero_Shadow::Set_ShadowPos(_vector3 vPosition)
+{
+	if (!pShadowCam) return;
+
+	pShadowCam->Get_Component<CTransform>()->Set_Pos(vPosition);
+}
+
+void CZero_Level::Zero_Shadow::Set_Light(LIGHT_DESC LightDesc)
+{
+	if (!pShadowCam) return;
+
+	pShadowCam->Get_Component<CLight>()->Set_Desc(LightDesc, LIGHT_TYPE::DIRECTIONAL);
+}

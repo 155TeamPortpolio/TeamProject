@@ -9,7 +9,7 @@
 #include "Collider.h"
 #include "Child.h"
 
-//�ӽ�
+//ÀÓ½Ã
 #include "Material.h"
 #include "StaticModel.h"
 
@@ -74,6 +74,31 @@ void CThugPoacher_Arrow::Update(_float dt)
 
 	__super::Update(dt);
 
+	if (m_isSound)
+	{
+		m_vSoundTime.y += dt;
+
+		if (m_vSoundTime.x <= m_vSoundTime.y)
+		{
+			m_vSoundTime.y = 0.f;
+			m_isAlive = false;
+			m_isSound = false;
+		}
+	}
+
+	// Ã³À½ ½ò ¶§, Ãæµ¹ ¹«Àû
+	if (m_isCollisionCooltime)
+	{
+		m_vCollisionCooltime.y += dt;
+		if (m_vCollisionCooltime.x <= m_vCollisionCooltime.y)
+		{
+			m_isCollisionCooltime = false;
+			m_vCollisionCooltime.y = 0.f;
+			Get_Component<CCollider>()->Set_CompActive(true);
+		}
+	}
+
+	m_pTransform->Translate(m_vDir * m_fSpeed * dt);
 }
 
 void CThugPoacher_Arrow::Late_Update(_float dt)
@@ -94,7 +119,7 @@ void CThugPoacher_Arrow::OnTriggerEnter(CGameObject* pOther)
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 
-	if (nullptr == pCollidable)
+	if (nullptr == pCollidable || true == m_isCollisionCooltime)
 		return;
 
 	_bool isCollision = false;
@@ -109,11 +134,11 @@ void CThugPoacher_Arrow::OnTriggerEnter(CGameObject* pOther)
 	}
 	case Engine::COLLISION_GROUP::PLAYER:
 	{
-		// ������ �ִ� �ڵ�
+		// µ¥¹ÌÁö ÁÖ´Â ÄÚµå
 		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 		if (nullptr != pEnemy)
 		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
 			CameraManager()->AddImpact(1, 0);
 			isCollision = true;
 		}
@@ -158,15 +183,19 @@ void CThugPoacher_Arrow::ShootArrow()
 
 	Get_Component<CRigidBody>()->Late_Update(0);
 
-	Get_Component<CCollider>()->Set_CompActive(true);
 	m_isAlive = true;
+	SetRenderLayer(RENDER_LAYER::Default);
+	m_isCollisionCooltime = true;
+	m_isSound = false;
 }
 
 void CThugPoacher_Arrow::FinishArrow()
 {
-	m_isAlive = false;
+	//m_isAlive = false;
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_vDir = {};
+	SetRenderLayer(RENDER_LAYER::None);
+	m_isSound = true;
 }
 
 void CThugPoacher_Arrow::Initialize_Effects()

@@ -31,8 +31,14 @@ void CThugPoacher_Move::Enter(CThugPoacher* pOwner)
 		_float fDistance = pOwner->GetTargetingInfo().fDistance;
 		if (hysteriesis.fEvadeEnter >= fDistance)
 			iMovePatternIndex = MOVEINDEX::Evade;
-		else
+		else if (hysteriesis.fComboExit >= fDistance)
+			iMovePatternIndex = MOVEINDEX::Walk_Back;
+		else if (hysteriesis.fChaseExit >= fDistance)
 			iMovePatternIndex = Helper::Get_Random_Int(3, 7);
+		else if (hysteriesis.fChaseEnter >= fDistance)
+			iMovePatternIndex = MOVEINDEX::Walk_Front;
+		else
+			pOwner->Idle();
 	}
 	ChangeMovePatternFromIndex(iMovePatternIndex);
 }

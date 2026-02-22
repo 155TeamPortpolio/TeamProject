@@ -81,6 +81,7 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
+	m_isUseGroggyRimLight = true;
 
 	return S_OK;
 }
@@ -405,12 +406,12 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACT
 
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
-		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Knock")
+		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Stay")
 			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iNowHP -= fDamage * 1.2f; // 1.5f
+		//m_tStatus.iNowHP -= fDamage * 1.2f; // 1.5f
 	}
 	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
@@ -425,8 +426,8 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACT
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iNowHP -= fDamage * 0.7f;
-		m_tStatus.iGroggyValue += 4;
+		//m_tStatus.iNowHP -= fDamage * 0.7f;
+		//m_tStatus.iGroggyValue += 4;
 	}
 
 	if (0.f > m_tStatus.iNowHP)
@@ -521,7 +522,7 @@ HRESULT CThugAssaulter::Initialize_Effects()
 HRESULT CThugAssaulter::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 1.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
 	//// Target 감지 범위 (default = 5.f)
 	//m_fDetectedRange = 5.f;

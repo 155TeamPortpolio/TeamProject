@@ -27,9 +27,9 @@ public:
 public:
 	//==================== Common ===============
 	/* 화면 페이드인 실행 (검정 화면 -> 화면) */
-	void FadeIn_Screen(_float fDuration = 0.5f);
+	void FadeIn_Screen(_float fDuration = 0.5f, function<void()> onFinished = nullptr );
 	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
-	void FadeOut_Screen(_float fDuration = 0.5f);
+	void FadeOut_Screen(_float fDuration = 0.5f, function<void()> onFinished = nullptr);
 
 	/* 씬 프레임을 화면에 표시 (화면 위, 아래에 프레임) */
 	void Show_SceneFrame();
@@ -87,6 +87,8 @@ public:
 	void Load_LevelObjects(const string& levelKey);
 
 private:
+	void Create_Fade();
+
 	/* json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장 */
 	void Load_UILevelData(const string& resourceKey);
 	void Show_HUD(const string& strInstanceName, _bool isFade = true);
@@ -104,6 +106,7 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
+	UI_HANDLE		m_hFade = {};
 
 public:
 	virtual void Free() override;

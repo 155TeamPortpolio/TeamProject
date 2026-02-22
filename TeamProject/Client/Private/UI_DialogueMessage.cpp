@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "DataBase.h"
 #include "ObjectContainer.h"
+#include "AudioSource.h"
+
 #include "Child.h"
 #include "TextSlot.h"
 #include "ButtonUI.h"
@@ -16,6 +18,8 @@ HRESULT CUI_DialogueMessage::Initialize_Prototype()
         return E_FAIL;
 
     Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/MainCity/Sound/NPC/");
 
     return S_OK;
 }
@@ -70,6 +74,11 @@ void CUI_DialogueMessage::UI_Active(void* pArg)
     Set_ChildText(TEXTSLOT::NAME, pDesc->strName);  // 화자 이름 설정
     Start_TypingMessage(pDesc->strMessage);         // 메시지 타이핑 시작
     m_hasChoice = pDesc->hasChoice;                 // 선택지 존재 여부 저장
+
+    if (pDesc->strName == L"전류감별부" || pDesc->strName == L"충전부")
+        Get_Component<CAudioSource>()->Slot("BangBoo_Sequence" + to_string(pDesc->SequenceID) + ".wav").PlayUnique();
+    else if (pDesc->strName == L"냥냥이 치안관")
+        Get_Component<CAudioSource>()->Slot("Meow_Sequence" + to_string(pDesc->SequenceID) + ".wav").PlayUnique();
 }
 
 void CUI_DialogueMessage::UI_DeActive(void* pArg)

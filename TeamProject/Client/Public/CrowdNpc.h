@@ -24,7 +24,8 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-
+public:
+    virtual void OnCameraCollision(const CamOcclusionHit& hit) override;
 private:
     NpcColorPreset colorPreset;
     NpcModelPreset modelPreset;

@@ -48,7 +48,7 @@ HRESULT CMilitaryHelicopter::Initialize(INIT_DESC* pArg)
     pMaterial->Link_Material("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.mat");
 
     m_AnimName = pDesc->strAnimName;
-    m_bLoop = pDesc->bLoop;
+    m_fDelayTime = pDesc->fDelay;
 
     return S_OK;
 }
@@ -58,25 +58,35 @@ void CMilitaryHelicopter::Awake()
     auto pAnimator = Get_Component<CAnimator3D>();
     pAnimator->LinkAnimate_Model("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01out.model");
     pAnimator->Link_MetaData("Scott_Level", "Device_Vehicle_MilitaryHelicopter_01_Meta.json");
-
-    pAnimator->Set_Animation(m_AnimName)
-        .Loop(true)
-        .Apply();
-
-    Get_Component<CAudioSource>()->Slot("Helicopter.wav")
-        .Attribute3D(true)
-        .Group(SOUND_GROUP::ENV)
-        .Loop(true)
-        .Volume(0.15f)
-        .Play();
+    m_bActive = false;
 }
 
 void CMilitaryHelicopter::Priority_Update(_float dt)
 {
+    if (m_bActive)  return;
+
+    m_fDelayElapsed += dt;
+
+    if (m_fDelayElapsed >= m_fDelayTime) {
+        m_bActive = true;
+
+        Get_Component<CAnimator3D>()->Set_Animation(m_AnimName)
+            .Loop(true)
+            .Apply();
+
+        Get_Component<CAudioSource>()->Slot("Helicopter.wav")
+            .Attribute3D(true)
+            .Group(SOUND_GROUP::ENV)
+            .Loop(true)
+            .Volume(0.3f)
+            .Play();
+    }
 }
 
 void CMilitaryHelicopter::Update(_float dt)
 {
+    if (!m_bActive) return;
+
     Get_Component<CAnimator3D>()->Update_Animation(dt);
     Get_Component<CAudioSource>()->Set_AudioPos(
         Get_Component<CAnimator3D>()->Get_BonePosition(CAnimator3D::BoneSpace::WORLD, "Ctr_Main"));

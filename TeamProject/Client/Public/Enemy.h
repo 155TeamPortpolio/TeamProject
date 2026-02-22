@@ -64,9 +64,10 @@ public:
 
     virtual void        Set_Alive(_bool alive) override;
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
-    virtual void        Active_AttackSign(_bool parryEnable = true);
+    virtual void        Active_AttackSign(_bool parryEnable = true, _bool isUsedSound = true);
     // 플레이어 무기에서 몬스터한테 데미지 입힐 때 호출 될 함 수
     virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END);
+    void                SetLastHitCharacter(CHARACTER charaName);
     /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
     void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc);
@@ -79,7 +80,7 @@ public:
     // 패링 당했을 때 플레이어 쪽에서 호출될 함수
     virtual void        Parried();
     // 공격 상태 진입 시, AttackSign 켜고 공격 관련 flag를 일괄 처리하는 함수
-    void                UnleashAttack(ATTACK_SIDE eSide = ATTACK_SIDE::NONE, _bool ParryEnable = true);
+    void                UnleashAttack(ATTACK_SIDE eSide = ATTACK_SIDE::NONE, _bool ParryEnable = true, _bool isUsedSound = true);
     // 패링당할 수 있는 상태인지 정하는 함수
     void                SetParryEnable(_bool is) { m_isParryEnable = is; }
     // 플레이어가 수행할 수 있는 콤보 카운트 내리는 함수
@@ -171,7 +172,14 @@ protected:
     _bool m_isUseInspector = { false };
 #endif // _USING_GUI
 
+    /* For.Groggy RimLight*/
+    _bool   m_isUseGroggyRimLight = { false };
+    GROGGY_RIMLIGHT m_tGroggyRimLight = {};
 
+    // 강공(코린,노란색), 빙결(미야비,푸른색), 에테르(제인 도, 분홍색)
+    //_float3 m_vGroggyRimRightColors[3] = { { 0.784, 0.392f, 0.f }, {0.f, 0.384, 1.f}, {0.611f, 0.f, 1.f} };
+    //_float2 m_vGroggyRimRightTime = { 1.2f, 0.f };
+    //_float2 m_vGroggyRimRightPower = { 5.f, 20.f };
 
     // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
     //_float                  m_fDetectedRange = { 5.f };

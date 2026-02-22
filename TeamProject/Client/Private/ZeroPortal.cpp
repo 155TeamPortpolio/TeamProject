@@ -66,7 +66,8 @@ void CZeroPortal::Awake()
 	m_vBaseScale	= m_pTransform->Get_Scale();
 	m_vExtendScale	= m_vBaseScale * 3.f;
 	m_fDuration		= 0.7f;
-
+	
+	//NoiseSequence();
 	PortalEffectFlowSetting();
 }
 
@@ -81,18 +82,10 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
 	Focus(dt);
-
+	
 	m_PortalFlow.Tick(dt);
 
-	//if (m_OnActive)
-	//{
-	//	m_fActiveElapsedTime += dt;
-	//	if (m_fActiveElapsedTime >= m_fActiveDuration)
-	//	{
-	//		NoiseSequence();
-	//		m_OnActive = false;
-	//	}
-	//}
+	Update_ActivePortal(dt);
 }
 
 void CZeroPortal::Late_Update(_float dt)
@@ -107,7 +100,7 @@ void CZeroPortal::Render_GUI()
 		On_InPlayer();
 
 	if (ImGui::Button("Active Portal"))
-		Active_Portal();
+		Active_PortalEffect();
 }
 
 void CZeroPortal::OnTriggerEnter(CGameObject* pOther)
@@ -143,10 +136,13 @@ void CZeroPortal::Interact(CGameObject* pObject)
 {
 	if (!m_bIsInteractable)
 		return;
-
-	m_pOwnerStage->StageChangeOn(m_choiceIndex);
+	m_bUsingPortal = true;
 	m_bIsInteractable = false;
 	Get_Component<CAudioSource>()->Slot("ZeroPortal_Enter.wav").Play();
+
+	
+	CamDirector()->EnterPortal(Get_Handle());
+	
 }
 
 OBJECT_HANDLE CZeroPortal::Get_InteractHandle()
@@ -197,38 +193,6 @@ void CZeroPortal::Focus(_float dt)
 	m_pTransform->Scale(vCurrScale);
 }
 
-void CZeroPortal::Extend(_float dt)
-{
-	m_fElapsedTime += dt;
-	if (m_fElapsedTime >= m_fDuration)
-	{
-		m_OnExtend = false;
-	}
-	else
-	{
-		_float t = m_fElapsedTime / m_fDuration;
-
-		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vBaseScale), _vector3(m_vExtendScale), Math::ApplyEase(EaseType::OutExpo, t));
-		m_pTransform->Scale(vCurrScale);
-	}
-}
-
-void CZeroPortal::Contract(_float dt)
-{
-	m_fElapsedTime += dt;
-	if (m_fElapsedTime >= m_fDuration)
-	{
-		m_OnContract = false;
-	}
-	else
-	{
-		_float t = m_fElapsedTime / m_fDuration;
-
-		_vector3 vCurrScale = _vector3::Lerp(_vector3(m_vExtendScale), _vector3(m_vBaseScale), Math::ApplyEase(EaseType::OutExpo, t));
-		m_pTransform->Scale(vCurrScale);
-	}
-}
-
 void CZeroPortal::NoiseSequence()
 {
 	auto pPost = RenderSystem()->GetPostRenderer();
@@ -239,7 +203,27 @@ void CZeroPortal::NoiseSequence()
 		->SetEnable(true);
 }
 
-void CZeroPortal::Active_Portal()
+void CZeroPortal::Update_ActivePortal(_float dt)
+{
+	if (!m_bUsingPortal)
+		return;
+
+	m_fElapsedPortal += dt;
+
+	if (!m_PortalFlow.IsRunning()) {
+		if (m_fElapsedPortal > m_fEffectTiming) {
+			m_PortalFlow.Start();
+		}
+	}
+	else {
+		if (m_PortalFlow.IsDoneAll()) {
+			m_pOwnerStage->StageChangeOn(m_choiceIndex);
+			m_bUsingPortal = false;
+		}
+	}
+}
+
+void CZeroPortal::Active_PortalEffect()
 {
 	m_PortalFlow.Start();
 	/*auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("ZeroPortal_Active");

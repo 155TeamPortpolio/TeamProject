@@ -83,6 +83,7 @@ HRESULT CStrikeJaeger::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
+	m_isUseGroggyRimLight = true;
 
 	return S_OK;
 }

@@ -7,6 +7,7 @@
 #include "ObjectContainer.h"
 #include "Collider.h"
 #include "Child.h"
+#include "AudioSource.h"
 
 //임시
 #include "Material.h"
@@ -49,11 +50,22 @@ HRESULT CCyclops_Spit::Initialize(INIT_DESC* pArg)
 	//Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Default.mat");
 	//Get_Component<CTransform>()->Scale({ 0.2f, 0.2f, 0.2f });
 
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/Cyclops/Sound");
+
 	Get_Component<CRigidBody>()->Set_Kinematic(true);
 	Get_Component<CCollider>()->Set_CompActive(false);
+
 	m_isAlive = false;
 
 	Initialize_Effects();
+	m_HardHitDesc.eDamageType = DAMAGE_TYPE::HARD;
+	m_HardHitDesc.eHitType = HIT_TYPE::ONCE;
+	m_HardHitDesc.fDamage = 10.f;
+
+	m_KnockOutHitDesc.eDamageType = DAMAGE_TYPE::KNOCKOUT;
+	m_KnockOutHitDesc.eHitType = HIT_TYPE::ONCE;
+	m_KnockOutHitDesc.fDamage = 13.f;
+
 
 	return S_OK;
 }
@@ -70,6 +82,18 @@ void CCyclops_Spit::Priority_Update(_float dt)
 void CCyclops_Spit::Update(_float dt)
 {
 	__super::Update(dt);
+
+	if (m_isSound)
+	{
+		m_vSoundTime.y += dt;
+
+		if (m_vSoundTime.x <= m_vSoundTime.y)
+		{
+			m_vSoundTime.y = 0.f;
+			m_isAlive = false;
+			m_isSound = false;
+		}
+	}
 	
 	// 처음 쏠 때, 충돌 무적
 	if (m_isCollisionCooltime)
@@ -79,6 +103,7 @@ void CCyclops_Spit::Update(_float dt)
 		{
 			m_isCollisionCooltime = false;
 			m_vCollisionCooltime.y = 0.f;
+			Get_Component<CCollider>()->Set_CompActive(true);
 		}
 	}
 
@@ -150,7 +175,13 @@ void CCyclops_Spit::OnTriggerEnter(CGameObject* pOther)
 		auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 		if (nullptr != pEnemy)
 		{
-			pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+			HitDesc hitdesc = {};
+			if (m_eSpitType == SPIT::STRAIGHT)
+				hitdesc = m_KnockOutHitDesc;
+			else
+				hitdesc = m_HardHitDesc;
+
+			pEnemy->Take_Damage(hitdesc.eDamageType, hitdesc.fDamage);
 			CameraManager()->AddImpact(1, 0);
 			isCollision = true;
 		}
@@ -196,7 +227,9 @@ void CCyclops_Spit::ShootSpit(SPIT eSpitType)
 	
 	_vector vLookDir = XMVector3Normalize(ParentWorld.r[2]);
 
-	switch (eSpitType)
+	m_eSpitType = eSpitType;
+
+	switch (m_eSpitType)
 	{
 	case Client::CCyclops_Spit::SPIT::STRAIGHT:
 	{
@@ -245,23 +278,29 @@ void CCyclops_Spit::ShootSpit(SPIT eSpitType)
 	}
 	}
 
-	Get_Component<CCollider>()->Set_CompActive(true);
+	//Get_Component<CCollider>()->Set_CompActive(true);
 	Get_Component<CRigidBody>()->Late_Update(0);
 
 	m_isCollisionCooltime = true;
 	m_isAlive = true;
+	SetRenderLayer(RENDER_LAYER::Default);
+	m_isSound = false;
 }
 
 void CCyclops_Spit::FinishSpit()
 {
+	Get_Component<CAudioSource>()->Slot("cyclops_Spit_Finish.wav").Attribute3D(true).Play();
+
 	m_isStraight = false;
 	m_isArc = false;
 
-	m_isAlive = false;
+	//m_isAlive = false;
 	Get_Component<CCollider>()->Set_CompActive(false);
 	m_vDir = {};
 
 	Spawn_DeadEffect();
+	SetRenderLayer(RENDER_LAYER::None);
+	m_isSound = true;
 }
 
 _float CCyclops_Spit::ComputeGravityScale(_float lifeTime, _float rampTime)

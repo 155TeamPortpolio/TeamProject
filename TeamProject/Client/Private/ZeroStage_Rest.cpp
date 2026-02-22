@@ -5,6 +5,7 @@
 #include "Zero_Level.h"
 #include "StageRouter.h"
 #include "ZeroPortal.h"
+#include "BattlePlayer.h"
 
 CZeroStage_Rest::CZeroStage_Rest()
 {
@@ -67,6 +68,7 @@ void CZeroStage_Rest::Intro()
 		CBattleSystem::GetInstance()->SetActive(true);
 		m_eStageState = StageState::None;
 		Active_Portal();
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
 	}
 }
 
