@@ -127,6 +127,12 @@ protected:
 
 #pragma endregion
 
+#pragma region Effect
+public:
+    virtual void Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform = true);
+    virtual void Stop_Effect(const string& effectTag);
+#pragma endregion
+
 protected:
     ENEMY_CLASS             m_eEnemyClass = { ENEMY_CLASS::NORMAL }; 
     // Status HUD 소멸할때 UI매니저에 보내서 지워야함

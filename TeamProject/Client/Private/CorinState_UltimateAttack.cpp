@@ -149,6 +149,9 @@ void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_UltimateAttack_Loop::Exit(CCorin* pOwner)
 {
+    //pOwner->Stop_Effect("Corin_Saw_Slash0");
+    //pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_HitGround");
     pOwner->End_AttackCollider("Saw");
 }
 

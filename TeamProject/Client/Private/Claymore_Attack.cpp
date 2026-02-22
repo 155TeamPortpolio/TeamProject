@@ -145,10 +145,17 @@ void CClaymore_Attack1::Enter(CClaymore* pOwner)
 
 void CClaymore_Attack1::Update(CClaymore* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CClaymore_Attack1::Exit(CClaymore* pOwner)
 {
+}
+
+void CClaymore_Attack1::Update_Effects(CClaymore* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Claymore_Slash0_0", _vector3(0.f, 0.8f, 0.f), _quaternion(0.66f, -0.24f, 0.24f, 0.66f));
 }
 
 /*============================================================================*/
@@ -160,10 +167,21 @@ void CClaymore_Attack2::Enter(CClaymore* pOwner)
 
 void CClaymore_Attack2::Update(CClaymore* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CClaymore_Attack2::Exit(CClaymore* pOwner)
 {
+}
+
+void CClaymore_Attack2::Update_Effects(CClaymore* pOwner)
+{
+	if (IsCrossAnimProgress(0.17f))
+		pOwner->Play_Effect("Claymore_Slash0_0", _vector3(0.f, 1.4f, 0.f), _quaternion(-0.2f, 0.61f, 0.61f, -0.48f));
+	if (IsCrossAnimProgress(0.3f))
+		pOwner->Play_Effect("Claymore_Slash0_1", _vector3(0.f, 0.9f, 0.f), _quaternion(0.67f, -0.27f, 0.27f, 0.64f));
+	if (IsCrossAnimProgress(0.44f))
+		pOwner->Play_Effect("Claymore_Slash0_2", _vector3(0.2f, 1.f, 0.3f), _quaternion(0.01f, 0.77f, 0.01f, 0.63f));
 }
 
 /*============================================================================*/
@@ -192,10 +210,20 @@ void CClaymore_Attack3::Update(CClaymore* pOwner, _float dt)
 {
 	if (3.f >= pOwner->GetTargetingInfo().fDistance)
 		m_pOwnerStateMachine->Change_State("Attack03_End");
+
+	Update_Effects(pOwner);
 }
 
 void CClaymore_Attack3::Exit(CClaymore* pOwner)
 {
+}
+
+void CClaymore_Attack3::Update_Effects(CClaymore* pOwner)
+{
+	if (IsCrossAnimProgress(0.42f))
+		pOwner->Play_Effect("Claymore_Slash0_0", _vector3(0.f, 0.9f, 0.f), _quaternion(-0.06f, -0.64f, -0.51f, 0.57f));
+	if (IsCrossAnimProgress(0.53f))
+		pOwner->Play_Effect("Claymore_Slash0_1", _vector3(0.2f, 0.6f, 0.f), _quaternion(0.f, 0.72f, -0.05f, 0.69f));
 }
 
 /*============================================================================*/
@@ -207,10 +235,19 @@ void CClaymore_Attack3_End::Enter(CClaymore* pOwner)
 
 void CClaymore_Attack3_End::Update(CClaymore* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CClaymore_Attack3_End::Exit(CClaymore* pOwner)
 {
+}
+
+void CClaymore_Attack3_End::Update_Effects(CClaymore* pOwner)
+{
+	if (IsCrossAnimProgress(0.05f))
+		pOwner->Play_Effect("Claymore_Slash0_0", _vector3(0.f, 0.9f, 0.f), _quaternion(-0.06f, -0.64f, -0.51f, 0.57f));
+	if (IsCrossAnimProgress(0.21f))
+		pOwner->Play_Effect("Claymore_Slash0_1", _vector3(0.2f, 0.6f, 0.f), _quaternion(0.f, 0.72f, -0.05f, 0.69f));
 }
 
 /*============================================================================*/
@@ -222,10 +259,17 @@ void CClaymore_Attack4::Enter(CClaymore* pOwner)
 
 void CClaymore_Attack4::Update(CClaymore* pOwner, _float dt)
 {
+	Update_Effects(pOwner);
 }
 
 void CClaymore_Attack4::Exit(CClaymore* pOwner)
 {
+}
+
+void CClaymore_Attack4::Update_Effects(CClaymore* pOwner)
+{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->Play_Effect("Claymore_Slash0_0", _vector3(0.f, 1.3f, 0.f), _quaternion(0.3f, 0.67f, 0.67f, 0.13f));
 }
 
 /*============================================================================*/
