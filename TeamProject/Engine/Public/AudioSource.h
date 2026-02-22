@@ -121,7 +121,7 @@ public:
     void    Play(const string& soundKey, _bool continuePlay = false, _bool startPaused = false);
     void    PlayUnique(const string& soundKey);
     void    Update_Audio(AUDIO_SLOT& slot);
-
+    void    FadeOutAll(_float Durationfactor);
 public:
     void    Render_GUI();
 private:
