@@ -769,6 +769,7 @@ void CBattlePlayer::Process_Ultimate()
     {
         if (m_pCurrentCharacter->Can_Ultimate())
         {
+            Update_Target(true);
             m_pCurrentCharacter->On_Ultimate();
         }
     }
@@ -778,6 +779,7 @@ void CBattlePlayer::Process_Energy()
 {
     if (InputDevice()->Key_Down('E'))
     {
+        Update_Target(true);
         m_pCurrentCharacter->On_Special();
     }
 }
@@ -806,6 +808,10 @@ void CBattlePlayer::Process_ComboSelect(_float dt)
         Cancel_ComboAttack();
         return;
     }
+
+    // ComboSwitch Input막기 : 0.5초간
+    if (m_fComboSelectTimer < 0.5f)
+        return;
 
     if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
     {
