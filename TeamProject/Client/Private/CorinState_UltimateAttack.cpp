@@ -3,6 +3,7 @@
 
 #include "BattleSystem.h"
 #include "CamDirector.h"
+#include "UIDirector.h"
 
 #include "Corin.h"
 
@@ -95,6 +96,7 @@ void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
 {
     BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
+    UIDirector()->Show_Ultimate(CHARACTER::Corin, 2.f);
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
         //.Speed(2.f)
         .Apply();
@@ -149,6 +151,9 @@ void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_UltimateAttack_Loop::Exit(CCorin* pOwner)
 {
+    //pOwner->Stop_Effect("Corin_Saw_Slash0");
+    //pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_HitGround");
     pOwner->End_AttackCollider("Saw");
 }
 

@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -30,6 +31,7 @@
 #include "ThugBulkyEnforcer_Parried.h"
 
 #include "AttackSign.h"
+#include "EffectContainer.h"
 
 CThugBulkyEnforcer::CThugBulkyEnforcer()
 	: CEnemy()
@@ -86,6 +88,12 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
+	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 	return S_OK;
 }
@@ -372,7 +380,7 @@ void CThugBulkyEnforcer::OnPooledRelease()
 
 void CThugBulkyEnforcer::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName()/* || false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -625,6 +633,51 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 	return S_OK;
 }
 
+HRESULT CThugBulkyEnforcer::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_hit_ground0.json")
+			.Build("Bulky_HitGround0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_hit_ground1.json")
+			.Build("Bulky_HitGround1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_punch.json")
+			.Build("Bulky_Punch");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_knee_kick.json")
+			.Build("Bulky_KneeKick");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 2; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("bulky_slash0.json")
+			.Build("Bulky_Slash0_" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	return S_OK;
+}
+
 HRESULT CThugBulkyEnforcer::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
@@ -661,6 +714,11 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	ManageAttackHistory();
 	CheckDistanceFromPlayer();
 	RotateToPlayer(dt);
+
+	// 사운드 재생
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+		if (Event.Type == CLIP_EVENT_TYPE::SOUND)
+			Get_Component<CAudioSource>()->Slot(Event.Tag).Attribute3D(true).Play();
 
 	//================================
 	ControlState(dt);

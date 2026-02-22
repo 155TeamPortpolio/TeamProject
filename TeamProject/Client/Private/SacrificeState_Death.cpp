@@ -2,6 +2,7 @@
 #include "SacrificeState_Death.h"
 #include "Sacrifice.h"
 #include "AudioSource.h"
+#include "BattleSystem.h"
 
 void CSacrificeState_Death::Enter(CSacrifice* pOwner)
 {
@@ -52,6 +53,8 @@ void CSacrificeState_Death_Phase1::Enter(CSacrifice* pOwner)
 	pOwner->DeactiveEyeLaser();
 
 	pOwner->Set_Hitable(false);
+	pOwner->Control_TargetEnable(false);
+	pOwner->HideHUD(true);
 }
 
 void CSacrificeState_Death_Phase1::Update(CSacrifice* pOwner, _float dt)

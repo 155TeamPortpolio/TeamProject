@@ -47,6 +47,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     HRESULT Ready_Rules();
     void Update_States(const _float dt);
     void ControlState(const _float dt);

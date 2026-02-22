@@ -37,6 +37,9 @@ public:
 public:
 	static CClaymore_Attack1* Create() { return new CClaymore_Attack1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CClaymore* pOwner);
 };
 
 class CClaymore_Attack2 : public IBaseState<CClaymore>
@@ -49,6 +52,10 @@ public:
 public:
 	static CClaymore_Attack2* Create() { return new CClaymore_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CClaymore* pOwner);
+
 };
 
 class CClaymore_Attack2b : public IBaseState<CClaymore>
@@ -73,6 +80,10 @@ public:
 public:
 	static CClaymore_Attack3* Create() { return new CClaymore_Attack3(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CClaymore* pOwner);
+
 };
 
 class CClaymore_Attack3_End : public IBaseState<CClaymore>
@@ -85,6 +96,9 @@ public:
 public:
 	static CClaymore_Attack3_End* Create() { return new CClaymore_Attack3_End(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CClaymore* pOwner);
 };
 
 class CClaymore_Attack4: public IBaseState<CClaymore>
@@ -97,6 +111,10 @@ public:
 public:
 	static CClaymore_Attack4* Create() { return new CClaymore_Attack4(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CClaymore* pOwner);
+
 };
 
 class CClaymore_Attack5: public IBaseState<CClaymore>

@@ -171,6 +171,20 @@ void CBattlePlayer::Render_GUI()
             Character->Set_AttackPower(0.f);
         }
     }
+    if(m_bLockInput)
+    {
+        if (ImGui::Button("UnLockInput"))
+        {
+            m_bLockInput = false;
+        }
+    }
+    else
+    {
+        if (ImGui::Button("LockInput"))
+        {
+            m_bLockInput = true;
+        }
+    }
 
     ImGui::Separator();
     if (ImGui::Button("RecoverHP"))
@@ -508,9 +522,9 @@ void CBattlePlayer::Execute_ComboAttack(_bool bNext)
 
     // 콤보 어택 전용 SwitchIn
     m_pCurrentCharacter->Set_MainCharacter(true);
-    m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
     m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+    m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
     m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
@@ -837,9 +851,9 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
     }
 
     m_pCurrentCharacter->Set_MainCharacter(true);
-    m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
     m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+    m_pCurrentCharacter->Active_Character();
     m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
     AudioDevice()->Set_Listener(m_pCurrentCharacter->Get_Component<CTransform>());
 
