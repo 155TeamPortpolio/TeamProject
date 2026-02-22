@@ -14,7 +14,7 @@ CStageRouter::CStageRouter()
 
 void CStageRouter::Render_GUI()
 {
-    static const char* typeNames[] = { "Start", "Normal", "Elite", "Boss", "Shop", "Rest", "End" };
+    static const char* typeNames[] = { "Start", "Rest", "Normal", "Elite", "Boss", "Shop", "End" };
 
     ImGui::Begin("Stage Map");
 
