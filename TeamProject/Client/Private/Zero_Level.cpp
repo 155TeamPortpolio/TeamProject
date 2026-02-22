@@ -232,7 +232,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
-	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1", "Zero_3_1", "Zero_Spec3_2", "Zero_1_2", "Zero_8_1", "Zero_3_2", "Zero_Spec3_1"};
+	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1",  "Zero_3_2", "Zero_Spec3_1", "Zero_1_2", "Zero_3_1", "Zero_8_1", "Zero_Spec3_2"};
 	//Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
 	_uint Normal_Progress{};
@@ -274,7 +274,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Rest);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

@@ -6,13 +6,6 @@ NS_BEGIN(Client)
 class CBangBoo :
     public CNpc
 {
-public:
-    typedef struct tagBangBooDesc : public Engine::GAMEOBJECT_DESC {
-        string BangBooTag{};
-        string Name{};
-        string Speech{};
-    }BANGBOO_DESC;
-
 private:
     CBangBoo();
     CBangBoo(const CBangBoo& rhs);
@@ -25,6 +18,12 @@ public:
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+    
+public:
+    void Set_BangBoo_Model(const string& BangBooTag);
+    void Set_BangBoo_Animation(const string& AnimationTag);
+    void Set_BangBoo_Name(const wstring& NameTag);
+    void Set_BangBoo_Speech(const wstring& SpeechString);
 
 public:
     static CBangBoo* Create();
