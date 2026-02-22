@@ -16,6 +16,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -84,6 +85,10 @@ HRESULT CMeleeJaeger::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 	m_isUseGroggyRimLight = true;
+
+	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
+	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
+
 
 	return S_OK;
 }
@@ -266,7 +271,7 @@ void CMeleeJaeger::OnPooledRelease()
 
 void CMeleeJaeger::Parried()
 {
-	if ("Attack" != m_pStateMachine->Get_CurrentStateName() || false == m_isParryEnable)
+	if ("Attack" != m_pStateMachine->Get_CurrentStateName() /*|| false == m_isParryEnable*/)
 		return;
 
 	__super::Parried();
@@ -528,6 +533,7 @@ void CMeleeJaeger::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	PlaySoundFromMeta();
 
 	//================================
 	ControlState(dt);
