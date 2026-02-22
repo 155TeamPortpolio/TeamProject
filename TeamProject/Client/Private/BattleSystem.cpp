@@ -62,7 +62,7 @@ void CBattleSystem::Update()
 	}
 	if(InputDevice()->Key_Tap(VK_CONTROL))
 	{
-		//StartGimmick(BATTLE_VFX_TYPE::CLEAR);
+		AllKill();
 	}
 }
 

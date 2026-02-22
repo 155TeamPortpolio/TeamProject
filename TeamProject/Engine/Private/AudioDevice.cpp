@@ -129,7 +129,7 @@ FMOD::System* CAudioDevice::Get_System()
      m_pSystem->playSound(
          packet.pSound->Get_SoundData(),
          m_Groups[static_cast<_uint>(packet.eGroup)],
-         packet.isPaused,            
+         true, // 항상 일단 pause 상태로 생성
          packet.ppChannelToUpdate
      );
 

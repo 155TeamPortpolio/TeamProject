@@ -66,9 +66,26 @@ CAudioSource::CAudioSource(const CAudioSource& rhs)
 	:m_pAudioDevice(AudioDevice())
 	, CComponent(rhs), m_Audios(rhs.m_Audios), m_Sequences(rhs.m_Sequences)
 {
-	for (auto& sound : m_Audios) {
-		sound.second.pChannels.clear();
-		Safe_AddRef(sound.second.pSound);
+	for (auto& pair : m_Audios)
+	{
+		auto& slot = pair.second;
+		slot.pChannels.clear();
+		Safe_AddRef(slot.pSound);
+
+		// 런타임 상태 리셋
+		slot.hasPendingFadeIn = false;
+		slot.pendingFadeInSec = 0.f;
+		slot.pendingFadeInDst = slot.fVolume; // 또는 1.f
+		slot.hasStopScheduled = false;
+		slot.stopDspClock = 0;
+		slot.isPaused = false;
+		slot.lastPlayTime = -1000.f;
+	}
+	for (auto& pair : m_Sequences)
+	{
+		auto& seq = pair.second;
+		seq.lastPlayTime = -1000.f;
+		seq.idx = 0; // 의도에 따라 유지/리셋
 	}
 }
 

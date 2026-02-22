@@ -14,7 +14,8 @@
 #include "Zero_Level.h"
 #include "StageRouter.h"
 #include "ZeroPortal.h"
-
+#include "PostProcessCommand.h"
+#include "PostRenderer.h"
 CStage::CStage()
 {
 }
@@ -327,9 +328,18 @@ void CStage::BaseIntro(StageContext& context)
 				});
 		}
 		else {
+	
 			m_introFlow.AddOnce(seqId, [this]() {CamDirector()->AutoBattle(CamStartDir::Back); });
 			m_introFlow.AddWait(seqId, 0.2f);
 			m_introFlow.AddOnce(seqId, [this]() {CUIDirector::GetInstance()->FadeIn_Screen(1.f); });
+			CPostRenderer* pPost = RenderSystem()->GetPostRenderer();
+			m_introFlow.AddOnce(seqId, [pPost]() {
+				pPost->GetCommand<CRadialBlurCommand>()
+					->SetDuration(2.3)
+					->SetEaseType(EaseType::InOutSine)
+					->SetIntensity(0.08)
+					->SetEnable(true);
+				});
 			m_introFlow.AddWait(seqId, 2.0f);
 		}
 
