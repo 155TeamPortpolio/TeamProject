@@ -86,7 +86,7 @@ HRESULT CMeleeJaeger::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	m_isUseGroggyRimLight = true;
 
-	//Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
+	Get_Component<CAudioSource>()->SoundFolder(LevelManager()->Get_NowLevelKey(), "../Bin/Resources/Zero/Enemy/MeleeJaeger/Sound");
 	Get_Component<CAudioSource>()->Slot("NormalEnemy_Spawn.wav").Attribute3D(true).Play();
 
 
@@ -415,6 +415,14 @@ void CMeleeJaeger::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER
 				.Loop(false)
 				.Apply();
 	}
+}
+
+void CMeleeJaeger::SetIsShield(_bool is)
+{
+	m_isShield = is;
+
+	if (m_isShield == false)
+		Get_Component<CAudioSource>()->Slot("melee_BreakShield.wav").Attribute3D(true).Play();
 }
 
 void CMeleeJaeger::StartRoll(_float fDegree)
