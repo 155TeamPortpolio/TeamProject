@@ -14,22 +14,29 @@ CRoom_Gacha::CRoom_Gacha(const ROOM_DESC& desc)
 
 void CRoom_Gacha::Enter()
 {
-	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
-	pFieldPlayer->Lock_Input();
-	pFieldPlayer->DeActive_Field();
-
-	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
-	UIDirector()->Show_GachaPage();
+	FieldSystem()->FadeOutBGM();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->Lock_Input();
+			pFieldPlayer->DeActive_Field();
+			UIDirector()->FadeIn_Screen();
+			UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Show_GachaPage();
+		});
 }
 
 void CRoom_Gacha::Exit()
 {
-	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
-	pFieldPlayer->UnLock_Input();
-	pFieldPlayer->Active_Field();
-
-	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
-	UIDirector()->Hide_GachaPage();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->UnLock_Input();
+			pFieldPlayer->Active_Field();
+			UIDirector()->FadeIn_Screen();
+			UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Hide_GachaPage();
+		});
 }
 
 void CRoom_Gacha::Update()

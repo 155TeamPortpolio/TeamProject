@@ -16,37 +16,40 @@ CRoom_Noodle::CRoom_Noodle(const ROOM_DESC& desc)
 
 void CRoom_Noodle::Enter()
 {
-	UIDirector()->FadeIn_Screen(0.2f);
-	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
-	pFieldPlayer->DeActive_Field();
-	pFieldPlayer->Lock_Input();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->DeActive_Field();
+			pFieldPlayer->Lock_Input();
+			UIDirector()->FadeIn_Screen();
+			CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
+			CamDirector()->RequestSequence("Field/Noodle");
 
-	CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
-	CamDirector()->RequestSequence("Field/Noodle");
+			UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Show_Ramen();
 
-	UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
-	UIDirector()->Show_Ramen();
-
-	FieldSystem()->PlayBGM("NoodleBGM.wav", 0.04f);
+			FieldSystem()->PlayBGM("NoodleBGM.wav", 0.04f);
+		});
 }
 
 void CRoom_Noodle::Exit()
 {
-	UIDirector()->FadeOut_Screen(0.2f);
-	auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
-	pFieldPlayer->Active_Field();
-	pFieldPlayer->UnLock_Input();
-	
-	auto NpcHandle = FieldSystem()->GetInteractHandle();
-	if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset(); 
-
-	CamDirector()->AutoTarget();
-	CamDirector()->RequestSequence("Field/Back");
-
-	UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
-	UIDirector()->Hide_Ramen();
-
 	FieldSystem()->FadeOutBGM();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->Active_Field();
+			pFieldPlayer->UnLock_Input();
+			UIDirector()->FadeIn_Screen();
+			auto NpcHandle = FieldSystem()->GetInteractHandle();
+			if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset();
+
+			CamDirector()->AutoTarget();
+			CamDirector()->RequestSequence("Field/Back");
+
+			UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Hide_Ramen();
+		});
 }
 
 void CRoom_Noodle::Update()
