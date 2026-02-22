@@ -665,6 +665,12 @@ void CBattlePlayer::Update_Input(_float dt)
         m_bLockOn = !m_bLockOn;
         m_fLockOnTimer = LOCKON_COOLDOWN;
 
+        if (m_bLockOn)
+        {
+            m_TargetHandle = {};
+            Update_Target();
+        }
+
         if (!m_TargetHandle.isValid()) return;
 
         TARGET_LOCK_DESC desc;
