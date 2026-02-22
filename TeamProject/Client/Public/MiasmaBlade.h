@@ -33,7 +33,7 @@ private:
     void Initialize_Effects(_uint count);
 private:
     _float m_ElapsedTime = {};
-    _float m_fMoveSpeed = {45.f};
+    _float m_fMoveSpeed = {35.f};
     _vector3 m_vTargetVelocity = {};
     _vector3 m_vVelocity = {};
     class CDefiler* m_pOwner = { nullptr };

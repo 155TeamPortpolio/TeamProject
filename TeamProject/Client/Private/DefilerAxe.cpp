@@ -126,9 +126,9 @@ void CDefilerAxe::Render_GUI()
 
 void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
-	BattleSystem()->HitVFX(eDamageType);
+	BattleSystem()->HitVFX(DAMAGE_TYPE::NORMAL);
 	if(eDamageType == DAMAGE_TYPE::NORMAL){
-	_bool  soundpick = Helper::Get_Random_Bool(0.4f);
+	_bool  soundpick = Helper::Get_Random_Bool(0.2f);
 	Get_Component<CAudioSource>()->Slot(
 		soundpick ?
 		"DefilerHitLight.wav" : 
@@ -137,7 +137,7 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 	}
 	else {
 		_bool  soundpick = Helper::Get_Random_Bool(0.4f);
-		Get_Component<CAudioSource>()->Slot("HitProp.wav").Volume(0.6f).Play();
+		Get_Component<CAudioSource>()->Slot("HitProp.wav").Volume(0.4f).Play();
 	}
 
 	_float fTakeDamage = fDamage;
@@ -169,12 +169,12 @@ void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER 
 
 void CDefilerAxe::SummonWall()
 {
+	Get_Component<CAudioSource>()->Slot("DefilerSlash03.wav").Volume(0.4f).Play();
+	Get_Component<CAudioSource>()->Slot("DeflierSlash05.wav").Volume(0.3f).Play();
 	string nowLevelKey = LevelManager()->Get_NowLevelKey();
 	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
 	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
 	_vector3 pos =  m_pTransform->Get_Pos();
-
-
 	COLLIDER_DESC ColDesc = {};
 	ColDesc.eGroup = COLLISION_GROUP::COMMON;
 	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND)| ENUM(COLLISION_GROUP::PLAYER);
