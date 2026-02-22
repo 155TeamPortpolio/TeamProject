@@ -243,7 +243,7 @@ void CZero_Level::Ready_Stage()
 
 	_uint Boss_Process{};
 	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 1; //Start BossMap Index;
+		Boss_Process = 2; //Start BossMap Index;
 
 	//Elite
 	string Elite{};
