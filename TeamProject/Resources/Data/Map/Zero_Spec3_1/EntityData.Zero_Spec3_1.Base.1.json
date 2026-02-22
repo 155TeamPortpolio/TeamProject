@@ -1,0 +1,57 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_Spec3_1",
+  "iVersion": 1,
+  "Entities": [
+    {
+      "iEntityID": 0,
+      "tagName": "Invwall_XWall",
+      "iType": 4,
+      "vScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "vRotation": [
+        -0.0,
+        -1.570796012878418,
+        0.0
+      ],
+      "vTranslation": [
+        -20.852724075317383,
+        9.603334426879883,
+        -34.50937271118164
+      ],
+      "vColSize": [
+        7.5,
+        3.0,
+        0.8361368179321289
+      ]
+    },
+    {
+      "iEntityID": 1,
+      "tagName": "Invwall_XWall",
+      "iType": 4,
+      "vScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "vRotation": [
+        -0.0,
+        0.0,
+        -0.0
+      ],
+      "vTranslation": [
+        -34.35286331176758,
+        9.637285232543945,
+        -24.959659576416016
+      ],
+      "vColSize": [
+        4.0,
+        3.0,
+        0.8361368179321289
+      ]
+    }
+  ]
+}
