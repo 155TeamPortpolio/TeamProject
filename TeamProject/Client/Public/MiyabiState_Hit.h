@@ -36,7 +36,7 @@ class CMiyabi_HitHard : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override {}
 
 public:
@@ -48,7 +48,7 @@ class CMiyabi_HitKnockOut : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
-    virtual void Update(CMiyabi* pOwner, _float dt) override {}
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override {}
 
 public:
