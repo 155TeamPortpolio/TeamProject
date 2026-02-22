@@ -115,7 +115,7 @@ HRESULT CZero_Level::Awake()
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
 
-	UIDirector()->FadeIn_Screen();
+	UIDirector()->FadeIn_Screen(1.f);
 
 	return S_OK;
 }
@@ -129,23 +129,6 @@ void CZero_Level::Update()
 	_float dt = GameInstance()->Get_TimeMgr()->Get_DeltaTime(G_EngineTimerID);
 	m_tZeroCloud.Update_Cloud(dt);
 	m_tZeroFog.Update_Fog(dt);
-
-	if (GetAsyncKeyState('N')) {
-		m_tZeroFog.Change_FogState(FOG_DESC{ _float4(1,1,1,1), 1.f }, 1.f, EaseType::Linear);
-	}
-
-	if (GetAsyncKeyState('M')) {
-		m_tZeroFog.RollBack_Fog(1.f, EaseType::Linear);
-	}
-
-	if (InputDevice()->Key_Tap('Z'))
-	{
-		auto pEffect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackRange" })
-			.Position(_float3(0.f, 1.f, 0.f))
-			.Build("effect");
-
-		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
-	}
 }
 
 HRESULT CZero_Level::Render()
@@ -230,7 +213,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
 
 	//Normal
-	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1", "Zero_3_1", "Zero_Spec3_2", "Zero_1_2", "Zero_8_1", "Zero_3_2", "Zero_Spec3_1"};
+	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1",  "Zero_3_2", "Zero_Spec3_1", "Zero_1_2", "Zero_3_1", "Zero_8_1", "Zero_Spec3_2"};
 	//Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
 
 	_uint Normal_Progress{};

@@ -25,6 +25,10 @@
 #include "SilverAnbi.h"
 #include "BackgroundNpc.h"
 #include "ScottCar.h"
+#include "Sarah.h"
+#include "BettyBrenda.h"
+#include "Cecilia.h"
+#include "BangBoo.h"
 
 /* Maptool Type 1 (Interactable) */
 #include "Portal.h"
@@ -65,8 +69,12 @@ static unordered_map<string, Spawner::OBJ_SPEC> s_NPCTable =
 	{ "SilverAnbi",     Spawner::OBJ_SPEC{ "Proto_GameObject_SilverAnbi", &CSilverAnbi::Create } },
 	{ "BackGround",     Spawner::OBJ_SPEC{ "Proto_GameObject_CBackgroundNpc", &CBackgroundNpc::Create } },
 	{ "ScottCar",		Spawner::OBJ_SPEC{ "Proto_GameObject_ScottCar", &CScottCar::Create } },
-	{ "Jaeger2",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger2", &CJaeger2::Create } },
-	{ "Jaeger3",         Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger3", &CJaeger3::Create } }
+	{ "Sarah",			Spawner::OBJ_SPEC{ "Proto_GameObject_CSarah", &CSarah::Create } },
+	{ "BettyBrenda",	Spawner::OBJ_SPEC{ "Proto_GameObject_BettyBrenda", &CBettyBrenda::Create } },
+	{ "Cecilia",		Spawner::OBJ_SPEC{ "Proto_GameObject_Cecilia", &CCecilia::Create } },
+	{ "Jaeger2",        Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger2", &CJaeger2::Create } },
+	{ "Jaeger3",        Spawner::OBJ_SPEC{ "Proto_GameObject_Jaeger3", &CJaeger3::Create } },
+	{ "BangBoo",        Spawner::OBJ_SPEC{ "Proto_GameObject_BangBoo", &CBangBoo::Create } }
 };
 
 /* Maptool Type 1 */
@@ -152,7 +160,6 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	CCT.bAutoFit = false;
 	CCT.fRadius = (Desc.vColSize.x +Desc.vColSize.z) * 0.25f;
 	CCT.fHeight = (Desc.vColSize.y * 0.5f) - CCT.fRadius;
-	
 	CCT.vPos = _float3(Desc.vTranslation.x, Desc.vTranslation.y, Desc.vTranslation.z);
 	
 	PrototypeManager()->Add_ProtoType(Desc.tagLevel, NPCTable->second.ProtoTag, NPCTable->second.Create());
@@ -164,7 +171,6 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 		.Scale(Desc.vScale)
 		.Build(Desc.tagName);
 
-
 	if (auto controller = Object->Get_Component<CCharacterController>())
 		controller->Set_FootPosition(Desc.vTranslation);
 	else
@@ -173,6 +179,7 @@ OBJECT_HANDLE Client::Spawner::Create_NPC(const SPAWNER_DESC& Desc)
 	auto iter = Desc.SlotDataValues.find("NPCSlot");
 	if (iter != Desc.SlotDataValues.end()) {
 		Spawner::Gravity(Object, iter->second);
+		Spawner::BangBoo(Object, iter->second);
 	}
 
 	ObjectManager()->Add_Object(Object, { Desc.tagLevel, "NPC_Layer"});
@@ -444,5 +451,31 @@ void Client::Spawner::Gravity(CGameObject* pGameObject, const vector<FIELD_DATA>
 		}
 	}
 }
+
+void Client::Spawner::BangBoo(CGameObject* pGameObject, const vector<FIELD_DATA>& SlotDatas)
+{
+	auto pBangBoo = dynamic_cast<CBangBoo*>(pGameObject);
+	if (nullptr == pBangBoo) return;
+
+	for (const auto& Data : SlotDatas) {
+		if (Data.TagName == "BangBoo") {
+			pBangBoo->Set_BangBoo_Model(*GetSlotValue<string>(Data.defaultvalue));
+			break;
+		}
+	}
+	
+	for (const auto& Data : SlotDatas) {
+		if (Data.TagName == "Animation") {
+			pBangBoo->Set_BangBoo_Animation(*GetSlotValue<string>(Data.defaultvalue));
+		}
+		else if (Data.TagName == "Name") {
+			pBangBoo->Set_BangBoo_Name(*GetSlotValue<wstring>(Data.defaultvalue));
+		}
+		else if (Data.TagName == "Speech") {
+			pBangBoo->Set_BangBoo_Speech(*GetSlotValue<wstring>(Data.defaultvalue));
+		}
+	}
+}
 #pragma endregion
+
 

@@ -1,0 +1,159 @@
+{
+  "TagDataFormat": "NPCSlot",
+  "TagArea": "Zero_Start2",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 1,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "AgentBoo"
+      }
+    },
+    {
+      "iObjID": 2,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "AgentBoo"
+      }
+    },
+    {
+      "iObjID": 2,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "이쪽에서 회복 할 수 있어요!"
+      }
+    },
+    {
+      "iObjID": 3,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "SafetyBoo"
+      }
+    },
+    {
+      "iObjID": 3,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "천천히 여기로 옮겨"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "SafetyBoo"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "아니 이쪽으로 옮겨"
+      }
+    },
+    {
+      "iObjID": 5,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "PenguinBoo"
+      }
+    },
+    {
+      "iObjID": 5,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "헉.. 너무 무서워"
+      }
+    },
+    {
+      "iObjID": 6,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "RocketBoo"
+      }
+    },
+    {
+      "iObjID": 6,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "악성 코드가 심어져있다는데?"
+      }
+    },
+    {
+      "iObjID": 7,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "SumoBoo"
+      }
+    },
+    {
+      "iObjID": 8,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "EousBoo"
+      }
+    },
+    {
+      "iObjID": 9,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "ExploreBoo"
+      }
+    },
+    {
+      "iObjID": 9,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "조심히 다녀오세요!"
+      }
+    },
+    {
+      "iObjID": 10,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "BagBoo"
+      }
+    },
+    {
+      "iObjID": 11,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "AgentBoo"
+      }
+    },
+    {
+      "iObjID": 12,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "DevilBoo"
+      }
+    },
+    {
+      "iObjID": 12,
+      "TagName": "Speech",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "절대로 ***을 하지마."
+      }
+    }
+  ]
+}

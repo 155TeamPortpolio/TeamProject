@@ -36,6 +36,7 @@ OBJECT_HANDLE Create_Invwall(const SPAWNER_DESC& Desc);
 OBJECT_HANDLE Create_ETC(const SPAWNER_DESC& Desc);
 
 void Gravity(CGameObject* pGameObject,const vector<FIELD_DATA>& SlotDatas);
+void BangBoo(CGameObject* pGameObject, const vector<FIELD_DATA>& SlotDatas);
 
 NS_END
 NS_END

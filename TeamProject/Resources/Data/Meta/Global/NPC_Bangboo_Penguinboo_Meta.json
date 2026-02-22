@@ -20,6 +20,10 @@
   },
   "Clips": [
     {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Idle",
+      "Events": []
+    },
+    {
       "ClipTag": "Bangboo_Penguinboo_Ani_AutoBattle_Grab_Loop",
       "Events": []
     },
@@ -57,10 +61,6 @@
     },
     {
       "ClipTag": "Bangboo_Penguinboo_Ani_HitFly_F",
-      "Events": []
-    },
-    {
-      "ClipTag": "Bangboo_Penguinboo_Ani_Idle",
       "Events": []
     },
     {

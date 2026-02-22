@@ -13,7 +13,7 @@
 CPairBoo::CPairBoo()
     :CNpc()
 {
-}
+} 
 
 CPairBoo::CPairBoo(const CPairBoo& rhs)
     :CNpc(rhs)
