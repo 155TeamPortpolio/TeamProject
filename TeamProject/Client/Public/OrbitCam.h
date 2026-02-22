@@ -60,6 +60,7 @@ public:
     _bool   IsDistHit() const { return m_hitDist; }
     _float  GetOffsetY() const { return m_prof.offsetY; }
 
+    void          Lock_SetSavedDist(_float dist);
     void          Lock_BlendUpdate_External(_float dt) { Lock_BlendUpdate(dt); }
     OrbitLockEval Lock_Eval_External(_float dt, _float curYawDeg, _float curDist) { return EvalLock(dt, curYawDeg, curDist); }
     OrbitLockEval EvalLock_PlayerPivot(_float dt, const Vector3& playerPivot, _float curYawDeg, _float curDist);
@@ -67,12 +68,11 @@ public:
 
     OBJECT_HANDLE GetTarget() const { return m_target; }
 
-public:
     void CommitExternalHandoff(const Vector3& pivotWorld, const Vector3& camPosWorld, const Quaternion& camRot, const Vector3& lookAtWorld, _float pivotRecoverSec = 0.18f, _float collisionGraceSec = 0.10f, _float lockDistGraceSec = 0.10f);
 
 private:
-    void ExternalHandoff_Reset();
-    void ExternalHandoff_Update(_float dt);
+    void  ExternalHandoff_Reset();
+    void  ExternalHandoff_Update(_float dt);
     _bool ExternalHandoff_CollisionGraceOn() const;
     _bool ExternalHandoff_LockDistGraceOn() const;
 

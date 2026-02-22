@@ -714,6 +714,8 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update_Effects(CSacr
 		effectTransform->Set_WorldPos(vWorldPosition);
 		effectTransform->Set_Look(vLook);
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+
+		//jae
 	}
 }
 
@@ -796,6 +798,8 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacr
 		effectTransform->Set_WorldPos(vWorldPosition);
 		effectTransform->Set_Look(vLook);
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+
+		//jae
 	}
 
 	/* Charge */
@@ -834,5 +838,7 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update_Effects(CSacr
 		effectTransform->Set_WorldPos(vWorldPosition);
 		effectTransform->Set_Look(vLook);
 		ObjectManager()->Add_Object(effect, { "Zero_Level","Enemy_Effect_Layer" });
+
+		//jae
 	}
 }

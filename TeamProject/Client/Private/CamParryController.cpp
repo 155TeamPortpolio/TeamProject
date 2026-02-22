@@ -1023,7 +1023,6 @@ void CamParryController::End()
     auto IsEffectiveLockOn = [&](const OrbitSnapshot& s) -> _bool
         {
             const _bool hasHandle = s.lock.handle.isValid();
-
             if (!hasHandle) return false;
 
             if (s.lockBlend.active)
@@ -1048,34 +1047,24 @@ void CamParryController::End()
 
     const _bool hasSavedPreParryLockPose = exit.savedLockWasOn && exit.preParryLockPoseValid;
 
-    if (hasSavedPreParryLockPose)
-    {
-        exit.exitPivotWorld = exit.preParryLockPivotWorld;
-        exit.exitCamPosTo = exit.preParryLockCamPosWorld;
-        useExitBlend = true;
-
-        const _bool sameLockAsSaved = lockOn && exit.savedLockHandle.isValid() && (lockHandle == exit.savedLockHandle);
-        if (sameLockAsSaved)
-        {
-            exit.returnLockHandle = exit.savedLockHandle;
-            exit.returnLockBlend = true;
-            orbit->SetLockOn(exit.returnLockHandle);
-        }
-    }
-    else if (lockOn)
+    if (lockOn)
     {
         exit.returnLockHandle = lockHandle;
         exit.returnLockBlend = lockHandle.isValid();
 
         if (exit.returnLockBlend)
-        {
             orbit->SetLockOn(exit.returnLockHandle);
 
-            exit.exitPivotWorld = BasePivotWorld();
-            exit.exitCamPosTo = BuildReturnPresetCamPos();
+        exit.exitPivotWorld = BasePivotWorld();
+        exit.exitCamPosTo = BuildReturnPresetCamPos();
 
-            useExitBlend = true;
-        }
+        useExitBlend = true;
+    }
+    else if (hasSavedPreParryLockPose)
+    {
+        exit.exitPivotWorld = exit.preParryLockPivotWorld;
+        exit.exitCamPosTo = exit.preParryLockCamPosWorld;
+        useExitBlend = true;
     }
 
     if (useExitBlend)
@@ -1311,7 +1300,12 @@ void CamParryController::Update(_float dt)
         if (u >= 1.f)
         {
             if (exit.finalPoseValid)
+            {
                 orbit->CommitExternalHandoff(exit.finalPivotWorld, exit.finalCamPosWorld, exit.finalCamRot, exit.finalLookAtWorld, 0.18f, 0.10f, 0.10f);
+
+                if (exit.returnLockBlend)
+                    orbit->Lock_SetSavedDist(exit.finalDist);
+            }
             else
             {
                 orbit->ResumeSync();

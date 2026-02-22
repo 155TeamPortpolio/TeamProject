@@ -235,7 +235,7 @@ void COrbitCam::SetLockOn(OBJECT_HANDLE h)
 
     if (!Lock_Active())
     {
-        Lock_Enter(h, m_pose.distGoal);
+        Lock_Enter(h, m_pose.distCur);
         return;
     }
 
@@ -260,6 +260,13 @@ void COrbitCam::Lock_ReenterBlend(_float blendInSec)
     Lock_ReenterBlend(blendInSec, m_prof.lockBlendInEase);
 }
 
+void COrbitCam::Lock_SetSavedDist(_float dist)
+{
+    if (!m_lock.handle.isValid()) return;
+
+    m_lock.savedDist = clamp(dist, m_prof.distMin, m_prof.distMax);
+}
+
 void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
 {
     if (!m_lock.active) return;
@@ -278,6 +285,7 @@ void COrbitCam::Lock_ReenterBlend(_float blendInSec, EaseType ease)
     m_lockFocus = m_pose.pivotCurWorld;
     m_hasLockFocus = true;
 }
+
 
 void COrbitCam::ReturnPreset_Begin(const Vector3& pivotWorld, const Vector3& camPosTo, _float sec, EaseType ease)
 {
@@ -318,6 +326,7 @@ void COrbitCam::CaptureSnapshot(OrbitSnapshot& out) const
     out.lockBlend = m_lockBlend;
     out.autoYaw = m_autoYaw;
     out.sw = m_switch;
+    out.lockEnterPreset = m_lockEnterPreset;
     out.target = m_target;
 }
 
@@ -331,11 +340,22 @@ void COrbitCam::RestoreSnapshot(const OrbitSnapshot& s)
     m_lockBlend = s.lockBlend;
     m_autoYaw = s.autoYaw;
     m_switch = s.sw;
+    m_lockEnterPreset = s.lockEnterPreset;
 
     m_lockFocus = {};
     m_hasLockFocus = false;
 
-    SyncPivot();
+    m_lockAir = {};
+    m_returnPreset = {};
+    ExternalHandoff_Reset();
+
+    m_hitDist = false;
+    m_yawDeltaCapDeg = m_prof.yawDeltaCapDeg;
+    m_pitchDeltaCapDeg = m_prof.pitchDeltaCapDeg;
+
+    PivotStab_Reset(m_pose.pivotCurWorld);
+
+    ClampTargets();
 
     Lock_BlendUpdate(0.f);
 
@@ -547,8 +567,9 @@ void COrbitCam::ApplyAutoYaw(_float dt, const OrbitLockEval& lockRes)
 
 void COrbitCam::Priority_Update(_float dt)
 {
-    if (Freeze_SkipUpdate(dt)) return;
     ExternalHandoff_Update(dt);
+    if (Freeze_SkipUpdate(dt)) return;
+
     UpdateSwitch(dt);
 
     const Vector3 rawPivot = GetPivotTargetPos();
@@ -1221,6 +1242,7 @@ void COrbitCam::Lock_BlendStart(_bool entering)
     m_lockBlend.active = true;
     m_lockBlend.entering = entering;
     m_lockBlend.elapsed = 0.f;
+    m_lockBlend.holdFirstFrame = false;
 
     if (entering)
     {

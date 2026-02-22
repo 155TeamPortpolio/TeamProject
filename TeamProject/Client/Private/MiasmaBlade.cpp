@@ -129,6 +129,7 @@ void CMiasmaBlade::Parried()
 {
 	if (m_pOwner) {
 		isParried = true;
+		m_isParryEnable = false;
 		_vector3 pos = m_pOwner->Get_BipedPos();
 		m_pTransform->LookAt(_vector3(pos));
 		Get_Component<CCollider>()->Set_CompActive(false);
