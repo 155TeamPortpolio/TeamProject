@@ -379,6 +379,9 @@ void CThugBulkyEnforcer::Parried()
 
 	m_pStateMachine->Change_State("Parried");
 	SetOnAttack(false);
+	SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, false);
+	SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, false);
+
 }
 
 CThugBulkyEnforcer* CThugBulkyEnforcer::Create()
