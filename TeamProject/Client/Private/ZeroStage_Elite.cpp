@@ -67,7 +67,7 @@ HRESULT CZeroStage_Elite::Enter_Stage(StageContext& context)
 
 	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
 		{
-			_float4{ 0.08f, 0.02f, 0.02f, 1.0f },
+			_float4{ 0.08f, 0.05f, 0.04f, 1.0f },
 			0.02f
 		});
 
