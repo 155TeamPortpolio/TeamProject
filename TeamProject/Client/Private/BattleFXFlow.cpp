@@ -230,7 +230,7 @@ void CBattleFXFlow::StartVfx(BATTLE_VFX_TYPE vfxType)
 	{
 		if (m_isRunning)
 			return;
-		ResetBattleVfxState();
+		//ResetBattleVfxState();
 	}
 
 	if (m_BattleVFX.isRunning)
@@ -419,6 +419,8 @@ void CBattleFXFlow::StartVfx_Ultimate()
 
 void CBattleFXFlow::StartVfx_Switch(CHARACTER eLeft, CHARACTER eRight)
 {
+	if (m_BattleVFX.eVFXType == BATTLE_VFX_TYPE::WIPEOUT)
+		return;
 	Clear(false);
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::SWITCH)];
 	m_BattleVFX.isRunning = true;
@@ -510,17 +512,18 @@ void CBattleFXFlow::StartVfx_WipeOut()
 	auto& preset = m_BattleVFXData[ENUM(BATTLE_VFX_TYPE::WIPEOUT)];
 	CPostRenderer* postRenderer = RenderSystem()->GetPostRenderer();
 
-	const _float totalDuration = max(preset.fVFXDuration, 0.01f);
-	const _float blurDuration = min(preset.fBlurDuration, totalDuration);
+	const _float baseDuration = max(preset.fVFXDuration, 0.01f);
+	const _float blurDuration = min(preset.fBlurDuration, baseDuration);
 	(void)blurDuration;
 
 	auto defaultNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_Noise_052.png");
 	using NoiseTextureType = decltype(defaultNoiseTexture);
+
 	auto ChooseGlitchEase = [](_float glitchDuration)
 		{
 			if (glitchDuration <= 0.08f) return EaseType::OutQuad;
 			if (glitchDuration <= 0.18f) return EaseType::OutCubic;
-			return  EaseType::OutExpo;
+			return EaseType::OutExpo;
 		};
 
 	auto RequestGlitch = [postRenderer, ChooseGlitchEase](_float glitchIntensity, _float glitchDuration, NoiseTextureType noiseTexture)
@@ -543,7 +546,7 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 		postRenderer->GetCommand<CSaturationCommand>()
 			->SetIntensity(1.f)
-			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED))
+			->SetSaturationType(ENUM(SATURATIONTYPE::SKINNED)| ENUM(SATURATIONTYPE::EFFECT))
 			->SetDuration(preset.fVFXDuration)
 			->SetEaseType(EaseType::OutBack)
 			->SetEnable(true);
@@ -557,10 +560,10 @@ void CBattleFXFlow::StartVfx_WipeOut()
 
 	struct GlitchKeySec
 	{
-		_float timeSec;      // 발동 시점(초)
-		_float intensity;    // 강도
-		_float durSec;       // 지속 시간(초)
-		const char* noiseKey; // 노이즈 텍스처 키(선택)
+		_float timeSec;
+		_float intensity;
+		_float durSec;
+		const char* noiseKey;
 	};
 
 	const GlitchKeySec glitchKeys[] =
@@ -580,21 +583,33 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		{ 4.35f, 6.2f, 0.26f, "Eff_Noise_086_LKJ_01.png" },
 	};
 
-	_float accumulatedTimeSec = 0.f;
 	const _uint glitchKeyCount = (_uint)(sizeof(glitchKeys) / sizeof(glitchKeys[0]));
+
+	_float maxGlitchEndSec = 0.f;
+	for (_uint keyIndex = 0; keyIndex < glitchKeyCount; ++keyIndex)
+	{
+		const _float keyStartSec = max(0.f, glitchKeys[keyIndex].timeSec);
+		const _float keyDurSec = max(0.01f, glitchKeys[keyIndex].durSec);
+		maxGlitchEndSec = max(maxGlitchEndSec, keyStartSec + keyDurSec);
+	}
+
+	const _float timelineEndSec = max(baseDuration, maxGlitchEndSec);
+
+	_float accumulatedTimeSec = 0.f;
 
 	for (_uint keyIndex = 0; keyIndex < glitchKeyCount; ++keyIndex)
 	{
-		const _float targetTimeSec = clamp(glitchKeys[keyIndex].timeSec, 0.f, totalDuration);
+		const _float targetTimeSec = clamp(glitchKeys[keyIndex].timeSec, 0.f, timelineEndSec);
 		const _float waitTimeSec = max(0.f, targetTimeSec - accumulatedTimeSec);
 
 		AddWait(waitTimeSec);
 		accumulatedTimeSec += waitTimeSec;
 
 		const _float glitchIntensity = glitchKeys[keyIndex].intensity;
-		const _float glitchDurationSec = max(0.01f, min(glitchKeys[keyIndex].durSec, totalDuration));
 
-		// 키에 noiseKey가 있으면 그걸 로드, 없으면 기본 텍스처 사용
+		const _float remainSec = max(0.01f, timelineEndSec - targetTimeSec);
+		const _float glitchDurationSec = max(0.01f, min(glitchKeys[keyIndex].durSec, remainSec));
+
 		const char* noiseKeyForThis = glitchKeys[keyIndex].noiseKey;
 		NoiseTextureType noiseTextureForThis =
 			(noiseKeyForThis && noiseKeyForThis[0] != '\0')
@@ -607,11 +622,8 @@ void CBattleFXFlow::StartVfx_WipeOut()
 			});
 	}
 
-	if (accumulatedTimeSec < totalDuration)
-		AddWait(totalDuration - accumulatedTimeSec);
-	
-	//AddWait(0.05f);
-	//AddCall([]() {UIDirector()->FadeOut_Screen(0.f); });
+	if (accumulatedTimeSec < timelineEndSec)
+		AddWait(timelineEndSec - accumulatedTimeSec);
 
 	AddCall([this, preset]() {
 		m_BattleVFX.fCurPos = 0.f;
@@ -619,12 +631,13 @@ void CBattleFXFlow::StartVfx_WipeOut()
 		m_BattleVFX.isRunning = false;
 		CamDirector()->EndWipeOut();
 		UIDirector()->Show_HUD(CUIDirector::BATTLE);
+		for (size_t typeIndex = 0; typeIndex < ENUM(BATTLE_OBJ_TYPE::END); ++typeIndex)
+			ResetLayerTimeScale(BATTLE_OBJ_TYPE(typeIndex));
 		UIDirector()->FadeOut_Screen(0.2f);
 		});
 
 	Start(nullptr);
 }
-
 void CBattleFXFlow::StartVfx_Clear()
 {
 	Clear(false);

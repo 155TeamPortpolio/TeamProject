@@ -1432,7 +1432,7 @@ HRESULT CDefiler::Create_Colliders()
 		WeaponDesc.tagBone = "Root";
 		WeaponDesc.pOwnerAnimator3D = pAnimator;
 		WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		WeaponDesc.vAttackSize = _float3{ 5.f,3.f,5.f };
+		WeaponDesc.vAttackSize = _float3{ 10.f,3.f,10.f };
 
 		if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 			return E_FAIL;
