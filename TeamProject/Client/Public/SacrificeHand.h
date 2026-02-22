@@ -26,6 +26,7 @@ private:
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
+    HRESULT Initialize_Effects();
     void    Awake() override;
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;

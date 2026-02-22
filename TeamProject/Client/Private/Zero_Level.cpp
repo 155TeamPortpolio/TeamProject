@@ -244,9 +244,10 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Elite].maps.push_back(Elite);
 
 	//Boss
-	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
+	//m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
+	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss1");
 	
-	ChangeStage(StageType::Start);
+	ChangeStage(StageType::Boss);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)

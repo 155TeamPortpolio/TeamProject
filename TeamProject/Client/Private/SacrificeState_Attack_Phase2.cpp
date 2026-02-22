@@ -846,6 +846,7 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _floa
 		if (!m_IsStartDissolve && m_fStateTime >= 1.5f)
 		{
 			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
+			pOwner->HideHUD(true);
 			m_IsStartDissolve = true;
 		}
 
@@ -853,6 +854,7 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _floa
 		{
 			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.3f);
 			pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-2.f, 1.f, 21.f));
+			pOwner->HideHUD(false);
 			m_IsEndDissolve = true;
 		}
 
@@ -863,6 +865,7 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _floa
 			{
 				blackBoard.isRequestNext = true;
 				pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
+				pOwner->HideHUD(false);
 			}
 		}
 	}
@@ -999,16 +1002,21 @@ void CSacrificeState_Attack_Roar_Phase2::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
+		pOwner->HideHUD(false);
 	}
 
 	if (IsCrossAnimProgress(0.7f))
+	{
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.2f);
+		pOwner->HideHUD(true);
+	}
 
 	if (IsCrossAnimProgress(0.8f))
 	{
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.2f);
 		pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-15.f, 1.f, 22.f));
 		pOwner->Get_Component<CTransform>()->Set_Look(_vector3(1.f, 0.f, 0.f));
+		pOwner->HideHUD(false);
 	}
 
 	pOwner->Update_Dissolve(dt);
@@ -1111,6 +1119,8 @@ void CSacrificeState_OverDrive_Release_Start_Phase2::Update_Effects(CSacrifice* 
 			.Build("Sacrifice_Overdrive_Charge_Hand");
 
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Enemy_Effect_Layer" });
+
+		pOwner->Play_Effect("Sacrifice_Cloud", _vector3(0.f, 29.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 	}
 }
 
@@ -1118,6 +1128,7 @@ void CSacrificeState_OverDrive_Release_Loop_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Charge_Loop").Loop(true).Speed(1.2f).Apply();
+
 }
 
 void CSacrificeState_OverDrive_Release_Loop_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -1130,12 +1141,14 @@ void CSacrificeState_OverDrive_Release_Loop_Phase2::Update(CSacrifice* pOwner, _
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 
+		pOwner->Stop_Effect("Sacrifice_Cloud");
 		pOwner->SetOverDriveCharged(true);
 	}
 }
 
 void CSacrificeState_OverDrive_Release_Loop_Phase2::Exit(CSacrifice* pOwner)
 {
+	
 }
 
 void CSacrificeState_OverDrive_Release_End_Phase2::Enter(CSacrifice* pOwner)
@@ -1234,10 +1247,14 @@ void CSacrificeState_OverDrive_Release_Attack03_Phase2::Update(CSacrifice* pOwne
 		pOwner->DeactiveSword();
 		pOwner->SetOverDrive(false);
 		pOwner->SetOverDriveCharged(false);
+		pOwner->HideHUD(false);
 	}
 
 	if (IsCrossAnimProgress(0.9f))
+	{
 		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+		pOwner->HideHUD(true);
+	}
 
 	pOwner->Update_Dissolve(dt);
 }

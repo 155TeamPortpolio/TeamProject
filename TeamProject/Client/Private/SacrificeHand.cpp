@@ -66,6 +66,26 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	if (FAILED(Create_Children()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSacrificeHand::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("attack_range.json")
+			.Scale(_float3(6.f,6.f,6.f))
+			.Build("Attack_Range");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
 	return S_OK;
 }
 

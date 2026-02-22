@@ -10,6 +10,8 @@
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "EffectContainer.h"
+#include "UI_BossHUD.h"
+#include "UI_EnemyStatus.h"
 
 /* Component */
 #include "CharacterController.h"
@@ -109,7 +111,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Create_UIEnemyStatus("Bip001_Spine2");
-
+	HideHUD(true);
 
 	return S_OK;
 }
@@ -513,6 +515,22 @@ void CSacrifice::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 	m_fDissolveDuration = duration;
 	m_fDissolveElapsedTime = 0.f;
 	m_fDissolveProgress = 0.f;
+
+	//switch (state)
+	//{
+	//case Client::CSacrifice::DISSOLVE_STATE::DISAPPEAR:
+	//{
+	//	Control_TargetEnable(false);
+	//}break;
+	//case Client::CSacrifice::DISSOLVE_STATE::APPEAR:
+	//	Control_TargetEnable(true);
+	//	break;
+	//case Client::CSacrifice::DISSOLVE_STATE::NONE:
+	//	Control_TargetEnable(true);
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void CSacrifice::Update_Dissolve(_float dt)
@@ -545,6 +563,60 @@ void CSacrifice::Update_Dissolve(_float dt)
 		else
 			m_fDissolveProgress = 0.f;
 	}
+}
+
+void CSacrifice::Create_UIEnemyStatus(string boneTag)
+{
+	// 월드 행렬 포인터 
+	if (!m_pTransform)
+		return;
+
+	const _float4x4* pParentWorld = m_pTransform->Get_WorldMatrix_Ptr();
+	if (!pParentWorld)
+		return;
+
+	// 본 로컬 행렬 포인터
+	const _float4x4* pBoneLocal = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, boneTag);
+	if (!pBoneLocal)
+		return;
+
+	// ENEMYSTATUS_DESC 생성
+	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
+	pDesc->pParentWorld = pParentWorld;
+	pDesc->pBoneLocal = pBoneLocal;
+	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->tOwnerHandle = Get_Handle();
+
+	// EnemyStatus UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
+		.Add_UIDesc(pDesc)
+		.Build("EnemyStatus");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
+
+	m_BoneHUD = pEnemyStatus->Get_Handle();
+}
+
+void CSacrifice::Create_UIBossHUD()
+{
+	// BOSS_HUD_DESC 생성
+	CUI_BossHUD::BOSS_HUD_DESC* pDesc = new CUI_BossHUD::BOSS_HUD_DESC;
+	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->eBoss = BOSS::Sacrifice;
+
+	//pDesc.
+	// BossHUD UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pBossHUD = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_BossHUD" })
+		.Add_UIDesc(pDesc)
+		.Build("bossHUD");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
+
+	m_hUIEnemyStatus = pBossHUD->Get_Handle();
 }
 
 void CSacrifice::Create_Children()
@@ -861,6 +933,15 @@ HRESULT CSacrifice::Initialize_Effects()
 		pObjectContainer->Add_Child(pEffect,false);
 	}
 
+	/* Cloud */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_cloud.json")
+			.Build("Sacrifice_Cloud");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 	return S_OK;
 }
 
@@ -951,3 +1032,21 @@ void CSacrifice::Control_Sound(const string& event)
 {
 	Get_Component<CAudioSource>()->Slot(event).Volume(0.7f).Attribute3D(false).Loop(false).Play();
 }
+
+void CSacrifice::Control_TargetEnable(_bool on)
+{
+	if (!on) {
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	else {
+		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+
+	Get_Component<CCharacterController>()->Set_CompActive(on);
+}
+
+void CSacrifice::HideHUD(_bool hide)
+{
+	if (m_BoneHUD.isValid())
+		m_BoneHUD.Get()->Set_Alive(!hide);
+}	
