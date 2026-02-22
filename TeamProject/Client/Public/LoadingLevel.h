@@ -22,9 +22,11 @@ public:
 private:
     CGameInstance* m_pGameInstance{}; 
     _float m_leastTime = { 0.f };
+
 private:
     void PreLoadLevel(const string& levelKey);
     void PreLoadZero(const string& levelKey);
+    void PreAddPath(const string& levelKey);
     void PreLoadForTestLevel();
     ResourceType CheckResourceType(const string& filePath,const string& fileName);
     _bool isSRGB(const string& filePath);

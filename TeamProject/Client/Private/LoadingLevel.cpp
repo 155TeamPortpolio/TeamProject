@@ -30,19 +30,15 @@ HRESULT CLoadingLevel::Awake()
 
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
 	m_NextLevel=transDesc.nextLevelKey;
+	PreAddPath("");
 	if(m_NextLevel == "Zero_Level")
 		PreLoadZero("Zero_Level");
-	else if(m_NextLevel == "MainCity_Level")
+	else if (m_NextLevel == "MainCity_Level") {
 		PreLoadLevel("Gacha_Level");
+		PreLoadLevel(m_NextLevel);
+	}
 	else
 		PreLoadLevel(m_NextLevel);
-
-	if (!m_bGlobal)
-	{
-		PreLoadLevel("Global_Level");
-		//PreLoadForTestLevel();
-		m_bGlobal = true;
-	}
 
 	return S_OK;
 }
@@ -161,13 +157,6 @@ void CLoadingLevel::PreLoadZero(const string& levelKey)
 	auto* resourceManager = ResourceManager();
 	if (!resourceManager) return;
 
-	// 필요하면 실제 큐를 비우는 쪽이 안전 (복사본 pop 방지)
-	// for (auto& queuePerType : m_LoadQue)
-	// {
-	//     while (!queuePerType.second.empty())
-	//         queuePerType.second.pop();
-	// }
-
 	auto ToLower = [](string value) -> string
 		{
 			std::transform(value.begin(), value.end(), value.begin(),
@@ -230,7 +219,6 @@ void CLoadingLevel::PreLoadZero(const string& levelKey)
 			{
 				const bool isInTargetStage =
 					(fileNorm.find(targetStageToken) != string::npos) ||
-					// 혹시 파일이 바로 Stage_Zero_WorkSite 폴더 루트 직하위면 대비
 					(fileNorm.find("/Zero_Start") != string::npos);
 
 				if (!isInTargetStage)
@@ -257,6 +245,44 @@ void CLoadingLevel::PreLoadZero(const string& levelKey)
 			resourceManager->RequestPreload(queuePerType.second.front());
 			queuePerType.second.pop();
 		}
+	}
+}
+
+void CLoadingLevel::PreAddPath(const string& levelKey)
+{
+	const string clientPath = "../Bin/Resources/MainCity";
+	filesystem::path directory = clientPath;
+
+	error_code ec;
+	if (!filesystem::exists(directory, ec) || ec) return;
+	if (!filesystem::is_directory(directory, ec) || ec) return;
+
+	auto* resourceManager = ResourceManager();
+	if (!resourceManager) return;
+
+	// (선택) 이전에 남아있던 큐가 있으면 비우기
+	// for (auto& q : m_LoadQue) while (!q.empty()) q.pop();
+
+	filesystem::recursive_directory_iterator iter(
+		directory,
+		filesystem::directory_options::skip_permission_denied,
+		ec
+	);
+	filesystem::recursive_directory_iterator endIter;
+
+	for (; iter != endIter; iter.increment(ec))
+	{
+		if (ec) { ec.clear(); continue; }
+
+		const auto& entry = *iter;
+
+		if (!entry.is_regular_file(ec) || ec) { ec.clear(); continue; }
+
+		const filesystem::path filePathObj = entry.path();
+		const string filePath = filePathObj.string();
+		const string fileName = filePathObj.filename().string();
+
+		resourceManager->Add_ResourcePath(fileName, filePath);
 	}
 }
 
