@@ -519,6 +519,7 @@ void CThugBulkyEnforcer::FinishWeaponCollider()
 void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
 	__super::TakeDamage(eDamageType, fDamage, charaName);
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -550,9 +551,13 @@ void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHA
 	}
 	else if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
-		m_pStateMachine->Set_Trigger("Idle_To_Hit");
-		DIR eDir = GetDIRToPlayer();
-		m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+		_int i = Helper::Get_Random_Int(1, 4);
+		if (i == 1)
+		{
+			m_pStateMachine->Set_Trigger("Idle_To_Hit");
+			DIR eDir = GetDIRToPlayer();
+			m_pStateMachine->Set_Int("Dir", ENUM(eDir));
+		}
 	}
 	else {
 		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Hit_Stay")
