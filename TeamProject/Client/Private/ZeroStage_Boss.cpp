@@ -73,6 +73,7 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 {
+	m_pOwnerLevel->Get_ZeroBGM()->FadeOutAll(0.2f);
 	Ready_Map("Zero_Level", context.mapKey);
 	Reserve_Enemy("Zero_Level");
 	m_eStageState = StageState::Entrance;
@@ -84,8 +85,6 @@ HRESULT CZeroStage_Boss::Enter_Stage(StageContext& context)
 	if ("Zero_Boss1" == context.mapKey) 
 	{
 		m_PrevShadowLight = m_pOwnerLevel->Get_ZeroShadow()->pShadowCam->Get_Component<CLight>()->Get_Desc();
-		m_pOwnerLevel->Get_ZeroBGM()->Slot("Hollow_Zero_1.wav").FadeOut(0.5f);
-
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_ENV_Wind.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroBGM()->Slot("Sacrifice_BGM.wav").Attribute3D(false).Loop(-1).Volume(0.2f).Play();
 		m_pOwnerLevel->Get_ZeroCloud()->Set_BaseCloud({

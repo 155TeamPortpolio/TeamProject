@@ -60,19 +60,19 @@ void CBettyBrenda::Awake()
 
 	//__super::Awake();
 
-	m_DiagloueData = CDataBase::GetInstance()->GetNpcIDData(m_strName);
-	//Add_NameIndicator();
-	CUI_NameIndicator::INDICATOR_DESC* pDesc = new CUI_NameIndicator::INDICATOR_DESC;
-	pDesc->strName = m_strName;
-	pDesc->pCCT = Get_Component<CCharacterController>();
-	m_pNameIndicator = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_NameIndicator"})
-		.Add_UIDesc(pDesc)
-		.Build("nameIndicator");
+	//m_DiagloueData = CDataBase::GetInstance()->GetNpcIDData(m_strName);
+	////Add_NameIndicator();
+	//CUI_NameIndicator::INDICATOR_DESC* pDesc = new CUI_NameIndicator::INDICATOR_DESC;
+	//pDesc->strName = m_strName;
+	//pDesc->pCCT = Get_Component<CCharacterController>();
+	//m_pNameIndicator = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_NameIndicator"})
+	//	.Add_UIDesc(pDesc)
+	//	.Build("nameIndicator");
 
-	if (!m_pNameIndicator)
-		return;
+	//if (!m_pNameIndicator)
+	//	return;
 
-	UIManager()->Add_UIObject(m_pNameIndicator, LevelManager()->Get_NowLevelKey());
+	//UIManager()->Add_UIObject(m_pNameIndicator, LevelManager()->Get_NowLevelKey());
 }
 
 void CBettyBrenda::Priority_Update(_float dt)
@@ -118,5 +118,5 @@ CGameObject* CBettyBrenda::Clone(INIT_DESC* pArg)
 void CBettyBrenda::Free()
 {
 	__super::Free();
-	UIManager()->Remove_UIObject(m_pNameIndicator);
+	//UIManager()->Remove_UIObject(m_pNameIndicator);
 }

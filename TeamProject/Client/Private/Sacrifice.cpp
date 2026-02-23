@@ -363,7 +363,7 @@ void CSacrifice::ChangePhase()
 
 void CSacrifice::ChangePhase_SetUp()
 {
-	m_tStatus.iMaxHP = 1000.f;
+	m_tStatus.iMaxHP = 300.f;
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
 	m_tStatus.isGroggy = false;	

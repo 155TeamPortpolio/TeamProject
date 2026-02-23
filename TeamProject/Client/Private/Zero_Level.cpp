@@ -218,12 +218,12 @@ void CZero_Level::Ready_Stage()
 
 	_uint Normal_Progress{};
 	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Normal_Progress", Normal_Progress))
-		Normal_Progress = 0;
+		Normal_Progress = 4;
 
 	auto& normalMaps = m_mapCycle[StageType::Normal].maps;
 	vector<string> selected;
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 7; ++i)
 	{
 		if (Normal_Progress < normalMaps.size())
 			selected.push_back(normalMaps[Normal_Progress++]);
@@ -243,7 +243,7 @@ void CZero_Level::Ready_Stage()
 
 	_uint Boss_Process{};
 	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
-		Boss_Process = 1; //Start BossMap Index;
+		Boss_Process = 2; //Start BossMap Index;
 
 	//Elite
 	string Elite{};
@@ -254,7 +254,7 @@ void CZero_Level::Ready_Stage()
 	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
 
 	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
-	ChangeStage(StageType::Boss);
+	ChangeStage(StageType::Start);
 }
 
 void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
