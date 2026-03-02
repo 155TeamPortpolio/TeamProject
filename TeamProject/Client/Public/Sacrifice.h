@@ -138,7 +138,7 @@ private:
     _bool m_IsHitBlendable = true;
     _bool m_IsHitable = true;
     _float m_fOverDriveElapsedTime{};
-    _float m_fOverDriveDuration = 20.f;
+    _float m_fOverDriveDuration = 40.f;
 
     UI_HANDLE m_BoneHUD;
 };

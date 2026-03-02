@@ -705,6 +705,11 @@ DIR CEnemy::GetDIRToPlayer()
 	return map[isector];
 }
 
+void CEnemy::CustomHit(_uint damage)
+{
+	m_tStatus.iNowHP -= damage;
+}
+
 void CEnemy::Parried()
 {
 	if (false == m_isParryEnable)
@@ -756,11 +761,12 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 	auto pBattleCol = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
 	if (nullptr == pBattleCol)
 		return;
-
+	HitDesc snapdesc= hitdesc;
+	snapdesc.fDamage = snapdesc.fDamage == 0 ? 10 : snapdesc.fDamage;
 	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
 	{
 		if (true == is)
-			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->Begin_Attack(hitdesc);
+			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->Begin_Attack(snapdesc);
 		else
 			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->End_Attack();
 	}

@@ -164,6 +164,11 @@ void CDefiler::Update(_float dt)
 	MoveByTraceMode(dt);
 	RotateToTarget(dt, 4.f);
 
+	if (InputDevice()->Key_Tap('1'))
+		CustomHit(10.f);
+
+	if (InputDevice()->Key_Tap('2'))
+		CustomHit(20.f);
 }
 
 void CDefiler::Late_Update(_float dt)

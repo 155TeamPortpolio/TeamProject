@@ -24,6 +24,8 @@ private:
 private:
 	virtual void Active_Portal() override;
 
+private:
+	_bool m_BgmPlayed = {};
 public:
 	static CZeroStage_Start* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();

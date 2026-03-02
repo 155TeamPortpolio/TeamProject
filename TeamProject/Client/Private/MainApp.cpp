@@ -176,6 +176,9 @@ void CMainApp::Set_Levels()
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Logo_Level", false);
+
+	//m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level", true);
+	
 } 
 
 CMainApp* CMainApp::Create()
