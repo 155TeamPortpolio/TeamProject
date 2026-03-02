@@ -1,10 +1,12 @@
 #pragma once
+
 #include "IService.h"
 #include "Engine_Math.h"
-#include "ZoomControllerData.h"
+#include "Camera.h"
+#include "CamFXData.h"
 
 NS_BEGIN(Engine)
-class CCamera; struct Lens; enum class CamShakeType; enum class CamZoomType;
+class CCamera; struct Lens;
 
 class ENGINE_DLL ICameraService abstract : public IService
 {
@@ -28,43 +30,68 @@ public:
     virtual _bool Pop(_uint handle, _float blendTime = 0.25f) PURE;
     virtual void  Clear(_float blendTime = 0.25f) PURE;
 
+    virtual void   SetFov(_float deltaDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
+    virtual void   SetFov(_float d0, _float s0, EaseType e0, _float d1, _float s1, EaseType e1) PURE;
+    virtual void   SetFinalFov(_float finalFovDeg, _float blendSec = 0.f, EaseType easeType = EaseType::Linear, _bool clearZoom = true) PURE;
+
+    virtual _float GetFov() const PURE;
+
+    virtual void SetZNear(_float zNear, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
+    virtual void SetZFar(_float zFar, _float blendSec = 0.f, EaseType easeType = EaseType::Linear) PURE;
+    virtual void ClearZNear() PURE;
+    virtual void ClearZFar() PURE;
+
+public:
+    virtual void RegisterShakePresets(const CamShakePreset* presets, _uint count) PURE;
+    virtual void RegisterZoomPresets(const CamZoomPreset* presets, _uint count) PURE;
+
 public:
     virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
     virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
     virtual void ClearShake(_float fadeOutSec = 0.f) PURE;
 
+    virtual void AddShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) PURE;
+    virtual void SetShakeAxis(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec) PURE;
+
+    virtual void AddShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec,
+        EaseType attackEase, EaseType decayEase) PURE;
+    virtual void SetShakeAxisWave(CamShakeAxis axes, _float ampDeg, _float freq, _float dur, _float fadeOutSec,
+        EaseType attackEase, EaseType decayEase) PURE;
+
     virtual void SetZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) PURE;
     virtual void AddZoomPunch(_float amountDeg, _float attackSec = 0.020f, _float releaseSec = 0.100f) PURE;
     virtual void ClearZoom(_float fadeOutSec = 0.f) PURE;
 
-    virtual void SetShake(CamShakeType type, _float strength = 1.f) PURE;
-    virtual void AddShake(CamShakeType type, _float strength = 1.f) PURE;
+public:
+    virtual void SetShakeType(_uint type, _float strength = 1.f) PURE;
+    virtual void AddShakeType(_uint type, _float strength = 1.f) PURE;
 
-    virtual void SetZoom(CamZoomType type, _float strength = 1.f) PURE;
-    virtual void AddZoom(CamZoomType type, _float strength = 1.f) PURE;
+    virtual void SetZoomType(_uint type, _float strength = 1.f) PURE;
+    virtual void AddZoomType(_uint type, _float strength = 1.f) PURE;
 
-    virtual void AddImpact(CamShakeType shakeType, CamZoomType zoomType, _float strength = 1.f) PURE;
-    virtual void AddImpact(_uint shakeType = 0u, _uint zoomType = ENUM(CamZoomType::End), _float strength = 1.f) PURE;
+    virtual void AddImpact(_uint shakeType = 0u, _uint zoomType = 0u, _float strength = 1.f) PURE;
 
-    virtual Lens Get_Lens() const PURE;
+public:
+    virtual Lens Get_Lens()       const PURE;
     virtual Lens Get_ShadowLens() const PURE;
 
-    virtual const Matrix* Get_ViewMatrix() PURE;
-    virtual const Matrix* Get_ProjMatrix() PURE;
+public:
+    virtual const Matrix* Get_ViewMatrix()         PURE;
+    virtual const Matrix* Get_ProjMatrix()         PURE;
     virtual const Matrix* Get_InversedViewMatrix() PURE;
     virtual const Matrix* Get_InversedProjMatrix() PURE;
-    virtual const Vector4 Get_CameraPos() PURE;
-    virtual const _float  Get_Far() PURE;
+    virtual const Vector4 Get_CameraPos()          PURE;
+    virtual const _float  Get_Far()                PURE;
 
-    virtual const Matrix* Get_ShadowViewMatrix() PURE;
-    virtual const Matrix* Get_ShadowProjMatrix() PURE;
-    virtual const Vector4 Get_ShadowCameraPos() PURE;
-    virtual const _float  Get_ShadowFar() PURE;
+    virtual const Matrix* Get_ShadowViewMatrix()         PURE;
+    virtual const Matrix* Get_ShadowProjMatrix()         PURE;
+    virtual const Vector4 Get_ShadowCameraPos()          PURE;
+    virtual const _float  Get_ShadowFar()                PURE;
     virtual const Matrix* Get_InversedShadowViewMatrix() PURE;
     virtual const Matrix* Get_InversedShadowProjMatrix() PURE;
 
     virtual Vector4 GetForward() const PURE;
-    virtual Vector4 GetRight() const PURE;
+    virtual Vector4 GetRight()   const PURE;
 };
 
 NS_END

@@ -1,13 +1,19 @@
 #include "Shader_Define.hlsl"
+#include "Shader_PBRFunction.hlsl"
 
 float3 vRimLightColor;
 float fRimLightPower;
-vector vOutLineColor;
+float4 vOutLineColor;
+float4 vMotionBlurColor;
 float fOutLineThickness;
 float fDissolveProgress;
 float fDissolveTiling;
-float4x4 g_OutLineBoneMatrices[512];
+float4x4 g_CommandBoneMatrices[512];
 matrix g_worldMatrix;
+Texture2D MotionBlurNoiseTexture;
+float fCameraFadeAlpha;
+matrix g_viewMatrix, g_projMatrix;
+int iUseHeightGradient = 1;
 
 struct VS_IN
 {
@@ -80,10 +86,10 @@ VS_OUT VS_OUTLINE(VS_IN In)
     float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
     float4x4 BoneMatrix =
-        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
-        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
-        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
-        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
     
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
@@ -110,6 +116,104 @@ VS_OUT VS_OUTLINE(VS_IN In)
     return Out;
 }
 
+struct VS_MOTIONOUT
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float vWorldHeight : TEXCOORD3;
+};
+
+VS_MOTIONOUT VS_MOTIONBLUR(VS_IN In)
+{
+    VS_MOTIONOUT Out;
+    
+    float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+
+    float4x4 BoneMatrix =
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
+    
+    vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
+    vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
+    vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
+    vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
+      
+    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
+    float4 viewPos = mul(float4(worldPos, 1.f), matView);
+    float4 projPos = mul(viewPos, matProjection);
+        
+    matrix matrixWV = mul(g_worldMatrix, matView);
+    matrix matrixWVP = mul(matrixWV, matProjection);
+    
+    Out.vWorldHeight = worldPos.y;
+    Out.vPosition = projPos;
+    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
+    Out.vProjPos = Out.vPosition;
+
+    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
+    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
+
+    return Out;
+}
+
+struct VS_CUSTOMOUT
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float4 vWorldPos : TEXCOORD3;
+};
+
+VS_CUSTOMOUT VS_CUSTOM(VS_IN In)
+{
+    VS_CUSTOMOUT Out;
+    
+    float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+
+    float4x4 BoneMatrix =
+        g_CommandBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_CommandBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_CommandBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_CommandBoneMatrices[In.vBlendIndex.w] * fWeightW;
+    
+    vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
+    vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
+    vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
+    vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
+      
+    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
+    float4 viewPos = mul(float4(worldPos, 1.f), g_viewMatrix);
+    float4 projPos = mul(viewPos, g_projMatrix);
+        
+    matrix matrixWV = mul(g_worldMatrix, g_viewMatrix);
+    matrix matrixWVP = mul(matrixWV, g_projMatrix);
+    
+    Out.vPosition = projPos;
+    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
+    Out.vProjPos = Out.vPosition;
+
+    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
+    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
+    Out.vWorldPos = float4(worldPos, 1.f);
+    
+    return Out;
+}
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -127,9 +231,9 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
-    vector vAmbient : SV_Target4;
-    vector vRimLight : SV_Target5;
-    vector vLook : SV_Target6;
+    vector vAmbient : SV_TARGET4;
+    vector vRimLight : SV_TARGET5;
+    vector vLook : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -141,6 +245,8 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         discard;
     }
+    if (length(vMtrlDiffuse.rgb) <= 0.f)
+        vMtrlDiffuse.rgb = float3(0.01, 0.01, 0.01);
     Out.vDiffuse = vMtrlDiffuse;
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -167,6 +273,229 @@ PS_OUT PS_MAIN(PS_IN In)
         vNormal = mul(vNormal, WorldMatrix);
         vMetalic.a = 0.6f;
         Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
+    }
+    else
+    {
+        float3 vNormal = normalize(In.vNormal);
+        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
+
+        float3 headRight = normalize(cross(float3(0.f, 1.f, 0.f), vLookVector.xyz));
+
+        vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
+        if (length(vMetalic.rgb) < 0.01f) vMetalic.a = 0.6f;
+        else vMetalic.a = 0.8f;
+        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
+    }
+    
+    if (vAmbient.g < 0.2) vAmbient.g = 1.f;
+    vAmbient.b = 0;
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    Out.vAmbient = vAmbient;
+    Out.vMetalic = vMetalic;
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    
+    return Out;
+}
+
+PS_OUT PS_OPAQUE(VS_CUSTOMOUT In)
+{
+    PS_OUT Out;
+
+    float3 localLightDir = normalize(float3(-1.f, -0.6f, 1.f));
+    float3 localLightDiffuse = float3(1.f, 1.f, 1.f);
+    float3 localLightAmbient = float3(1.f, 1.f, 1.f);
+    float3 localLightSpecular = float3(1.f, 1.f, 1.f);
+    float localLightIntensity = 2.f; 
+
+    float4 vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vMtrlDiffuse.a < 0.2f)
+        discard;
+
+    if (length(vMtrlDiffuse.rgb) <= 0.f)
+        vMtrlDiffuse.rgb = float3(0.01f, 0.01f, 0.01f);
+
+    float4 vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vAmbientTex = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    vAmbientTex.r = 0.f;
+
+    float3 worldNormal;
+    float normalAlpha;
+    float Skin;
+    bool bIsFace = false;
+    float3 faceLookDir = float3(0.f, 0.f, -1.f);
+
+    if (vNormalDesc.a > 0.f)
+    {
+        float3 vNormal;
+        vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+        vNormal.z = 1.f;
+
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1.f);
+        float3 N = normalize(In.vNormal);
+        float3x3 TBN = float3x3(T, B, N);
+
+        worldNormal = normalize(mul(vNormal, TBN));
+        normalAlpha = vNormalDesc.z;
+        Skin = 0.6f;
+        vMetalic.a = 0.6f;
+        bIsFace = false;
+    }
+    else
+    {
+        worldNormal = normalize(In.vNormal);
+        normalAlpha = 1.f;
+       // faceLookDir = vLookVector.xyz;
+
+        vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+        float lightMapLength = length(vMetalic.rgba);
+        if (lightMapLength < 0.01f)
+        {
+            Out.vDiffuse = float4(vMtrlDiffuse.rgb, 1.f);
+            return Out;
+        }
+        else
+        {
+            if (length(vMetalic.rgb) < 0.01f)
+                vMetalic.a = 0.6f;
+            else
+                vMetalic.a = 0.8f;
+
+            Skin = vMetalic.a;
+            bIsFace = (Skin >= 0.7f);
+        }
+    }
+
+    if (vAmbientTex.g < 0.2f)
+        vAmbientTex.g = 1.f;
+    vAmbientTex.b = 0.f;
+
+    float roughness = vMetalic.r;
+    float metalic = vMetalic.g;
+    float specMask = vMetalic.b;
+
+    float3 lightDir = normalize(localLightDir * -1.f);
+    float3 viewDir = normalize(vCamPosition.xyz - In.vWorldPos.xyz);
+
+    float3 litColor = float3(0, 0, 0);
+    float NdotL_out = 0.f;
+    float specular_out = 0.f;
+    float shadowValue = 1.f;
+    float lightAlpha = 0.f;
+
+    if (length(vMtrlDiffuse.rgb) > 0.f)
+        lightAlpha = 1.f;
+
+    if (!bIsFace)
+    {
+        float NdotL = dot(worldNormal, lightDir);
+        float saturateNdotL = saturate(NdotL);
+        float halfLambert = NdotL * 0.5f + 0.5f;
+
+        float toon = smoothstep(0.55f, 0.65f, halfLambert);
+        toon = lerp(0.6f, 1.0f, toon);
+
+        float3 halfVec = normalize(viewDir + lightDir);
+        float specBase = saturate(dot(worldNormal, halfVec));
+        float specularPower = lerp(50.0f, 5.0f, roughness);
+        float spec = pow(specBase, specularPower) * specMask;
+
+        float3 PBR = CalculateDirectionalLight(
+            vMtrlDiffuse.rgb, worldNormal, metalic, roughness,
+            viewDir, lightDir, localLightDiffuse, localLightIntensity, toon);
+
+        litColor = PBR * normalAlpha;
+        NdotL_out = saturateNdotL;
+        specular_out = spec;
+        shadowValue = saturate(toon * 0.7f + 0.3f);
+    }
+    else
+    {
+        float4 LightDesc = vMetalic;
+
+        float3 headRight = normalize(cross(float3(0, 1, 0), faceLookDir));
+        float RdotL = dot(headRight, lightDir);
+        float FdotL = dot(faceLookDir, lightDir);
+
+        float faceShadow = 1.f - LightDesc.r;
+        float lightIntensity = FdotL * 0.5f + 0.5f;
+
+        float threshold = faceShadow;
+        float shadow = smoothstep(threshold - 0.1f, threshold + 0.1f, lightIntensity);
+
+        float sideInfluence = RdotL * 0.3f;
+        shadow = saturate(shadow + sideInfluence);
+
+        float minBrightness = 0.2f;//        0.3f;
+        float maxBrightness = 0.48f;//        0.5f;
+        float brightness = lerp(minBrightness, maxBrightness, shadow);
+
+        litColor = vMtrlDiffuse.rgb * localLightDiffuse * brightness;
+        NdotL_out = brightness;
+        specular_out = 0.f;
+        shadowValue = saturate(brightness * 0.7f + 0.3f);
+    }
+
+    float3 ambient = localLightAmbient * vMtrlDiffuse.rgb * vAmbientTex.g;
+    ambient = max(ambient, vMtrlDiffuse.rgb * localLightAmbient * 0.5f) * vNormalDesc.a * shadowValue;
+
+    float3 finalColor;
+    if (Skin < 0.7f)
+    {
+        finalColor = litColor + ambient;
+    }
+    else
+    {
+        finalColor = litColor + localLightAmbient * vMtrlDiffuse.rgb * max(shadowValue, 0.5f);
+    }
+
+    float3 specularColor = localLightSpecular * specular_out;
+    finalColor += specularColor;
+
+    Out.vDiffuse = float4(finalColor, lightAlpha);
+
+    return Out;
+}
+
+PS_OUT PS_TRANSPARENTNOISE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+        discard;
+    
+    float2 screenUV = (In.vPosition.xy / 512.0) * 40.0;
+    float fNoise = DitheringTexture.Sample(PointSampler, screenUV).r;
+    
+    if (fNoise > fCameraFadeAlpha)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+ 
+    vAmbient.r = 0.f;
+    if (vNormalDesc.a > 0.f)
+    {
+        float3 vNormal;
+        vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+        vNormal.z = 1.f;
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1);
+        float3 N = normalize(In.vNormal.xyz);
+
+        float3x3 WorldMatrix = float3x3(T, B, N);
+        
+        vNormal = mul(vNormal, WorldMatrix);
+        vMetalic.a = 0.6f;
+        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+        Out.vLook = float4(0.f, 0.f, 0.f, 0.f);
     }
     else
     {
@@ -178,14 +507,16 @@ PS_OUT PS_MAIN(PS_IN In)
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
 
         vMetalic.a = 0.8f;
-        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
+        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 0.f);
     }
-    if (vAmbient.g < 0.2) vAmbient.g = 1.f;
+    if (vAmbient.g < 0.2)
+        vAmbient.g = 1.f;
     vAmbient.b = 0;
+    
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    
     return Out;
 }
 
@@ -194,6 +525,58 @@ PS_OUT PS_OUTLINE(PS_IN In)
     PS_OUT Out;
     
     Out.vDiffuse = vOutLineColor;
+    
+    return Out;
+}
+
+struct PS_MOTIONIN
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
+    float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
+    float vWorldHeight : TEXCOORD3;
+};
+
+struct PS_MOTIONOUT
+{
+    float4 vDiffuse : SV_TARGET0;
+    float4 vRimLight : SV_TARGET1;
+    float4 vNormal : SV_TARGET2;
+    float4 vDepth : SV_TARGET3;
+    float fHeight : SV_TARGET4;
+};
+
+PS_MOTIONOUT PS_MOTIONBLUR(PS_MOTIONIN In)
+{
+    PS_MOTIONOUT Out;
+    
+    float4 color = vMotionBlurColor;    
+    
+    float heightNormalized = saturate((In.vWorldHeight - 0.0f) / 3.f);
+    heightNormalized = 1.0f - heightNormalized;
+    Out.vDiffuse = color * DiffuseTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    Out.fHeight = iUseHeightGradient ? heightNormalized : 1.0f;
+    
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
+    vNormal = mul(vNormal, WorldMatrix);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+    
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+ 
     return Out;
 }
 
@@ -202,10 +585,8 @@ PS_OUT PS_DEBUG(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
-    }
+    vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
+
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vDiffuse = vMtrlDiffuse;
@@ -281,12 +662,32 @@ technique11 DefaultTechnique
 {
     pass Opaque
     {
-        SetRasterizerState(RS_NoCull);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_WriteStencil,1);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass Blend
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass TransparentNoise
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_TRANSPARENTNOISE();
     }
 
     pass Debug
@@ -298,6 +699,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DEBUG();
     }
+
     pass Shadow
     {
         SetRasterizerState(RS_Shadow);
@@ -309,14 +711,34 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
     }
 
+    pass MotionBlur
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_MotionStencil, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MOTIONBLUR();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MOTIONBLUR();
+    }
+
     pass OutLine
     {
         SetRasterizerState(RS_CullFront);
         SetDepthStencilState(DSS_OutlineStencil, 1);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_OUTLINE();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_OUTLINE();
+    }
+
+    pass UI_RenderTarget
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_WriteStencil, 1);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_CUSTOM();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_OPAQUE();
     }
 }
 

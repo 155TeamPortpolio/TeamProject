@@ -60,6 +60,11 @@ HRESULT CTrailNode::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
+void CTrailNode::Post_EngineUpdate(_float dt)
+{
+	CGameObject::Post_EngineUpdate(dt);
+}
+
 void CTrailNode::Awake()
 {
 }
@@ -72,19 +77,29 @@ void CTrailNode::Update(_float dt)
 {
 	auto pTrail = Get_Component<CTrailModel>();
 
-	auto pEffectContainer = Get_Component<CChild>()->Get_Parent();
+	auto pChild = Get_Component<CChild>();
+	if (!pChild)
+		return;
+
+	auto pEffectContainer = pChild->Get_Parent();
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
 
 	switch (m_eMode)
 	{
 	case Engine::CTrailModel::POINT_MODE::CENTER:
 	{
+		if (!m_IsEffectActive)
+			break;
+
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
-		pTrail->Update_CenterPoint(context.vLinePoint0, dt);
+		pTrail->Update_CenterPoint(vPosition, dt);
 
 	}break;
 	case Engine::CTrailModel::POINT_MODE::SEGMENT:
 	{
+		if (!m_IsEffectActive)
+			break;
+
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 		_vector3 vPosition1 = vPosition0;
 		vPosition1.y -= 5.f;
@@ -96,7 +111,7 @@ void CTrailNode::Update(_float dt)
 	{
 		auto pCild = Get_Component<CChild>();
 		auto pEffectContainer = static_cast<CEffectContainer*>(pCild->Get_Parent());
-		
+
 		if (!m_IsEffectActive)
 			pTrail->SetFadeOut(true);
 
@@ -117,10 +132,10 @@ void CTrailNode::Play()
 {
 	m_IsEffectActive = true;
 	m_fElpasedTime = 0.f;
+	Get_Component<CTrailModel>()->Reset();
 
 	if (CTrailModel::POINT_MODE::LINE == m_eMode)
 	{
-		Get_Component<CTrailModel>()->Reset();
 		Get_Component<CTrailModel>()->SetFadeOut(false);
 	}
 }

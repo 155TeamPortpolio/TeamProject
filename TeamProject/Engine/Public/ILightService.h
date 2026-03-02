@@ -13,6 +13,8 @@ public:
     virtual void DeActive_Light(class CLight* Light, _int Index)PURE;
     virtual void Active_Light(class CLight* Light, _int Index)PURE;
     virtual vector<LIGHT_DESC> Visible_Lights() PURE;
+    virtual void SetMain(class CLight* Light, _int Index)PURE;
+    virtual LIGHT_DESC Get_MainDirectional()PURE;
 
 };
 NS_END

@@ -119,129 +119,160 @@ void GS_MAIN_SCREEN_EFFECT(point GS_IN_SCREEN_EFFECT In[1], inout TriangleStream
     float projZ = In[0].vProjPos.z;
     float projW = In[0].vProjPos.w;
     float2 vAnchorNDC = In[0].vProjPos.xy / In[0].vProjPos.w;
+
     float LenNdcX = Width * (2.f / ScreenWidth);
     float LenNdcY = Width * (2.f / ScreenHeight);
     float ThickNdcX = Height * (2.f / ScreenWidth);
     float ThickNdcY = Height * (2.f / ScreenHeight);
 
-    /* Right (가로, 앵커가 왼쪽) */
+    // ======= 튜닝값(픽셀) =======
+    float TrimPx = 20.f; // 바깥쪽 끝을 안쪽으로 당겨 길이 줄이기
+    float OverlapPx = 60.f; // 앵커를 침범해서 시작점/끝점을 더 뻗게(가운데로 모이게)
+
+    float TrimNdcX = TrimPx * (2.f / ScreenWidth);
+    float TrimNdcY = TrimPx * (2.f / ScreenHeight);
+    float OverlapNdcX = OverlapPx * (2.f / ScreenWidth);
+    float OverlapNdcY = OverlapPx * (2.f / ScreenHeight);
+
+    // 길이 0 방지
+    TrimNdcX = min(TrimNdcX, LenNdcX * 0.99f);
+    TrimNdcY = min(TrimNdcY, LenNdcY * 0.99f);
+
+    float Len2X = LenNdcX - TrimNdcX; // 실제 "바깥쪽"으로 뻗는 길이(줄어든 값)
+    float Len2Y = LenNdcY - TrimNdcY;
+
+    // -------------------------------------------------------------------------
+    // Right (가로, 앵커가 왼쪽) : [anchor - overlap] ~ [anchor + len2]
+    // -------------------------------------------------------------------------
     {
         GS_OUT_SCREEN_EFFECT Out[4];
-        float2 LT = float2(vAnchorNDC.x, vAnchorNDC.y + ThickNdcY * 0.5f);
-        float2 RT = float2(vAnchorNDC.x + LenNdcX, vAnchorNDC.y + ThickNdcY * 0.5f);
-        float2 RB = float2(vAnchorNDC.x + LenNdcX, vAnchorNDC.y - ThickNdcY * 0.5f);
-        float2 LB = float2(vAnchorNDC.x, vAnchorNDC.y - ThickNdcY * 0.5f);
 
+        float x0 = vAnchorNDC.x - OverlapNdcX; // 시작점을 더 왼쪽으로(앵커 침범)
+        float x1 = vAnchorNDC.x + Len2X; // 끝은 줄인 길이만큼
+
+        float2 LT = float2(x0, vAnchorNDC.y + ThickNdcY * 0.5f);
+        float2 RT = float2(x1, vAnchorNDC.y + ThickNdcY * 0.5f);
+        float2 RB = float2(x1, vAnchorNDC.y - ThickNdcY * 0.5f);
+        float2 LB = float2(x0, vAnchorNDC.y - ThickNdcY * 0.5f);
+
+        // Right UV (네가 쓰던 좌우 반전 유지)
         Out[0].vPosition = float4(LT * projW, projZ, projW);
-        Out[0].vTexcoord = float2(0.f, 0.f);
-        
+        Out[0].vTexcoord = float2(1, 0);
         Out[1].vPosition = float4(RT * projW, projZ, projW);
-        Out[1].vTexcoord = float2(1.f, 0.f);
-        
+        Out[1].vTexcoord = float2(0, 0);
         Out[2].vPosition = float4(RB * projW, projZ, projW);
-        Out[2].vTexcoord = float2(1.f, 1.f);
-        
+        Out[2].vTexcoord = float2(0, 1);
         Out[3].vPosition = float4(LB * projW, projZ, projW);
-        Out[3].vTexcoord = float2(0.f, 1.f);
-        
+        Out[3].vTexcoord = float2(1, 1);
+
         triStream.Append(Out[0]);
         triStream.Append(Out[1]);
         triStream.Append(Out[2]);
         triStream.RestartStrip();
-        
         triStream.Append(Out[0]);
         triStream.Append(Out[2]);
         triStream.Append(Out[3]);
         triStream.RestartStrip();
     }
 
-    /* Bottom (세로, 앵커가 위쪽) */
+    // -------------------------------------------------------------------------
+    // Bottom (세로, 앵커가 위쪽) : [anchor + overlap] ~ [anchor - len2]
+    //  - "위쪽 앵커"를 침범해서 시작을 조금 더 위로 올리고 싶으면 y0 = anchor + overlap
+    //    (NDC에서 y+ 는 위로)
+    // -------------------------------------------------------------------------
     {
         GS_OUT_SCREEN_EFFECT Out[4];
-        float2 LT = float2(vAnchorNDC.x - ThickNdcX * 0.5f, vAnchorNDC.y);
-        float2 RT = float2(vAnchorNDC.x + ThickNdcX * 0.5f, vAnchorNDC.y);
-        float2 RB = float2(vAnchorNDC.x + ThickNdcX * 0.5f, vAnchorNDC.y - LenNdcY);
-        float2 LB = float2(vAnchorNDC.x - ThickNdcX * 0.5f, vAnchorNDC.y - LenNdcY);
 
+        float y0 = vAnchorNDC.y + OverlapNdcY; // 시작점을 더 위로(앵커 침범)
+        float y1 = vAnchorNDC.y - Len2Y; // 끝은 줄인 길이만큼 아래로
+
+        float2 LT = float2(vAnchorNDC.x - ThickNdcX * 0.5f, y0);
+        float2 RT = float2(vAnchorNDC.x + ThickNdcX * 0.5f, y0);
+        float2 RB = float2(vAnchorNDC.x + ThickNdcX * 0.5f, y1);
+        float2 LB = float2(vAnchorNDC.x - ThickNdcX * 0.5f, y1);
+
+        // Bottom UV (네가 쓰던 그대로)
         Out[0].vPosition = float4(LT * projW, projZ, projW);
-        Out[0].vTexcoord = float2(1.f, 0.f);
-        
+        Out[0].vTexcoord = float2(1, 0);
         Out[1].vPosition = float4(RT * projW, projZ, projW);
-        Out[1].vTexcoord = float2(1.f, 1.f);
-        
+        Out[1].vTexcoord = float2(1, 1);
         Out[2].vPosition = float4(RB * projW, projZ, projW);
-        Out[2].vTexcoord = float2(0.f, 1.f);
-        
+        Out[2].vTexcoord = float2(0, 1);
         Out[3].vPosition = float4(LB * projW, projZ, projW);
-        Out[3].vTexcoord = float2(0.f, 0.f);
+        Out[3].vTexcoord = float2(0, 0);
 
         triStream.Append(Out[0]);
         triStream.Append(Out[1]);
         triStream.Append(Out[2]);
         triStream.RestartStrip();
-        
         triStream.Append(Out[0]);
         triStream.Append(Out[2]);
         triStream.Append(Out[3]);
         triStream.RestartStrip();
     }
 
-    /* Left (가로, 앵커가 오른쪽) */
+    // -------------------------------------------------------------------------
+    // Left (가로, 앵커가 오른쪽) : [anchor - len2] ~ [anchor + overlap]
+    // -------------------------------------------------------------------------
     {
         GS_OUT_SCREEN_EFFECT Out[4];
-        float2 LT = float2(vAnchorNDC.x - LenNdcX, vAnchorNDC.y + ThickNdcY * 0.5f);
-        float2 RT = float2(vAnchorNDC.x, vAnchorNDC.y + ThickNdcY * 0.5f);
-        float2 RB = float2(vAnchorNDC.x, vAnchorNDC.y - ThickNdcY * 0.5f);
-        float2 LB = float2(vAnchorNDC.x - LenNdcX, vAnchorNDC.y - ThickNdcY * 0.5f);
 
+        float x0 = vAnchorNDC.x - Len2X; // 왼쪽 바깥 끝(줄인 길이만큼)
+        float x1 = vAnchorNDC.x + OverlapNdcX; // 앵커를 침범해서 오른쪽으로 조금 더
+
+        float2 LT = float2(x0, vAnchorNDC.y + ThickNdcY * 0.5f);
+        float2 RT = float2(x1, vAnchorNDC.y + ThickNdcY * 0.5f);
+        float2 RB = float2(x1, vAnchorNDC.y - ThickNdcY * 0.5f);
+        float2 LB = float2(x0, vAnchorNDC.y - ThickNdcY * 0.5f);
+
+        // Left UV (네가 쓰던 그대로)
         Out[0].vPosition = float4(LT * projW, projZ, projW);
-        Out[0].vTexcoord = float2(0.f, 0.f);
-    
+        Out[0].vTexcoord = float2(0, 0);
         Out[1].vPosition = float4(RT * projW, projZ, projW);
-        Out[1].vTexcoord = float2(1.f, 0.f);
-        
+        Out[1].vTexcoord = float2(1, 0);
         Out[2].vPosition = float4(RB * projW, projZ, projW);
-        Out[2].vTexcoord = float2(1.f, 1.f);
-        
+        Out[2].vTexcoord = float2(1, 1);
         Out[3].vPosition = float4(LB * projW, projZ, projW);
-        Out[3].vTexcoord = float2(0.f, 1.f);
+        Out[3].vTexcoord = float2(0, 1);
 
         triStream.Append(Out[0]);
         triStream.Append(Out[1]);
         triStream.Append(Out[2]);
         triStream.RestartStrip();
-        
         triStream.Append(Out[0]);
         triStream.Append(Out[2]);
         triStream.Append(Out[3]);
         triStream.RestartStrip();
     }
 
-    /* Top (세로, 앵커가 아래쪽) */
+    // -------------------------------------------------------------------------
+    // Top (세로, 앵커가 아래쪽) : [anchor + len2] ~ [anchor - overlap]
+    // -------------------------------------------------------------------------
     {
         GS_OUT_SCREEN_EFFECT Out[4];
-        float2 LT = float2(vAnchorNDC.x - ThickNdcX * 0.5f, vAnchorNDC.y + LenNdcY);
-        float2 RT = float2(vAnchorNDC.x + ThickNdcX * 0.5f, vAnchorNDC.y + LenNdcY);
-        float2 RB = float2(vAnchorNDC.x + ThickNdcX * 0.5f, vAnchorNDC.y);
-        float2 LB = float2(vAnchorNDC.x - ThickNdcX * 0.5f, vAnchorNDC.y);
 
+        float y0 = vAnchorNDC.y + Len2Y; // 위쪽 바깥 끝(줄인 길이만큼)
+        float y1 = vAnchorNDC.y - OverlapNdcY; // 앵커를 침범해서 아래로 조금 더
+
+        float2 LT = float2(vAnchorNDC.x - ThickNdcX * 0.5f, y0);
+        float2 RT = float2(vAnchorNDC.x + ThickNdcX * 0.5f, y0);
+        float2 RB = float2(vAnchorNDC.x + ThickNdcX * 0.5f, y1);
+        float2 LB = float2(vAnchorNDC.x - ThickNdcX * 0.5f, y1);
+
+        // Top UV (네가 쓰던 그대로)
         Out[0].vPosition = float4(LT * projW, projZ, projW);
-        Out[0].vTexcoord = float2(1.f, 0.f);
-        
+        Out[0].vTexcoord = float2(0, 0);
         Out[1].vPosition = float4(RT * projW, projZ, projW);
-        Out[1].vTexcoord = float2(1.f, 1.f);
-        
+        Out[1].vTexcoord = float2(0, 1);
         Out[2].vPosition = float4(RB * projW, projZ, projW);
-        Out[2].vTexcoord = float2(0.f, 1.f);
-        
+        Out[2].vTexcoord = float2(1, 1);
         Out[3].vPosition = float4(LB * projW, projZ, projW);
-        Out[3].vTexcoord = float2(0.f, 0.f);
+        Out[3].vTexcoord = float2(1, 0);
 
         triStream.Append(Out[0]);
         triStream.Append(Out[1]);
         triStream.Append(Out[2]);
         triStream.RestartStrip();
-        
         triStream.Append(Out[0]);
         triStream.Append(Out[2]);
         triStream.Append(Out[3]);
@@ -310,13 +341,13 @@ PS_OUT_SCREEN_EFFECT PS_MAIN_SCREENEFFECT(PS_IN In)
     vector vDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     
     vector vResult = ApplyColorMode(0, vDiffuse, float4(Color, Alpha));
+    float fColorMask = max(vDiffuse.b, max(vDiffuse.r, vDiffuse.g));
+    vResult.a *= fColorMask;
     vector vPremulColor = vector(vResult.rgb * vResult.a, vResult.a);
-    vector vBloomColor = float4(1.f, 0.3f, 0.f, 1.f);
-    vector vBloomPremul = float4(vBloomColor.rgb * vResult.a, vResult.a);
     
     Out.vDiffuseAcc = vPremulColor;
-    Out.vBloomAcc = ExtractBright(vBloomColor, 0.3f, 0.5f, 10.f);
-    Out.vBloomInfo = float4(0.f, 100.5f, 0.f, 0.f);
+    Out.vBloomAcc = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = vResult.a;
     
     return Out;

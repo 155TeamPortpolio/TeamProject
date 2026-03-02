@@ -7,39 +7,74 @@
 #include "CorinState_SwitchInAttack.h"
 #include "CorinState_SwitchInParryAid.h"
 
+#include "AudioSource.h"
+
+CCorinState_SwitchIn* CCorinState_SwitchIn::Create()
+{
+    auto pInstance = new CCorinState_SwitchIn();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("SwitchInNormal", CCorinState_SwitchInNormal::Create());
+    pSubStateMachine->Register_State("SwitchInAttack", CCorinState_SwitchInAttack::Create());
+    pSubStateMachine->Register_State("SwitchInParryAid", CCorinState_SwitchInParryAid::Create());
+
+    pSubStateMachine->Get_State("SwitchInNormal")->Set_Tag("Normal");
+    pSubStateMachine->Get_State("SwitchInAttack")->Set_Tag("Attack");
+    pSubStateMachine->Get_State("SwitchInParryAid")->Set_Tag("ParryAid");
+
+    return pInstance;
+}
+
 void CCorinState_SwitchIn::Enter(CCorin* pOwner)
 {
-    pOwner->Unlock_Move();
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Normal", CCorinState_SwitchInNormal::Create());
-        m_pSubStateMachine->Register_State("Attack", CCorinState_SwitchInAttack::Create());
-        m_pSubStateMachine->Register_State("ParryAid", CCorinState_SwitchInParryAid::Create());
-
-        m_pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
-        m_pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
-        m_pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
-    }
+    pOwner->Push_Invincible();
 
     switch (pOwner->Get_Switch())
     {
     case CCharacter::SWITCH::NORMAL:
-        m_pSubStateMachine->Set_DefaultState("Normal");
+        m_pSubStateMachine->Set_DefaultState("SwitchInNormal");
         break;
     case CCharacter::SWITCH::ATTACK:
-        m_pSubStateMachine->Set_DefaultState("Attack");
+        m_pSubStateMachine->Set_DefaultState("SwitchInAttack");
         break;
     case CCharacter::SWITCH::PARRYAID:
-        m_pSubStateMachine->Set_DefaultState("ParryAid");
+        m_pSubStateMachine->Set_DefaultState("SwitchInParryAid");
         break;
     }
+
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
+    pOwner->Get_StateMachine()->Reset_Trigger("ResetState");
+    pOwner->Reset_InputInfo();
+
+    m_pSubStateMachine->Reset_Trigger("Complete");
+    m_pSubStateMachine->Set_Int("ExitMode", 0);
+
+    pOwner->Control_VoiceSequence("Switch_Voice");
+    pOwner->Control_SFX("Corin_Switch_01_SFX.wav");
+
     __super::Enter(pOwner);
 }
 
 void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        IHState<CCorin>* pSub = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        bool bEndState = false;
+        if (pSub && pSub->Get_SubStateMachine())
+            bEndState = pSub->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() == "End";
+
+        if (bEndState || Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+        return;
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
@@ -54,6 +89,7 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
         {
         case 1:
             pRootFSM->Set_Trigger("ToMove");
+            pRootFSM->Set_Int("MoveEntryMode", 2);
             break;
         case 2:
             pRootFSM->Set_Trigger("Attack");
@@ -70,5 +106,31 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_SwitchIn::Exit(CCorin* pOwner)
 {
+    pOwner->Pop_Invincible();
+    pOwner->Reset_Switch();
+
+    pOwner->Control_FadeOut("Corin_Switch_01_SFX.wav");
+
     __super::Exit(pOwner);
+}
+
+_bool CCorinState_SwitchIn::Handle_Transition(CCorin* pOwner, const string& strState)
+{
+    if (pOwner->Get_StateMachine()->Get_Int("IdleEntryMode") == 2)
+        return true;
+    if (strState == "SwitchOut")
+        return true;
+    if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInParryAid")
+    {
+        IHState<CCorin>* pState = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        if (pState->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() != "End")
+            return false;
+    }
+    else if (m_pSubStateMachine->Get_CurrentStateName() == "SwitchInAttack")
+    {
+        IHState<CCorin>* pState = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        if (pState->Get_SubStateMachine()->Get_CurrentState()->Get_Tag() != "End")
+            return false;
+    }
+    return true;
 }

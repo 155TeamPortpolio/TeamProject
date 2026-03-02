@@ -8,48 +8,16 @@
 #include "Material.h"
 #include "Child.h"
 #include "Camera.h"
+#include "ObjectContainer.h"
 // Client
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 #include "Player.h"
 #include "MaterialInstance.h"
+#include "Enemy.h"
 
 namespace
 {
-    constexpr float PI = 3.14159265359f;
-    constexpr float TWO_PI = 6.28318530718f;
-
-    float ExpAlpha(float speed, float dt)
-    {
-        float a = 1.f - expf(-speed * dt);
-        return clamp(a, 0.f, 1.f);
-    }
-
-    float WrapRad(float rad)
-    {
-        while (rad > PI) rad -= TWO_PI;
-        while (rad < -PI) rad += TWO_PI;
-        return rad;
-    }
-
-    Vector2 MoveTowardsVec2(const Vector2& cur, const Vector2& target, float maxDelta)
-    {
-        Vector2 d = target - cur;
-        const float len = d.Length();
-        if (len <= maxDelta || len == 0.f) return target;
-        d /= len;
-        return cur + d * maxDelta;
-    }
-
-    Vector3 MoveTowardsVec3(const Vector3& cur, const Vector3& target, float maxDelta)
-    {
-        Vector3 d = target - cur;
-        const float len = d.Length();
-        if (len <= maxDelta || len == 0.f) return target;
-        d /= len;
-        return cur + d * maxDelta;
-    }
-
     Vector3 DirFromYaw(float yawRad)
     {
         return Vector3(sinf(yawRad), 0.f, cosf(yawRad));
@@ -59,12 +27,10 @@ namespace
 HRESULT CUI_MeshPyramid::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-
-	ResourceManager()->Add_ResourcePath("pyramid.model", "../bin/Resources/UI/Model/UI_3DPyramid/pyramid.model");
-	ResourceManager()->Add_ResourcePath("pyramid.mat", "../bin/Resources/UI/Model/UI_3DPyramid/pyramid.mat");
+	ResourceManager()->Add_ResourcePath("pyramid.model", "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.model");
+	ResourceManager()->Add_ResourcePath("pyramid.mat",   "../bin/Resources/Global/UI/Model/UI_3DPyramid/pyramid.mat");
 	Add_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "pyramid.model");
 	Add_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "pyramid.mat");
-
 	return S_OK;
 }
 
@@ -72,18 +38,53 @@ HRESULT CUI_MeshPyramid::Initialize(INIT_DESC* arg)
 {
     __super::Initialize(arg);
 
-    alpha = cfg.baseColorAlpha.w;
-    color = Vector3(cfg.baseColorAlpha.x, cfg.baseColorAlpha.y, cfg.baseColorAlpha.z);
+    m_alpha = m_cfg.baseColorAlpha.w;
+    m_color = m_cfg.gray;
+
+    static Vector3 fillDark(0.35f, 0.35f, 0.38f);
+    static Vector3 fillLight(0.90f, 0.90f, 0.92f);
+    static Vector3 outlineColor(0.03f, 0.03f, 0.03f);
+
+    static _float rimStart = 0.55f;
+    static _float rimEnd = 0.92f;
+    static _float rimStrength = 0.25f;
+    static _float edgeHardness = 1.5f;
+
+    m_topRed = Vector3(0.55f, 0.08f, 0.10f);
+    m_topWhite = Vector3(1.f, 1.f, 1.f);
+    m_topBlink = -1.f;
+
+    static _float topNStart = 0.85f;
+    static _float topNEnd = 0.98f;
+    static _float topNPow = 6.0f;
 
     auto mtrl = Get_Component<CMaterial>();
     auto mtrlInsts = mtrl->Get_MaterialInstances();
     for (auto& inst : mtrlInsts)
     {
-        inst->Set_Param("color", {&color, "float3", sizeof(_float3)});
-        inst->Set_Param("alpha", {&alpha, "float", sizeof(_float)});
+        inst->Set_Param("color", {&m_color, "float3", sizeof(_float3)});
+        inst->Set_Param("alpha", {&m_alpha, "float", sizeof(_float)});
+
+        inst->Set_Param("fillDark", {&fillDark, "float3", sizeof(_float3)});
+        inst->Set_Param("fillLight", {&fillLight, "float3", sizeof(_float3)});
+        inst->Set_Param("outlineColor", {&outlineColor, "float3", sizeof(_float3)});
+
+        inst->Set_Param("rimStart", {&rimStart, "float", sizeof(_float)});
+        inst->Set_Param("rimEnd", {&rimEnd, "float", sizeof(_float)});
+        inst->Set_Param("rimStrength", {&rimStrength, "float", sizeof(_float)});
+        inst->Set_Param("edgeHardness", {&edgeHardness, "float", sizeof(_float)});
+
+        inst->Set_Param("topBlink", {&m_topBlink, "float", sizeof(_float)});
+        inst->Set_Param("topRed", {&m_topRed, "float3", sizeof(_float3)});
+        inst->Set_Param("topWhite", {&m_topWhite, "float3", sizeof(_float3)});
+        inst->Set_Param("topNStart", {&topNStart, "float", sizeof(_float)});
+        inst->Set_Param("topNEnd", {&topNEnd, "float", sizeof(_float)});
+        inst->Set_Param("topNPow", {&topNPow, "float", sizeof(_float)});
     }
 
-    m_pTransform->Scale({0.05f, 0.1f, 0.05f});
+    static constexpr _float width = 0.03f;
+
+    m_pTransform->Scale({width, width * 2.f, width});
 
     auto model = Get_Component<CStaticModel>();
     model->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
@@ -94,127 +95,80 @@ HRESULT CUI_MeshPyramid::Initialize(INIT_DESC* arg)
 
 void CUI_MeshPyramid::Update(_float dt)
 {
-    if (!IsOnScreen(cfg.onScreenMarginPx))
+    if (!IsOnScreen(m_cfg.onScreenMarginPx))
     {
-        rt.fadeT += dt / cfg.fadeInDur;
-        if (rt.fadeT > 1.f) rt.fadeT = 1.f;
+        m_rt.fadeT += dt / m_cfg.fadeInDur;
+        if (m_rt.fadeT > 1.f) m_rt.fadeT = 1.f;
     }
     else
     {
-        rt.fadeT -= dt / cfg.fadeOutDur;
-        if (rt.fadeT < 0.f) rt.fadeT = 0.f;
+        m_rt.fadeT -= dt / m_cfg.fadeOutDur;
+        if (m_rt.fadeT < 0.f) m_rt.fadeT = 0.f;
     }
 
-    const float eased = Math::ApplyEase(EaseType::InOutSine, rt.fadeT);
-    alpha = cfg.baseColorAlpha.w * eased;
+    m_alpha = m_cfg.baseColorAlpha.w * Math::ApplyEase(EaseType::InOutSine, m_rt.fadeT);
 
-    //rt.isAlert = IsAlert();
+    auto child = Get_Component<CChild>();
+    if (!child) return;
 
-    if (!rt.isAlert)
+    auto parentObj = child->Get_Parent();
+    if (!parentObj) return;
+
+    const bool isAlert = static_cast<CEnemy*>(parentObj)->IsOnAttack();
+    m_rt.isAlert = isAlert;
+
+    m_color = m_cfg.gray;
+
+    if (!isAlert)
     {
-        color = cfg.gray;
-        rt.alertBlinkT = 0.f;
+        m_rt.alertBlinkT = 0.f;
+        m_topBlink = -1.f;
     }
     else
     {
-        rt.alertBlinkT += dt;
-        const float period = cfg.blinkSec > 0.f ? cfg.blinkSec : 0.0001f;
-        const int phase = (int)(rt.alertBlinkT / period);
-        color = (phase & 1) ? cfg.red : cfg.gray;
+        m_rt.alertBlinkT += dt;
+        const float period = m_cfg.blinkSec > 0.f ? m_cfg.blinkSec : 0.0001f;
+        const float w = 6.2831853f / period;
+        m_topBlink = 0.5f + 0.5f * sinf(m_rt.alertBlinkT * w);
     }
-
-    auto parentObj = Get_Component<CChild>()->Get_Parent();
 
     OBJECT_HANDLE hChar = BattleSystem()->GetCurCharacterHandle();
     auto charObj = ObjectManager()->Request_Object(hChar);
     auto charCC = charObj->Get_Component<CCharacterController>();
 
-    const Vector4 foot4 = charCC->Get_FootPosition();
-    Vector3 foot(foot4.x, foot4.y, foot4.z);
-    foot.y += charCC->Get_HalfSize() * 0.5f;
+    const Vector3 foot = charCC->Get_FootPosition();
 
-    const Vector3 targetPos3 = parentObj->Get_WorldPos();
+    const Vector3 targetPos = parentObj->Get_WorldPos();
+    const Vector3 charPos = charObj->Get_WorldPos();
 
-    Vector2 footXZ(foot.x, foot.z);
-    Vector2 targetXZ(targetPos3.x, targetPos3.z);
+    const float anchorY = foot.y + charCC->Get_HalfSize() * m_cfg.anchorUpRatio + m_cfg.anchorUpBias;
 
-    if (!rt.hasLastFootXZ)
-    {
-        rt.lastFootXZ = footXZ;
-        rt.hasLastFootXZ = true;
-    }
-    else
-    {
-        rt.lastFootXZ = MoveTowardsVec2(rt.lastFootXZ, footXZ, cfg.maxFootStepPerFrame);
-    }
+    Vector3 base(charPos.x, anchorY, charPos.z);
 
-    if (!rt.hasLastTargetXZ)
-    {
-        rt.lastTargetXZ = targetXZ;
-        rt.hasLastTargetXZ = true;
-    }
-    else
-    {
-        rt.lastTargetXZ = MoveTowardsVec2(rt.lastTargetXZ, targetXZ, cfg.maxTargetStepPerFrame);
-    }
-
-    const Vector3 stableFoot(rt.lastFootXZ.x, foot.y, rt.lastFootXZ.y);
-    const Vector3 stableTarget(rt.lastTargetXZ.x, targetPos3.y, rt.lastTargetXZ.y);
-
-    Vector3 dir = stableTarget - stableFoot;
+    Vector3 dir = targetPos - base;
     dir.y = 0.f;
 
-    const float dirLen = dir.Length();
+    const float dirLenSq = dir.LengthSquared();
+    if (dirLenSq <= 1e-10f) dir = Vector3(0.f, 0.f, 1.f);
+    else dir /= sqrtf(dirLenSq);
 
-    if (dirLen >= cfg.minDirLen)
-    {
-        dir /= dirLen;
-        rt.lastDirXZ = dir;
-        rt.hasLastDir = true;
-    }
-    else
-    {
-        if (rt.hasLastDir) dir = rt.lastDirXZ;
-        else dir = DirFromYaw(rt.hasLastYaw ? rt.lastYawRad : 0.f);
-    }
+    const float yawRad = atan2f(dir.x, dir.z);
 
-    const Vector3 rawPos = stableFoot + dir * cfg.ringRadius + Vector3(0.f, cfg.yOffset, 0.f);
-    const float rawYawRad = atan2f(dir.x, dir.z);
-
-    if (!rt.hasLastYaw)
-    {
-        rt.lastYawRad = rawYawRad;
-        rt.hasLastYaw = true;
-    }
-    else
-    {
-        const float a = ExpAlpha(cfg.yawSmoothSpeed, dt);
-        const float delta = WrapRad(rawYawRad - rt.lastYawRad);
-        rt.lastYawRad = WrapRad(rt.lastYawRad + delta * a);
-    }
-
-    if (!rt.hasSmoothPos)
-    {
-        rt.smoothPos = rawPos;
-        rt.hasSmoothPos = true;
-    }
-    else
-    {
-        const float a = ExpAlpha(cfg.posSmoothSpeed, dt);
-        Vector3 nextPos = Vector3::Lerp(rt.smoothPos, rawPos, a);
-        rt.smoothPos = MoveTowardsVec3(rt.smoothPos, nextPos, cfg.maxPosStepPerFrame);
-    }
+    const Vector3 pos = base + dir * m_cfg.ringRadius + Vector3(0.f, m_cfg.yOffset, 0.f);
 
     auto tf = Get_Component<CTransform>();
-    tf->Set_WorldPos(Vector4(rt.smoothPos.x, rt.smoothPos.y, rt.smoothPos.z, 1.f));
+    tf->Set_WorldPos(Vector4(pos.x, pos.y, pos.z, 1.f));
 
-    const Quaternion q = Quaternion::CreateFromYawPitchRoll(rt.lastYawRad, cfg.basePitchRad, 0.f);
-    tf->Set_WorldQuaternion(Vector4(q.x, q.y, q.z, q.w));
+    const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, m_cfg.basePitchRad, 0.f);
+    tf->Set_WorldQuaternion(q);
 }
 
 _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
 {
-    auto parent = Get_Component<CChild>()->Get_Parent();
+    auto child = Get_Component<CChild>();
+    if (!child) return false;
+
+    auto parent = child->Get_Parent();
     if (!parent) return false;
 
     const Vector3 worldPos = parent->Get_WorldPos();
@@ -241,7 +195,7 @@ _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
     if (ndcZ > 1.f) return false;
 
     Vector2 screen{};
-    screen.x = viewport.x + (ndcX * 0.5f + 0.5f) * viewport.z;
+    screen.x = viewport.x + ( ndcX * 0.5f + 0.5f) * viewport.z;
     screen.y = viewport.y + (-ndcY * 0.5f + 0.5f) * viewport.w;
 
     const float minX = viewport.x - marginPx;
@@ -259,22 +213,22 @@ _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
 
 CGameObject* CUI_MeshPyramid::Create()
 {
-	CUI_MeshPyramid* pInstance = new CUI_MeshPyramid;
-	if (FAILED(pInstance->Initialize_Prototype()))
+	auto inst = new CUI_MeshPyramid;
+	if (FAILED(inst->Initialize_Prototype()))
 	{
 		MSG_BOX("Failed to Create : CUI_MeshPyramid");
-		Safe_Release(pInstance);
+		Safe_Release(inst);
 	}
-	return pInstance;
+	return inst;
 }
 
 CGameObject* CUI_MeshPyramid::Clone(INIT_DESC* pArg)
 {
-	CUI_MeshPyramid* pInstance = new CUI_MeshPyramid(*this);
-	if (FAILED(pInstance->Initialize(pArg)))
+	auto inst = new CUI_MeshPyramid(*this);
+	if (FAILED(inst->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Clone : CUI_MeshPyramid");
-		Safe_Release(pInstance);
+		Safe_Release(inst);
 	}
-	return pInstance;
+	return inst;
 }

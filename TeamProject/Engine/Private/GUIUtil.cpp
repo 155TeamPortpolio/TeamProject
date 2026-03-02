@@ -48,7 +48,7 @@ namespace GuiUtil
 		ImGui::TableSetColumnIndex(1);
 		ImGui::SetNextItemWidth(-FLT_MIN);
 	}
-	 
+
 	ENGINE_DLL bool DrawFloatRow(const char* label, const char* id, float* v, float init, float speed, float minV, float maxV, const char* fmt)
 	{
 		const bool changed = (*v != init);
@@ -250,4 +250,25 @@ bool GuiUtil::DrawOkPopupModalText(const char* popupId, const char* title, const
 
 	ImGui::EndPopup();
 	return closed;
+}
+
+ENGINE_DLL void GuiUtil::PushTypeBadgeColor(const std::string& typeName)
+{
+	if (typeName == "Texture2D")      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.80f, 0.90f, 1.00f, 1.0f));
+	else if (typeName.find("float") == 0) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.80f, 1.00f, 0.80f, 1.0f));
+	else if (typeName.find("int") == 0)   ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 0.90f, 0.70f, 1.0f));
+	else if (typeName.find("uint") == 0)  ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.00f, 0.85f, 0.85f, 1.0f));
+	else if (typeName.find("bool") == 0)  ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.95f, 0.95f, 0.95f, 1.0f));
+	else                                   ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.85f, 0.85f, 0.85f, 1.0f));
+
+}
+
+ENGINE_DLL void GuiUtil::PopTypeBadgeColor()
+{
+	ImGui::PopStyleColor(1);
+}
+
+ENGINE_DLL void GuiUtil::DrawBoundDot(bool isBound)
+{
+	ImGui::TextUnformatted(isBound ? u8"¡Ü" : u8"¡Û");
 }

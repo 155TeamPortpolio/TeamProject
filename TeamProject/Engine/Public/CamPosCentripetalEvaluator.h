@@ -23,7 +23,6 @@ private:
 
 public:
 	static CCamPosCentripetalEvaluator* Create() { return new CCamPosCentripetalEvaluator(); }
-	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

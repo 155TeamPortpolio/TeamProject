@@ -5,11 +5,14 @@
 
 #include "Helper_Func.h"
 #include "EffectContainer.h"
+#include "RunTimeBucket.h"
 
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
-#include "ZeroStage_Normal.h"
 #include "ZeroStage_Elite.h"
+#include "ZeroStage_Normal.h"
+#include "ZeroStage_Start.h"
+#include "TestCloud.h"
 
 // Camera
 #include "Camera.h"
@@ -22,10 +25,27 @@
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "Sacrifice_Orb.h"
+#include "Hand_Core.h"
+#include "Hand_Sword.h"
 #include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
+#include "Defiler.h"
+#include "MiasmaBlade.h"
+#include "DefilerLaser.h"
+#include "JaegerLaser.h"
+
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
+#include "StageRouter.h"
+#include "ThugPoacher.h"
+#include "ThugPoacher_Arrow.h"
+#include "Claymore.h"
+#include "Cyclops.h"
+#include "Cyclops_Spit.h"
+#include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
+#include "MeleeJaeger_Shield.h"
+#include "Giant.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -35,154 +55,219 @@
 
 /*Map*/
 #include "MapLoader.h"
+#include "DataBase.h"
+
+/*PostRenderer*/
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+#include "ProceduralSky.h"
+#include "Light.h"
+#include "AudioSource.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
-	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() },
-	m_pCamDirector{CCamDirector::GetInstance()}
+	:CLevel(LevelKey)
 {
-	Safe_AddRef(m_pGameInstance);
-	Safe_AddRef(m_pCamDirector);
 }
 
 HRESULT CZero_Level::Initialize()
 {
-	/* UI */
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Zero_Level");
+	Ready_Prototype();
 
+	/* UI */
+	CUIDirector::GetInstance()->Load_LevelObjects("Zero_Level");
+
+	/*ENV*/
+	//Cloud
+	auto pPost = RenderSystem()->GetPostRenderer();
+	auto pFogCommand = pPost->GetCommand<CFogCommand>();
+	m_PrevFog = pFogCommand->GetFogDesc();
+	m_bPrevFogUse = pFogCommand->IsEnabled();
+	/*pFogCommand->SetEnable(false);*/
+
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	pCloud->Set_Alive(true);
+	//Fog
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetColor(_float4(0.08f, 0.02f, 0.02f, 1.0f))
+		->SetDensity(0.02f)
+		->SetEnable(true);
+	//ShadowCam
+	m_tZeroShadow.pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+
+	/* BGM */
+	m_pBGM = CAudioSource::Create();
+	m_pBGM->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/BGM");
+	
+	/* Player */
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
-	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
-
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
-	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
-
-	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
-	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
-	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
-
+	
 	m_Context.isFirstIn = true;
-	ChangeStage(StageType::Normal, 1);
-	m_Context.isFirstIn = false;
-	m_Context.pNowStage->Ready_Stage(m_Context);
-
-	{
-		//==================== Effect =======================
-		auto pResource = ResourceManager();
-		/* Assets */
-		pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/Data/test_particle.json");
-		pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/Data/spawn_smoke.json");
-		pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/Data/fog.json");
-		pResource->Add_ResourcePath("hit_ground_smoke.json", "../Bin/Resources/Effect/Data/hit_ground_smoke.json");
-		pResource->Add_ResourcePath("hit_ground_smoke_strong.json", "../Bin/Resources/Effect/Data/hit_ground_smoke_strong.json");
-		pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/Data/core.json");
-		pResource->Add_ResourcePath("rock_particle.json", "../Bin/Resources/Effect/Data/rock_particle.json");
-		pResource->Add_ResourcePath("sacrifice_spark.json", "../Bin/Resources/Effect/Data/sacrifice_spark.json");
-		pResource->Add_ResourcePath("sacrifice_hit_ground_flare.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare.json");
-		pResource->Add_ResourcePath("sacrifice_hit_ground_flare_smoke.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare_smoke.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_trail_cone.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail_cone.json");
-		pResource->Add_ResourcePath("sacrifice_orb.json", "../Bin/Resources/Effect/Data/sacrifice_orb.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_slash.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash.json");
-		pResource->Add_ResourcePath("sacrifice_sword_slash.json", "../Bin/Resources/Effect/Data/sacrifice_sword_slash.json");
-		pResource->Add_ResourcePath("sacrifice_hand_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_hand_smoke_trail.json");
-		pResource->Add_ResourcePath("sacrifice_hand_ground_up.json", "../Bin/Resources/Effect/Data/sacrifice_hand_ground_up.json");
-
-		/* Textures */
-		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
-		pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Texture/Eff_Particle_044.png");
-		pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_046_LB_01.png");
-		pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_218.png");
-		pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_006.png");
-		pResource->Add_ResourcePath("rock0.png", "../Bin/Resources/Effect/Texture/rock0.png");
-		pResource->Add_ResourcePath("lightning10.png", "../Bin/Resources/Effect/Texture/lightning10.png");
-		pResource->Add_ResourcePath("lightning7.png", "../Bin/Resources/Effect/Texture/lightning7.png");
-		pResource->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
-		pResource->Add_ResourcePath("Eff_Burn_LYX_28.png", "../Bin/Resources/Effect/Texture/Eff_Burn_LYX_28.png");
-		pResource->Add_ResourcePath("Eff_Smoke_259.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_259.png");
-		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
-		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
-		pResource->Add_ResourcePath("Eff_Noise_243_YZ_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_243_YZ_01.png");
-		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
-		pResource->Add_ResourcePath("smoke0.png", "../Bin/Resources/Effect/Texture/smoke0.png");
-
-		/* Models */
-		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
-		pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
-		pResource->Add_ResourcePath("Sacrifice_Orb.model", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.model");
-		pResource->Add_ResourcePath("Sacrifice_Orb.mat", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.mat");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.model");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.mat");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.model");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
-		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
-		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
-		pResource->Add_ResourcePath("Circle0.mat", "../Bin/Resources/Effect/Model/Circle0/Circle0.mat");
-		pResource->Add_ResourcePath("Circle0.model", "../Bin/Resources/Effect/Model/Circle0/Circle0.model");
-
-	}
+	m_Context.hPlayer = castedPlayer->Get_CurCharacterHandle();
+	Ready_Stage();
 	
 	return S_OK;
 }
 
 HRESULT CZero_Level::Awake()
 {
-	/* Enemy */
-	/* Player */
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
+
+	UIDirector()->FadeIn_Screen(1.f);
+
 	return S_OK;
 }
 
 void CZero_Level::Update()
 {
+	CBattleSystem::GetInstance()->Update();
 	m_Context.pNowStage->Update();
+	BattleSystem()->Update();
 
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		ChangeStage(StageType::Boss, 0);
-	}
-
+	_float dt = GameInstance()->Get_TimeMgr()->Get_DeltaTime(G_EngineTimerID);
+	m_tZeroCloud.Update_Cloud(dt);
+	m_tZeroFog.Update_Fog(dt);
 }
 
 HRESULT CZero_Level::Render()
 {
-	return S_OK;
+	return S_OK; 
 }
 
-void CZero_Level::PreLoad_Level()
+HRESULT CZero_Level::ChangeStage(StageType type)
 {
-	
-}
-
-HRESULT CZero_Level::ChangeStage(StageType nextStageType, _int StageID)
-{
-	if (m_Context.eStageType == nextStageType && m_Context.pNowStage)
-		return S_OK;
+	auto found = m_StageContainer.find(type);
+	if (found == m_StageContainer.end())
+		return E_FAIL;
 
 	if (m_Context.pNowStage)
 		m_Context.pNowStage->Exit_Stage(m_Context);
 
-	auto found = m_StageContainer.find(nextStageType);
-	if (found == m_StageContainer.end())
-		return E_FAIL;
+	m_Context.nextType = type;
+	m_Context.mapKey = PopMapKey(type);
 
-	m_Context.eStageType = nextStageType;
-	m_Context.StageID = StageID;
 	m_Context.pNowStage = found->second;
-
 	return m_Context.pNowStage->Enter_Stage(m_Context);
+}
+
+string CZero_Level::PopMapKey(StageType type)
+{
+	auto it = m_mapCycle.find(type);
+	if (it == m_mapCycle.end())
+		return {};
+	return it->second.Next();
+}
+
+void CZero_Level::Ready_Prototype()
+{
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MiasmaBlade", CMiasmaBlade::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_DefilerLaser", CDefilerLaser::Create());
+
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_LevelObject_ZeroPortal", CStageRouter::Create());
+	
+	/* Enemy */
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Claymore", CClaymore::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Giant", CGiant::Create());
+
+	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level",	"Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_HandCore", CHand_Core::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_HandSword", CHand_Sword::Create());
+}
+
+void CZero_Level::Ready_Stage()
+{
+	/*Stage*/
+	m_pRouter = Add_LevelObject<CStageRouter>();Safe_AddRef(m_pRouter);
+	ObjectManager()->Add_Object(m_pRouter, { "Zero_Level", "Router_Layer" });
+
+	m_StageContainer.emplace(StageType::Start, CZeroStage_Start::Create(this));
+	m_StageContainer.emplace(StageType::Rest, CZeroStage_Start::Create(this));
+	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
+	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
+	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
+
+	//BuildGraph
+	m_pRouter->BuildGraph(3, StageType::Start, StageType::Elite);
+
+	//Start
+	m_mapCycle[StageType::Start].maps	= { "Zero_Start1" };
+	m_mapCycle[StageType::Rest].maps = { "Zero_Start2" };
+
+	//Normal
+	m_mapCycle[StageType::Normal].maps = {  "Zero_1_1",  "Zero_3_2", "Zero_Spec3_1", "Zero_1_2", "Zero_3_1", "Zero_8_1", "Zero_Spec3_2"};
+	//Shuffle_MapCycle(m_mapCycle[StageType::Normal].maps);
+
+	_uint Normal_Progress{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Normal_Progress", Normal_Progress))
+		Normal_Progress = 4;
+
+	auto& normalMaps = m_mapCycle[StageType::Normal].maps;
+	vector<string> selected;
+
+	for (int i = 0; i < 7; ++i)
+	{
+		if (Normal_Progress < normalMaps.size())
+			selected.push_back(normalMaps[Normal_Progress++]);
+		else {
+			Normal_Progress = 0;
+			selected.push_back(normalMaps[Normal_Progress]);
+		}
+	}
+
+	m_mapCycle[StageType::Normal].maps = selected;
+
+	RuntimeBucket().Int64.Set(
+		PersistScope::SaveSlot,
+		"Normal_Progress",
+		Normal_Progress
+	);
+
+	_uint Boss_Process{};
+	if (!RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Boss_Process", Boss_Process))
+		Boss_Process = 2; //Start BossMap Index;
+
+	//Elite
+	string Elite{};
+	Boss_Process == 1 ? Elite = "Zero_Com26_1" : Elite = "Zero_8_2";
+	m_mapCycle[StageType::Elite].maps.push_back(Elite);
+
+	//Boss
+	m_mapCycle[StageType::Boss].maps.push_back("Zero_Boss" + to_string(Boss_Process));
+
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Boss_Process", (++Boss_Process <= 2) ? Boss_Process : 1);
+	ChangeStage(StageType::Start);
+}
+
+void CZero_Level::Shuffle_MapCycle(vector<string>& Map)
+{
+	if (Map.size() <= 1)
+		return;
+
+	for (size_t i = Map.size() - 1; i > 0 ; --i)
+	{
+		_int Rand = Helper::Get_Random_Int(0, i);
+		swap(Map[i], Map[Rand]);
+	}
+	 
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)
@@ -205,12 +290,215 @@ void CZero_Level::Free()
 		Safe_Release(pair.second);
 	m_StageContainer.clear();
 
-	m_pGameInstance->DestroyInstance();
-	m_pCamDirector->DestroyInstance();
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()->
+		SetEnable(false);
 
-	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, false });
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	pCloud->Set_CloudInfo(m_PrevCloud);
+
+	auto pPost = RenderSystem()->GetPostRenderer();
+	pPost->GetCommand<CFogCommand>()
+		->SetFogDesc(m_PrevFog)
+		->SetEnable(m_bPrevFogUse);
 
 	auto pPlayer = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player));
 	auto castedPlayer = dynamic_cast<CPlayer*>(pPlayer);
 	castedPlayer->Clear_Characters();
+	Safe_Release(m_pBGM);
+
+}
+
+#pragma region Fog
+void CZero_Level::Zero_Fog::Update_Fog(_float dt)
+{
+	if (eUpdate == ZeroUpdate::Nope)
+		return;
+
+	fElapsed += dt;
+
+	if (fDuration <= fElapsed) {
+		fElapsed = fDuration;
+		eUpdate = ZeroUpdate::Nope;
+	}
+
+	_float fRatio = (fDuration > 0.f) ? (fElapsed / fDuration) : 1.f;
+	_float t = Math::ApplyEase(eEase, clamp(fRatio, 0.f, 1.f));
+
+	const FOG_DESC* pSrcDesc = nullptr;
+	const FOG_DESC* pDstDesc = nullptr;
+
+	if (eUpdate == ZeroUpdate::Target) {
+		pSrcDesc = &tCurFog;
+		pDstDesc = &tTargetFog;
+	}
+	else if (eUpdate == ZeroUpdate::RollBack) {
+		pSrcDesc = &tCurFog;
+		pDstDesc = &tBaseFog;
+	}
+
+	if (pSrcDesc == nullptr || pDstDesc == nullptr) {
+		eUpdate = ZeroUpdate::Nope;
+		return;
+	}
+
+	Vector4 fogColor = XMVectorLerp(
+		XMLoadFloat4(&pSrcDesc->fogColor),
+		XMLoadFloat4(&pDstDesc->fogColor),
+		t
+	);
+	_float fogDensity = pSrcDesc->fogDensity + (pDstDesc->fogDensity - pSrcDesc->fogDensity) * t;
+
+	tCurFog = { fogColor, fogDensity };
+
+	RenderSystem()->GetPostRenderer()
+		->GetCommand<CFogCommand>()
+		->SetFogDesc(tCurFog)
+		->SetEnable(true);
+}
+
+void CZero_Level::Zero_Fog::Set_BaseFog(FOG_DESC FogDesc)
+{
+	tCurFog = tBaseFog = FogDesc;
+
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetFogDesc(tBaseFog);
+}
+
+void CZero_Level::Zero_Fog::Change_FogState(FOG_DESC FogDesc, _float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::Target;
+	tTargetFog = FogDesc;
+	fElapsed   = 0.f;
+	fDuration  = fTime;
+	eEase  = eEaseType;
+}
+
+void CZero_Level::Zero_Fog::RollBack_Fog(_float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::RollBack;
+	fElapsed = 0.f;
+	fDuration = fTime;
+	eEase = eEaseType;
+	tTargetFog = RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()->GetFogDesc();
+}
+
+void CZero_Level::Zero_Fog::Use_Fog(_bool b)
+{
+	RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>()
+		->SetEnable(b);
+}
+#pragma endregion
+
+#pragma region Cloud
+void CZero_Level::Zero_Cloud::Update_Cloud(_float dt)
+{
+	if (eUpdate == ZeroUpdate::Nope)
+		return;
+
+	fElapsed += dt;
+
+	if (fDuration <= fElapsed) {
+		fElapsed = fDuration;
+		eUpdate = ZeroUpdate::Nope;
+	}
+
+	_float fRatio = (fDuration > 0.f) ? (fElapsed / fDuration) : 1.f;
+	_float t = Math::ApplyEase(eEase, clamp(fRatio, 0.f, 1.f));
+
+	const CLOUD_DESC* pSrcDesc = nullptr;
+	const CLOUD_DESC* pDstDesc = nullptr;
+
+	if (eUpdate == ZeroUpdate::Target) {
+		pSrcDesc = &tCurCloud;
+		pDstDesc = &tTargetCloud;
+	}
+	else if (eUpdate == ZeroUpdate::RollBack) {
+		pSrcDesc = &tCurCloud;
+		pDstDesc = &tBaseCloud;
+	}
+
+	if (pSrcDesc == nullptr || pDstDesc == nullptr) {
+		eUpdate = ZeroUpdate::Nope;
+		return;
+	}
+		
+	Vector3 topCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->topColor),
+		XMLoadFloat3(&pDstDesc->topColor), t);
+	Vector3 horizonCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->horizonColor),
+		XMLoadFloat3(&pDstDesc->horizonColor), t);
+	Vector3 hazeCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->hazeColor),
+		XMLoadFloat3(&pDstDesc->hazeColor), t);
+	_float atmoBlend = pSrcDesc->atmosphereBlend + (pDstDesc->atmosphereBlend - pSrcDesc->atmosphereBlend) * t;
+	Vector3 brightCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->cloudBright),
+		XMLoadFloat3(&pDstDesc->cloudBright), t);
+	Vector3 darkCol = XMVectorLerp(
+		XMLoadFloat3(&pSrcDesc->cloudDark),
+		XMLoadFloat3(&pDstDesc->cloudDark), t);
+	_float coverage = pSrcDesc->coverage + (pDstDesc->coverage - pSrcDesc->coverage) * t;
+
+	tCurCloud = { topCol,horizonCol,hazeCol,atmoBlend,brightCol,darkCol,coverage };
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud)pCloud->Set_CloudInfo(tCurCloud);
+}
+
+void CZero_Level::Zero_Cloud::Set_BaseCloud(CLOUD_DESC CloudDesc)
+{
+	tCurCloud = tBaseCloud = CloudDesc;
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud) pCloud->Set_CloudInfo(tBaseCloud);
+}
+
+void CZero_Level::Zero_Cloud::Change_CloudState(CLOUD_DESC CloudDesc, _float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::Target;
+	tTargetCloud = CloudDesc;
+	fElapsed = 0.f;
+	fDuration = fTime;
+	eEase = eEaseType;
+}
+
+void CZero_Level::Zero_Cloud::RollBack_Cloud(_float fTime, EaseType eEaseType)
+{
+	eUpdate = ZeroUpdate::RollBack;
+	fElapsed = 0.f;
+	fDuration = fTime;
+	eEase = eEaseType;
+
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud)
+		tTargetCloud = pCloud->Get_CloudInfo();
+}
+
+void CZero_Level::Zero_Cloud::Set_Moon(_bool b)
+{
+	auto pCloud = dynamic_cast<CProceduralSky*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud)));
+	if (pCloud) pCloud->SetMoon(b);
+}
+
+void CZero_Level::Zero_Cloud::Use_Cloud(_bool b)
+{
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	if(pCloud) pCloud->Set_Alive(b);
+}
+
+#pragma endregion
+
+void CZero_Level::Zero_Shadow::Set_ShadowPos(_vector3 vPosition)
+{
+	if (!pShadowCam) return;
+
+	pShadowCam->Get_Component<CTransform>()->Set_Pos(vPosition);
+}
+
+void CZero_Level::Zero_Shadow::Set_Light(LIGHT_DESC LightDesc)
+{
+	if (!pShadowCam) return;
+
+	pShadowCam->Get_Component<CLight>()->Set_Desc(LightDesc, LIGHT_TYPE::DIRECTIONAL);
 }

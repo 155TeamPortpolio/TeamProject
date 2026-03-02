@@ -18,6 +18,8 @@
 #include "Layer.h"
 #include "RigidBody.h"
 #include "ParticleSystem.h"
+#include "Collider.h"
+#include "CharacterController.h"
 
 _uint CGameObject::s_NextID = 1;
 
@@ -84,7 +86,7 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 {
-	if (!m_pTransform) {
+ 	if (!m_pTransform) {
 		m_pTransform = Add_Component<CTransform>();
 		Safe_AddRef(m_pTransform);
 	}
@@ -227,10 +229,20 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 	ImGui::PopID();
 
 }
-
+_bool CGameObject::Is_Root() {
+	if (CChild* pChild = Get_Component<CChild>()) {
+		m_isRootObject = false;
+	}
+	else {
+		m_isRootObject = true;
+	}
+	return m_isRootObject;
+}
 void CGameObject::Set_Layer(CLayer* pLayer)
 {
 	m_pLayer = pLayer;
+	if (!pLayer) return;
+	m_LayerTag = pLayer->Get_LayerTag();
 }
 
 const vector<CGameObject*> CGameObject::Get_Children()
@@ -249,7 +261,7 @@ const vector<CGameObject*> CGameObject::Get_Children()
 
 LAYER_DESC CGameObject::Get_LayerDesc()
 {
-	return LAYER_DESC{ m_LevelTag,m_pLayer->Get_LayerTag() };
+	return LAYER_DESC{ m_LevelTag,m_LayerTag };
 }
 
 OBJECT_HANDLE CGameObject::Get_Handle()
@@ -263,7 +275,7 @@ OBJECT_HANDLE CGameObject::Get_Handle()
 		return hObj;
 	}
 
-	hObj.Layer = m_pLayer->Get_LayerTag();
+	hObj.Layer = m_LayerTag;
 	hObj.Level = m_LevelTag;
 	hObj.hObjID = m_ObjectID;
 
@@ -298,6 +310,83 @@ _quaternion CGameObject::Get_WorldQuat()
 	quat.Normalize();
 
 	return quat;
+}
+
+_vector3 CGameObject::Get_WorldRotation()
+{
+	return _quaternion(m_pTransform->Get_QuaternionRotate()).ToEuler();
+}
+
+HRESULT CGameObject::ReInitialize_Component(INIT_DESC* pArg)
+{
+	if (!m_pTransform) {
+		m_pTransform = Add_Component<CTransform>();
+		Safe_AddRef(m_pTransform);
+	}
+
+	if (pArg == nullptr)
+		return S_OK;
+
+	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
+
+	// Transform 초기화
+	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
+	if (tfIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CTransform)));
+		if (descIter == obj->CompDesc.end())
+			tfIter->second->Initialize(nullptr);
+		else
+			tfIter->second->Initialize(descIter->second);
+	}
+
+	// RigidBody 초기화
+	auto rbIter = m_Components.find(type_index(typeid(CRigidBody)));
+	if (rbIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CRigidBody)));
+		if (descIter == obj->CompDesc.end())
+			dynamic_cast<CRigidBody*>(rbIter->second)->ReInitialize(nullptr);
+		else
+			dynamic_cast<CRigidBody*>(rbIter->second)->ReInitialize(descIter->second);
+
+	}
+
+
+	auto colIter = m_Components.find(type_index(typeid(CCollider)));
+	if (colIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CCollider)));
+		if (descIter == obj->CompDesc.end())
+			dynamic_cast<CCollider*>(colIter->second)->ReInitialize(nullptr);
+		else
+			dynamic_cast<CCollider*>(colIter->second)->ReInitialize(descIter->second);
+	}
+
+	auto cctIter = m_Components.find(type_index(typeid(CCharacterController)));
+	if (cctIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CCharacterController)));
+		if (descIter == obj->CompDesc.end())
+			dynamic_cast<CCharacterController*>(cctIter->second)->ReInitialize(nullptr);
+		else
+			dynamic_cast<CCharacterController*>(cctIter->second)->ReInitialize(descIter->second);
+	}
+
+	for (auto& pair : m_Components)
+	{
+		/*상속 주는 친구들은 제외*/
+		if (pair.first == type_index(typeid(CTransform))) continue;
+		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(ICollidable))) continue;
+		if (pair.first == type_index(typeid(CCollider))) continue;
+		if (pair.first == type_index(typeid(CCharacterController))) continue;
+		if (pair.first == type_index(typeid(CRigidBody))) continue;
+
+		auto iter = obj->CompDesc.find(pair.first);
+		if (iter == obj->CompDesc.end())
+			pair.second->Initialize(nullptr);
+		else
+			pair.second->Initialize(iter->second);
+	}
+
+	m_InstanceName = obj->InstanceName;
 }
 
 HRESULT CGameObject::Make_OpaquePacket()
@@ -359,6 +448,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_3DUIPacket(packet);
 
 		 if (packet.pModel->doShadowCast()) {
+
 			 if (packet.pMaterial->isValid(packet.MaterialIndex))
 			 {
 				 if (packet.bSkinning)
@@ -384,6 +474,7 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	newPacket.pPayLoad = packet.pPayLoad;
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	newPacket.ObjID = m_ObjectID;
+
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
 
@@ -459,7 +550,7 @@ HRESULT CGameObject::Make_EffectPacket(OPAQUE_PACKET packet)
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
-	packet.ObjID = m_ObjectID;
+	newPacket.ObjID = m_ObjectID;
 
 	const _float4x4* viewInverseMat = CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
 	_matrix viewInverse = XMLoadFloat4x4(viewInverseMat);
@@ -503,7 +594,7 @@ _float CGameObject::Calculate_LinearDepth(const MINMAX_BOX& box)
 	_vector3 toCenter = centerWorld - camPos;
 	_float depth = toCenter.Dot(forward);
 
-	if (depth < 0.f) depth = 0.f;
+	//if (depth < 0.f) depth = 0.f;
 	return depth;
 }
 

@@ -190,8 +190,6 @@ void CAIModelData::Render_GUI()
 
 }
 
-
-
 vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<_uint>& indices)
 {
 	if (indices.size() % 3 != 0)  {

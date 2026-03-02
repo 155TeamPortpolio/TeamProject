@@ -28,14 +28,19 @@ public:
     void Render_GUI() override;
     //애니매이션 클립 이름을 주기 위해 만들어짐
     void Set_Panel(class CAnimToolPanel* pAnimToolPanel);
+    void ReLoad_Sound();
 
 private: //GUI Func
     void GUI_LoadResource(_float fChildHeight);
     void GUI_SetModel(_float fChildHeight);
 
 private: //Model Logic
+    void Load_NewOnce();
+    void Load_NewModelMat();
+    void Load_NewMeta();
     void Load_ModelOnce();
     void Load_Resource();
+    void Load_Sound();
     void Set_Model(string ModelTag, string MaterialTag);
     void Set_Animator();
     void Clear_Model();
@@ -51,11 +56,14 @@ private:
     //Show Selected Tags
     string m_CurModelTag = { "Select Model" };
     string m_CurMaterialTag = { "Select Material" };
+    string m_CurSoundForlderTag = { };
 
     _float m_fDegree = 0.f;
 
     Matrix testMat;
     _vector3 testVector;
+
+    _float m_fMoveSpeed = 0.f;
 
 public:
     static CAnimModel* Create();

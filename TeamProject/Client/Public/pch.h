@@ -3,13 +3,12 @@
 #include <windows.h>
 #include <d3d11.h>
 
-
 namespace Client {
 	static constexpr unsigned int g_iWinSizeX = 1600;
 	static constexpr unsigned int g_iWinSizeY = 900;
 	//static constexpr unsigned int g_iWinSizeX = 2560;
 	//static constexpr unsigned int g_iWinSizeY = 1440;
-	static constexpr unsigned int g_iMainFrame = 144;
+	static constexpr unsigned int g_iMainFrame = 60;
 	static int	g_iMapDataVersion = { 1 };
 }
 
@@ -24,3 +23,5 @@ using namespace Client;
 #include "Client_Struct.h"
 #include "Event_Struct.h"
 #include "UIDesign_Macro.h"
+
+#define OPTIMIZE_VERTEX

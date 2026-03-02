@@ -13,6 +13,8 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    m_stencilMode = StencilMode::Write;
+
     Set_OriginTexSize(true);
 
     auto sprite = Get_Component<CSprite2D>();
@@ -45,15 +47,21 @@ void CMaskUI::Render_GUI()
     if (ImGui::DragFloat("Preview Alpha", &m_previewAlpha, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
         sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
 
+    if (ImGui::DragFloat("Mask Threshold", &m_fMaskThreshold, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+        sprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) });
+
     ImGui::TextDisabled(m_previewVisible ? "Pass: UI_StencilWritePreview" : "Pass: UI_StencilWrite");
 }
 
 void CMaskUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
+    
+    data["stencilMode"] = ENUM(StencilMode::Write);
 
     data["typeTag"] = m_strTypeTag;
     data["maskTextureKey"] = m_strTextureKey;
+    data["maskThreshold"] = m_fMaskThreshold;
 
     auto sprite = Get_Component<CSprite2D>();
     const string curPass = sprite->Get_PassConstant();
@@ -72,8 +80,10 @@ void CMaskUI::Load(const nlohmann::ordered_json& data)
     m_previewVisible = true;
     m_previewAlpha = 0.5f;
 
-    auto sprite = Get_Component<CSprite2D>();
-    sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+    auto pSprite = Get_Component<CSprite2D>();
+    pSprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+    m_fMaskThreshold = data.value("maskThreshold", m_fMaskThreshold);
+    pSprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) });
 }
 
 CGameObject* CMaskUI::Create()

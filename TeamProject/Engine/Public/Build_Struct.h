@@ -48,23 +48,27 @@ namespace Engine {
 	typedef struct LightInitDesc :public COMPONENT_DESC {
 
 		LIGHT_TYPE			eType = {};
-		_float4		vDiffuse = {};
-		_float4		vAmbient = {};
-		_float4		vSpecular = {};
+		_float4				vDiffuse = {};
+		_float4				vAmbient = {};
+		_float4				vSpecular = {};
 
-		_float4		vDirection = {};
-		_float4		vPosition = {};
-		_float			fRange = {};
-		_float			fIntensity = { 3.f };
-
+		_float4				vDirection = {};
+		_float4				vPosition = {};
+		_float				fRange = {};
+		_float				fIntensity = { 3.f };
+		//_float				fInnerCos = 0.95f;
+		//_float				fOuterCos = 0.85f;
+		union { _float fInnerCos; _float fInnerDegree; };
+		union { _float fOuterCos; _float fOuterDegree; };
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
 	}LIGHT_INIT_DESC;
 
 	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
 		_bool	isKinematic = false;      // Transform 제어 vs 물리 제어
+		_bool   bCCD = false;			  // 연속 충돌 감지
 		_bool	bEnableGravity = true;    // 중력 적용
-		_float  fMass = 1.0f;            // 질량
+		_float  fMass = 1.0f;             // 질량
 		_bool	bLockX = true;
 		_bool	bLockY = false;
 		_bool	bLockZ = true;
@@ -79,6 +83,7 @@ namespace Engine {
 		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// 충돌체 모양
 		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
 		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
+		_vector4		vColliderColor = { 0.f, 0.5019608f, 0.f, 1.f };
 
 		_bool			bAutoFit = true;					// 박스 사이즈 자동 플래그
 		_float			fSizeScale = 1.f;					// 사이즈 비율
@@ -96,12 +101,14 @@ namespace Engine {
 	}COLLIDER_DESC;
 
 	typedef struct CCTinitDesc : public COMPONENT_DESC {
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
+		_vector4		vColliderColor = { 0.f, 0.5019608f, 0.f, 1.f };
+
 		_float			fStepOffset = { 0.1f };				// 계단 등반 높이
 		_float			fSlopeLimit = { 45.0f };			// 등반 각도 제한
 		_float			fMaxSpeed = 100.f;
 
-		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
-		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
 		_float3			vPos = { 0.f, 0.f, 0.f };			// 초기 위치
 		_float			fHeight = { 2.0f };					// 캡슐 높이
 		_float			fRadius = { 0.5f };					// 캡슐 반지름

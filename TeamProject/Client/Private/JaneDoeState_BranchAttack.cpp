@@ -26,37 +26,28 @@ void CJaneDoeState_BranchAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("Start");
     }
     __super::Enter(pOwner);
+
+    pOwner->Increase_Passion(30.f);
 }
 
 void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
 {
-    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    auto pJaneDoeState = pOwner->Get_StateMachine();
+    if (pJaneDoeState->Get_Bool("OutReserve"))
     {
-        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
-
-        if (Event.Tag == "LFootStart")
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
+            Is_AnimEnd())
         {
-            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(30,60), 0.05, 0 });
-        }
-        else if (Event.Tag == "LFootEnd")
-        {
-            pOwner->End_AttackCollider("FootWeapon_L");
-        }
-        else if (Event.Tag == "RFootStart")
-        {
-            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::HARD, Helper::Get_Random_Float(30,60), 0.05, 0 });
-        }
-        else if (Event.Tag == "RFootEnd")
-        {
-            pOwner->End_AttackCollider("FootWeapon_R");
+            pJaneDoeState->Set_Trigger("SwitchOut");
+            pJaneDoeState->Set_Bool("OutReserve", false);
         }
     }
-
     __super::Update(pOwner, dt);
 }
 
 void CJaneDoeState_BranchAttack::Exit(CJaneDoe* pOwner)
 {
+    pOwner->Reset_ReserveCombo();
     __super::Exit(pOwner);
 }
 
@@ -64,6 +55,9 @@ void CJaneDoeState_BranchAttack_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01")
         .Apply();
+
+    m_fRepeatProgress = 0.4f;
+    m_iRepeatCount = 0;
 }
 
 void CJaneDoeState_BranchAttack_Start::Update(CJaneDoe* pOwner, _float dt)
@@ -79,6 +73,56 @@ void CJaneDoeState_BranchAttack_Start::Update(CJaneDoe* pOwner, _float dt)
         if (pAttackState && pAttackState->Get_SubStateMachine())
         {
             pAttackState->Get_SubStateMachine()->Set_Trigger("Release");
+        }
+    }
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 0.162f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+    }
+
+    if (IsCrossAnimProgress(m_fRepeatProgress))
+    {
+        pOwner->Add_MotionBlur();
+    }
+  
+    Update_Effects(pOwner);
+}
+
+void CJaneDoeState_BranchAttack_Start::Exit(CJaneDoe* pOwner)
+{
+    pOwner->Clear_MotionBlur();
+}
+
+void CJaneDoeState_BranchAttack_Start::Update_Effects(CJaneDoe* pOwner)
+{
+    if (IsCrossAnimProgress(0.17f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash0", _vector3(-0.3f, 1.1f, 0.1f), _quaternion(0.63f, 0.07f, -0.26f, 0.73f));
+    if (IsCrossAnimProgress(0.29f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash1", _vector3(-0.3f, 1.1f, 0.1f), _quaternion(0.58f, 0.29f, -0.13f, 0.75f));
+
+    if (m_iRepeatCount < 12)
+    {
+        if (IsCrossAnimProgress(m_fRepeatProgress))
+        {
+            pOwner->Play_Effect("JaneDoe_Ex_Slash" + to_string(m_iRepeatCount % 3), _vector3(0.f, 0.8f, 0.f), _quaternion(0.25f, 0.66f, -0.66f, 0.25f));
+
+            m_fRepeatProgress += m_fRepeatInterval;
+            ++m_iRepeatCount;
         }
     }
 }
@@ -109,6 +153,72 @@ void CJaneDoeState_BranchAttack_Release01::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    if (IsCrossAnimProgress(0.19f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    }
+    if (IsCrossAnimProgress(0.36f))
+    {
+        pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    }
+    if (IsCrossAnimProgress(0.41f))
+    {
+        pOwner->Clear_MotionBlur();
+    }
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 0.162f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Interval(0.05f)
+            );
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+        else if (Event.Tag == "RFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_R", HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * 0.162f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.05f)
+            );
+        }
+        else if (Event.Tag == "RFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_R");
+        }
+
+        if (Event.Tag == "MotionBlur")
+        {
+            pOwner->Add_MotionBlur();
+        }
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CJaneDoeState_BranchAttack_Release01::Exit(CJaneDoe* pOwner)
+{
+    pOwner->Clear_MotionBlur();
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
+}
+
+void CJaneDoeState_BranchAttack_Release01::Update_Effects(CJaneDoe* pOwner)
+{
+    if (IsCrossAnimProgress(0.1f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash0", _vector3(0.f, 1.6f, 0.f), _quaternion(0.69f, -0.17f, -0.69f, 0.17f));
+    if (IsCrossAnimProgress(0.32f))
+        pOwner->Play_Effect("JaneDoe_Normal_Slash1", _vector3(0.f, 0.f, 0.9f), _quaternion(-0.06f, 0.69f, 0.72f, 0.05f));
 }
 
 void CJaneDoeState_BranchAttack_Release02::Enter(CJaneDoe* pOwner)

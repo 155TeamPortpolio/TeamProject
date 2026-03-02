@@ -19,7 +19,7 @@ public:
 		_float CurrentTrackPosition,
 		_float dt,
 		_bool isLoop, _float fEndAt, _float fStartAt,
-		_bool* isWarpped,
+		_bool* isWarpped, _bool* isJumpedAnim,
 		_bool* isAnimEnd,
 		_float* outProgress,
 		vector<EVENT_INST>& EventBus);

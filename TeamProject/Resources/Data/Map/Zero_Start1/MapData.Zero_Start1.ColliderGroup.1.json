@@ -1,0 +1,40 @@
+{
+  "TagDataFormat": "ColliderGroup",
+  "TagArea": "Zero_Start1",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 1,
+      "TagName": "Ground",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    },
+    {
+      "iObjID": 5,
+      "TagName": "Ground",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    },
+    {
+      "iObjID": 8,
+      "TagName": "Ground",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    },
+    {
+      "iObjID": 14,
+      "TagName": "Ground",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": true
+      }
+    }
+
+  ]
+}

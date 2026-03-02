@@ -2,6 +2,10 @@
 #include "UI_Object.h"
 #include "UI_Decibel.h"
 
+NS_BEGIN(Engine)
+class CSprite2D;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_DecibelPts final : public CUI_Object
@@ -10,6 +14,9 @@ public:
 	typedef struct tagPtsDesc : public UI_DESC {
 		const _float4*	pColor = { nullptr };
 	}PTS_DESC;
+
+private:
+	enum CHILD { BG, PTS, END };
 
 private:
 	CUI_DecibelPts() {}
@@ -25,19 +32,20 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
+	class CSprite2D* m_pSprites[ENUM(CHILD::END)] = {};
+
 	const _float	m_fHeight = 20.f;
 	const _vector2	m_vPadding = { 20.f, 10.f };
 
 	const _float4*	m_pColor = { nullptr };
 
-	UI_HANDLE		m_hPts = {};
-
 private:
 	void Ready_PartObjects();
-	void Init_PtsObject(CUI_Object* pPts);
-	void Init_BgObject(CUI_Object* pBg, CUI_Object* pPts);
+	void Init_PtsObject();
+	void Init_BgObject(_float2 vSize);
 
-	void Set_Color();
+	void Set_ChildColor(CHILD child, _float4 vColor);
 
 public:
 	static  CGameObject* Create();

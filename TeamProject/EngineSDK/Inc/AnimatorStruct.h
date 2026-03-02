@@ -29,6 +29,8 @@ typedef struct AnimationLayer {
     //---------- 베이스 레이어 속성
     //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
     _bool               bWrapped = { false };
+    _bool               bJumpedAnim = { false };
+    _bool               bNoRootMoveDelta = { false }; //블랜딩중 루트델타값을 
     _int                iRootBoneIndex = { -1 }; //루트 본 
     _vector3            vRootEndPos{};                          //그 클립의 제일마지막 루트위치
     _quaternion         vRootEndQuat{ _quaternion::Identity };  //그 클립의 제일마지막 루트회전값
@@ -36,6 +38,9 @@ typedef struct AnimationLayer {
     _quaternion         vPrevRootQuat{ _quaternion::Identity }; //이전 프레임 회전
     _vector3            vRootMoveDelta{};                       //이동값
     _quaternion         vRootQuatDelta{ _quaternion::Identity };//회전값
+
+    _vector3            vOutRootMoveDelta{};                       //이동값
+    _quaternion         vOutRootQuatDelta{ _quaternion::Identity };//회전값
 
     //모션본 (애니매이션의 움직임을 담당하는 본)
     _int    iMotionBoneIndex = { -1 };
@@ -85,6 +90,24 @@ typedef struct AnimationLayer {
 
     //보간을 다한 최종 매트릭스
     vector<_float4x4> FinalLocalMatrices = {};
+    
+    //기능함수
+    _bool isEndLayerBlended() {
+        if (BaseLayer)
+            return false;
+
+        if (fLayerWeight <= 0.f)
+            return true;
+
+        if (fLayerWeightDuration < 0.f)
+            return false;
+
+        if (fLayerWeightElapsed >= fLayerWeightDuration)
+            return true;
+    
+        return false;
+    }
+
 }ANIM_LAYER;
 
 NS_END

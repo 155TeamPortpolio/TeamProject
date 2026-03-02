@@ -3,6 +3,7 @@
 
 #include "Helper_Func.h"
 #include "GameInstance.h"
+#include "CamDirector.h"
 
 /* Component */
 #include "RigidBody.h"
@@ -53,8 +54,14 @@ void CEnemyAttackCollider::Priority_Update(_float dt)
 
 void CEnemyAttackCollider::Update(_float dt)
 {
+	m_fTimer += dt;
+
+	_float4x4 worldMatrix = m_pTransform->Get_WorldMatrix();
+	_vector scale, position, rotation;
+	XMMatrixDecompose(&scale, &rotation, &position, XMLoadFloat4x4(&worldMatrix));
+
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_WorldPos(), rotation);
 	Get_Component<CCollider>()->Update(dt);
 }
 
@@ -99,6 +106,9 @@ void CEnemyAttackCollider::OnCollisionExit(CGameObject* pOther)
 void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
 
 {
+	if(Get_Component<CChild>()&&Get_Component<CChild>()->Get_Parent())
+		Get_Component<CChild>()->Get_Parent()->OnTriggerEnter(pOther);
+
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
 		return;
@@ -108,7 +118,10 @@ void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	// 데미지 주는 코드
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
-		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+	{
+		pEnemy->Take_Damage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+		CameraManager()->AddImpact(1,0);
+	}
 }
 
 void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
@@ -122,11 +135,15 @@ void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
 	// 데미지 주는 코드
 	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
 	if (nullptr != pEnemy)
-		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+	{
+		pEnemy->Take_Damage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+		CameraManager()->AddImpact(1,0);
+	}
 }
 
 void CEnemyAttackCollider::OnTriggerExit(CGameObject* pOther)
 {
+
 }
 
 void CEnemyAttackCollider::Begin_Attack(const HitDesc& hitdesc)

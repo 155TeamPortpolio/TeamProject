@@ -66,32 +66,16 @@ HRESULT CMapPlacedObject::Initialize(INIT_DESC* pArg)
 #pragma endregion
 	__super::Initialize(pArg);
 
-	auto iter = pObjDesc->SlotDataValues.find("Effect");
-	if (iter != pObjDesc->SlotDataValues.end()) {
-		string TagAsset = {};
-		_float3 vPosition = {};
-		for (auto& tFieldData : iter->second) {
-			if (tFieldData.TagName == "AssetKey") {
-				auto TagValueAssetKey = GetSlotValue<string>(tFieldData.defaultvalue);
-				TagAsset = *TagValueAssetKey;
-			}
-			else if (tFieldData.TagName == "Position") {
-				auto vValuePos = GetSlotValue<_float3>(tFieldData.defaultvalue);
-				vPosition = *vValuePos;
-			}
-		}
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset(TagAsset)
-			.Position(vPosition)
-			.Build("Test_Effect");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, {"Test_Level","Effect_Layer"});
-	}
+	ColliderGroup_SlotData(pObjDesc);
+	Effect_SlotData(pObjDesc);
+	Rotate_SlotData(pObjDesc);
 
 	return S_OK;
 }
 
 void CMapPlacedObject::Awake()
 {
+	Get_Component<CMaterial>()->SetBlendHasAlpha(AlphaCheckLevel::Fast, "Blend");
 }
 
 void CMapPlacedObject::Priority_Update(_float dt)
@@ -100,6 +84,9 @@ void CMapPlacedObject::Priority_Update(_float dt)
 
 void CMapPlacedObject::Update(_float dt)
 {
+	RotatePerSec(dt);
+	Wave(dt);
+	LookSway(dt);
 }
 
 void CMapPlacedObject::Late_Update(_float dt)
@@ -119,6 +106,138 @@ void CMapPlacedObject::Export_ObjectData(void* pDesc)
 	pObjectDesc->vUp = { matWorld._21,matWorld._22, matWorld._23, matWorld._24 };
 	pObjectDesc->vLook = { matWorld._31,matWorld._32, matWorld._33, matWorld._34 };
 	pObjectDesc->vPos = { matWorld._41,matWorld._42, matWorld._43, matWorld._44 };
+}
+
+#pragma region SlotData
+void CMapPlacedObject::ColliderGroup_SlotData(MAPOBJ_DESC* pObjDesc)
+{
+	if (!pObjDesc) return;
+
+	auto ColGroup_iter = pObjDesc->SlotDataValues.find("ColliderGroup");
+	if (ColGroup_iter != pObjDesc->SlotDataValues.end()) {
+		for (auto& tFieldData : ColGroup_iter->second) {
+			if (tFieldData.TagName == "Ground") {
+				_bool isGround = *GetSlotValue<_bool>(tFieldData.defaultvalue);
+				if (isGround)
+					Get_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::GROUND);
+			}
+		}
+	}
+}
+
+void CMapPlacedObject::Effect_SlotData(MAPOBJ_DESC* pObjDesc)
+{
+	if (!pObjDesc) return;
+
+	auto Eff_iter = pObjDesc->SlotDataValues.find("Effect");
+	if (Eff_iter != pObjDesc->SlotDataValues.end()) {
+		string TagAsset = {};
+		_float3 vPosition = {};
+		for (auto& tFieldData : Eff_iter->second) {
+			if (tFieldData.TagName == "AssetKey") {
+				auto TagValueAssetKey = GetSlotValue<string>(tFieldData.defaultvalue);
+				TagAsset = *TagValueAssetKey;
+			}
+			else if (tFieldData.TagName == "Position") {
+				auto vValuePos = GetSlotValue<_float3>(tFieldData.defaultvalue);
+				vPosition = *vValuePos;
+			}
+		}
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset(TagAsset)
+			.Position(vPosition)
+			.Build("Test_Effect");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	}
+}
+
+void CMapPlacedObject::Rotate_SlotData(MAPOBJ_DESC* pObjDesc)
+{
+	if (!pObjDesc) return;
+
+	auto ColGroup_iter = pObjDesc->SlotDataValues.find("Placed");
+	if (ColGroup_iter != pObjDesc->SlotDataValues.end()) {
+		for (auto& tFieldData : ColGroup_iter->second) {
+			if (tFieldData.TagName == "DegreePerSec") {
+				m_vDegreePerSec = *GetSlotValue<_float3>(tFieldData.defaultvalue);
+			}
+
+			if (tFieldData.TagName == "Wave") {
+				m_vWave = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				m_fWaveTime = 0.f;
+			}
+
+			if (tFieldData.TagName == "LookSway") {
+				m_vLookSway = *GetSlotValue<_float2>(tFieldData.defaultvalue);
+				m_fLookSwayTime = 0.f;
+			}
+		}
+	}
+}
+
+#pragma endregion
+
+void CMapPlacedObject::RotatePerSec(_float dt)
+{
+	if (m_vDegreePerSec == _vector3::Zero)
+		return;
+
+	_quaternion curQuat = Get_Component<CTransform>()->Get_QuaternionRotate();
+
+	_vector3 vDeltaDegree = m_vDegreePerSec * dt;
+	_vector3 vDeltaRadians = {
+		XMConvertToRadians(vDeltaDegree.x),
+		XMConvertToRadians(vDeltaDegree.y),
+		XMConvertToRadians(vDeltaDegree.z)
+	};
+
+	_quaternion deltaQuat = _quaternion::CreateFromYawPitchRoll(
+		vDeltaRadians.y, vDeltaRadians.x, vDeltaRadians.z
+	);
+
+	_quaternion nextQuat = deltaQuat * curQuat;
+	nextQuat.Normalize();
+
+	Get_Component<CTransform>()->Set_Quaternion(nextQuat);
+}
+
+void CMapPlacedObject::Wave(_float dt)
+{
+	if (m_vWave == _vector2::Zero)
+		return;
+
+	_vector3 vPos = Get_WorldPos();
+
+	if (m_fWaveTime == 0.f)
+		m_fBaseY = vPos.y;
+
+	m_fWaveTime += dt * m_vWave.x;
+
+	_float offset = sinf(XMConvertToRadians(m_fWaveTime)) * m_vWave.y;
+
+	vPos.y = m_fBaseY + offset;
+	m_pTransform->Set_Pos(vPos);
+}
+
+void CMapPlacedObject::LookSway(_float dt)
+{
+	if (m_vLookSway == _vector2::Zero)
+		return;
+
+	if (m_fLookSwayTime == 0.f)
+		m_BaseRotation = Get_WorldRotation().x;
+
+	m_fLookSwayTime += dt;
+
+	float angle =
+		sinf(m_fLookSwayTime * m_vLookSway.x) *
+		m_vLookSway.y;   // degree로 쓸 거면 rad 변환 안 함
+
+	_vector3 rot = Get_WorldRotation(); // 오일러
+
+	rot.x = m_BaseRotation + XMConvertToRadians(angle);  // X축만 변경
+
+	m_pTransform->Rotate(rot);
 }
 
 void CMapPlacedObject::Render_GUI()

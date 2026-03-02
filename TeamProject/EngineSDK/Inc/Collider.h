@@ -32,6 +32,7 @@ public:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
+    HRESULT         ReInitialize(COMPONENT_DESC* pArg);
     void            Update(_float dt);
     void            Render_GUI();
     // 충돌 이벤트 핸들러 (System에서 호출)

@@ -1,16 +1,14 @@
 #include "pch.h"
 #include "ZeroStage_Elite.h"
-#include "Zero_Level.h"
-#include "BattleSystem.h"
-#include "CamDirector.h"
 #include "GameInstance.h"
-#include "Layer.h"
-#include "Player.h"
-#include "StageFx.h"
-#include "UIDirector.h"
+#include "BattleSystem.h"
+#include "Zero_Level.h"
+#include "BattlePlayer.h"
+#include "StageRouter.h"
 
 CZeroStage_Elite::CZeroStage_Elite()
 {
+	m_eType = StageType::Elite;
 }
 
 HRESULT CZeroStage_Elite::Initialize(CZero_Level* pOwnerLevel)
@@ -29,20 +27,22 @@ HRESULT CZeroStage_Elite::Awake()
 
 void CZeroStage_Elite::Update()
 {
-
 	float dt = TimeManager()->Get_RawDeltaTime(G_EngineTimerID);
-	m_fStageTime += dt;
-
-	switch (m_eStageStage)
+	switch (m_eStageState)
 	{
 	case Client::CStage::StageState::Entrance:
 		m_introFlow.Tick(dt);
 		Intro();
 		break;
 	case Client::CStage::StageState::BattleStart:
+		BattleStart();
+		break;
+	case Client::CStage::StageState::Battle:
 		Battle();
 		break;
 	case Client::CStage::StageState::BattleEnd:
+		m_ClearFlow.Tick(dt);
+		BattleEnd();
 		break;
 	case Client::CStage::StageState::Outro:
 		Outro();
@@ -56,24 +56,21 @@ void CZeroStage_Elite::Update()
 	}
 }
 
-HRESULT CZeroStage_Elite::Ready_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_Elite::Enter_Stage(StageContext& context)
 {
-	Ready_Map("Zero_Level", "Zero_1_1");
-	return S_OK;
-}
-
-HRESULT CZeroStage_Elite::Enter_Stage(CZero_Level::StageContext& context)
-{
-	Ready_Map("Zero_Level", "Zero_1_1");
-	m_eStageStage = StageState::Entrance;
+	Ready_Map("Zero_Level", context.mapKey);
+	Reserve_Enemy("Zero_Level");
+	m_eStageState = StageState::Entrance;
 	m_PlayerHandle = context.hPlayer;
 	BaseIntro(context);
+	Active_Player(CStage::PlayerPoint::Typical);
 
-	return S_OK;
-}
+	m_pOwnerLevel->Get_ZeroFog()->Set_BaseFog(
+		{
+			_float4{ 0.08f, 0.05f, 0.04f, 1.0f },
+			0.02f
+		});
 
-HRESULT CZeroStage_Elite::Exit_Stage(CZero_Level::StageContext& context)
-{
 	return S_OK;
 }
 
@@ -81,41 +78,59 @@ void CZeroStage_Elite::Intro()
 {
 	if (m_introFlow.IsDoneAll())
 	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -1.f, -5.f,38.f });
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, -5.f,34.f });
-
-		CBattleSystem::GetInstance()->SetActive(true);
-		m_eStageStage = StageState::BattleStart;
+		BattleSystem()->GetBattlePlayer()->UnLock_Input();
+		if (!HasBattleStarter())
+			m_eStageState = StageState::BattleStart;
 	}
+}
+
+void CZeroStage_Elite::BattleStart()
+{
+	Active_Enemy();
+	CBattleSystem::GetInstance()->SetActive(true);
+	m_eStageState = StageState::Battle;
 }
 
 void CZeroStage_Elite::Battle()
 {
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
-		m_eStageStage = StageState::BattleEnd;
-		CBattleSystem::GetInstance()->SetActive(false);
-		STAGE_CHANGED_DESC Stage_End = {this};
-		EventSystem()->Broadcast<STAGE_CHANGED_DESC>(Stage_End);
+		if (!m_MonsterQueue.empty()) {
+			Active_Enemy();
+			return;
+		}
+
+		WipeOutFX();
+		m_eStageState = StageState::BattleEnd;
 	}
 }
 
+
+void CZeroStage_Elite::BattleEnd()
+{
+	if (m_ClearFlow.IsDoneAll())
+	{
+		m_eStageState = StageState::Outro;
+		CBattleSystem::GetInstance()->SetActive(false);
+		Active_Portal();
+	}
+}
 
 void CZeroStage_Elite::Outro()
 {
 	BaseOutro();
 	m_outroFlow.Start();
-	m_eStageStage = StageState::End;
+	m_eStageState = StageState::End;
 }
 
 void CZeroStage_Elite::End()
 {
 	if (m_outroFlow.IsDoneAll()) {
-		RenderSystem()->UnRegister_AddictiveColor();
-		ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
-		ObjectManager()->Get_Layer({ "Zero_Level","InteractableObject_Layer" })->Clear_Layer();
-		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
+		auto stageType = m_pOwnerLevel->Get_Router()->GetChoiceType(m_iNextChoice);
+
+		//ReCycle
+		m_pOwnerLevel->Get_Router()->BuildGraph(3, StageType::Rest, StageType::Boss);
+		m_pOwnerLevel->ChangeStage(StageType::Rest);
 	}
 }
 

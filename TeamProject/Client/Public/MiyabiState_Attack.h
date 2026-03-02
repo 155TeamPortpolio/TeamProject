@@ -11,16 +11,9 @@ public:
     virtual void Enter(CMiyabi* pOwner) override;
     virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
-    virtual _bool Handle_Transition(CMiyabi* pOwner, const string& strState) override;
 
 public:
-    void Move_Motion(CMiyabi* pOwner, _float dt);
-
-private:
-    _float m_fHoldTime = 0.f;
-
-public:
-    static CMiyabiState_Attack* Create() { return new CMiyabiState_Attack(); }
+    static CMiyabiState_Attack* Create();
     virtual void Free() override { __super::Free(); }
 };
 

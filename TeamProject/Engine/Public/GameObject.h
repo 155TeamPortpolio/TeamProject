@@ -75,13 +75,14 @@ public:
 	Matrix Get_WorldMatrix();
 	_vector3 Get_WorldPos();
 	_quaternion Get_WorldQuat();
+	_vector3 Get_WorldRotation();
 	/*----------------------------------------*/
- 	_bool Is_Root() { return m_isRootObject; };
+	_bool Is_Root();
 	const vector<CGameObject*> Get_Children();
 
 public:
 	_bool Is_Alive() { return m_isAlive; };
-	void Set_Alive(_bool alive) { m_isAlive = alive; };
+	virtual void Set_Alive(_bool alive) { m_isAlive = alive; };
 
 public:
 	void Set_FromPool(_bool fromPool) { m_PoolMark.fromPool = fromPool; }
@@ -89,12 +90,15 @@ public:
 	void Set_PoolKey(CLONE_DESC key) { m_PoolMark.key = key; }
 	const CLONE_DESC& Get_PoolKey() const { return m_PoolMark.key; }
 
-	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}		// 풀에서 꺼낼 때
+public:
+	virtual HRESULT ReInitialize_Component(INIT_DESC* pArg);
+	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {};		// 풀에서 꺼낼 때
 	virtual void OnPooledRelease() {}														// 풀로 돌아갈 때
 
 public:
 	void SetRenderLayer(RENDER_LAYER layer) { m_eRenderLayer = layer; };
 	RENDER_LAYER GetRenderLayer() const {return m_eRenderLayer; };
+
 
 private:
 	HRESULT Make_OpaquePacket();
@@ -114,6 +118,7 @@ protected:
 	CTransform* m_pTransform = { nullptr };
 	class CLayer* m_pLayer = { nullptr };
 	string m_LevelTag = {};
+	string m_LayerTag = {};
 	
 	string m_InstanceName = {};
 	string m_InstanceTag = {};

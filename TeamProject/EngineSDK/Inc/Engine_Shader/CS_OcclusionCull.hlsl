@@ -71,7 +71,7 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
         VisibleFlags[inputIndex] = 1u;
         return;
     }
-    if (rectMax0 >= 300u)
+    if (rectMax0 >= 800u)
     {
         VisibleFlags[inputIndex] = 1u;
         return;
@@ -81,13 +81,12 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
     mipSel = max(mipSel, 0);
 
     uint mip = ClampMip((uint) mipSel);
-    mip = min(mip, 4u);
+    mip = min(mip, 7u);
 
     uint mipScale = 1u << mip;
 
     // ---- inflate ----
-    uint inflate = 2u + (mip > 0u ? 2u : 0u);
-
+    uint inflate = max(1u, 3u - min(mip, 2u));
     int minX = (int) inData.minX - (int) inflate;
     int minY = (int) inData.minY - (int) inflate;
     int maxX = (int) inData.maxX + (int) inflate;
@@ -149,8 +148,8 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
     }
 
     // 덜 가리게: obj를 조금 더 가깝게
-    obj = max(0.0f, obj - biasLocal);
-    
+    //obj = max(0.0f, obj - biasLocal);
+    epsLocal += biasLocal * 0.5f;
     if (obj > hizMaxDepth01 + epsLocal)
         visible = 0u;
 

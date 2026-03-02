@@ -336,6 +336,8 @@ void CObjectContainer::Destroy_Child(_uint childIndex)
 
 	CUI_Object* uiObject = dynamic_cast<CUI_Object*>(targetObject);
 	const _bool isUIObject = (uiObject != nullptr);
+	targetObject->Get_Component<CChild>()->Dettach_Parent();
+	targetObject->Remove_Component<CChild>();
 
 	if (isUIObject)
 	{
@@ -599,12 +601,12 @@ void CObjectContainer::Free()
 	__super::Free();
 	if (m_ChildrenObjects.empty()) return;
 
-	for (auto& child : m_ChildrenObjects) {
-		if (child)
-			child->Get_Component<CChild>()->Dettach_Parent();
-		Safe_Release(child);
+	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
+	{
+		
+		
+		Destroy_Child(i);
 	}
-
 	m_ChildrenObjects.clear();
 	m_ChildrensName.clear();
 	m_IndexByID.clear();

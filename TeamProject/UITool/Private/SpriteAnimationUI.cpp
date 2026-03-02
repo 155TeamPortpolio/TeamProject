@@ -36,25 +36,34 @@ void CSpriteAnimationUI::Update(_float dt)
 {
     __super::Update(dt);
 
-    if (m_isPlaying)
-    {
-        m_fFrameAccTime += dt;
+    if (!m_isPlaying)
+        return;
 
-        if (!m_isLoop && m_iCurrentFrameIndex >= m_iFrameCountTotal - 1)
+    m_fFrameAccTime += dt;
+
+    if (m_fFrameAccTime >= (1.f / m_fFrameSpeed))
+    { 
+        m_fFrameAccTime = 0.f;
+        _uint iNextFrame = m_iCurrentFrameIndex + 1;
+
+        if (iNextFrame >= m_iFrameCountTotal)
         {
-            m_fFrameAccTime = 0.f;
-            m_iCurrentFrameIndex = 0;
-            m_isPlaying = false;
-            return;
+            if (m_isLoop)
+            {
+                m_iCurrentFrameIndex = 0;
+            }
+            else
+            {
+                m_iCurrentFrameIndex = m_iFrameCountTotal - 1;
+                m_isPlaying = false;
+            }
         }
-
-        if (m_fFrameAccTime >= (1.f / m_fFrameSpeed))
-        { 
-            m_fFrameAccTime = 0.f;
-            m_iCurrentFrameIndex = (m_iCurrentFrameIndex + 1) % m_iFrameCountTotal;// (m_iFrameCountX * m_iFrameCountY);
-            Get_Component<CSprite2D>()->Set_Param("FrameIndex", { &m_iCurrentFrameIndex,"uint",sizeof(_uint) });             
+        else
+        {
+            m_iCurrentFrameIndex = iNextFrame;
         }
-    } 
+        Get_Component<CSprite2D>()->Set_Param("FrameIndex", { &m_iCurrentFrameIndex,"uint",sizeof(_uint) });             
+    }
 }
 
 void CSpriteAnimationUI::Render_GUI()
@@ -69,12 +78,12 @@ void CSpriteAnimationUI::Render_GUI()
     if (ImGui::Button(m_isPlaying ? u8"정지" : u8"재생"))
     {
         m_isPlaying = !m_isPlaying;
-        if (!m_isPlaying)
-        {
+        //if (!m_isPlaying)
+        //{
             m_fFrameAccTime = 0.f;
             m_iCurrentFrameIndex = 0;
             sprite->Set_Param("FrameIndex", {&m_iCurrentFrameIndex, "uint", sizeof(_uint)});
-        }
+        //}
     }
 
     ImGui::Checkbox(u8"루프", &m_isLoop);
@@ -84,7 +93,7 @@ void CSpriteAnimationUI::Render_GUI()
         if (!isCustomCount) m_iFrameCountTotal = m_iFrameCountX * m_iFrameCountY;
 
     ImGui::BeginDisabled(!isCustomCount);
-    static _uint iTotalMin = m_iFrameCountX * (m_iFrameCountY - 1);
+    static _uint iTotalMin = 1;// m_iFrameCountX* (m_iFrameCountY - 1);
     ImGui::DragScalar(u8"총 개수", ImGuiDataType_U32, &m_iFrameCountTotal, 1.f, &iTotalMin, NULL, "%u", ImGuiSliderFlags_AlwaysClamp);
     ImGui::EndDisabled();
 

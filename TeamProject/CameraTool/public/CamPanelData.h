@@ -6,7 +6,7 @@ NS_BEGIN(CameraTool)
 
 struct CamToolTarget
 {
-    CamSequenceDesc*    sequence{};
+    CamSeqDesc*         sequence{};
     _uint               nextKeyId = 1;
 
     CCamObj*            captureCamObj{};
@@ -32,6 +32,9 @@ struct CamToolEditState
     _float editFov = 60.f;
     _float editRoll = 0.f;
 
+    bool playAllLink = false;
+    OBJECT_HANDLE playAllRefHandle{};
+
     CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
     CamOrbitState     orbit{};
 };
@@ -54,12 +57,14 @@ struct KeyframeListUIState
     bool requestOpenFileErrorPopup = false;
 
     char prefabNameBuf[128] = "DebugSequence";
-    const CamSequenceDesc* lastSeqPtr = nullptr;
+    const CamSeqDesc* lastSeqPtr = nullptr;
     bool nameEditing = false;
 
     string lastLoadedPath{};
     char   autoLoadPathBuf[260] = "";
     bool   didAutoLoadOnce = false;
+
+    unordered_map<_uint, array<char, 64>> eventTagBufs{};
 };
 struct KeyframeEditorUIState
 {
@@ -67,6 +72,9 @@ struct KeyframeEditorUIState
     float pendingTimeValue = 0.f;
     int   pendingOverwriteCount = 0;
     bool  requestOpenTimeCollisionPopup = false;
+
+    _vector3 lookTargetPos{};
+    bool     lookTargetInited = false;
 };
 
 NS_END

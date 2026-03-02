@@ -103,6 +103,7 @@ private:
     PxPhysics* m_pPhysics = { nullptr }; // 물리객체를 만들기(Device 역할)
     PxPvd* m_pPvd = { nullptr }; // 디버깅 툴용
     PxDefaultCpuDispatcher* m_pDispatcher = { nullptr }; // 스레드관리자(멀티스레딩 물리연산)
+    PxCudaContextManager* m_pCudaManager = { nullptr }; // GPU 가속
     PxScene* m_pScene = { nullptr }; // 물리월드
     PxMaterial* m_pMaterial = { nullptr }; // 기본 물리재질
     map<string, PxMaterial*> m_Materials;                        // 물리재질
@@ -115,7 +116,7 @@ private:
     map<string, PxTriangleMesh*> m_CachedTriangleMeshes;                 // 쿠킹된 메쉬 캐싱
     PxCooking* m_pCooking = { nullptr };
 
-    _float m_fFixedTimeStep = 1.f / 60.f;  // 60Hz
+    _float m_fFixedTimeStep = 1.f / 30.f;  // 60Hz
     _float m_fAccumulator = 0.f;
 
 public:

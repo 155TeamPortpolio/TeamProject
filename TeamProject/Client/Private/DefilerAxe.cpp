@@ -1,0 +1,254 @@
+#include "pch.h"
+#include "DefilerAxe.h"
+
+#include "BattleSystem.h"
+#include "GameInstance.h"
+
+#include "StaticModel.h"
+#include "Material.h"
+#include "CharacterController.h"
+#include "ObjectContainer.h"
+
+#include "Helper_Func.h"
+#include "Character.h"
+#include "Defiler.h"
+#include "Texture.h"
+#include "AudioSource.h"
+#include "UI_DamageText.h"
+#include "UIDirector.h"
+#include "DefilerWall.h"
+#include "CamDirector.h"
+#include "EventListener.h"
+
+#include "EffectContainer.h"
+
+CDefilerAxe::CDefilerAxe()
+	: CEnemy()
+{
+}
+
+CDefilerAxe::CDefilerAxe(const CDefilerAxe& rhs)
+	:CEnemy(rhs)
+{
+}
+
+HRESULT CDefilerAxe::Initialize_Prototype()
+{
+	__super::Initialize_Prototype();
+
+	Add_Component<CStaticModel>()->Link_Model("Zero_Level", "Defile_Axe.model");
+	Add_Component<CMaterial>()->Link_Material("Zero_Level", "Defile_Axe.mat");
+	Add_Component<CCharacterController>();
+	Add_Component<CEventListener>();
+	Add_Component<CAudioSource>();
+
+	return S_OK;
+}
+
+HRESULT CDefilerAxe::Initialize(INIT_DESC* pArg)
+{
+	__super::Initialize(pArg);
+	auto desc = static_cast<DefilerAxeDesc*>(pArg);
+	Get_Component<CEventListener>()->Add_Listener<TsunamiDesc>([&](TsunamiDesc desc) {DisAppear(); });
+	Get_Component<CCharacterController>()->Set_BoundingMinY(1.3f);
+	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+	Get_Component<CAudioSource>()->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Defiler_Isolde/Sound/");
+	m_pTransform->Set_Look(desc->vLook);
+	m_vSlide = desc->vLook;
+	m_vSlide = Math::NormalizeSafeXZ(m_vSlide)*5;
+	m_BaseRot = m_pTransform->Get_QuaternionRotate(); 
+	m_fElapsedTime = 0.f;
+	m_tStatus.iNowHP = 40.f;
+	m_bDangle = true;
+	m_eEnemyClass = ENEMY_CLASS::NORMAL;
+	return S_OK;
+}
+
+void CDefilerAxe::Awake()
+{
+	Get_Component<CAudioSource>()->Slot("DefilerHitGround4.wav").Volume(0.7f).Play();
+}
+
+void CDefilerAxe::Priority_Update(_float dt)
+{
+}
+
+void CDefilerAxe::Update(_float dt)
+{
+
+	m_fElapsedTime += dt;
+	Get_Component<CCharacterController>()->Update(dt);
+
+	if (m_bDangle)
+	{
+		m_vSlide *= expf(-4.f * dt);
+		m_HitShakeAmpDeg *= expf(-m_HitShakeDecay * dt);
+
+		const float length = _vector3(m_vSlide.x, 0.f, m_vSlide.z).Length();
+		const float speedRef = 4.0f;
+		float speed = length / speedRef;
+		speed = Math::ApplyEase(EaseType::OutCubic, speed);
+		float rad = XMConvertToRadians(m_ShakeAmpDeg) * speed;
+		rad += XMConvertToRadians(m_HitShakeAmpDeg);
+
+		float hz = 1.f + 5.f * speed; 
+		float phase = m_fElapsedTime * hz * XM_2PI;
+		const float angle = -sinf(phase) * rad;
+
+		_quaternion qOffset = _quaternion::CreateFromAxisAngle(_vector3(1.f, 0.f, 0.f), angle);
+		_quaternion qShake = qOffset * m_BaseRot;
+
+		const float settleSpeed = 8.f;
+		const float t = 1.f - expf(-settleSpeed * dt);
+		_quaternion qFinal = _quaternion::Slerp(qShake, m_BaseRot, t);
+		m_pTransform->Set_Quaternion(qFinal);
+		Get_Component<CCharacterController>()->Move_RootMotion(m_vSlide * dt, {},dt);
+		if (rad < XMConvertToRadians(0.2f))
+			m_bDangle = false;
+	}
+
+	if (m_tStatus.iNowHP <= 0.f)
+	{
+		SummonWall();
+		SpawnEffect();
+	}
+}
+
+void CDefilerAxe::Late_Update(_float dt)
+{
+	Get_Component<CCharacterController>()->Late_Update(dt);
+}
+
+void CDefilerAxe::Render_GUI()
+{
+	__super::Render_GUI();
+}
+
+void CDefilerAxe::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
+{
+	BattleSystem()->HitVFX(DAMAGE_TYPE::NORMAL);
+	if(eDamageType == DAMAGE_TYPE::NORMAL){
+	_bool  soundpick = Helper::Get_Random_Bool(0.2f);
+	Get_Component<CAudioSource>()->Slot(
+		soundpick ?
+		"DefilerHitLight.wav" : 
+		"DefilerHitHeavy.wav"
+	).Volume(0.5f).Play();
+	}
+	else {
+		_bool  soundpick = Helper::Get_Random_Bool(0.4f);
+		Get_Component<CAudioSource>()->Slot("HitProp.wav").Volume(0.4f).Play();
+	}
+
+	_float fTakeDamage = fDamage;
+	m_tStatus.iNowHP -= fTakeDamage;
+
+	if (0 >= m_tStatus.iNowHP)
+		m_tStatus.iNowHP = 0.f;
+
+	DAMAGE_DESC desc{};
+	_int damage = Helper::Get_Random_Int(1000, 10000); // юс╫ц
+
+	desc.damage = damage;
+	desc.followHandle = Get_Handle();
+	desc.followOffset = {0,0,0};
+	desc.isEnemy = true;
+	desc.charaName = charaName;
+
+	m_bDangle = true;
+	const _float addDeg = Helper::Get_Random_Float(eDamageType == DAMAGE_TYPE::NORMAL ? 0.6f : 2.3f, eDamageType == DAMAGE_TYPE::NORMAL? 1.4f : 4.5);
+	m_HitShakeAmpDeg = min(m_HitShakeAmpDeg + addDeg, m_HitShakeMaxDeg);
+	UIDirector()->Request_DamageText(desc);
+	if (eDamageType == DAMAGE_TYPE::NORMAL) {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitLight), ENUM(CamZoomType::HitLight));
+	}
+	else {
+		CameraManager()->AddImpact(ENUM(CamShakeType::HitCrit), ENUM(CamZoomType::HitCrit), 1.3);
+	}
+}
+
+void CDefilerAxe::SummonWall()
+{
+	Get_Component<CAudioSource>()->Slot("DefilerSlash03.wav").Volume(0.4f).Play();
+	Get_Component<CAudioSource>()->Slot("DeflierSlash05.wav").Volume(0.3f).Play();
+	string nowLevelKey = LevelManager()->Get_NowLevelKey();
+	CDefilerWall::DefilerWallDesc* desc = new CDefilerWall::DefilerWallDesc;
+	desc->vLook = Math::NormalizeSafeXZ(m_pTransform->Dir(STATE::LOOK));
+	_vector3 pos =  m_pTransform->Get_Pos();
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eGroup = COLLISION_GROUP::COMMON;
+	ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::GROUND)| ENUM(COLLISION_GROUP::PLAYER);
+	ColDesc.bTrigger = true;
+	ColDesc.bAutoFit = true;
+	ColDesc.eType = COLLIDER_TYPE::BOX;
+
+	auto pWall = Builder::Create_Object({ "Zero_Level","Proto_GameObject_DefilerWall" })
+		.Position(pos)
+		.Add_ObjDesc(desc)
+		.Collider(ColDesc)
+		.Build("Wall");
+	ObjectManager()->Add_Object(pWall, { nowLevelKey,"Enemy_Layer" });
+	Get_Component<CAudioSource>()->Slot("Defiler_Crash01.wav").Volume(0.4f).Play();
+	DisAppear();
+}
+
+void CDefilerAxe::SpawnEffect()
+{
+	_vector3 vWorldPosition = m_pTransform->Get_WorldPos();
+	vWorldPosition.y += 1.5f;
+
+	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("defiler_wave_explode.json")
+		.Position(vWorldPosition)
+		.Build("Defiler_Wave_Explode");
+
+	ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer"});
+}
+
+
+CDefilerAxe* CDefilerAxe::Create()
+{
+	CDefilerAxe* instance = new CDefilerAxe();
+
+	if (FAILED(instance->Initialize_Prototype()))
+	{
+		Safe_Release(instance);
+		MSG_BOX("Failed to create : CDefilerAxe");
+	}
+
+	return instance;
+}
+
+CGameObject* CDefilerAxe::Clone(INIT_DESC* pArg)
+{
+	CDefilerAxe* instance = new CDefilerAxe(*this);
+
+	if (FAILED(instance->Initialize(pArg)))
+	{
+		Safe_Release(instance);
+		MSG_BOX("Failed to clone : CDefilerAxe");
+	}
+
+	return instance;
+}
+
+void CDefilerAxe::Free()
+{
+	__super::Free();
+}
+
+void CDefilerAxe::OnTriggerEnter(CGameObject* pOther)
+{
+	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+	if (!pEnemy) return;
+
+	pEnemy->Take_Damage(DAMAGE_TYPE::HARD, 10);
+	CameraManager()->AddImpact(1, 0);
+}
+
+
+void CDefilerAxe::DisAppear()
+{
+	ObjectManager()->Remove_Object(this);
+	BattleSystem()->ExitBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+}

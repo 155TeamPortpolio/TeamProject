@@ -97,93 +97,75 @@ void CToolModel::LoadModel()
 {
 	if (ImGui::Button("Load Once"))
 	{
-		//vector<string> files = Helper::OpenMultiFiles();
-		//if (files.size() != 3)
-		//	return;
-		//
-		//string baseName;
-		//bool bModel = false, bMat = false, bJson = false;
-		//
-		//for (const auto& pathStr : files)
-		//{
-		//	std::filesystem::path p(pathStr);
-		//	string ext = p.extension().string();
-		//	string stem = p.stem().string();
-		//
-		//	// 기준 이름 설정
-		//	if (baseName.empty())
-		//		baseName = stem;
-		//	else if (baseName != stem) {
-		//		if (ext == ".json") {
-		//			size_t pos = stem.find("_Meta");
-		//			if (pos == string::npos)
-		//				return;
-		//
-		//			if (baseName != stem.substr(0, pos))
-		//				return;
-		//		}
-		//		else {
-		//			if (baseName != stem)
-		//				return;
-		//		}
-		//	}
-		//
-		//	if (ext == ".model")
-		//	{
-		//		if (bModel) return;
-		//		bModel = true;
-		//	}
-		//	else if (ext == ".mat")
-		//	{
-		//		if (bMat) return;
-		//		bMat = true;
-		//	}
-		//	else if (ext == ".json")
-		//	{
-		//		if (bJson) return;
-		//		bJson = true;
-		//	}
-		//	else
-		//		return;
-		//}
-		//
-		//if (!(bModel && bMat && bJson))
-		//	return;
-		//
-		//string Model, Material, Meta;
-		//for (const auto& path : files)
-		//{
-		//	string ext = std::filesystem::path(path).extension().string();
-		//	string name = std::filesystem::path(path).stem().string() + ext;
-		//
-		//	if (".model" == ext) {
-		//		if (SUCCEEDED(ResourceManager()->Add_ResourcePath(name, path))) {
-		//			Model = name;
-		//		}
-		//	}
-		//	else if (".mat" == ext) {
-		//		if (SUCCEEDED(ResourceManager()->Add_ResourcePath(name, path))) {
-		//			Material = name;
-		//		}
-		//	}
-		//	else if (".json" == ext) {
-		//		if (SUCCEEDED(ResourceManager()->Add_ResourcePath(name, path))) {
-		//			Meta = name;
-		//		}
-		//	}
-		//}
-		//
+		vector<string> files = Helper::OpenMultiFiles();
+		if (files.size() != 3)
+			return;
+		
+		string baseName;
+		bool bModel = false, bMat = false, bJson = false;
+		
+		for (const auto& pathStr : files)
+		{
+			std::filesystem::path p(pathStr);
+			string ext = p.extension().string();
+			string stem = p.stem().string();
+		
+			if (ext == ".model")
+			{
+				if (bModel) return;
+				bModel = true;
+			}
+			else if (ext == ".mat")
+			{
+				if (bMat) return;
+				bMat = true;
+			}
+			else if (ext == ".json")
+			{
+				if (bJson) return;
+				bJson = true;
+			}
+			else
+				return;
+		}
+		
+		if (!(bModel && bMat && bJson))
+			return;
+		
+		string Model, Material, Meta;
+		for (const auto& path : files)
+		{
+			string ext = std::filesystem::path(path).extension().string();
+			string name = std::filesystem::path(path).stem().string() + ext;
+		
+			if (".model" == ext) {
+				if (SUCCEEDED(ResourceManager()->Add_ResourcePath(name, path))) {
+					Model = name;
+				}
+			}
+			else if (".mat" == ext) {
+				if (SUCCEEDED(ResourceManager()->Add_ResourcePath(name, path))) {
+					Material = name;
+				}
+			}
+			else if (".json" == ext) {
+				if (SUCCEEDED(ResourceManager()->Add_ResourcePath(name, path))) {
+					Meta = name;
+				}
+			}
+		}
+		
 		auto pModel = Get_Component<CSkeletalModel>();
 		auto pMaterial = Get_Component<CMaterial>();
 		auto pAnimator = Get_Component<CAnimator3D>();
-
-		string Model = "JaneDoeModel.model";
-		string Material = "JaneDoe.mat";
-		string Meta = "JaneDoeModel_Meata.json";
-
-		ResourceManager()->Add_ResourcePath(Model, "D:/TeamPortpolio/TeamProject/TeamProject/Client/Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
-		ResourceManager()->Add_ResourcePath(Material,"D:/TeamPortpolio/TeamProject/TeamProject/Client/Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat" );
-		ResourceManager()->Add_ResourcePath(Meta, "D:/TeamPortpolio/TeamProject/TeamProject/Client/Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel_Meta.json");
+		//
+		//string Model = "JaneDoeModel.model";
+		//string Material = "JaneDoe.mat";
+		//string Meta = "JaneDoeModel_Meata.json";
+		//
+		//ResourceManager()->Add_ResourcePath(Model, "D:/TeamPortpolio/TeamProject/TeamProject/Client/Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
+		//ResourceManager()->Add_ResourcePath(Material,"D:/TeamPortpolio/TeamProject/TeamProject/Client/Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat" );
+		//ResourceManager()->Add_ResourcePath(Meta, "D:/TeamPortpolio/TeamProject/TeamProject/Client/Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel_Meta.json");
 
 		pModel->Link_Model(G_GlobalLevelKey, Model);
 		pMaterial->Link_Material(G_GlobalLevelKey, Material);

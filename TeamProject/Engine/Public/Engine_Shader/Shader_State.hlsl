@@ -8,6 +8,14 @@ RasterizerState RS_Default
     FrontCounterClockwise = false;
 };
 
+RasterizerState RS_Command
+{
+    FillMode = Solid;
+    CullMode = NONE;
+    FrontCounterClockwise = false;
+    DepthBias = -50.f; 
+};
+
 RasterizerState RS_CW
 {
     FillMode = Solid;
@@ -67,6 +75,21 @@ DepthStencilState DSS_None
     DepthWriteMask = zero;
 };
 
+DepthStencilState DSS_MotionStencil
+{
+    DepthEnable = true;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+    
+    StencilEnable = true;
+    FrontFaceStencilFunc = EQUAL;
+    FrontFaceStencilPass = INCR;
+    BackFaceStencilFunc = EQUAL;
+    BackFaceStencilPass = INCR;
+    
+    StencilReadMask = 0xFF;
+    StencilWriteMask = 0xFF;
+};
 
 DepthStencilState DSS_WriteStencil
 {
@@ -144,6 +167,20 @@ DepthStencilState DSS_ReadOnly
     DepthWriteMask = zero;
 };
 
+DepthStencilState DSS_WriteOnly
+{
+    DepthEnable = true;
+    DepthWriteMask = all;
+    DepthFunc = always;
+};
+
+DepthStencilState DSS_Command
+{
+    DepthEnable = true;
+    DepthWriteMask = zero;
+    DepthFunc = less_equal;
+};
+
 BlendState BS_Default
 {
     BlendEnable[0] = false;
@@ -179,6 +216,18 @@ BlendState BS_Additive
     SrcBlendAlpha = One;
     DestBlendAlpha = One;
     BlendOpAlpha = Add;
+};
+
+BlendState BS_Additive_MaxAlpha
+{
+    BlendEnable[0] = true;
+    SrcBlend = One;
+    DestBlend = One;
+    BlendOp = Add;
+    
+    SrcBlendAlpha = One;
+    DestBlendAlpha = One; 
+    BlendOpAlpha = Max;
 };
 
 BlendState BS_SrcAdditive
@@ -254,13 +303,7 @@ BlendState BS_OITAccmulation
     BlendOpAlpha[1] = Add;
 
     /* Bloom Info */
-    BlendEnable[2] = true;
-    SrcBlend[2] = One;
-    DestBlend[2] = One;
-    BlendOp[2] = Add;
-    SrcBlendAlpha[2] = One;
-    DestBlendAlpha[2] = One;
-    BlendOpAlpha[2] = Add;
+    BlendEnable[2] = false;
 
     /* Revealage */
     BlendEnable[3] = true;
@@ -270,6 +313,24 @@ BlendState BS_OITAccmulation
     SrcBlendAlpha[3] = Zero;
     DestBlendAlpha[3] = Inv_Src_Alpha;
     BlendOpAlpha[3] = Add;
+
+    /* Distortion */
+    BlendEnable[4] = true;
+    SrcBlend[4] = One;
+    DestBlend[4] = One;
+    BlendOp[4] = Add;
+    SrcBlendAlpha[4] = One;
+    DestBlendAlpha[4] = One;
+    BlendOpAlpha[4] = Add;
+
+    /* RimLight */
+    BlendEnable[5] = true;
+    SrcBlend[5] = One;
+    DestBlend[5] = One;
+    BlendOp[5] = Add;
+    SrcBlendAlpha[5] = One;
+    DestBlendAlpha[5] = One;
+    BlendOpAlpha[5] = Add;
 };
 
 SamplerState DefaultSampler = sampler_state

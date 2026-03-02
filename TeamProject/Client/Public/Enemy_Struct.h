@@ -73,6 +73,26 @@ namespace Client
     {
         _float      iMaxHP = { 100.f };
         _float      iNowHP = iMaxHP;
-        _int        iGroggyValue = {};
+        _float        iGroggyValue = {};
+        _bool       isGroggy = {};
+        _bool       isGroggyStay = { false }; // ForUI
+        _int        iPlayerComboCount = {};
+        CHARACTER   eLastHitCharacter = { CHARACTER::END };
+        _float      fPropertiesValue = {};                      // 현재 속성 이상 값. Max == 100
     }MONSTER_STATUS;
+    
+    typedef struct tagGroggyManage
+    {
+        _float  fGroggyDecreaseTime = {};
+        _float  fGroggyStayTime = {};
+    }GROGGY_MANAGE;
+
+    typedef struct tagGroggyRimLight
+    {
+        // 강공(코린,노란색), 에테르(제인 도, 분홍색), 빙결(미야비,푸른색)
+        _float3 vColors[3] = { { 0.784, 0.392f, 0.f }, {0.611f, 0.f, 1.f} , {0.f, 0.384, 1.f} };
+        _float2 vTime = { 1.2f, 0.f };      // 림라이트 밝기 x의 절반만큼 커졌다 작아졌다 하는 시간.
+        _float2 vPower = { 5.f, 20.f };     // 림라이트 밝기 크기 정도의 Min(x)Max(y) 
+    }GROGGY_RIMLIGHT;
+
 }

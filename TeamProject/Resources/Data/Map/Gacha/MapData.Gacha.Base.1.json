@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Gacha",
+  "iVersion": 1,
+  "Layers": [
+    {
+      "TagLayer": "PlacedObject_Layer",
+      "Objects": [
+        {
+        
+        }
+      ]
+    }
+  ]
+}

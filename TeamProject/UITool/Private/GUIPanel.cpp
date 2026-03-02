@@ -15,6 +15,8 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 #include "MaskUI.h"
+#include "NineSliceUI.h"
+#include "SoftDirectionalOutlineUI.h"
 
 CGUIPanel::CGUIPanel(GUI_CONTEXT* pContext)
 	: CBasePanel(pContext)
@@ -48,7 +50,7 @@ void CGUIPanel::Render_GUI()
 {
 	{
 		ImGui::SetNextWindowPos(ImVec2(220.f, 40.f), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(200.f, 480.f), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(200.f, 520.f), ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("UI Tool");
 
@@ -74,7 +76,7 @@ void CGUIPanel::Render_GUI_CreateCanvasPanel()
 		const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
 		const string& strTypeTag = CCanvasPanel::m_strTypeTag;
 
-		CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strTypeTag })
+		CUI_Object* pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_" + strTypeTag })
 			.Size({ m_pGameInstance->Get_ClientSize().x, m_pGameInstance->Get_ClientSize().y })
 			.Build(strTypeTag);
 
@@ -190,13 +192,24 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 			strType = CMaskUI::m_strTypeTag;
 		}
 
+		if (ImGui::Button(u8"9슬라이스"))
+		{
+			isCreateChild = true;
+			strType = CNineSliceUI::m_strTypeTag;
+		}
+
+		if (ImGui::Button(u8"Soft Directional Outline"))
+		{
+			isCreateChild = true;
+			strType = CSoftDirectionalOutlineUI::m_strTypeTag;
+		}
 
 		// 자식 생성
 		if (isCreateChild)
 		{
 			string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-			CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType })
+			CUI_Object* pChild = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_" + strType })
 				.Anchor(ANCHOR::Center)
 				.Build(strType);
 
@@ -227,7 +240,7 @@ CUI_Object* CGUIPanel::LoadPrefab()
 	file.close();
 
 	string strTypeTag = data.value("typeTag", "");
-	CUI_Object* pObj = Builder::Create_UIObject({ m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey() , "Proto_GameObject_" + strTypeTag })
+	CUI_Object* pObj = Builder::Create_UIObject({ G_GlobalLevelKey , "Proto_GameObject_" + strTypeTag })
 		.Build(strTypeTag);
 
 	if (!pObj)

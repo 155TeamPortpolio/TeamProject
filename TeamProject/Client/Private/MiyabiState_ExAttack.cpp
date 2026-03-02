@@ -1,0 +1,550 @@
+#include "pch.h"
+#include "MiyabiState_ExAttack.h"
+
+#include "GameInstance.h"
+#include "BattleSystem.h"
+
+#include "Miyabi.h"
+#include "CharacterController.h"
+#include "AudioSource.h"
+
+#include "EffectContainer.h"
+
+CMiyabiState_ExAttack* CMiyabiState_ExAttack::Create()
+{
+    auto pInstance = new CMiyabiState_ExAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("ExAttack_Start", CMiyabiState_ExAttack_Start::Create());
+    pSubStateMachine->Register_State("ExAttack_01", CMiyabiState_ExAttack_01::Create());
+    pSubStateMachine->Register_State("ExAttack_02", CMiyabiState_ExAttack_02::Create());
+    pSubStateMachine->Register_State("ExAttack_03", CMiyabiState_ExAttack_03::Create());
+    pSubStateMachine->Register_State("ExAttack_End", CMiyabiState_ExAttack_End::Create());
+
+    pSubStateMachine->Get_State("ExAttack_End")->Set_Tag("End");
+
+    vector<CStateMachine<CMiyabi>::CONDITION_INFO> conditions;
+
+    conditions.push_back({ CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "Enhanced" });
+    conditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_END });
+    pSubStateMachine->Register_Transition("ExAttack_Start", "ExAttack_01",
+        conditions);
+    conditions.clear();
+
+    conditions.push_back({ CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "Enhanced" });
+    conditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_END });
+    pSubStateMachine->Register_Transition("ExAttack_Start", "ExAttack_02",
+        conditions);
+    conditions.clear();
+
+    conditions.push_back({ CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "Extra" });
+    conditions.push_back({ CStateMachine<CMiyabi>::CONDITION_ANIMATION_END });
+    pSubStateMachine->Register_Transition("ExAttack_02", "ExAttack_03",
+        conditions);
+    conditions.clear();
+
+    pSubStateMachine->Register_Transition("ExAttack_01", "ExAttack_End",
+        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("ExAttack_02", "ExAttack_End",
+        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("ExAttack_03", "ExAttack_End",
+        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("ExAttack_Start");
+
+    return pInstance;
+}
+
+void CMiyabiState_ExAttack::Enter(CMiyabi* pOwner)
+{
+    m_pSubStateMachine->Set_Bool("Extra", false);
+
+    // ��ȭ ���� ����
+    auto EnergyDesc = pOwner->Get_EnergyDesc();
+    _bool bEnhanced = EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy;
+    m_pSubStateMachine->Set_Bool("Enhanced", bEnhanced);
+    if (bEnhanced)
+    {
+        EnergyDesc.fCurrentEnergy -= EnergyDesc.fSpecialEnergy;
+        pOwner->Set_CurrentEnergy(EnergyDesc.fCurrentEnergy);
+        pOwner->Push_Invincible();
+
+        UI_ACTION_DESC desc;
+        desc.eType = UI_ACTION_TYPE::SPECIAL;
+        if (EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy)
+        {
+            desc.eState = UI_ACTION_STATE::AVAILABLE;
+        }
+        else
+        {
+            desc.eState = UI_ACTION_STATE::EXECUTING;
+        }
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    }
+
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
+    __super::Enter(pOwner);
+}
+
+void CMiyabiState_ExAttack::Update(CMiyabi* pOwner, _float dt)
+{
+    auto pMiyabiState = pOwner->Get_StateMachine();
+    if (pMiyabiState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "End" ||
+            Is_AnimEnd())
+        {
+            pMiyabiState->Set_Trigger("SwitchOut");
+            pMiyabiState->Set_Bool("OutReserve", false);
+        }
+    }
+
+    __super::Update(pOwner, dt);
+}
+
+void CMiyabiState_ExAttack::Exit(CMiyabi* pOwner)
+{
+    pOwner->Show_Ghost();
+    pOwner->Reset_ReserveCombo();
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
+    pOwner->Pop_Invincible();
+    __super::Exit(pOwner);
+}
+
+void CMiyabiState_ExAttack_Start::Enter(CMiyabi* pOwner)
+{
+    pOwner->Hide_Ghost();
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Start")
+        .Speed(3.f)
+        .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack_Start_SFX.wav")
+        .Attribute3D(true)
+        .Play();
+}
+
+void CMiyabiState_ExAttack_Start::Update(CMiyabi* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CMiyabiState_ExAttack_01::Enter(CMiyabi* pOwner)
+{
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_01")
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 0.4f, 2.f, EaseType::OutExpo)
+        .ReserveSpeed(0.4f, 1.f, 1.5f, EaseType::Linear)
+        .Apply();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_NormalAttack01_Voice")
+        .Attribute3D(true)
+        .Play();
+}
+
+void CMiyabiState_ExAttack_01::Update(CMiyabi* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "KatanaAttackStart")
+        {
+            pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 0.358f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+            );
+        }
+        else if (Event.Tag == "KatanaAttackEnd")
+        {
+            pOwner->End_AttackCollider("KatanaWeapon");
+        }
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_ExAttack_01::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.17f))
+    {
+        pOwner->Play_Effect("Miyabi_Ex0_Slash0", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.21f, 0.71f, 0.64f, 0.2f));
+        pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.5f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+}
+
+void CMiyabiState_ExAttack_02::Enter(CMiyabi* pOwner)
+{
+    pOwner->Set_WeaponEffectMesh(true);
+
+    m_iCount = 0;
+    m_fProgress = 0.2f;
+
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_02")
+        .ReserveSpeed(0.f, 0.2f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.2f, 1.f, 2.5f, EaseType::InExpo)
+        .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_SFX.wav")
+        .Attribute3D(true)
+        .Play();
+    pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack02")
+        .Attribute3D(true)
+        .PlayNext();
+
+    pOwner->Increase_Frost(2);
+
+    m_vPos = pOwner->Get_WorldPos();
+    m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+    m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
+    pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
+    pOwner->Set_LookTarget(false);
+    m_pOwnerStateMachine->Set_Bool("Penetrate", true);
+
+    m_eType = DAMAGE_TYPE::HARD;
+
+    // Effect 
+    m_iRepeatCount = 0;
+    m_fRepeatProgress = 0.33f;
+    m_vStartRotation = _float4(0.f, 0.f, 0.f, 1.f);
+}
+
+void CMiyabiState_ExAttack_02::Update(CMiyabi* pOwner, _float dt)
+{
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.fMoveWeight = 2.f;
+    desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE)
+        | ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
+    pOwner->Process_RootMotion(dt, desc);
+
+    // 0.2 ~ 0.9 8Ÿ 0.1����
+    if(IsCrossAnimProgress(m_fProgress + m_iCount * m_fInterval))
+    {
+        BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 8.f, 8.f, -m_vLook, 15.f, HitDesc()
+            .Name(pOwner->Get_CharacterName())
+            .Type(HIT_TYPE::ONCE)
+            .Damage(pOwner->Get_AttackPower() * 0.604f * Helper::Get_Random_Float(1.f, 1.5f)
+                , m_eType)
+            .Charge(0.f, 10.f)
+        );
+        m_eType = DAMAGE_TYPE::NORMAL;
+        m_iCount++;
+    }
+
+    if (m_fAnimProgress >= 0.35f)
+    {
+        if (InputDevice()->Key_Down('E'))
+        {
+            auto EnergyDesc = pOwner->Get_EnergyDesc();
+            if (EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy)
+            {
+                pOwner->Reset_ReserveCombo();   // 이러면 콤보카운트를 공짜로 까먹는다. 
+                m_pOwnerStateMachine->Set_Bool("Extra", true);
+            }
+        }
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_ExAttack_02::Exit(CMiyabi* pOwner)
+{
+    if (m_pOwnerStateMachine->Get_Bool("Penetrate"))
+    {
+        pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
+    }
+    pOwner->Set_LookTarget(true);
+}
+
+void CMiyabiState_ExAttack_02::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.16f))
+    {
+        auto pTransform = pOwner->Get_Component<CTransform>();
+
+        _vector3 vWorldPosition = pTransform->Get_WorldPos();
+        _vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("miyabi_ex_smoke2.json")
+            .Position(vWorldPosition)
+            .Build("Miyabi_Ex_Smoke");
+
+        pEffect->Get_Component<CTransform>()->Set_Look(vLook);
+
+        ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Player_Effect_Layer" });
+    }
+
+    if (m_iRepeatCount < 15)
+    {
+        if (IsCrossAnimProgress(m_fRepeatProgress))
+        {
+            _uint rand = 1;
+            _quaternion deltaRotation = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(-45.f), XMConvertToRadians(60.f), XMConvertToRadians(45.f));
+            _quaternion currRotation = m_vStartRotation;
+            currRotation *= deltaRotation;
+            currRotation.Normalize();
+            m_vStartRotation = currRotation;
+
+            pOwner->Play_Effect("Miyabi_Ex1_Slash" + to_string(m_iRepeatCount % 9), _vector3(0.f, 1.1f, -9.5f + m_iRepeatCount * m_fDistanceInterval), currRotation, false);
+
+            m_fRepeatProgress += m_fRepeatInterval;
+            ++m_iRepeatCount;
+        }
+    }
+}
+
+void CMiyabiState_ExAttack_03::Enter(CMiyabi* pOwner)
+{
+    pOwner->Set_WeaponEffectMesh(true);
+
+    m_iCount = 0;
+    m_fProgress = 0.3f;
+
+    pOwner->Increase_Frost(2);
+
+    auto EnergyDesc = pOwner->Get_EnergyDesc();
+    EnergyDesc.fCurrentEnergy -= EnergyDesc.fSpecialEnergy;
+    pOwner->Set_CurrentEnergy(EnergyDesc.fCurrentEnergy);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+    UI_ACTION_DESC desc;
+    desc.eType = UI_ACTION_TYPE::SPECIAL;
+    if (EnergyDesc.fCurrentEnergy >= EnergyDesc.fSpecialEnergy)
+    {
+        desc.eState = UI_ACTION_STATE::AVAILABLE;
+    }
+    else
+    {
+        desc.eState = UI_ACTION_STATE::EXECUTING;
+    }
+    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01_Attack_03")
+        .ReserveSpeed(0.f, 0.1f, 0.7f, EaseType::InQuad)
+        .ReserveSpeed(0.1f, 0.2f, 1.8f, EaseType::OutExpo)
+        .ReserveSpeed(0.2f, 0.5f, 1.3f, EaseType::OutQuad)
+        .ReserveSpeed(0.5f, 1.0f, 1.f, EaseType::OutQuart)
+        .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_SFX.wav")
+        .Attribute3D(true)
+        .Play();
+
+    m_iMask = pOwner->Get_CCT()->Get_CollisionMask();
+    pOwner->Get_CCT()->Set_CollisionMask(m_iMask - ENUM(COLLISION_GROUP::MONSTER));
+    pOwner->Look_Target();  // ���� ���� ����
+    pOwner->Set_LookTarget(false);
+    m_pOwnerStateMachine->Set_Bool("Penetrate", true);
+
+    m_vPos = pOwner->Get_WorldPos();
+    m_vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+
+    m_eType = DAMAGE_TYPE::HARD;
+
+    m_iRepeatCount = 0;
+    m_fRepeatProgress = 0.28f;
+}
+
+void CMiyabiState_ExAttack_03::Update(CMiyabi* pOwner, _float dt)
+{
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.fMoveWeight = m_fAnimProgress < 0.2f ? 1.5f : 1.8f;
+    desc.iModeMask = ENUM(CMiyabi::ROOTMOTION_MASK::MOVE)
+        | ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION);
+    pOwner->Process_RootMotion(dt, desc);
+
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "KatanaAttackStart")
+        {
+            pOwner->Begin_AttackCollider("KatanaWeapon", HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 3.934f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Charge(0.f, 10.f)
+            );
+        }
+        else if (Event.Tag == "KatanaAttackEnd")
+        {
+            pOwner->End_AttackCollider("KatanaWeapon");
+        }
+    }
+    // 0.3~0.8 12Ÿ 0.05����
+    if (IsCrossAnimProgress(m_fProgress + m_iCount * m_fInterval))
+    {   // ���� ���� �ʿ�
+        BattleSystem()->TakeAreaDamage(m_vPos + m_vLook * 2.f, 6.f, HitDesc()
+            .Name(pOwner->Get_CharacterName())
+            .Type(HIT_TYPE::ONCE)
+            .Damage(pOwner->Get_AttackPower() * 0.402f * Helper::Get_Random_Float(1.f, 1.5f)
+                , m_eType)
+            .Charge(0.f, 10.f)
+        );
+        m_eType = DAMAGE_TYPE::NORMAL;
+        m_iCount++;
+    }
+
+    if (IsCrossAnimProgress(0.3f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Sequence("ExAttack03")
+            .Attribute3D(true)
+            .PlayNext();
+    }
+
+    if (IsCrossAnimProgress(0.8f))
+    {
+        pOwner->Set_WeaponEffectMesh(false);
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_ExAttack_03::Exit(CMiyabi* pOwner)
+{
+    if (m_pOwnerStateMachine->Get_Bool("Penetrate"))
+    {
+        pOwner->Get_CCT()->Set_CollisionMask(m_iMask);
+    }
+    pOwner->Set_LookTarget(true);
+}
+
+void CMiyabiState_ExAttack_03::Update_Effects(CMiyabi* pOwner)
+{
+    if (IsCrossAnimProgress(0.14f))
+    {
+        pOwner->Play_Effect("Miyabi_Ex0_Slash0", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.11f, 0.71f, 0.69f, 0.13f));
+        pOwner->Play_Effect("Miyabi_Ex0_Sting0", _vector3(-6.6f, 0.8f, 2.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (m_iRepeatCount < 18)
+    {
+        if (IsCrossAnimProgress(m_fRepeatProgress))
+        {
+            if (0 == m_iRepeatCount)
+            {
+                auto pTransform = pOwner->Get_Component<CTransform>();
+
+                _vector3 vWorldPosition = pTransform->Get_WorldPos();
+                _vector3 vLook = pTransform->Dir(STATE::LOOK);
+
+                auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+                    .Asset("miyabi_ex3_smoke.json")
+                    .Position(vWorldPosition)
+                    .Build("Miyabi_Ex3_Smoke");
+
+                pEffect->Get_Component<CTransform>()->Set_Look(vLook);
+
+                ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Player_Effect_Layer" });
+            }
+
+            _float3 vRandPosition{}, vRandRotation{};
+            vRandPosition.x = Helper::Get_Random_Float(m_vMinRange.x, m_vMaxRange.x);
+            vRandPosition.y = Helper::Get_Random_Float(m_vMinRange.y, m_vMaxRange.y);
+            vRandPosition.z = Helper::Get_Random_Float(m_vMinRange.z, m_vMaxRange.z);
+
+            vRandRotation.x = 0.f;
+            vRandRotation.y = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+            vRandRotation.z = XMConvertToRadians(Helper::Get_Random_Float(-10.f, 10.f));
+
+            _vector3 vDir = m_vCenter - vRandPosition;
+            vDir.Normalize();
+
+            _float yaw = atan2(vDir.z, vDir.x);
+            _float roll = atan2(vDir.y, sqrtf(vDir.x * vDir.x + vDir.z * vDir.z));
+
+            _quaternion rotation = _quaternion::CreateFromYawPitchRoll(yaw, 0.f, roll);
+            rotation *= _quaternion::CreateFromYawPitchRoll(vRandRotation);
+
+            pOwner->Play_Effect("Miyabi_Ex1_Sting" + to_string(m_iRepeatCount % 9), _vector3(vRandPosition), rotation, false);
+
+            m_fRepeatProgress += m_fRepeatInterval;
+            ++m_iRepeatCount;
+        }
+    }
+}
+
+void CMiyabiState_ExAttack_End::Enter(CMiyabi* pOwner)
+{
+    const string arrEndAnims[3] =
+    {
+        pOwner->Get_Name() + "Attack_Branch_01_Attack_01_End",
+        pOwner->Get_Name() + "Attack_Branch_01_Attack_02_End",
+        pOwner->Get_Name() + "Attack_Branch_01_Attack_03_End",
+    };
+    _int iIndex = {};
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+        iIndex = 0;
+    else
+    {
+        if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+        {
+            iIndex = 1;
+        }
+        else
+            iIndex = 2;
+    }
+    pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .ReserveSpeed(0.3f, 0.75f, 1.5f, EaseType::OutSine)
+        .EndAt(0.75f)
+        .Apply();
+}
+
+void CMiyabiState_ExAttack_End::Update(CMiyabi* pOwner, _float dt)
+{
+    _int iIndex = {};
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+        iIndex = 0;
+    else
+    {
+        if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+            iIndex = 1;
+        else
+            iIndex = 2;
+    }
+
+    if (IsCrossAnimProgress(0.2f) && iIndex == 2)
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
+            .Attribute3D(true)
+            .Play();
+    }
+
+    if(IsCrossAnimProgress(0.4f) && iIndex == 1)
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_End_SFX.wav")
+            .Attribute3D(true)
+            .Play();
+        pOwner->Set_WeaponEffectMesh(false);
+    }
+}
+
+void CMiyabiState_ExAttack_End::Exit(CMiyabi* pOwner)
+{
+    _int iIndex = {};
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+        iIndex = 0;
+    else
+    {
+        if (!m_pOwnerStateMachine->Get_Bool("Extra"))
+            iIndex = 1;
+        else
+            iIndex = 2;
+    }
+    switch (iIndex)
+    {
+    case 1:
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack02_End_SFX.wav")
+            .Attribute3D(true)
+            .Stop();
+        break;
+
+    case 2:
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_ExAttack03_End_SFX.wav")
+            .Attribute3D(true)
+            .Stop();
+        break;
+    }
+}

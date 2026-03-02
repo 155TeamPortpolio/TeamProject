@@ -1,0 +1,656 @@
+{
+  "AnimPath": "../bin/Resources/Zero/Enemy/ThugBulkyEnforcer/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": -1.1920929798847624e-09,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 1.1920929798847624e-09,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_01",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_Attack1_FULL.wav"
+        },
+        {
+          "EventTime": 0.009999999776482582,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithoutSound"
+        },
+        {
+          "EventTime": 0.7272903919219971,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
+          "EventTime": 0.8711500763893127,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 0.8711500763893127,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.6321130990982056,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_02",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithoutSound"
+        },
+        {
+          "EventTime": 0.029999999329447746,
+          "EventType": "Sound",
+          "EventTag": "bulky_Attack2_FULL.wav"
+        },
+        {
+          "EventTime": 0.8086419701576233,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_Hard"
+        },
+        {
+          "EventTime": 0.9363223314285278,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.0640026330947876,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_KnockOut"
+        },
+        {
+          "EventTime": 1.3193633556365967,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 1.3193633556365967,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 3.421832323074341,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_03",
+      "Events": [
+        {
+          "EventTime": 0.15000000596046448,
+          "EventType": "Sound",
+          "EventTag": "bulky_Attack3_FULL.wav"
+        },
+        {
+          "EventTime": 0.15000000596046448,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_ParryDisable_WithoutSound"
+        },
+        {
+          "EventTime": 0.8413254618644714,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_Ankle_Hard"
+        },
+        {
+          "EventTime": 1.1961013078689575,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_ParryDisable_WithoutSound"
+        },
+        {
+          "EventTime": 1.2670564651489258,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_Ankle"
+        },
+        {
+          "EventTime": 1.5001949071884155,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 1.6218323707580566,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.6218323707580566,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 2.4124755859375,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_04",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.5400000214576721,
+          "EventType": "Sound",
+          "EventTag": "bulky_Attack4.wav"
+        },
+        {
+          "EventTime": 0.7599740028381348,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 1.1046133041381836,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.1046133041381836,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 2.871994972229004,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_05_01",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_Attack5_1_FULL.wav"
+        },
+        {
+          "EventTime": 0.001,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithoutSound"
+        },
+        {
+          "EventTime": 0.6593891978263855,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_Hard"
+        },
+        {
+          "EventTime": 0.8046783208847046,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 0.8046783208847046,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.2517218589782715,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Attack_05_02",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_Attack5_2_FULL.wav"
+        },
+        {
+          "EventTime": 0.001,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithoutSound"
+        },
+        {
+          "EventTime": 0.6783625483512878,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
+          "EventTime": 0.8743339776992798,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 0.9421702027320862,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 1.2059779167175293,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.2059779167175293,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 1.899415135383606,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Born",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_Start_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Debuff_Stun_Start_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Evade",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_Evade.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Angry_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Angry_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Angry_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Happy_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Happy_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Sad_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Sad_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Surprise_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Surprise_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Galgame_Surprise_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Parry_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Parry_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle01",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle02",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle03",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Idle04",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_MainCity_Stand_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Run",
+      "Events": [
+        {
+          "EventTime": 0.0036387264262884855,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 0.4493827223777771,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Run_Start",
+      "Events": [
+        {
+          "EventTime": 0.6132553815841675,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_SideStep_L",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_SideStep.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_SideStep_R",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_SideStep.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Back_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Stun_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_B",
+      "Events": [
+        {
+          "EventTime": 0.8035087585449219,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 1.7157894372940063,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_F",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 0.8982455730438232,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_F_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_FL_RFoot",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 0.9228070378303528,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_FR_RFoot",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 0.9087718725204468,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_L",
+      "Events": [
+        {
+          "EventTime": 0.8799999952316284,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        },
+        {
+          "EventTime": 1.6456140279769897,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_R",
+      "Events": [
+        {
+          "EventTime": 0.6947367787361145,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 1.543859601020813,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "ThugBulkyEnforcer_Ani_Walk_RF_LFoot",
+      "Events": [
+        {
+          "EventTime": 0.7438596487045288,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_L.wav"
+        },
+        {
+          "EventTime": 1.659649133682251,
+          "EventType": "Sound",
+          "EventTag": "bulky_FootStep_R.wav"
+        }
+      ]
+    }
+  ]
+}

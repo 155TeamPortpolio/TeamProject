@@ -85,11 +85,18 @@ HRESULT CGraphicDevice::Clear_DepthStencil_View()
 
 HRESULT CGraphicDevice::Present()
 {
-	if (nullptr == m_pSwapChain)
+	if (!m_pSwapChain)
 		return E_FAIL;
 
-	return m_pSwapChain->Present(0, 0);
+	// VSync on
+	HRESULT hr = m_pSwapChain->Present(1, 0);
+
+	if (hr == DXGI_STATUS_OCCLUDED)
+		return S_OK;
+
+	return hr;
 }
+
 
 HRESULT CGraphicDevice::Ready_SwapChain(HWND hWnd, WINMODE isWindowed, _uint iWinCX, _uint iWinCY)
 {

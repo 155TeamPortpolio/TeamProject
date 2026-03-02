@@ -22,17 +22,19 @@ private:
     _bool   IsOnScreen(_float marginPx = 0.f);
 
 private:
-    UI_MeshPyramidConfig  cfg{}; 
-    UI_MeshPyramidRuntime rt{};
+    UI_MeshPyramidConfig  m_cfg{}; 
+    UI_MeshPyramidRuntime m_rt{};
 
 private:
-    Vector3 color = {1.f, 1.f, 1.f};
-    _float  alpha = 0.f;
+    Vector3 m_color = {1.f, 1.f, 1.f};
+    _float  m_alpha = 0.f;
+    Vector3 m_topRed;
+    Vector3 m_topWhite;
+    _float  m_topBlink = 0.f;
 
 public:
     static CGameObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

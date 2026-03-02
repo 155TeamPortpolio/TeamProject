@@ -10,6 +10,10 @@ uint Col;
 uint Row;
 uint ColorMode;
 uint RGBMask;
+float2 Pivot;
+float3 RimLightColor;
+uint RenderAlignment;
+uint UseDepthTest;
 
 struct VS_IN
 {
@@ -41,7 +45,7 @@ VS_OUT VS_MAIN(VS_IN In, uint InstanceID : SV_InstanceID)
     float4 position = mul(float4(In.vPosition, 1.f), TransformMatrix);
     
     Out.vWorldPos = mul(position, g_WorldMatrix);
-    Out.vSize = float2(length(data.vRight), length(data.vUp));
+    Out.vSize = float2(length(data.vRight) * length(g_WorldMatrix._11_12_13), length(data.vUp) * length(g_WorldMatrix._21_22_23));
     Out.vLifeTime = data.vLife;
     
     float t = Out.vLifeTime.x / Out.vLifeTime.y;
@@ -81,11 +85,26 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     
     float3 worldPos = In[0].vWorldPos.xyz;
     float3 camPos = vCamPosition.xyz;
+    float3 camForward = normalize(matViewInverse._31_32_33);
+    float3 camRight = normalize(matViewInverse._11_12_13);
+    float3 camUp = normalize(matViewInverse._21_22_23); /*모하냐 코딩.해.*/
+    
     float3 worldUp = float3(0.f, 1.f, 0.f);
     
-    float3 look = normalize(camPos - worldPos);
-    float3 right = normalize(cross(worldUp, look));
-    float3 up = normalize(cross(look, right));
+    float3 look, right, up;
+    
+    if(0 == RenderAlignment) /* Facing */
+    {
+        look = normalize(camPos - worldPos);
+        right = normalize(cross(worldUp, look));
+        up = normalize(cross(look, right));
+    }
+    else /* View */
+    {
+        look = -camForward.xyz;
+        right = -camRight.xyz;
+        up = camUp.xyz;
+    }
     
     float3 dir = normalize(-In[0].vVelocity);
     float vx = dot(dir, right);
@@ -98,21 +117,30 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float scaleX = In[0].vSize.x;
     float scaleY = In[0].vSize.y;
     
+    float halfX = scaleX * 0.5f;
+    float halfY = scaleY * 0.5f;
+    
+    float shiftX = (0.5f - Pivot.x) * scaleX;
+    float shiftY = (0.5f - Pivot.y) * scaleY;
+
     float2 offset[4] =
     {
-        float2(scaleX * 0.5f, scaleY * 0.5f),
-        float2(-scaleX * 0.5f, scaleY * 0.5f),
-        float2(-scaleX * 0.5f, -scaleY * 0.5f),
-        float2(scaleX * 0.5f, -scaleY * 0.5f)
+        float2(+halfX + shiftX, +halfY + shiftY),
+        float2(-halfX + shiftX, +halfY + shiftY),
+        float2(-halfX + shiftX, -halfY + shiftY),
+        float2(+halfX + shiftX, -halfY + shiftY)
     };
     
-    for (int i = 0; i < 4; ++i)
+    if(0 == RenderAlignment)
     {
-        float x = offset[i].x;
-        float y = offset[i].y;
-
-        offset[i].x = x * c - y * s;
-        offset[i].y = x * s + y * c;
+        for (int i = 0; i < 4; ++i)
+        {
+            float x = offset[i].x;
+            float y = offset[i].y;
+    
+            offset[i].x = x * c - y * s;
+            offset[i].y = x * s + y * c;
+        }
     }
     
     float3 p0 = worldPos + (offset[0].x * right + offset[0].y * up);
@@ -181,6 +209,8 @@ struct PS_OUT
     float4 vBloomAcc : SV_Target1;
     float4 vBloomInfo : SV_Target2;
     float4 vRevealage : SV_Target3;
+    float4 vDistortionAcc : SV_Target4;
+    float4 vRimLightAcc : SV_Target5;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -198,7 +228,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float3 vColor = vResult.rgb;
     float fAlpha = vResult.a;
     
-    if(1 == RGBMask)
+    if (1 == RGBMask)
     {
         float fColorMask = max(vColorDesc.b, max(vColorDesc.r, vColorDesc.g));
         fAlpha *= fColorMask;
@@ -210,10 +240,14 @@ PS_OUT PS_MAIN(PS_IN In)
     vDepthTexcoord.y = In.vProjPosition.y / In.vProjPosition.w * -0.5f + 0.5f;
     
     float fLinearZ = In.vViewPosition.z;
-    float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
-    float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
-    float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
-    fAlpha *= saturate(fOldViewZ - fLinearZ);
+    
+    if(UseDepthTest)
+    {
+        float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
+        fAlpha *= saturate(fOldViewZ - fLinearZ);
+    }
     /*------------------------------------------------------------------------------------*/
     
     /* 깊이 기반 가중치 생성 */
@@ -225,9 +259,65 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vBloomAcc = float4(0.f, 0.f, 0.f, 0.f); //ExtractBright(float4(0.f,0.f,0.f,0.f), 0.6f, 0.5f, 50.5f) * fWeight;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
+    Out.vDistortionAcc = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vRimLightAcc = float4(RimLightColor * fAlpha, fAlpha);
     
     return Out;
 }
+
+PS_OUT PS_MAIN_MASK(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 FrameSize = float2(1.f / Col, 1.f / Row);
+    int iFrameX = In.iFrameIndex % Col;
+    int iFrameY = In.iFrameIndex / Col;
+    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
+    float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
+    
+    float4 vColorDesc = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    float4 vResult = ApplyColorMode(ColorMode, vColorDesc, In.vColor);
+    float3 vColor = vResult.rgb;
+    float fAlpha = vResult.a;
+    float3 vMaskColor = MaskTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    if (1 == RGBMask)
+    {
+        float fColorMask = max(vColorDesc.b, max(vColorDesc.r, vColorDesc.g));
+        fAlpha *= fColorMask;
+    }
+
+    /*---------------------------------Soft Particle-------------------------------------*/ 
+    float2 vDepthTexcoord;
+    vDepthTexcoord.x = In.vProjPosition.x / In.vProjPosition.w * 0.5f + 0.5f;
+    vDepthTexcoord.y = In.vProjPosition.y / In.vProjPosition.w * -0.5f + 0.5f;
+    
+    float fLinearZ = In.vViewPosition.z;
+    
+    if (UseDepthTest)
+    {
+        float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+        float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
+        fAlpha *= saturate(fOldViewZ - fLinearZ);
+    }
+    /*------------------------------------------------------------------------------------*/
+    
+    /* 깊이 기반 가중치 생성 */
+    float fDepthBias = 1.f / (1.f + fLinearZ * fLinearZ);
+    float fWeight = clamp((fAlpha * 4.f + 0.01f) * fDepthBias, 0.01f, 1.f);
+    float4 vPremulColor = float4(vColor * vMaskColor * fAlpha, fAlpha);
+    
+    Out.vDiffuseAcc = vPremulColor * fWeight;
+    Out.vBloomAcc = float4(0.f, 0.f, 0.f, 0.f); //ExtractBright(float4(0.f,0.f,0.f,0.f), 0.6f, 0.5f, 50.5f) * fWeight;
+    Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
+    Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
+    Out.vDistortionAcc = float4(0.f, 0.f, 0.f, 0.f);
+    Out.vRimLightAcc = float4(RimLightColor * fAlpha, fAlpha);
+    
+    return Out;
+}
+
 
 technique11 Default
 {
@@ -239,6 +329,25 @@ technique11 Default
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+    pass None_Depth
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_OITAccmulation, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass MaskPass
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_ReadOnly, 0);
+        SetBlendState(BS_OITAccmulation, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_MASK();
     }
 }
 

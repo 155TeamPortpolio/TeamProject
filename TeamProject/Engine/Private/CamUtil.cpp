@@ -7,10 +7,13 @@ namespace
     enum class CamVersion : _uint
     {
         V1 = 1u,
+        V2 = 2u,
+        V3 = 3u,
+        V4 = 4u,
     };
 
-    constexpr _uint kCamMagic   = 0x43414D53u;
-    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V1);
+    constexpr _uint kCamMagic = 0x43414D53u;
+    constexpr _uint kCamVersion = static_cast<_uint>(CamVersion::V4);
 }
 
 CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, float time)
@@ -47,7 +50,7 @@ CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, floa
 
 	return { segmentIdx, normalizedTime };
 }
-// =======================================================================================================
+
 ofstream CamUtil::OpenOut(const filesystem::path& filePath, bool truncate)
 {
 	ios::openmode mode = ios::binary | ios::out;
@@ -123,91 +126,27 @@ bool CamUtil::ReadString(ifstream& inFile, string& outStr)
 	return static_cast<bool>(inFile);
 }
 
-void CamUtil::WriteAlign(ofstream& outFile, _uint align)
-{
-	assert(align > 0);
-
-	const streamoff pos = outFile.tellp();
-	const _uint padding = static_cast<_uint>((align - (pos % align)) % align);
-	if (padding == 0) return;
-
-	static const uint8_t zeros[16] = { 0 };
-	_uint remain = padding;
-
-	while (remain > 0)
-	{
-		const _uint chunk = (remain < 16u) ? remain : 16u;
-		WriteBytes(outFile, zeros, static_cast<size_t>(chunk));
-		remain -= chunk;
-	}
-}
-
-bool CamUtil::ReadAlign(ifstream& inFile, _uint align)
-{
-	assert(align > 0);
-
-	const streamoff pos = inFile.tellg();
-	const _uint padding = static_cast<_uint>((align - (pos % align)) % align);
-	if (padding == 0) return true;
-
-	vector<uint8_t> scratch(static_cast<size_t>(padding));
-	return ReadBytes(inFile, scratch.data(), scratch.size());
-}
-
 bool CamUtil::AtomicReplaceFile(const filesystem::path& tempPath, const filesystem::path& targetPath, string& outErrorMsg)
 {
-#ifdef _WIN32
-	const wstring tempW = tempPath.wstring();
-	const wstring targetW = targetPath.wstring();
+    const wstring tempW = tempPath.wstring();
+    const wstring targetW = targetPath.wstring();
 
-	if (MoveFileExW(tempW.c_str(), targetW.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) == 0)
-	{
-		const DWORD e = GetLastError();
-		outErrorMsg = "MoveFileExW failed: " + to_string(static_cast<unsigned long>(e));
-		return false;
-	}
-	return true;
-#else
-	error_code ec;
-	filesystem::rename(tempPath, targetPath, ec);
-	if (!ec) return true;
+    if (MoveFileExW(tempW.c_str(), targetW.c_str(), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH) == 0)
+        return false;
 
-	filesystem::remove(targetPath, ec);
-	ec.clear();
-	filesystem::rename(tempPath, targetPath, ec);
-	if (ec)
-	{
-		outErrorMsg = "rename failed: " + ec.message();
-		return false;
-	}
-	return true;
-#endif
+    return true;
 }
 
-bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, string* outErrorMsg)
+bool CamUtil::Save(const filesystem::path& path, const CamSeqDesc& seq, string* outErrorMsg)
 {
-    if (outErrorMsg) outErrorMsg->clear();
-
-    auto SetErr = [&](const string& msg)
-        {
-            if (outErrorMsg) *outErrorMsg = msg;
-        };
-
     const filesystem::path tempPath = path.string() + ".tmp";
 
     ofstream outFile = CamUtil::OpenOut(tempPath, true);
-    if (!outFile)
-    {
-        SetErr("Failed to open file: " + tempPath.string());
-        return false;
-    }
+    if (!outFile) return false;
 
     WriteHeader(outFile, kCamMagic, kCamVersion);
 
     WriteString(outFile, seq.name);
-
-    WriteData(outFile, static_cast<_uint>(seq.projType));
-    WriteData(outFile, static_cast<_uint>(seq.playbackMode));
 
     WriteData(outFile, static_cast<_uint>(seq.space));
 
@@ -216,7 +155,9 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
     WriteData(outFile, static_cast<_uint>(seq.fovInterp));
 
     WriteData(outFile, static_cast<_uint>(seq.segmentEase));
+
     WriteData(outFile, seq.orbitArc);
+    WriteData(outFile, seq.orbitSpin);
 
     const _uint keyCount = static_cast<_uint>(seq.keyframes.size());
     WriteData(outFile, keyCount);
@@ -247,12 +188,13 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
 
         WriteData(outFile, (uint8_t)(k.useCustomEase ? 1u : 0u));
         WriteData(outFile, static_cast<_uint>(k.outEase));
+
+        WriteString(outFile, k.eventTag);
     }
 
     outFile.flush();
     if (!outFile)
     {
-        SetErr("Failed to write file: " + tempPath.string());
         outFile.close();
         return false;
     }
@@ -262,7 +204,6 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
     string replaceErr;
     if (!CamUtil::AtomicReplaceFile(tempPath, path, replaceErr))
     {
-        SetErr(replaceErr);
         error_code ec;
         filesystem::remove(tempPath, ec);
         return false;
@@ -271,43 +212,21 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
     return true;
 }
 
-bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string* outErrorMsg)
+bool CamUtil::Load(const filesystem::path& path, CamSeqDesc& outSeq, string* outErrorMsg)
 {
-    if (outErrorMsg) outErrorMsg->clear();
-
-    auto SetErr = [&](const string& msg)
-        {
-            if (outErrorMsg) *outErrorMsg = msg;
-        };
-
     ifstream inFile = OpenIn(path);
-    if (!inFile)
-    {
-        SetErr("Failed to open file: " + path.string());
-        return false;
-    }
+    if (!inFile) return false;
 
     _uint version = 0;
     if (!ReadHeader(inFile, kCamMagic, version))
-    {
-        SetErr("Invalid header");
         return false;
-    }
 
-    if (version != kCamVersion)
-    {
-        SetErr("Unsupported version: " + to_string(static_cast<unsigned long>(version)));
+    if (version < static_cast<_uint>(CamVersion::V1) || version > kCamVersion)
         return false;
-    }
 
     if (!ReadString(inFile, outSeq.name))
-    {
-        SetErr("Failed to read name");
         return false;
-    }
 
-    _uint projType = 0;
-    _uint playbackMode = 0;
     _uint space = 0;
 
     _uint posInterp = 0;
@@ -315,20 +234,22 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     _uint fovInterp = 0;
     _uint segmentEase = 0;
 
-    if (!ReadData(inFile, projType)) { SetErr("Read projType failed"); return false; }
-    if (!ReadData(inFile, playbackMode)) { SetErr("Read playbackMode failed"); return false; }
+    if (version <= static_cast<_uint>(CamVersion::V3))
+    {
+        _uint projTypeDummy = 0;
+        if (!ReadData(inFile, projTypeDummy)) return false;
 
-    if (!ReadData(inFile, space)) { SetErr("Read space failed"); return false; }
+        _uint playbackModeDummy = 0;
+        if (!ReadData(inFile, playbackModeDummy)) return false;
+    }
 
-    if (!ReadData(inFile, posInterp)) { SetErr("Read posInterp failed"); return false; }
-    if (!ReadData(inFile, rotInterp)) { SetErr("Read rotInterp failed"); return false; }
-    if (!ReadData(inFile, fovInterp)) { SetErr("Read fovInterp failed"); return false; }
+    if (!ReadData(inFile, space)) return false;
 
-    if (!ReadData(inFile, segmentEase)) { SetErr("Read segmentEase failed"); return false; }
-    if (!ReadData(inFile, outSeq.orbitArc)) { SetErr("Read orbitArc failed"); return false; }
+    if (!ReadData(inFile, posInterp)) return false;
+    if (!ReadData(inFile, rotInterp)) return false;
+    if (!ReadData(inFile, fovInterp)) return false;
 
-    outSeq.projType = static_cast<CamProjType>(projType);
-    outSeq.playbackMode = static_cast<CamPlaybackMode>(playbackMode);
+    if (!ReadData(inFile, segmentEase)) return false;
 
     outSeq.space = static_cast<CamSpace>(space);
 
@@ -338,12 +259,27 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
 
     outSeq.segmentEase = static_cast<EaseType>(segmentEase);
 
+    if (version >= static_cast<_uint>(CamVersion::V2))
+    {
+        if (!ReadData(inFile, outSeq.orbitArc)) return false;
+    }
+    else
+    {
+        outSeq.orbitArc = {};
+    }
+
+    if (version >= static_cast<_uint>(CamVersion::V3))
+    {
+        if (!ReadData(inFile, outSeq.orbitSpin)) return false;
+    }
+    else
+    {
+        outSeq.orbitSpin = {};
+    }
+
     _uint keyCount = 0;
     if (!ReadData(inFile, keyCount))
-    {
-        SetErr("Failed to read keyCount");
         return false;
-    }
 
     outSeq.keyframes.clear();
     outSeq.keyframes.resize((size_t)keyCount);
@@ -352,29 +288,29 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     {
         CamKeyFrame& k = outSeq.keyframes[(size_t)i];
 
-        if (!ReadData(inFile, k.keyId)) { SetErr("Read keyId failed"); return false; }
-        if (!ReadData(inFile, k.time)) { SetErr("Read time failed");  return false; }
+        if (!ReadData(inFile, k.keyId)) return false;
+        if (!ReadData(inFile, k.time))  return false;
 
-        if (!ReadData(inFile, k.pos.x)) { SetErr("Read pos.x failed"); return false; }
-        if (!ReadData(inFile, k.pos.y)) { SetErr("Read pos.y failed"); return false; }
-        if (!ReadData(inFile, k.pos.z)) { SetErr("Read pos.z failed"); return false; }
+        if (!ReadData(inFile, k.pos.x)) return false;
+        if (!ReadData(inFile, k.pos.y)) return false;
+        if (!ReadData(inFile, k.pos.z)) return false;
 
-        if (!ReadData(inFile, k.look.x)) { SetErr("Read look.x failed"); return false; }
-        if (!ReadData(inFile, k.look.y)) { SetErr("Read look.y failed"); return false; }
-        if (!ReadData(inFile, k.look.z)) { SetErr("Read look.z failed"); return false; }
+        if (!ReadData(inFile, k.look.x)) return false;
+        if (!ReadData(inFile, k.look.y)) return false;
+        if (!ReadData(inFile, k.look.z)) return false;
 
-        if (!ReadData(inFile, k.roll)) { SetErr("Read roll failed"); return false; }
-        if (!ReadData(inFile, k.fov)) { SetErr("Read fov failed");  return false; }
+        if (!ReadData(inFile, k.roll)) return false;
+        if (!ReadData(inFile, k.fov))  return false;
 
         uint8_t useCustomInterp = 0;
         _uint outPos = 0;
         _uint outRot = 0;
         _uint outFov = 0;
 
-        if (!ReadData(inFile, useCustomInterp)) { SetErr("Read useCustomInterp failed"); return false; }
-        if (!ReadData(inFile, outPos)) { SetErr("Read outPosInterp failed"); return false; }
-        if (!ReadData(inFile, outRot)) { SetErr("Read outRotInterp failed"); return false; }
-        if (!ReadData(inFile, outFov)) { SetErr("Read outFovInterp failed"); return false; }
+        if (!ReadData(inFile, useCustomInterp)) return false;
+        if (!ReadData(inFile, outPos)) return false;
+        if (!ReadData(inFile, outRot)) return false;
+        if (!ReadData(inFile, outFov)) return false;
 
         k.useCustomInterp = (useCustomInterp != 0);
         k.outPosInterp = static_cast<CamPosInterp>(outPos);
@@ -384,18 +320,24 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
         uint8_t useCustomEase = 0;
         _uint outEase = 0;
 
-        if (!ReadData(inFile, useCustomEase)) { SetErr("Read useCustomEase failed"); return false; }
-        if (!ReadData(inFile, outEase)) { SetErr("Read outEase failed"); return false; }
+        if (!ReadData(inFile, useCustomEase)) return false;
+        if (!ReadData(inFile, outEase)) return false;
 
         k.useCustomEase = (useCustomEase != 0);
         k.outEase = static_cast<EaseType>(outEase);
+
+        if (version >= static_cast<_uint>(CamVersion::V2))
+        {
+            if (!ReadString(inFile, k.eventTag)) return false;
+        }
+        else
+        {
+            k.eventTag.clear();
+        }
     }
 
     if (!inFile)
-    {
-        SetErr("File read error");
         return false;
-    }
 
     return true;
 }

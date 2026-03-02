@@ -20,6 +20,9 @@ public:
 
 public:
 	virtual void    Load(const nlohmann::ordered_json& data) override;
+	
+private:
+	_float2			m_vTextPivotOffset = {};
 
 public:
 	static  CGameObject* Create();

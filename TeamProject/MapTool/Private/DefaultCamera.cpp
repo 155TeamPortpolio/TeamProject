@@ -35,6 +35,9 @@ HRESULT CDefaultCamera::Initialize(INIT_DESC* pArg)
 
 void CDefaultCamera::Priority_Update(_float dt)
 {
+	if (true == GUISystem()->UsingUI())
+		return;
+
 	_vector LookDir = m_pTransform->Dir(STATE::LOOK);
 	_vector UpDir = m_pTransform->Dir(STATE::UP);
 	_vector RightDir = m_pTransform->Dir(STATE::RIGHT);

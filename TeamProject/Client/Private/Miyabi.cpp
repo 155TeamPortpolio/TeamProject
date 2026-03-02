@@ -1,22 +1,40 @@
 #include "pch.h"
 #include "Miyabi.h"
+#include "Miyabi_Ghost.h"
+
 #include "GameInstance.h"
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
 
+#include "DataBase.h"
+#include "EffectContainer.h"
 
+#include "Renderer.h"
+#include "Shader.h"
+#include "Texture.h"
 #include "Material.h"
+#include "MaterialInstance.h"
+
+#include "SkeletalModel.h"
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
+#include "BoneFollower.h"
+#include "AudioSource.h"
 
 #include "StateMachine.h"
+#include "MiyabiState_Start.h"
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
 #include "MiyabiState_NormalAttack.h"
-#include "MiyabiState_ChargeAttack.h"
-
-#include "Renderer.h"
-#include "SkeletalModel.h"
-#include "Shader.h"
+#include "MiyabiState_CounterAttack.h"
+#include "MiyabiState_AssaultAttack.h"
+#include "MiyabiState_SwitchIn.h"
+#include "MiyabiState_SwitchInParryAid.h"
+#include "MiyabiState_SwitchOut.h"
+#include "MiyabiState_Hit.h"
+#include "MiyabiState_Evade.h"
 
 CMiyabi::CMiyabi()
 {
@@ -32,19 +50,8 @@ HRESULT CMiyabi::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.model",
-		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.model");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.mat",
-		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.mat");
-	//pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
-	//	"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
-		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi_Meta.json");
-
-	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Unagi.mat");
-
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Miyabi.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Miyabi.mat");
 
 	return S_OK;
 }
@@ -54,7 +61,19 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Ghost()))
+		return E_FAIL;
+
 	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Weapon()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Sound()))
 		return E_FAIL;
 
 	return S_OK;
@@ -62,43 +81,98 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 
 void CMiyabi::Awake()
 {
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
-	//m_pAnimator()->Set_ExtractBoneMovement(21);
-	m_pAnimator ->Set_MotionBone(21);
+	__super::Awake();
+
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Miyabi.model");
+	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Miyabi_Meta.json");
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-	//m_pAnimator->Set_ExtractMotionboneRotation(AXIS::Y);
-	m_pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
+	m_strAnimName = "Avatar_Female_Size02_Unagi_Ani_";
+	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
-	m_pCCT->Set_GravityEnabled(true);
+
+	m_strName = "Miyabi";
+	m_eCharacterName = CHARACTER::Miyabi;
+
+	Initialize_Stat();
+	m_fCurrentHP = m_fMaxHP;
+	m_tEnergy.fCurrentEnergy = 0.f;
+	m_fCurrentDecibel = 0.f;
+	m_iFrost = 0;
+
+	if (FAILED(Attach_ParryCollider()))
+		return;
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto MaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& Instance : MaterialInstances)
+	{
+		pMaterial->Add_MaterialData(Instance, "iUseHeightGradient", { &m_iUseHeightGradient, "int", sizeof(_int) });
+	}
+
+	Get_Component<CSkeletalModel>()->Hide_MehsByName("0012_Unagi_PET_mesh0012");
+	Set_WeaponEffectMesh(false);
+
 }
 
 void CMiyabi::Priority_Update(_float dt)
 {
 	__super::Priority_Update(dt);
+
+	m_fMotionBlurFade = max(0.f, m_fMotionBlurFade - dt * 6.f);
+	if (m_fMotionBlurFade <= 0.01f && !m_BoneMatrices.empty())
+	{
+		m_fRimLightPower = 0.f;
+		m_BoneMatrices.clear();
+		m_WorldMatrices.clear();
+	}
+
+	if (!m_BoneMatrices.empty() && m_pCCT->Get_CompActive())
+		Update_MotionBlurQueue();
 }
 
 void CMiyabi::Update(_float dt)
 {
-	Update_States();
-	m_pStateMachine->Update(dt);
+	if (!m_bTest)
+	{
+		Update_States();
+		m_pStateMachine->Update(dt);
+	}
 	__super::Update(dt);
 }
 
 void CMiyabi::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	//Add_OutLineRender();
 }
 
 void CMiyabi::Render_GUI()
 {
-	__super::Render_GUI();
-	// StateMachine ����� ����
+	ImGui::Separator();
+	ImGui::Text("FrostCount : %d", m_iFrost);
+	if (ImGui::Button("Max"))
+		Increase_Frost(MAX_FROST);
+	ImGui::SameLine();
+	if (ImGui::Button("Up"))
+		Increase_Frost(1);
+	ImGui::SameLine();
+	if (ImGui::Button("Down"))
+		Decrease_Frost(1);
+	ImGui::SameLine();
+	if (ImGui::Button("Zero"))
+		Decrease_Frost(MAX_FROST);
+
+	if (ImGui::Button("Show Ghost"))
+		Show_Ghost();
+	ImGui::SameLine();
+	if (ImGui::Button("Hide Ghost"))
+		Hide_Ghost();
+
+
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
+		ImGui::Checkbox("Animation Test", &m_bTest);
 		ImGui::Text("StateMachine: %s", m_pStateMachine->Get_CurrentStateName().c_str());
 
 		if (ImGui::Button("Open StateMachine"))
@@ -106,150 +180,339 @@ void CMiyabi::Render_GUI()
 
 		m_pStateMachine->Render_GUI();
 	}
+
+	__super::Render_GUI();
 }
 
-void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
+void CMiyabi::Show_Ghost()
 {
-	auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem()->GetRenderer(RENDERER_TYPE::FORWARD);
-	auto Model = Get_Component<CSkeletalModel>();
-	auto Material = Get_Component<CMaterial>();
-
-	_int Index = Model->Get_MaterialIndex(idx);
-	auto Shader = Material->Get_Shader(Index);
-	ID3D11InputLayout* pLayout;
-	RenderSys->Get_InputLayout(
-		Model,
-		Shader,
-		idx,
-		"OutLine",
-		&pLayout
-	);
-
-	//Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
-
-	pContext->IASetInputLayout(pLayout);
-	Shader->Apply("OutLine", pContext);
-	Model->Draw(pContext, idx);
+	//if (m_pGhost)
+	//	m_pGhost->Set_Show(true);
 }
 
-void CMiyabi::Update_States()
+void CMiyabi::Hide_Ghost()
 {
-	_bool bInMoveEnd = false;
-	_bool bInAttackEnd = false;
+	//if (m_pGhost)
+	//	m_pGhost->Set_Show(false);
+}
 
-	// Move End üũ (������ ����)
-	if (m_pStateMachine->Get_CurrentStateName() == "Move")
+_bool CMiyabi::Can_Evade()
+{
+	if (m_pStateMachine->Get_Bool("InDash02"))
+		return false;
+
+	return __super::Can_Evade();
+}
+
+//void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
+//{
+//	auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem()->GetRenderer(RENDERER_TYPE::FORWARD);
+//	auto Model = Get_Component<CSkeletalModel>();
+//	auto Material = Get_Component<CMaterial>();
+//
+//	_int Index = Model->Get_MaterialIndex(idx);
+//	auto Shader = Material->Get_Shader(Index);
+//	ID3D11InputLayout* pLayout;
+//	RenderSys->Get_InputLayout(
+//		Model,
+//		Shader,
+//		idx,
+//		"OutLine",
+//		&pLayout
+//	);
+//
+//	//Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
+//
+//	pContext->IASetInputLayout(pLayout);
+//	Shader->Apply("OutLine", pContext);
+//	Model->Draw(pContext, idx);
+//}
+
+void CMiyabi::Increase_Frost(_uint iFrost)
+{
+	m_iFrost += iFrost;
+	m_iFrost = min(m_iFrost, MAX_FROST);
+
+	UI_ANOMALY_MIYABI desc;
+	desc.iCount = m_iFrost;
+	desc.isIncreasing = true;
+	EventSystem()->Broadcast<UI_ANOMALY_MIYABI>(desc);
+}
+
+void CMiyabi::Decrease_Frost(_uint iFrost)
+{
+	m_iFrost -= iFrost;
+	m_iFrost = max(m_iFrost, 0.f);
+
+	UI_ANOMALY_MIYABI desc;
+	desc.iCount = m_iFrost;
+	desc.isIncreasing = false;
+	EventSystem()->Broadcast<UI_ANOMALY_MIYABI>(desc);
+}
+
+void CMiyabi::Reset_State()
+{
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+	m_bReserveCombo = false;
+
+	m_pStateMachine->Set_Bool("IsMove", false);
+	m_pStateMachine->Reset_Trigger("Attack");
+	m_pStateMachine->Reset_Trigger("ToEvade");
+	m_pStateMachine->Reset_Trigger("ToMove");
+	m_pStateMachine->Reset_Trigger("ToIdle");
+	if (m_bIsMain)
 	{
-		CMiyabiState_Move* pMove =
-			static_cast<CMiyabiState_Move*>(m_pStateMachine->Get_CurrentState());
+		m_pStateMachine->Set_Trigger("ResetState");
+	}
+	else
+	{
+		m_pStateMachine->Set_Trigger("SwitchOut");
+	}
+}
 
-		if (pMove && pMove->Get_SubStateMachine())
+void CMiyabi::On_Start()
+{
+	m_pStateMachine->Set_Trigger("QuestStart");
+}
+
+void CMiyabi::On_SwitchIn(SWITCH eType)
+{
+	m_fDissolveProgress = 0.f;
+	SetRenderLayer(RENDER_LAYER::Default);
+
+	m_bReserveCombo = false;
+	Set_Switch(eType);
+	m_pStateMachine->Set_Trigger("SwitchIn");
+}
+
+void CMiyabi::On_ParryImpact()
+{
+	IHState<CMiyabi>* pSwitchIn = dynamic_cast<IHState<CMiyabi>*>(
+		m_pStateMachine->Get_CurrentState());
+	if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+	{
+		m_pStateMachine->Set_Trigger("ReserveParryImpact");
+		return;
+	}
+
+	IHState<CMiyabi>* pParryAid = dynamic_cast<IHState<CMiyabi>*>(
+		pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+	if (!pParryAid || !pParryAid->Get_SubStateMachine())
+	{
+		m_pStateMachine->Set_Trigger("ReserveParryImpact");
+		return;
+	}
+
+	pParryAid->Get_SubStateMachine()->Set_Trigger("ParryImpact");
+}
+
+void CMiyabi::On_ChainParry()
+{
+	Set_Switch(CCharacter::SWITCH::PARRYAID);
+
+	if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+	{
+		Push_Invincible();
+		// 이미 SwitchIn이면 서브만 리셋
+		IHState<CMiyabi>* pSwitchIn = dynamic_cast<IHState<CMiyabi>*>(
+			m_pStateMachine->Get_CurrentState());
+		if (pSwitchIn && pSwitchIn->Get_SubStateMachine())
 		{
-			IHState<CMiyabi>* pMoveType =
-				dynamic_cast<IHState<CMiyabi>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
-
-			if (pMoveType && pMoveType->Has_SubStateMachine())
-			{
-				IBaseState<CMiyabi>* pAnim =
-					pMoveType->Get_SubStateMachine()->Get_CurrentState();
-
-				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
-			}
+			pSwitchIn->Get_SubStateMachine()->Set_DefaultState("SwitchInParryAid");
+			pSwitchIn->Get_SubStateMachine()->Change_State("SwitchInParryAid");
 		}
 	}
-	// Attack End üũ
-	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	else
 	{
-		CMiyabiState_Attack* pAttack =
-			static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+		// 다른 상태면 SwitchIn으로 전환
+		m_pStateMachine->Set_Trigger("SwitchIn");
+	}
+}
 
+void CMiyabi::On_SwitchOut(_bool isParry)
+{
+	__super::On_SwitchOut();
+
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+	m_bReserveCombo = false;
+
+	m_pStateMachine->Set_Bool("IsMove", false);
+	m_pStateMachine->Reset_Trigger("Attack");
+	m_pStateMachine->Reset_Trigger("ToEvade");
+	m_pStateMachine->Reset_Trigger("ToMove");
+	m_pStateMachine->Reset_Trigger("ToIdle");
+	m_pStateMachine->Reset_Trigger("ResetState");
+
+	if (isParry)
+	{
+		m_pStateMachine->Set_Trigger("SwitchOut");
+		return;
+	}
+
+	if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		m_pStateMachine->Set_Bool("OutReserve", true);
+		return;
+	}
+	else if (m_pStateMachine->Get_CurrentStateName() == "SwitchIn")
+	{
+		IHState<CMiyabi>* pState = dynamic_cast<IHState<CMiyabi>*>(m_pStateMachine->Get_CurrentState());
+		CStateMachine<CMiyabi>* pSub = pState->Get_SubStateMachine();
+		if (pSub && pSub->Get_CurrentStateName() != "SwitchInNormal")
+		{
+			m_pStateMachine->Set_Bool("OutReserve", true);
+			return;
+		}
+	}
+	m_pStateMachine->Set_Trigger("SwitchOut");
+}
+
+void CMiyabi::On_Ultimate()
+{
+	IHState<CMiyabi>* pState = dynamic_cast<IHState<CMiyabi>*>(m_pStateMachine->Get_CurrentState());
+	if (pState)
+	{
+		CStateMachine<CMiyabi>* pSub = pState->Get_SubStateMachine();
+		if (pSub && pSub->Get_CurrentStateName() == "UltimateAttack")
+			return;
+	}
+
+	__super::On_Ultimate();
+	m_pStateMachine->Set_Int("AttackEntryMode", 3);
+	m_pStateMachine->Set_Trigger("Attack");
+}
+
+void CMiyabi::On_Special()
+{
+	if (InputDevice()->Key_Tap('E') == false) return;
+
+	string strCurrentState = m_pStateMachine->Get_CurrentStateName();
+
+	// NormalAttack 중 캔슬해서 ExAttack
+	if (strCurrentState == "Attack")
+	{
+		CMiyabiState_Attack* pAttack = static_cast<CMiyabiState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
 		if (pAttack && pAttack->Get_SubStateMachine())
 		{
-			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+			string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
-			if (strSub == "NormalAttack")
+			if (strAttackType == "NormalAttack")
 			{
-				CMiyabiState_NormalAttack* pNormal =
-					static_cast<CMiyabiState_NormalAttack*>(
-						pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
-
-				if (pNormal && pNormal->Get_SubStateMachine())
-				{
-					IBaseState<CMiyabi>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
-				}
+				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+				return;
 			}
-			else if (strSub == "ChargeAttack")
+			else if (strAttackType == "RushAttack")
 			{
-				CMiyabiState_ChargeAttack* pCharge =
-					static_cast<CMiyabiState_ChargeAttack*>(
-						pAttack->Get_SubStateMachine()->Get_State("ChargeAttack"));
-
-				if (pCharge && pCharge->Get_SubStateMachine())
-				{
-					IBaseState<CMiyabi>* pChargeSub = pCharge->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pChargeSub && pChargeSub->Get_Tag() == "End");
-				}
+				pAttack->Get_SubStateMachine()->Set_Trigger("ToExAttack");
+				return;
 			}
+			return;
 		}
 	}
 
-	// �� AttackEnd �Ķ���� ����
-	if (bInAttackEnd)
-	{
-		CMiyabiState_Attack* pAttack =
-			static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+	m_pStateMachine->Set_Int("AttackEntryMode", 2);
+	m_pStateMachine->Set_Trigger("Attack");
+}
 
-		if (pAttack)
+void CMiyabi::On_Hit(DAMAGE_TYPE eType)
+{
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+	m_bReserveCombo = false;
+
+	m_pStateMachine->Set_Bool("IsMove", false);
+	m_pStateMachine->Reset_Trigger("Attack");
+	m_pStateMachine->Reset_Trigger("ToEvade");
+	m_pStateMachine->Reset_Trigger("ToMove");
+	m_pStateMachine->Reset_Trigger("ToIdle");
+	m_pStateMachine->Reset_Trigger("ResetState");
+
+	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
+	m_pStateMachine->Set_Trigger("ToHit");
+}
+
+void CMiyabi::OnDamage()
+{
+}
+
+void CMiyabi::OnPerfectDodge()
+{
+}
+
+void CMiyabi::OnDefensiveAssist()
+{
+}
+
+void CMiyabi::OnComboSound()
+{
+	Get_Component<CAudioSource>()->Sequence("ComboSound")
+		.Attribute3D(true)
+		.PlayNext();
+}
+
+void CMiyabi::Add_MotionBlur()
+{
+	m_fMotionBlurFade = 1.f;
+	if (m_BoneMatrices.size() > 5)
+	{
+		m_BoneMatrices.pop_front();
+		m_WorldMatrices.pop_front();
+	}
+
+	auto Model = Get_Component<CSkeletalModel>();
+	vector<vector<_float4x4>> BoneMatrices;
+	BoneMatrices.resize(Model->Get_MeshCount());
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		BoneMatrices[i] = m_pAnimator->Get_BoneMatrices(i);
+	}
+
+	m_WorldMatrices.push_back(*m_pTransform->Get_WorldMatrix_Ptr());
+	m_BoneMatrices.push_back(BoneMatrices);
+}
+
+void CMiyabi::Clear_MotionBlur()
+{
+	//m_fRimLightPower = 0.f;
+	//m_BoneMatrices.clear();
+	//m_WorldMatrices.clear();
+}
+
+void CMiyabi::Set_WeaponEffectMesh(_bool bOn)
+{
+	auto pModel = Get_Component<CSkeletalModel>();
+	if (bOn)
+	{
+		pModel->Show_MehsByName("0015_Unagi_Weapon03_mesh0015");
+		if (m_pGhost)
+			m_pGhost->Set_Show(false);
+	}
+	else
+	{
+		pModel->Hide_MehsByName("0015_Unagi_Weapon03_mesh0015");
+		if (m_pGhost)
+			m_pGhost->Set_Show(true);
+	}
+}
+
+void CMiyabi::Set_WeaponFire(_bool bOn)
+{
+	auto MiyabiFire = Get_Component<CObjectContainer>()->Find_ObjectByName("Miyabi_Sword_Fire");
+	if (MiyabiFire != nullptr)
+	{
+		if (bOn)
 		{
-			// Attack�� AnimProgress�� 1.0�̸� AttackEnd = true
-			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
-			m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
+			MiyabiFire->Set_Alive(true);
 		}
-	}
-	else
-	{
-		m_pStateMachine->Set_Bool("AttackEnd", false);
-	}
-
-	// End ĵ�� ó�� (������ ����)
-	if ((bInMoveEnd || bInAttackEnd) && Is_Input())
-	{
-		m_pStateMachine->Set_Bool("IsMove", false);
-
-		// Attack End���� �Է� �� ������ AttackEnd = true
-		if (bInAttackEnd)
-			m_pStateMachine->Set_Bool("AttackEnd", true);
-	}
-	else
-	{
-		m_pStateMachine->Set_Bool("IsMove", Is_Move());
-
-		if (m_bIsAttack)
+		else
 		{
-			string strCurrent = m_pStateMachine->Get_CurrentStateName();
-
-			if (strCurrent == "Idle")
-			{
-				m_pStateMachine->Set_Trigger("Attack");
-			}
-			else if (strCurrent == "Attack")
-			{
-				CMiyabiState_Attack* pAttackState =
-					static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
-				if (pAttackState && pAttackState->Get_SubStateMachine())
-				{
-					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
-					{
-						CMiyabiState_NormalAttack* pNormal =
-							static_cast<CMiyabiState_NormalAttack*>(
-								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
-
-						if (pNormal && pNormal->Get_SubStateMachine())
-							pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
-					}
-				}
-			}
+			MiyabiFire->Set_Alive(false);
 		}
 	}
 }
@@ -274,56 +537,872 @@ HRESULT CMiyabi::Initialize_StateMachine()
 
 HRESULT CMiyabi::Initialize_States()
 {
+	m_pStateMachine->Register_State("Start", CMiyabiState_Start::Create());
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
+	m_pStateMachine->Register_State("Evade", CMiyabiState_Evade::Create());
+	m_pStateMachine->Register_State("SwitchIn", CMiyabiState_SwitchIn::Create());
+	m_pStateMachine->Register_State("SwitchOut", CMiyabiState_SwitchOut::Create());
+	m_pStateMachine->Register_State("Hit", CMiyabiState_Hit::Create());
 
 	return S_OK;
 }
 
 HRESULT CMiyabi::Initialize_Transitions()
 {
-	// Idle <-> Move
+	// Start
+	m_pStateMachine->Register_AnyStateTransition("Start",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "QuestStart");
+
+	m_pStateMachine->Register_Transition("Start", "Idle",
+		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+
+	// Idle -> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
+	// Move -> Idle
 	m_pStateMachine->Register_Transition("Move", "Idle",
-		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToIdle");
 
-	// Idle -> Attack
+	m_pStateMachine->Register_AnyStateTransition("Idle",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ResetState");
+
+	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack");
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
-		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "AttackEnd");
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToIdle");
+
+	// Evade
+	m_pStateMachine->Register_AnyStateTransition("Evade",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToEvade");
+
+	// Evade -> Move (Dash)
+	m_pStateMachine->Register_Transition("Evade", "Move",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToMove");
+
+	// Evade -> Idle (Backstep)
+	m_pStateMachine->Register_Transition("Evade", "Idle",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToIdle");
+
+	// SwitchIn
+	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "SwitchIn");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Move",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToMove");
+
+	// SwitchOut
+	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "SwitchOut", 1);
+
+	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToIdle");
+
+	// Hit
+	vector<CStateMachine<CMiyabi>::CONDITION_INFO> HitConditions;
+	HitConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToHit" });
+	HitConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "Resistance" });
+	m_pStateMachine->Register_AnyStateTransition("Hit", HitConditions);
+
+	m_pStateMachine->Register_Transition("Hit", "Idle",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }
 
-HRESULT CMiyabi::Add_OutLineRender()
+HRESULT CMiyabi::Initialize_Stat()
+{
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+	m_fMaxHP = Desc.MaxHP;
+	m_fAttackPower = Desc.Attack;
+	m_fDefense = Desc.Defend;
+	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
+	Set_EvadeMax(2);
+
+	// 추가 버프 적용
+	string outID;
+	RuntimeBucket().String.TryGet(PersistScope::SaveSlot, "RamenID", outID);
+	if (!outID.empty())
+	{
+		auto Ramen = CDataBase::GetInstance()->GetRamenDesc(outID);
+		for (auto attribute : Ramen.attributes)
+		{
+			string attID = attribute.strAttributeID;
+			if (attID == "atk")
+			{
+				m_fAttackPower += attribute.iAttributeValue * 0.01f;
+			}
+			else if (attID == "max_hp")
+			{
+				m_fMaxHP += attribute.iAttributeValue;
+			}
+			else if (attID == "dmg_ice")
+			{
+				m_fAttackPower += attribute.iAttributeValue * 0.01f;
+			}
+			else
+				continue;
+		}
+	}
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Weapon()
+{
+	ATTACK_COLLIDER_DESC KatanaDesc;
+	KatanaDesc.eColliderType = COLLIDER_TYPE::BOX;
+	KatanaDesc.pOwnerAnimator = m_pAnimator;
+	KatanaDesc.tagBone = "Bn_katana_burst_eye";
+	KatanaDesc.tagName = "KatanaWeapon";
+	KatanaDesc.vCenter = { 0.2f,-0.3f,0.015f };
+	KatanaDesc.vSize = { 0.3f,1.3f,0.3f };
+	KatanaDesc.vRotation = { 0.f,0.f,0.69f };
+	if (FAILED(Attach_AttackCollider(&KatanaDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Ghost()
+{
+	RIGIDBODY_DESC rigidDesc{};
+	rigidDesc.isKinematic = true;
+	rigidDesc.bEnableGravity = false;
+	
+	CGameObject* pGhost = Builder::Create_Object(
+		{ G_GlobalLevelKey, "Proto_GameObject_Miyabi_Ghost" })
+		.RigidBody(rigidDesc)
+		.Build("Miyabi_Ghost");
+	if (nullptr == pGhost)
+		return E_FAIL;
+
+	m_pGhost = static_cast<CMiyabi_Ghost*>(pGhost);
+	m_pGhost->Set_FollowTarget(m_pTransform);
+	Get_Component<CObjectContainer>()->Add_Child(pGhost, false);
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Effects()
+{
+	if (FAILED(__super::Initialize_Effects()))
+		return E_FAIL;
+
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
+
+	// Dash
+	for (_uint i = 0; i < 4; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_dash.json")
+			.Build("Miyabi_Dash" + to_string(i));
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	// Sword Fire
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_sword_fire.json")
+			.Build("Miyabi_Sword_Fire");
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon");
+	}
+
+	// Charge Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_flare1.json")
+			.Build("Miyabi_Charge0_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_particle.json")
+			.Build("Miyabi_Charge0_Particle1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_start.json")
+			.Build("Miyabi_Charge_Start");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge_stack_up.json")
+			.Build("Miyabi_Charge_StackUp1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_smoke.json")
+			.Build("Miyabi_Charge0_Smoke");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ultimate Flare
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare.json")
+			.Build("Miyabi_Ultimate_Flare");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_flare1.json")
+			.Build("Miyabi_Ultimate_Flare1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+		pEffect->AttachBone(pAnimator, "Bn_Weapon", _smatrix::Identity, true);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke0.json")
+			.Build("Miyabi_Ultimate_Smoke0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate_smoke1.json")
+			.Build("Miyabi_Ultimate_Smoke1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Normal Slash0
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_slash.json")
+			.Build("Miyabi_Normal0_Slash0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	// Normal Slash1
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_slash.json")
+			.Build("Miyabi_Normal1_Slash3");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	// Normal Slash2
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal3_slash.json")
+			.Build("Miyabi_Normal2_Slash0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	// Normal Slash3
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal4_slash.json")
+			.Build("Miyabi_Normal3_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	// Normal Sting
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_sting.json")
+			.Build("Miyabi_Normal0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_sting.json")
+			.Build("Miyabi_Normal0_Sting1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_sting.json")
+			.Build("Miyabi_Normal0_Sting2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_sting.json")
+			.Build("Miyabi_Normal0_Sting3");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal1_sting.json")
+			.Build("Miyabi_Normal0_Sting4");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_sting.json")
+			.Build("Miyabi_Normal1_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_sting.json")
+			.Build("Miyabi_Normal1_Sting1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_sting.json")
+			.Build("Miyabi_Normal1_Sting2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_normal2_sting.json")
+			.Build("Miyabi_Normal1_Sting3");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ex Slash
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex0_slash.json")
+			.Build("Miyabi_Ex0_Slash0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	// Ultimate Slash
+	for (_uint i = 0; i < 6; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate0_slash.json")
+			.Build("Miyabi_Ultimate0_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_slash.json")
+			.Build("Miyabi_Ex1_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ex Sting
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex0_sting.json")
+			.Build("Miyabi_Ex0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	for (_uint i = 0; i < 9; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ex1_sting.json")
+			.Build("Miyabi_Ex1_Sting" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Rush Sting
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_rush0_sting.json")
+			.Build("Miyabi_Rush0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Ultimate Sting
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate0_sting.json")
+			.Build("Miyabi_Ultimate0_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting0");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting1");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_ultimate1_sting.json")
+			.Build("Miyabi_Ultimate1_Sting2");
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	// Charge Slash
+	for (_uint i = 0; i < 15; ++i)
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("miyabi_charge0_slash.json")
+			.Build("Miyabi_Charge0_Slash" + to_string(i));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+
+	return S_OK;
+}
+
+HRESULT CMiyabi::Initialize_Sound()
+{
+	auto AudioSrc = Get_Component<CAudioSource>();
+	AudioSrc->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/BattleCharacter/Miyabi/Sound");
+	AudioSrc->Add_Sequence("Ultimate"
+		, "Miyabi_UltimateAttack_Voice_01"
+		, "Miyabi_UltimateAttack_Voice_02"
+		, "Miyabi_UltimateAttack_Voice_03"
+	);
+	AudioSrc->Add_Sequence("ExAttack02"
+		, "Miyabi_ExAttack02_Voice_01"
+		, "Miyabi_ExAttack02_Voice_02"
+	);
+	AudioSrc->Add_Sequence("ExAttack03"
+		, "Miyabi_ExAttack03_Voice_01"
+		, "Miyabi_ExAttack03_Voice_02"
+		, "Miyabi_ExAttack03_Voice_03"
+	);
+	AudioSrc->Add_Sequence("ChargeAttack03"
+		, "Miyabi_ChargeAttack03_Voice_01"
+		, "Miyabi_ChargeAttack03_Voice_02"
+		, "Miyabi_ChargeAttack03_Voice_03"
+	);
+	AudioSrc->Add_Sequence("NormalAttack01"
+		, "Miyabi_NormalAttack01_Voice_01"
+		, "Miyabi_NormalAttack01_Voice_02"
+		, "Miyabi_NormalAttack01_Voice_03"
+	);
+	AudioSrc->Add_Sequence("NormalAttack02"
+		, "Miyabi_NormalAttack02_Voice_01"
+		, "Miyabi_NormalAttack02_Voice_02"
+	);
+	AudioSrc->Add_Sequence("NormalAttack03"
+		, "Miyabi_NormalAttack03_Voice_01"
+		, "Miyabi_NormalAttack03_Voice_02"
+		, "Miyabi_NormalAttack03_Voice_03"
+	);
+	AudioSrc->Add_Sequence("NormalAttack04"
+		, "Miyabi_NormalAttack04_Voice_01"
+		, "Miyabi_NormalAttack04_Voice_02"
+	);
+	AudioSrc->Add_Sequence("NormalAttack05"
+		, "Miyabi_NormalAttack05_Voice_01"
+		, "Miyabi_NormalAttack05_Voice_02"
+		, "Miyabi_NormalAttack05_Voice_03"
+		, "Miyabi_NormalAttack05_Voice_04"
+	);
+	AudioSrc->Add_Sequence("RushAttack"
+		, "Miyabi_RushAttack_Voice_01"
+		, "Miyabi_RushAttack_Voice_02"
+		, "Miyabi_RushAttack_Voice_03"
+		, "Miyabi_RushAttack_Voice_04"
+	);
+	AudioSrc->Add_Sequence("Evade_BackStep"
+		, "Miyabi_Evade_BackStep_Voice_01"
+		, "Miyabi_Evade_BackStep_Voice_02"
+	);
+	AudioSrc->Add_Sequence("Evade_Dash"
+		, "Miyabi_Evade_Dash_Voice_01"
+		, "Miyabi_Evade_Dash_Voice_02"
+	);
+	AudioSrc->Add_Sequence("CounterAttack"
+		, "Miyabi_CounterAttack_Voice_01"
+		, "Miyabi_CounterAttack_Voice_02"
+		, "Miyabi_CounterAttack_Voice_03"
+		, "Miyabi_CounterAttack_Voice_04"
+	);
+	AudioSrc->Add_Sequence("ComboSound"
+		, "Miyabi_ComboSound_Voice_01"
+		, "Miyabi_ComboSound_Voice_02"
+		, "Miyabi_ComboSound_Voice_03"
+	);
+	AudioSrc->Add_Sequence("HitNormal"
+		, "Miyabi_HitNormal_Voice_01"
+		, "Miyabi_HitNormal_Voice_02"
+		, "Miyabi_HitNormal_Voice_03"
+		, "Miyabi_HitNormal_Voice_04"
+	);
+	AudioSrc->Add_Sequence("HitHard"
+		, "Miyabi_HitHard_Voice_01"
+		, "Miyabi_HitHard_Voice_02"
+		, "Miyabi_HitHard_Voice_03"
+	);
+	AudioSrc->Add_Sequence("ParryAid"
+		, "Miyabi_ParryAid_Voice_01"
+		, "Miyabi_ParryAid_Voice_02"
+		, "Miyabi_ParryAid_Voice_03"
+	);
+	AudioSrc->Add_Sequence("AssaultAttack"
+		, "Miyabi_AssaultAttack_Voice_01"
+		, "Miyabi_AssaultAttack_Voice_02"
+		, "Miyabi_AssaultAttack_Voice_03"
+	);
+	AudioSrc->Add_Sequence("SwitchInAttack"
+		, "Miyabi_SwitchInAttack_Voice_01"
+		, "Miyabi_SwitchInAttack_Voice_02"
+	);
+
+
+	return S_OK;
+}
+
+void CMiyabi::Update_States()
+{
+	if (!Is_MainCharacter()) return;
+	if (!m_pCCT->Get_CompActive()) return;
+
+	for (const auto& Event : Get_Animator()->Get_EventBus())
+	{
+		if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+		if (Event.Tag == "CheckCombo")
+		{
+			if (m_bReserveCombo)
+			{
+				m_bReserveCombo = false;
+				if (m_TargetHandle.isAlive())
+				{
+					Get_Component<CAudioSource>()->Slot("ComboSwitch")
+						.Attribute3D(true)
+						.Volume(0.5f)
+						.Play();
+					BattleSystem()->GetBattlePlayer()->Request_ComboAttack();
+				}
+			}
+		}
+	}
+
+	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
+
+	Process_EndState(m_pStateMachine->Get_CurrentStateName());
+
+	if (m_bIsEvade)
+		m_pStateMachine->Set_Trigger("ToEvade");
+
+	if (m_bIsAttack)
+		Process_AttackInput(m_pStateMachine->Get_CurrentStateName());
+}
+
+void CMiyabi::Process_AttackInput(const string& strCurrentState)
+{
+	if (strCurrentState == "Idle")
+	{
+		m_pStateMachine->Set_Int("AttackEntryMode", 0);
+		m_pStateMachine->Set_Trigger("Attack");
+	}
+	else if (strCurrentState == "Move")
+	{
+		CMiyabiState_Move* pMove = static_cast<CMiyabiState_Move*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pMove || !pMove->Get_SubStateMachine())
+			return;
+
+		string strMoveType = pMove->Get_SubStateMachine()->Get_CurrentStateName();
+
+		if (strMoveType == "Walk")
+			m_pStateMachine->Set_Int("AttackEntryMode", 0);
+		else if (strMoveType == "Run")
+		{
+			IHState<CMiyabi>* pRun = dynamic_cast<IHState<CMiyabi>*>(
+				pMove->Get_SubStateMachine()->Get_CurrentState());
+			if (pRun && pRun->Get_SubStateMachine())
+			{
+				string strRunTag = pRun->Get_SubStateMachine()->Get_CurrentStateName();
+				if (strRunTag == "Run_End")
+					m_pStateMachine->Set_Int("AttackEntryMode", 0);
+				else
+					m_pStateMachine->Set_Int("AttackEntryMode", 1);
+			}
+			else return;
+		}
+		else return;
+
+		m_pStateMachine->Set_Trigger("Attack");
+	}
+	else if (strCurrentState == "Attack")
+	{
+		CMiyabiState_Attack* pAttack = static_cast<CMiyabiState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pAttack || !pAttack->Get_SubStateMachine())
+			return;
+
+		string strAttackType = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+		if (strAttackType == "NormalAttack")
+		{
+			CMiyabiState_NormalAttack* pNormal = static_cast<CMiyabiState_NormalAttack*>(
+				pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+			if (pNormal && pNormal->Get_SubStateMachine())
+				pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+		}
+		else if (strAttackType == "CounterAttack")
+		{
+			CMiyabiState_CounterAttack* pCounter = static_cast<CMiyabiState_CounterAttack*>(
+				pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (!pCounter || !pCounter->Get_SubStateMachine())
+				return;
+			if (!pCounter->Is_EndState())
+			{
+				pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
+				pCounter->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+			}
+		}
+		else if (strAttackType == "AssaultAttack")
+		{
+			CMiyabiState_AssaultAttack* pAssault = static_cast<CMiyabiState_AssaultAttack*>(
+				pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (!pAssault || !pAssault->Get_SubStateMachine())
+				return;
+			pAttack->Get_SubStateMachine()->Set_Int("ComboEntryIndex", 3);
+			pAssault->Get_SubStateMachine()->Set_Bool("ReserveNormal", true);
+		}
+	}
+	else if (strCurrentState == "SwitchIn")
+	{
+		CMiyabiState_SwitchIn* pSwitchIn = static_cast<CMiyabiState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+			return;
+
+		string strSwitchType = pSwitchIn->Get_SubStateMachine()->Get_CurrentStateName();
+		if (strSwitchType == "SwitchInParryAid")
+		{
+			CMiyabiState_SwitchInParryAid* pParryAid = static_cast<CMiyabiState_SwitchInParryAid*>(
+				pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+			if (!pSwitchIn || !pSwitchIn->Get_SubStateMachine())
+				return;
+			if (!pParryAid->Is_EndState())
+			{
+				pParryAid->Get_SubStateMachine()->Set_Bool("ReserveAssaultAid", true);
+			}
+		}
+	}
+}
+
+void CMiyabi::Process_EndState(const string& strCurrentState)
+{
+	if (strCurrentState == "Move")
+	{
+		CMiyabiState_Move* pMove = static_cast<CMiyabiState_Move*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pMove) return;
+
+		IHState<CMiyabi>* pMoveType = dynamic_cast<IHState<CMiyabi>*>(
+			pMove->Get_SubStateMachine()->Get_CurrentState());
+		if (pMoveType && pMoveType->Is_EndState())
+		{
+			IBaseState<CMiyabi>* pEnd = pMoveType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsAttack || m_bIsEvade) return;
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
+	}
+	else if (strCurrentState == "Attack")
+	{
+		CMiyabiState_Attack* pAttack = static_cast<CMiyabiState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pAttack) return;
+
+		IHState<CMiyabi>* pAttackType = dynamic_cast<IHState<CMiyabi>*>(
+			pAttack->Get_SubStateMachine()->Get_CurrentState());
+		if (pAttackType && pAttackType->Is_EndState())
+		{
+			IBaseState<CMiyabi>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsEvade) return;
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
+	}
+	else if (strCurrentState == "SwitchIn")
+	{
+		CMiyabiState_SwitchIn* pSwitchIn = static_cast<CMiyabiState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn) return;
+
+		IHState<CMiyabi>* pSwitchInType = dynamic_cast<IHState<CMiyabi>*>(
+			pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+		if (pSwitchInType && pSwitchInType->Is_EndState())
+		{
+			IBaseState<CMiyabi>* pEnd = pSwitchInType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsEvade) return;
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
+	}
+	//else if (strCurrentState == "Hit")
+	//{
+	//	CMiyabiState_Hit* pHit = static_cast<CMiyabiState_Hit*>(
+	//		m_pStateMachine->Get_CurrentState());
+	//	if (!pHit || !pHit->Get_SubStateMachine()) return;
+
+	//	IBaseState<CMiyabi>* pHitType = pHit->Get_SubStateMachine()->Get_CurrentState();
+	//	if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
+	//	{
+	//		if (m_bIsEvade) return;
+	//		if (Is_Input() || pHitType->Is_AnimEnd())
+	//			m_pStateMachine->Set_Trigger("ToIdle");
+	//	}
+	//}
+}
+
+HRESULT CMiyabi::Update_MotionBlurQueue()
 {
 	auto Model = Get_Component<CSkeletalModel>();
-	//_uint size = sizeof(_float4x4) * m_pAnimator->Get_CombinedBoneMatrices().size();
-	_uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
+	m_vRimLightColor = _vector3(0.25f, 0.5f, 1.f) * m_fMotionBlurFade;
+	m_fRimLightPower = 3.5f * m_fMotionBlurFade;
 
-	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	for (_int k = m_BoneMatrices.size() - 1; k >= 0; --k)
 	{
-		vector<_float4x4> BoneMatrices = m_pAnimator->Get_BoneMatrices(i);
-		OUTLINE_COMMAND Command =
+		_float t = (_float)k / (_float)(m_BoneMatrices.size());
+		_vector4 vColor = { 0.01f, 0.05f, 0.35f, 0.5f * m_fMotionBlurFade };
+
+		for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 		{
-			Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
-			m_pTransform->Get_WorldMatrix_Ptr(),
-			BoneMatrices,
-			"float4x4[]",
-			size ,
-			i,
-			[this](ID3D11DeviceContext* pContext, _uint index) {Render_OutLine(pContext,index); }
-		};
-		CGameInstance::GetInstance()->Get_RenderSystem()->Add_OutLineCommand(Command);
+			if (Model->isDrawable(i) == false) continue;
+			MOTIONBLUR_COMMAND Command =
+			{
+				Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+				&m_WorldMatrices[k],
+				m_BoneMatrices[k][i],
+				"float4x4[]",
+				vColor,
+				static_cast<_uint>(sizeof(_float4x4) * m_BoneMatrices[k][i].size()),
+				i,
+				[this](ID3D11DeviceContext* pContext, _uint index) {Render_DashMotionBlur(pContext, index); }
+			};
+			RenderSystem()->Add_MotionBlurCommand(Command);
+		}
 	}
 	return S_OK;
 }
+
+HRESULT CMiyabi::Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint idx)
+{
+	auto RenderSys = RenderSystem()->GetRenderer(RENDERER_TYPE::SKINNED);
+	auto Model = Get_Component<CSkeletalModel>();
+	auto Material = Get_Component<CMaterial>();
+	_int Index = Model->Get_MaterialIndex(idx);
+	auto Shader = Material->Get_Shader(Index);
+	auto instance = Material->Get_MaterialInstance(Index);
+	instance->Override_Pass("MotionBlur");
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		Model,
+		Shader,
+		idx,
+		"MotionBlur",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	Material->Apply_Material(pContext, Index);
+	Model->Draw(pContext, idx);
+	instance->Reset_Pass();
+	return S_OK;
+}
+
+//HRESULT CMiyabi::Add_OutLineRender()
+//{
+//	auto Model = Get_Component<CSkeletalModel>();
+//	//_uint size = sizeof(_float4x4) * m_pAnimator->Get_CombinedBoneMatrices().size();
+//	_uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
+//
+//	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+//	{
+//		vector<_float4x4> BoneMatrices = m_pAnimator->Get_BoneMatrices(i);
+//		OUTLINE_COMMAND Command =
+//		{
+//			Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+//			m_pTransform->Get_WorldMatrix_Ptr(),
+//			BoneMatrices,
+//			"float4x4[]",
+//			size ,
+//			i,
+//			[this](ID3D11DeviceContext* pContext, _uint index) {Render_OutLine(pContext,index); }
+//		};
+//		CGameInstance::GetInstance()->Get_RenderSystem()->Add_OutLineCommand(Command);
+//	}
+//	return S_OK;
+//}
 
 CMiyabi* CMiyabi::Create()
 {

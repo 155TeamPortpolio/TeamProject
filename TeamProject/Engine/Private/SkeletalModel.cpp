@@ -166,16 +166,17 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 
  vector<_float4x4> CSkeletalModel::Get_BoneMatrices(_uint meshIndex)
  {
+	 auto usedBones = m_pData->Get_Mesh(meshIndex)->Get_UsedBones();
 	 vector<_float4x4> result;
-	 result.reserve(m_CombinedMatrices.size());
+	 result.reserve(usedBones.size());
 
-	 for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	 for (uint16_t boneIndex : usedBones)
 	 {
-		 _smatrix final = m_CombinedMatrices[i];
-		 _smatrix offset= m_pData->Get_Offset(meshIndex, i);
-
-		 result.push_back(offset*final);
+		 _smatrix finalMat = m_CombinedMatrices[boneIndex];
+		 _smatrix offsetMat = m_pData->Get_Offset(meshIndex, (_uint)boneIndex);
+		 result.push_back(offsetMat * finalMat);
 	 }
+
 	 return result;
  }
 
@@ -191,12 +192,10 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 MINMAX_BOX CSkeletalModel::Get_WorldBoundingBox()
 {
 	MINMAX_BOX wordlBox = m_pData->Get_LocalBoundingBox();
-	_float4x4* pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix_Ptr();
-	XMStoreFloat3(&wordlBox.vMin, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMin), XMLoadFloat4x4(pWorldMat)));
-	XMStoreFloat3(&wordlBox.vMax, XMVector3TransformCoord(XMLoadFloat3(&wordlBox.vMax), XMLoadFloat4x4(pWorldMat)));
+	_float4x4 pWorldMat = m_pOwner->Get_Component<CTransform>()->Get_WorldMatrix();
+	wordlBox.TransformBox_8Corner(pWorldMat);
 	return wordlBox;
 }
-
 vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBoxes()
 {
 	vector<MINMAX_BOX> boxes;
@@ -217,6 +216,14 @@ MINMAX_BOX CSkeletalModel::Get_MeshBoundingBox(_uint index)
 _bool CSkeletalModel::isReadyToDraw()
 {
 	return m_pData != nullptr; 
+}
+
+void CSkeletalModel::SetModelDrawable(_bool isDraw)
+{
+	for (size_t i = 0; i < m_DrawableMeshes.size(); i++)
+	{
+		m_DrawableMeshes[i] = isDraw;
+	}
 }
 
 void CSkeletalModel::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -240,15 +247,37 @@ void CSkeletalModel::Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix)
 	m_bDirty = true;
 }
 
-void CSkeletalModel::Hide_MehsByName(const string& name)
+vector<_uint> CSkeletalModel::Hide_MehsByName(const string& name)
 {
-	_int index = m_pData->Find_MeshIndex(name);
+	vector<_uint> result = m_pData->Find_MeshesIndex(name);
 
-	if (index == -1)
-		return;
+	if (result.empty())
+		return result;
 
-	else
-		m_DrawableMeshes[index] = false;
+	else {
+		for (size_t i = 0; i < result.size(); i++)
+		{
+			m_DrawableMeshes[result[i]] = false;
+		}
+	}
+
+	return result;
+}
+vector<_uint> CSkeletalModel::Show_MehsByName(const string& name)
+{
+	vector<_uint> result = m_pData->Find_MeshesIndex(name);
+
+	if (result.empty())
+		return result;
+
+	else {
+		for (size_t i = 0; i < result.size(); i++)
+		{
+			m_DrawableMeshes[result[i]] = true;
+		}
+	}
+
+	return result;
 }
 void CSkeletalModel::Render_GUI()
 {

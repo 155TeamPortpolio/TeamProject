@@ -14,7 +14,7 @@ public:
     HRESULT Initialize_Prototype();
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
     virtual void Link_Bone(class CAnimator3D* pAnimator, const string& boneName);
-    virtual void Sync_Transform(_float dt, class CTransform* pTransform);
+    virtual void Sync_Transform(_float dt, class CTransform* pTransform, _bool OnlyPosition = false);
     virtual void Set_Offset(_fmatrix Offset);
     virtual void Dettach();
     _bool HasOwner() { return (m_pMasterAnimator || m_pMasterTransform); }

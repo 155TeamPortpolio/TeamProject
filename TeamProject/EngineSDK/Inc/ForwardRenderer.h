@@ -12,6 +12,16 @@ private:
     HRESULT Initialize(class CTarget_Manager* pTargetManager, class CPipeLine* pPipeLine);
 
 public:
+    CRenderer* GetRenderer(RENDERER_TYPE eType);
+
+public:
+    void Set_GlitchDesc(GLITCH_DESC desc);
+
+public:
+    void SetShadowUpdateInterval(_float fInterval);
+    void ResetUpdateInterval();
+
+public:
     HRESULT Render_Priority(class PriorityPass* pPriorityPass);
     HRESULT Render_StaticShadow(class StaticShadowPass* pShadowPass, _bool clear = false);
     HRESULT Render_SkinnedShadow(class SkinnedShadowPass* pShadowPass, _bool clear = false);
@@ -21,6 +31,8 @@ public:
     HRESULT Render_RimLight();
     HRESULT Render_SSAO();
     HRESULT Render_OutLine();
+    HRESULT Render_Vanish();
+    HRESULT Render_MotionBlur();
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);
     HRESULT Render_Combined();
@@ -28,10 +40,10 @@ public:
 
 public:
     void Update(_float dt);
-
 public:
     void SetRimLightMode(RIMLIGHT eMode);
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
+    void Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command);
 
 private:
     virtual HRESULT Ready_Target() override;
@@ -42,7 +54,7 @@ private:
     class CSkinnedMeshRenderer* m_pSkinnedRenderer;
 
     _float m_fStaticUpdateTimer = 0.f;
-    _float m_fStaticUpdateInterval = 0.2f;
+    _float m_fStaticUpdateInterval = 0.1f;
 
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,

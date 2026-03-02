@@ -81,7 +81,7 @@ void CInputMgr::Update()
 	ScreenToClient(m_hWnd, &m_pMousePos);
 }
 
-const _float2& CInputMgr::Mouse_Pos()
+ _float2 CInputMgr::Mouse_Pos()
 {
 	return { (float)m_pMousePos.x, (float)m_pMousePos.y };
 }

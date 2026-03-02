@@ -24,16 +24,34 @@ public:
 	virtual void Remove_UIObject(class CUI_Object* object);
 	const vector<class CUI_Object*>& Get_LevelUI(const string& leveTag);
 	virtual class CUI_Object* Request_UIObject(const UI_HANDLE& handle) override;
+	virtual class CUI_Object* Acquire(const CLONE_DESC& desc, INIT_DESC* pArg,_bool& outFirst) override;
+
+	void  Reset_StencilAllocator() override { m_stencilAlloc = 0; }
+	_uint Alloc_StencilRef()       override { return ++m_stencilAlloc; }
+	_uint Get_StencilRef()      const override { return m_stencilAlloc; }
 
 private:
 	void Add_Object_Recursive(const string& LevelTag, class CUI_Object* object);
 	void Sort_UI();
+	void CleanUp();
+	void Prune_Queues_ByLevel(const string& levelTag);
+	void Release_Subtree_ToPool(CUI_Object* root);
+
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	unordered_map<string, UIobjects> m_UIObjects;
 	UIobjects m_SortedUIObjects;
-	vector<CUI_Object*> DeleteUIs;
 	string m_nowLevelKey = {};
+	class CUI_Pool* m_pUIPool = { nullptr };
+
+	vector<CUI_Object*> DeleteUIs;
+	vector<CUI_Object*> m_ReleaseUIs;
+	unordered_set<_uint> DeleteUI_IDs;
+	unordered_set<_uint> m_ReleaseUI_IDs;
+
+private:
+	_uint m_stencilAlloc = 0;
+
 public:
 	static CUI_Manager* Create();
 	virtual void Free() override;

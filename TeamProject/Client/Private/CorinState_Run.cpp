@@ -4,34 +4,39 @@
 
 #include "CorinState_Move.h"
 #include "CharacterController.h"
+#include "AudioSource.h"
+
+CCorinState_Run* CCorinState_Run::Create()
+{
+    auto pInstance = new CCorinState_Run();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Loop", CCorinState_Run_Loop::Create());
+    pSubStateMachine->Register_State("End", CCorinState_Run_End::Create());
+    pSubStateMachine->Register_State("Turnback", CCorinState_Run_Turnback::Create());
+
+    pSubStateMachine->Get_State("End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("Loop", "End",
+        CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
+    // 반대 방향 입력
+    pSubStateMachine->Register_Transition("Loop", "Turnback",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToTurnback");
+    // Turnback -> End: 입력 없음
+    pSubStateMachine->Register_Transition("Turnback", "End",
+        CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
+    // Turnback -> Loop: 애니메이션 끝 + 입력 유지
+    pSubStateMachine->Register_Transition("Turnback", "Loop",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToLoop");
+
+    pSubStateMachine->Set_DefaultState("Loop");
+
+    return pInstance;
+}
 
 void CCorinState_Run::Enter(CCorin* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Loop", CCorinState_Run_Loop::Create());
-        m_pSubStateMachine->Register_State("End", CCorinState_Run_End::Create());
-        m_pSubStateMachine->Register_State("Turnback", CCorinState_Run_Turnback::Create());
-
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
-        m_pSubStateMachine->Get_State("Turnback")->Set_Tag("Turnback");
-
-        m_pSubStateMachine->Register_Transition("Loop", "End",
-            CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
-        // 반대 방향 입력
-        m_pSubStateMachine->Register_Transition("Loop", "Turnback",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToTurnback");
-        // Turnback -> End: 입력 없음
-        m_pSubStateMachine->Register_Transition("Turnback", "End",
-            CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
-        // Turnback -> Loop: 애니메이션 끝 + 입력 유지
-        m_pSubStateMachine->Register_Transition("Turnback", "Loop",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToLoop");
-
-        m_pSubStateMachine->Set_DefaultState("Loop");
-    }
-
     IHState<CCorin>* pMoveState = Get_ParentState();
     _int iRunEntryMode = 0;
     if (pMoveState && pMoveState->Get_SubStateMachine())
@@ -47,6 +52,10 @@ void CCorinState_Run::Enter(CCorin* pOwner)
 
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
     __super::Enter(pOwner);
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_Run::Update(CCorin* pOwner, _float dt)
@@ -73,6 +82,8 @@ void CCorinState_Run_Loop::Enter(CCorin* pOwner)
         m_fTurnbackCooldown = pRunState->Get_SubStateMachine()->Get_Float("TurnbackCooldown");
         pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.f);
     }
+
+    pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
 }
 
 void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
@@ -93,8 +104,14 @@ void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
         }
     }
     pOwner->Process_RootMotion(dt);
-}
 
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    if (IsCrossAnimProgress(0.40f))
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
+
+    if (IsCrossAnimProgress(0.8f))
+        pOwner->Control_SFX("Corin_FootStep_SFX_01.wav");
+}
 
 void CCorinState_Run_End::Enter(CCorin* pOwner)
 {
@@ -102,10 +119,17 @@ void CCorinState_Run_End::Enter(CCorin* pOwner)
         .Apply();
 }
 
+void CCorinState_Run_End::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt, ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION));
+}
+
 void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
-        .Speed(1.2f)
+        .Speed(1.f)
+        .EndAt(0.35f)
         .Apply();
     pOwner->Reset_InputBuffer();
     pOwner->Set_ResetMove(true);
@@ -113,18 +137,18 @@ void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
 
 void CCorinState_Run_Turnback::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-    }
-    if (m_fAnimProgress > 0.5f && pOwner->Is_Move())
+    CCharacter::ROOTMOTION_DESC desc;
+    desc.fMoveWeight = 1.f;
+    desc.iModeMask = ENUM(CCharacter::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCharacter::ROOTMOTION_MASK::QUATERNION);
+    pOwner->Process_RootMotion(dt, desc);
+
+    if (Is_AnimEnd() && pOwner->Is_Move())
     {
         IHState<CCorin>* pRunState = Get_ParentState();
         if (pRunState && pRunState->Get_SubStateMachine())
         {
-            pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 1.f);
+            pRunState->Get_SubStateMachine()->Set_Float("TurnbackCooldown", 0.3f);
             pRunState->Get_SubStateMachine()->Set_Trigger("ToLoop");
         }
     }

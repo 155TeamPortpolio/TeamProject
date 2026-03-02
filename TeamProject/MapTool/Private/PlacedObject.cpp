@@ -116,6 +116,15 @@ void CPlacedObject::Render_GUI()
 	string TagModelKey = "Model Key : " + m_TagModelKey;
 	ImGui::Text(TagModelKey.c_str());
 
+	_vector3 Pos = Get_Component<CTransform>()->Get_Pos();
+	_float fPos[3] = { Pos.x,Pos.y,Pos.z };
+	ImGui::DragFloat3("Pos", fPos, 0.01f, -100.f, 100.f, "%.2f");
+	Get_Component<CTransform>()->Set_Pos({ fPos[0], fPos[1] ,fPos[2] });
+
+	if (ImGui::Button("Set000")) {
+		Get_Component<CTransform>()->Set_Pos({ 0, 0, 0 });
+	}
+
 	ImGui::PopID();
 }
 

@@ -2,8 +2,11 @@
 #define Client_Enum_h__
 
 namespace Client {
-	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player };
-	enum class CHARACTER { JaneDoe, Corin, END };
+	enum class GLOBAL_ID : _uint { FreeCam, OrbitCam, SeqCam, ShadowCam, Player, Cloud };
+	enum class CHARACTER { Corin, JaneDoe, Miyabi, END };
+
+	enum class ATTRIBUTE { Electric, Ether, Fire, Ice, Physical, END };
+	enum class SPECIALTY { Attack, Anomaly, Defenses, Rupture, Stun, Support, END };
 
 	/* UI */
 	// ---------- Battle HUD : Stat ----------
@@ -12,10 +15,32 @@ namespace Client {
 	// ---------- Battle HUD : Action ----------
 	enum class UI_ACTION_TYPE { ALL, PRIMARY, EVADE, EVADEPERFECT, SPECIAL, SWITCH, ULTIMATE, END };
 	enum UI_ACTION_STATE { DISABLE, ENABLE, AVAILABLE, EXECUTING };
-	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT };
+	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT, END };
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
-	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE};
+	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE, ULTIMATE, KNOCKOUT, SWITCH};
+
+	//------------------- Field -------------------
+	enum class DayPhase {EarlyMorning,Morning,Afternoon,LateNight,Any};
+	enum class Speaker { Player, Npc, System };
+	enum class DialogueType {Normal, Choice, Quest};
+	enum class DialogueResult {Fail, Running, Success, None};
+	enum class GachaGrade { S, A, B };
+	enum class GachaType { Agent, Engine, End };
+
+	//------------------- Battle -------------------
+	enum class StageType { Start, Rest, Normal, Elite, Boss, End };
+	enum class BATTLE_VFX_TYPE { HIT_NORMAL, HIT_HARD, EVADE, PARRY, SWITCH, CANCLESWITCH,ULTIMATE, CLEAR, WIPEOUT,END };
+	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, CAMERA,EFFECT, ENVOBJECT, END };
+
+	//------------------- Gacha --------------------
+	enum class GACHA_STAGE { BANGBOO, AVATAR, END };
+
+	enum class BOSS { Sacrifice, Defiler, End };
+
+	enum class TUTORIAL_TYPE { EXTREME_EVADE, EXTREME_SUPPORT, DECIBEL_ULTIMATE, GROGGY_COMBO, END };
+	enum class TUTORIAL_STATE { INFO, PLAY, COMPLETED, END };
+	enum class TUTORIAL_ACTION { DODGE, DODGE_COUNTER, ASSIST, ASSIST_CHARGE, ULTIMATE, COMBO, END };
 }
 
 #endif

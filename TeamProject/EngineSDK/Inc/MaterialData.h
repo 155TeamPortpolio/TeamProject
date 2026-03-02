@@ -29,6 +29,8 @@ public:
 	_uint  Get_MaterialDataID() { return m_MaterialDataID; }
 	const string& Get_MaterialName() { return m_MaterialKey; }
 	void Change_DataPass(const string& pass) { m_passConstant = pass; }
+	_bool Get_Texture(TEXTURE_TYPE eType, _uint index, class CTexture*& outPrt);
+	_uint Get_TextureCount(TEXTURE_TYPE eType);
 
 public:
 	_bool Has_Texture(TEXTURE_TYPE eType);

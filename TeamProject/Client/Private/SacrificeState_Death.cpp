@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SacrificeState_Death.h"
 #include "Sacrifice.h"
+#include "AudioSource.h"
+#include "BattleSystem.h"
 
 void CSacrificeState_Death::Enter(CSacrifice* pOwner)
 {
@@ -44,7 +46,15 @@ void CSacrificeState_Death_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Death_Stay").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->DeactiveAxe();
+	pOwner->DeactiveSword();
+	pOwner->DeactiveWhip();
+	pOwner->DeactiveLaser();
+	pOwner->DeactiveEyeLaser();
+
 	pOwner->Set_Hitable(false);
+	pOwner->Control_TargetEnable(false);
+	pOwner->HideHUD(true);
 }
 
 void CSacrificeState_Death_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -61,7 +71,14 @@ void CSacrificeState_Death_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Death_Stay").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->DeactiveAxe();
+	pOwner->DeactiveSword();
+	pOwner->DeactiveWhip();
+	pOwner->DeactiveLaser();
+	pOwner->DeactiveEyeLaser();
 	pOwner->Set_Hitable(false);
+
+	pOwner->RequestRemoveOnDeathToBattleSystem();	
 }
 
 void CSacrificeState_Death_Phase2::Update(CSacrifice* pOwner, _float dt)

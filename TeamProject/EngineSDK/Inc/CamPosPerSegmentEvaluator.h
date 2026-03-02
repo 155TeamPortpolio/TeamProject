@@ -11,7 +11,7 @@ private:
     virtual ~CCamPosPerSegmentEvaluator() DEFAULT;
 
 public:
-    void         SetSequence(const CamSequenceDesc* s) { seq = s; }         
+    void         SetSequence(const CamSeqDesc* s) { seq = s; }         
     bool         Build(const vector<CamKeyFrame>& keys) override;
     _vector3     Evaluate(_float time) const override;
 
@@ -19,15 +19,16 @@ private:
     CamPosInterp ResolveMode(_uint segIdx) const;
 
 private:
-    const CamSequenceDesc*     seq{};
+    const CamSeqDesc* seq{};
     const vector<CamKeyFrame>* keyframes{};
 
-    ICamPosEvaluator*          evalLinear{};
-    ICamPosEvaluator*          evalCatmull{};
-    ICamPosEvaluator*          evalCentripetal{};
-    ICamPosEvaluator*          evalBSpline{};
-    ICamPosEvaluator*          evalHermite{};
-    ICamPosEvaluator*          evalOrbitArc{};
+    ICamPosEvaluator* evalLinear{};
+    ICamPosEvaluator* evalCatmull{};
+    ICamPosEvaluator* evalCentripetal{};
+    ICamPosEvaluator* evalBSpline{};
+    ICamPosEvaluator* evalHermite{};
+    ICamPosEvaluator* evalOrbitArc{};
+    ICamPosEvaluator* evalOrbitSpin{};
 
 public:
     static CCamPosPerSegmentEvaluator* Create() { return new CCamPosPerSegmentEvaluator(); }

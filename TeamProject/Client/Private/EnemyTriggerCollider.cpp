@@ -85,12 +85,10 @@ void CEnemyTriggerCollider::Render_GUI()
 
 void CEnemyTriggerCollider::OnTriggerEnter(CGameObject* pOther)
 {
-	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterTriggerHit(true);
 }
 
 void CEnemyTriggerCollider::OnTriggerExit(CGameObject* pOther)
 {
-	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterTriggerHit(false);
 }
 
 CEnemyTriggerCollider* CEnemyTriggerCollider::Create()

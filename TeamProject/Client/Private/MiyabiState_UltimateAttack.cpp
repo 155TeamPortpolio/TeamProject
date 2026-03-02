@@ -1,0 +1,344 @@
+#include "pch.h"
+#include "MiyabiState_UltimateAttack.h"
+
+#include "BattleSystem.h"
+
+#include "Miyabi.h"
+
+#include "CamDirector.h"
+#include "UIDirector.h"
+#include "AudioSource.h"
+#include "ObjectContainer.h"
+
+CMiyabiState_UltimateAttack* CMiyabiState_UltimateAttack::Create()
+{
+    auto pInstance = new CMiyabiState_UltimateAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("UltimateAttack_Start", CMiyabiState_UltimateAttack_Start::Create());
+    pSubStateMachine->Register_State("UltimateAttack_Loop", CMiyabiState_UltimateAttack_Loop::Create());
+    pSubStateMachine->Register_State("UltimateAttack_End", CMiyabiState_UltimateAttack_End::Create());
+
+    pSubStateMachine->Get_State("UltimateAttack_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("UltimateAttack_Start", "UltimateAttack_Loop",
+        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("UltimateAttack_Loop", "UltimateAttack_End",
+        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("UltimateAttack_Start");
+
+
+    return pInstance;
+}
+
+void CMiyabiState_UltimateAttack::Enter(CMiyabi* pOwner)
+{
+    pOwner->Push_Invincible();
+    pOwner->Lock_Move();
+    pOwner->Increase_Frost(3);
+
+    __super::Enter(pOwner);
+
+    CamDirector()->RequestSequence(CamSeqType::Ultimate);
+}
+
+void CMiyabiState_UltimateAttack::Update(CMiyabi* pOwner, _float dt)
+{
+    auto pMiyabiState = pOwner->Get_StateMachine();
+    if (pMiyabiState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentState()->Get_Tag() == "End" &&
+            Is_AnimEnd())
+        {
+            pMiyabiState->Set_Trigger("SwitchOut");
+            pMiyabiState->Set_Bool("OutReserve", false);
+        }
+    }
+    __super::Update(pOwner, dt);
+}
+
+void CMiyabiState_UltimateAttack::Exit(CMiyabi* pOwner)
+{
+    pOwner->Pop_Invincible();
+    __super::Exit(pOwner);
+}
+
+void CMiyabiState_UltimateAttack_Start::Enter(CMiyabi* pOwner)
+{
+    //BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::ULTIMATE);
+    UIDirector()->Show_Ultimate(CHARACTER::Miyabi, 2.f);
+    BattleSystem()->StartUltimate(2.f);
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
+        .Apply();
+    pOwner->Get_Component<CAudioSource>()->Sequence("Ultimate")
+        .Attribute3D(true)
+        .PlayNext();
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateStart_SFX")
+        .Attribute3D(true)
+        .Play();
+}
+
+void CMiyabiState_UltimateAttack_Start::Update(CMiyabi* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CMiyabiState_UltimateAttack_Loop::Enter(CMiyabi* pOwner)
+{
+    pOwner->Set_WeaponEffectMesh(true);
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
+        .ReserveSpeed(0.34f, 0.48f, 0.7f, EaseType::InExpo)
+        .ReserveSpeed(0.48f, 0.8f, 1.5f, EaseType::OutExpo)
+        .ReserveSpeed(0.8f, 1.f, 0.8f, EaseType::OutQuint)
+        .Apply();
+
+    pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_SFX_01")
+        .Attribute3D(true)
+        .Play();
+
+    m_bDamageActive = false;
+
+    m_iRepeatCount = 0;
+    m_fRepeatProgress = 0.54f;
+    m_vStartRotation = _float4(0.f, 0.f, 0.f, 1.f);
+
+    m_iStingRepeatCount = 0;
+    m_fStingRepeatProgress = 0.54f;
+
+    pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+    pOwner->Set_WeaponFire(false);
+}
+
+void CMiyabiState_UltimateAttack_Loop::Update(CMiyabi* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "UltimateAttack")
+        {
+            BattleSystem()->TakeAllDamage(HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.567f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::ULTIMATE)
+                .Charge(1.f)
+            );
+            BattleSystem()->TakeAllDamage(HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 1.567f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::ULTIMATE)
+                .Charge(1.f)
+            );
+        }
+
+        if (Event.Tag == "UltimateStart")
+        {
+            m_bDamageActive = true;
+            m_fDamageTimer = m_fDamageInterval;
+        }
+        else if (Event.Tag == "UltimateEnd")
+        {
+            m_bDamageActive = false;
+        }
+
+        if (Event.Tag == "MotionBlur")
+        {
+            pOwner->Add_MotionBlur();
+        }
+        if (Event.Tag == "MotionBlurEnd")
+        {
+            pOwner->Clear_MotionBlur();
+            pOwner->SetRenderLayer(RENDER_LAYER::Default);
+            pOwner->Set_WeaponFire(true);
+        }
+    }
+
+    if (m_bDamageActive)
+    {
+        m_fDamageTimer += dt;
+        if (m_fDamageTimer >= m_fDamageInterval)
+        {
+            m_fDamageTimer -= m_fDamageInterval;
+            BattleSystem()->TakeAllDamage(HitDesc()
+                .Name(pOwner->Get_CharacterName())
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * 3.135f * Helper::Get_Random_Float(1.f, 1.5f)
+                    , DAMAGE_TYPE::ULTIMATE)
+                .Charge(1.f)
+            );
+        }
+    }
+
+    if (IsCrossAnimProgress(0.4f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_SFX_02")
+            .Attribute3D(true)
+            .Play();
+    }
+
+    if (IsCrossAnimProgress(0.53f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateEnd_Voice.wav")
+            .Attribute3D(true)
+            .Play();
+        pOwner->Set_WeaponEffectMesh(false);
+    }
+
+    if (IsCrossAnimProgress(0.9f))
+    {
+        pOwner->Get_Component<CAudioSource>()->Slot("Miyabi_UltimateAttack_End_SFX")
+            .Attribute3D(true)
+            .Play();
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CMiyabiState_UltimateAttack_Loop::Exit(CMiyabi* pOwner)
+{
+    m_fDamageTimer = 0.f;
+    m_bDamageActive = false;
+}
+
+void CMiyabiState_UltimateAttack_Loop::Update_Effects(CMiyabi* pOwner)
+{
+    // 1
+    if (IsCrossAnimProgress(0.06f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash0", _vector3(0.f, 0.7f, 13.6f), _quaternion(-0.27f, 0.91f, 0.11f, -0.31f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Sting0", _vector3(0.f, 0.2f, 0.f), _quaternion(0.f, -0.71f, 0.f, 0.71f), false);
+    }
+    if (IsCrossAnimProgress(0.08f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash1", _vector3(0.f, 0.7f, 13.6f), _quaternion(-0.37f, -0.02f, -0.22f, 0.9f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash2", _vector3(0.f, 0.7f, 13.6f), _quaternion(0.14f, -0.5f, 0.84f, 0.17f), false);
+    }
+
+    // 2
+    if (IsCrossAnimProgress(0.21f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate1_Sting0", _vector3(1.1f, 0.2f, 12.9f), _quaternion(0.f, 0.49f, 0.f, 0.87f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash3", _vector3(3.f, 0.7f, 8.6f), _quaternion(-0.44f, 0.73f, 0.25f, -0.46f), false);
+    }
+    if (IsCrossAnimProgress(0.24f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash4", _vector3(3.f, 0.7f, 8.6f), _quaternion(0.71f, -0.09f, 0.12f, -0.69f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash5", _vector3(3.f, 0.7f, 8.6f), _quaternion(-0.4f, 0.6f, -0.65f, -0.25f), false);
+    }
+    // 3
+    if (IsCrossAnimProgress(0.245f)) 
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate1_Sting1", _vector3(0.2f, 0.2f, 9.f), _quaternion(0.f, 0.95f, 0.f, 0.3f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash0", _vector3(-4.f, 0.7f, 5.f), _quaternion(-0.44f, 0.73f, 0.25f, -0.46f), false);
+    }
+    if (IsCrossAnimProgress(0.26f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash1", _vector3(-4.f, 0.7f, 5.f), _quaternion(0.71f, -0.09f, 0.12f, -0.69f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash2", _vector3(-4.f, 0.7f, 5.f), _quaternion(-0.4f, 0.6f, -0.65f, -0.25f), false);
+    }
+    // 4
+    if (IsCrossAnimProgress(0.28f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate1_Sting2", _vector3(-4.1f, 0.2f, 3.6f), _quaternion(0.f, 0.36f, 0.f, 0.93f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash3", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.27f, 0.67f, 0.69f, -0.08f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash4", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.35f, 0.87f, 0.24f, 0.26f), false);
+    }
+    if (IsCrossAnimProgress(0.3f))
+        pOwner->Play_Effect("Miyabi_Ultimate0_Slash5", _vector3(0.f, 0.7f, 0.f), _quaternion(-0.44f, -0.3f, -0.37f, 0.76f), false);
+
+    if(IsCrossAnimProgress(0.34f))
+        pOwner->Play_Effect("Miyabi_Ultimate_Flare", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+
+    if (IsCrossAnimProgress(0.53f))
+    {
+        pOwner->Play_Effect("Miyabi_Ultimate_Flare1", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate_Smoke0", _vector3(0.f, 0.1f, 13.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Miyabi_Ultimate_Smoke1", _vector3(0.f, 0.1f, 13.6f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    }
+
+    if (m_iRepeatCount < 30)
+    {
+        if (IsCrossAnimProgress(m_fRepeatProgress))
+        {
+            _quaternion deltaRotation = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(-45.f), XMConvertToRadians(60.f), XMConvertToRadians(45.f));
+            _quaternion currRotation = m_vStartRotation;
+            currRotation *= deltaRotation;
+
+            _vector3 randAngle{};
+            randAngle.x = Helper::Get_Random_Float(-5.f, 5.f);
+            randAngle.y = Helper::Get_Random_Float(-5.f, 5.f);
+            randAngle.z = Helper::Get_Random_Float(-5.f, 5.f);
+            _quaternion randRotation = _quaternion::CreateFromYawPitchRoll(randAngle);
+            currRotation *= randRotation;
+            currRotation.Normalize();
+
+            m_vStartRotation = currRotation;
+
+            pOwner->Play_Effect("Miyabi_Ex1_Slash" + to_string(m_iRepeatCount % 9), _vector3(0.f, 0.5f, 13.6f - (m_iRepeatCount * m_fDistanceInterval)), currRotation, false);
+
+            m_fRepeatProgress += m_fRepeatInterval;
+            ++m_iRepeatCount;
+        }
+    }
+
+    if (m_iStingRepeatCount < 10)
+    {
+        if (IsCrossAnimProgress(m_fStingRepeatProgress))
+        {
+            _float3 vRandPosition{}, vRandRotation{}, vCenter{};
+            vCenter.x = 0.f;
+            vCenter.y = 2.f;
+            vCenter.z = 13.6f - (m_iRepeatCount * m_fDistanceInterval);
+
+            vRandPosition.x = Helper::Get_Random_Float(m_vMinRange.x, m_vMaxRange.x);
+            vRandPosition.y = Helper::Get_Random_Float(m_vMinRange.y, m_vMaxRange.y);
+            vRandPosition.z = vCenter.z + Helper::Get_Random_Float(m_vMinRange.z, m_vMaxRange.z);
+
+            vRandRotation.x = 0.f;
+            vRandRotation.y = XMConvertToRadians(Helper::Get_Random_Float(-5.f, 5.f));
+            vRandRotation.z = XMConvertToRadians(Helper::Get_Random_Float(-10.f, 10.f));
+
+
+            _vector3 vDir = vCenter - vRandPosition;
+            vDir.Normalize();
+
+            _float yaw = atan2(vDir.z, vDir.x);
+            _float roll = atan2(vDir.y, sqrtf(vDir.x * vDir.x + vDir.z * vDir.z));
+
+            _quaternion rotation = _quaternion::CreateFromYawPitchRoll(yaw, 0.f, roll);
+            rotation *= _quaternion::CreateFromYawPitchRoll(vRandRotation);
+
+            pOwner->Play_Effect("Miyabi_Ex1_Sting" + to_string(m_iRepeatCount % 9), _vector3(vRandPosition), rotation, false);
+
+            m_fStingRepeatProgress += m_fStingRepeatInterval;
+            ++m_iStingRepeatCount;
+        }
+    }
+
+}
+
+void CMiyabiState_UltimateAttack_End::Enter(CMiyabi* pOwner)
+{
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
+        .EndAt(0.1f)
+        .Apply();
+
+    pOwner->Unlock_Move();
+}
+
+void CMiyabiState_UltimateAttack_End::Update(CMiyabi* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CMiyabi::ROOTMOTION_MASK::MOVE) |
+        ENUM(CMiyabi::ROOTMOTION_MASK::QUATERNION));
+}

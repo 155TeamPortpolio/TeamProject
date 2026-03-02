@@ -21,6 +21,11 @@ private:
 	void Register_States();
 	void Register_Transitions();
 	void AttackFromIndex(_int iMoveIndex);
+
+private:
+	HitDesc		m_NormalHitDesc = {};
+	HitDesc		m_HardHitDesc = {};
+	HitDesc		m_Attack4HitDesc = {};
 };
 
 class CThugAssaulter_Attack1 : public IBaseState<CThugAssaulter>
@@ -33,6 +38,13 @@ public:
 public:
 	static CThugAssaulter_Attack1* Create() { return new CThugAssaulter_Attack1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugAssaulter* pOwner);
+
+private:
+	_bool		m_isFinish = { false };
+	_bool		m_isParryEnable = { false };
 };
 
 class CThugAssaulter_Attack2 : public IBaseState<CThugAssaulter>
@@ -47,9 +59,14 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CThugAssaulter* pOwner);
+
+private:
 	_bool		m_isFirstAttack = { false };
 	_bool		m_isSecondAttack = { false };
 	HitDesc		m_tHitDesc = {};
+	_bool		m_isFinish = { false };
+	_bool		m_isParryEnable = { false };
 
 };
 
@@ -65,8 +82,13 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CThugAssaulter* pOwner);
+
+private:
 	_bool m_isFirstAttack = { false };
 	HitDesc m_tHitDesc = {};
+	_bool		m_isFinish = { false };
+	_bool		m_isParryEnable = { false };
 };
 
 class CThugAssaulter_Attack4 : public IBaseState<CThugAssaulter>
@@ -79,6 +101,13 @@ public:
 public:
 	static CThugAssaulter_Attack4* Create() { return new CThugAssaulter_Attack4(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CThugAssaulter* pOwner);
+
+private:
+	_bool		m_isFinish = { false };
+	_bool		m_isParryEnable = { false };
 };
 
 NS_END

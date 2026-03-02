@@ -13,7 +13,7 @@ public:
     virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_Walk* Create() { return new CCorinState_Walk(); }
+    static CCorinState_Walk* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -45,7 +45,7 @@ class CCorinState_Walk_End : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override {}
 
 public:

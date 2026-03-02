@@ -46,7 +46,6 @@ void CPortal::Priority_Update(_float dt)
 void CPortal::Update(_float dt)
 {
 	Get_Component<CCollider>()->Update(dt);
-	Interact();
 }
 
 void CPortal::Late_Update(_float dt)
@@ -79,37 +78,40 @@ void CPortal::OnTriggerExit(CGameObject* pOther)
 	m_bIsInteractable = false;
 }
 
-void CPortal::Interact()
+void CPortal::Interact(CGameObject* pObject)
 {
 	if (!m_bIsInteractable)
 		return;
-	
-	if (InputDevice()->Key_Down('F')) {
-		LevelManager()->Set_LoadingLevel("Loading_Level");
-		LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
-	}
+
+	LevelManager()->Set_LoadingLevel("Loading_Level");
+	LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+}
+
+OBJECT_HANDLE CPortal::Get_InteractHandle()
+{
+	return Get_Handle();
 }
 
 CPortal* CPortal::Create()
 {
-	CPortal* Instance = new CPortal();
-	if (FAILED(Instance->Initialize_Prototype()))
+	CPortal* pInstance = new CPortal();
+	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		Safe_Release(Instance);
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-	return Instance;
+	return pInstance;
 }
 
 CGameObject* CPortal::Clone(INIT_DESC* pArg)
 {
-	CPortal* Instance = new CPortal(*this);
-	if (FAILED(Instance->Initialize(pArg)))
+	CPortal* pInstance = new CPortal(*this);
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		Safe_Release(Instance);
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-	return Instance;
+	return pInstance;
 }
 
 void CPortal::Free()

@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "Texture.h"
 #include "Helper_Func.h"
 
 CParticleNode_Edit::CParticleNode_Edit()
@@ -37,14 +38,13 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Default", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
-	customInstance->Set_Blended(true);
-
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
 
+	m_pTransform->Initialize(nullptr);
 	m_InstanceName = "ParticleNode";
 	m_IsEffectActive = false;
 
@@ -77,6 +77,7 @@ void CParticleNode_Edit::Render_GUI()
 	//ImGui::Begin("SpriteNode", &isOpen);
 	AddTextures();
 	SetUp_ParticleEffect();
+	CGameObject::Render_GUI();
 
 	ImGui::PopID();
 }
@@ -93,6 +94,10 @@ void CParticleNode_Edit::Play()
 
 	PARTICLE_NODE node{};
 
+	node.vRimLightColor = m_vRimLightColor;
+	node.vPivot = m_vPivot;
+	node.iUseDepthTest = m_iUseDepthTest;
+	node.iRenderAlignment = m_iRenderAlignment;
 	node.iRGBMaskMode = m_iRGBMaskMode;
 	node.iColorMode = ENUM(m_eColorMode);
 	node.isWorld = m_IsWorld;
@@ -145,10 +150,20 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
+	m_UseMask = json.value("use_mask", false);
+	m_MaskTextureTag = json.value("mask_texture_tag", "");
+
 	/* Offset Transform */
 	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
 	auto vOffsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
 
+	auto rimLightColor = json.value("rimlight_color", json::array({ 0.f,0.f,0.f }));
+	auto pivot = json.value("pivot", json::array({ 0.5f,0.5f }));
+	m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
+	m_vPivot = _float2(pivot[0], pivot[1]);
+	
+	m_iUseDepthTest = json.value("use_depth_test", 1);
+	m_iRenderAlignment = json.value("render_alignment", 0);
 	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
@@ -224,10 +239,32 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 
 	/* Set Texture */
 	{
-		auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
-		pMaterialData->Link_Texture("EffectEdit_Level", m_TextureKey, TEXTURE_TYPE::DIFFUSE);
+		auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_TextureKey, true);
 
-		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+	}
+
+	/* Set Mask */
+	if (m_UseMask)
+	{
+		auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_MaskTextureTag);
+
+		if (pTexture)
+		{
+			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+			pMaterialInstance->Override_Pass("MaskPass");
+			pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+		}
+	}
+	else
+	{
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+
+		if (0 == m_iUseDepthTest)
+			pMaterialInstance->Override_Pass("None_Depth");
+		else
+			pMaterialInstance->Override_Pass("Default");
 	}
 
 	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
@@ -248,10 +285,17 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
 
+		{"use_mask", m_UseMask},
+		{"mask_texture_tag",m_MaskTextureTag},
+
 		/* Offset Transform */
 		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
-		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetPosition.z,vOffsetQuaternion.w})},
+		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetQuaternion.z,vOffsetQuaternion.w})},
 
+		{"rimlight_color",json::array({m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z})},
+		{"pivot",json::array({m_vPivot.x,m_vPivot.y})},
+		{"use_depth_test",m_iUseDepthTest},
+		{"render_alignment",m_iRenderAlignment},
 		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},
 		{"delay_time",m_fDelayTime},
@@ -339,13 +383,27 @@ void CParticleNode_Edit::AddTextures()
 	{
 		if (!m_pContext->Textures.empty())
 		{
-			auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
-			pMaterialData->Link_Texture("EffectEdit_Level", m_pContext->TextureTags[0], TEXTURE_TYPE::DIFFUSE);
-
 			m_TextureKey = m_pContext->TextureTags[0];
-		}
 
-		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+			auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0], true);
+			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+			pMaterialInstance->Set_Param("DiffuseTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+		}
+	}
+
+	if (m_UseMask)
+	{
+		if (ImGui::Button("Add Mask Texture"))
+		{
+			if (!m_pContext->Textures.empty())
+			{
+				m_MaskTextureTag = m_pContext->TextureTags[0];
+
+				auto pTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_pContext->TextureTags[0]);
+				auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+				pMaterialInstance->Set_Param("MaskTexture", { pTexture->Get_SRV(),"Texture2D",0 });
+			}
+		}
 	}
 }
 
@@ -357,7 +415,20 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
+	isDirty |= ImGui::Checkbox("Use Mask", &m_UseMask);
 
+	{
+		_float rimLightColor[3] = { m_vRimLightColor.x,m_vRimLightColor.y,m_vRimLightColor.z };
+
+		if (ImGui::ColorEdit3("RimLight Color", rimLightColor))
+		{
+			m_vRimLightColor = _float3(rimLightColor[0], rimLightColor[1], rimLightColor[2]);
+			isDirty = true;
+		}
+	}
+	isDirty |= ImGui::DragFloat2("Pivot", &m_vPivot.x);
+	isDirty |= ImGui::DragInt("Use Depth Test", reinterpret_cast<_int*>(&m_iUseDepthTest));
+	isDirty |= ImGui::DragInt("Render Alignment", reinterpret_cast<_int*>(&m_iRenderAlignment));
 	isDirty |= ImGui::DragInt("RGB Mask Mode", reinterpret_cast<_int*>(&m_iRGBMaskMode));
 	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
@@ -438,6 +509,10 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 		PARTICLE_NODE node{};
 
+		node.vRimLightColor = m_vRimLightColor;
+		node.vPivot = m_vPivot;
+		node.iUseDepthTest = m_iUseDepthTest;
+		node.iRenderAlignment = m_iRenderAlignment;
 		node.iRGBMaskMode = m_iRGBMaskMode;
 		node.SpawnShape = ENUM(m_eSpawnShape);
 		node.iColorMode = ENUM(m_eColorMode);
@@ -484,5 +559,16 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.vScrollSpeed = m_vScrollSpeed;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
+
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		if (m_UseMask)
+			pMaterialInstance->Override_Pass("MaskPass");
+		else
+		{
+			if (0 == m_iUseDepthTest)
+				pMaterialInstance->Override_Pass("None_Depth");
+			else
+				pMaterialInstance->Override_Pass("Default");
+		}
 	}
 }

@@ -1,5 +1,21 @@
 {
   "levels": {
+    "Global_Level": {
+      "objects": [        
+        {
+          "prototypeTag": "Proto_GameObject_SceneFrame",
+          "instanceName": "scene_frame",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Mouse",
+          "instanceName": "mouse",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
     "Logo_Level": {
       "objects": [
         {
@@ -24,7 +40,13 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
-          "instanceName": "battleHUD",
+          "instanceName": "hud_battle",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Switch",
+          "instanceName": "switch",
           "prefabPath" : ""
         }
       ]
@@ -34,7 +56,13 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_BattleHUD",
-          "instanceName": "battleHUD",
+          "instanceName": "hud_battle",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Switch",
+          "instanceName": "switch",
           "prefabPath" : ""
         }
       ]
@@ -44,7 +72,73 @@
       "objects": [ 
         {
           "prototypeTag": "Proto_GameObject_FieldHUD",
-          "instanceName": "fieldHUD",
+          "instanceName": "hud_field",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Dialogue",
+          "instanceName": "dialogue",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "MainCity_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_FieldHUD",
+          "instanceName": "hud_field",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Dialogue",
+          "instanceName": "dialogue",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Lottery",
+          "instanceName": "lottery",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Ramen",
+          "instanceName": "ramen",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_GachaPage",
+          "instanceName": "gacha_page",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Gacha_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_GachaResult",
+          "instanceName": "gacha_result",
+          "prefabPath" : ""
+        }
+      ]
+    },
+
+    "Tutorial_Level": {
+      "objects": [ 
+        {
+          "prototypeTag": "Proto_GameObject_BattleHUD",
+          "instanceName": "hud_battle",
+          "prefabPath" : ""
+        },
+        
+        {
+          "prototypeTag": "Proto_GameObject_Switch",
+          "instanceName": "switch",
           "prefabPath" : ""
         }
       ]

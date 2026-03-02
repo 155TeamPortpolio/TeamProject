@@ -7,7 +7,7 @@ class CMapTriggerObject :
 {
 public:
     typedef struct tagMapTriggerObject final : public CMapObject::MAPOBJ_DESC {
-        _float3   vRight{}, vUp{}, vLook{};
+        _float3   vRight{}, vUp{}, vLook{}, vPos;
     }MAP_TRIGGEROBJ_DESC;
 
 private:
@@ -35,11 +35,8 @@ public:
 private:
     void Ready_PlaneUI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
     void Ready_MeshUI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
-    void Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc);
-    void Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc);
     void Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc);
-    void Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc);
-    void Ready_NPC(const MAP_TRIGGEROBJ_DESC* pObjDesc);
+    void Ready_ZeroPortal(const MAP_TRIGGEROBJ_DESC* pObjDesc);
 
 public:
     static CMapTriggerObject* Create();

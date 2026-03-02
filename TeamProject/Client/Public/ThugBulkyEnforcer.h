@@ -23,6 +23,9 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;
+    virtual void OnPooledRelease() override;
+    virtual void Parried() override;
 
 public:
     static CThugBulkyEnforcer* Create();
@@ -35,25 +38,26 @@ private:
 public:
     CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
-    HYSTERIESIS& GetHysteriesis() { return m_tHysteriesis; }
-    _int                                GetAttackHistoryFront() { return m_AttackHistory.front(); }
-    _bool                               IsBattleTriggerColliderOn() { return m_isBattleTriggerOn; }
-    _bool                               IsBattleAttackColliderOn() { return m_isBattleAttackOn; }
+    HYSTERIESIS&        GetHysteriesis() { return m_tHysteriesis; }
+    _int                GetAttackHistoryFront() { return m_AttackHistory.front(); }
+    _bool               IsBattleTriggerColliderOn() { return m_isBattleTriggerOn; }
+    _bool               IsBattleAttackColliderOn() { return m_isBattleAttackOn; }
 
-    void                                Idle() { m_isIdle = true; }
-    void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
-    void                                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
-    void                                TurnOnAttackCollider(BATTLE_PART ePart);
-    void                                TurnOnTriggerCollider(BATTLE_PART ePart);
-    void                                FinishWeaponCollider();
-    void                                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
-    void                                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
-    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
+    void                Idle() { m_isIdle = true; }
+    void                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
+    void                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
+    void                TurnOnAttackCollider(BATTLE_PART ePart);
+    void                TurnOnTriggerCollider(BATTLE_PART ePart);
+    void                FinishWeaponCollider();
+    void                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
+    void                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
+    virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName = CHARACTER::END) override;
 
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Effects();
     HRESULT Ready_Rules();
     void Update_States(const _float dt);
     void ControlState(const _float dt);
@@ -87,6 +91,7 @@ private:
     /*For.Groggy*/
     //_int                m_iGroggyValue = {};
     //_float              m_fGroggyDecreaseTime = {};
+
 };
 
 NS_END

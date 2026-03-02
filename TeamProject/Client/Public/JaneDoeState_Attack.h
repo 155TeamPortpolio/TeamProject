@@ -16,7 +16,7 @@ private:
     _float      m_fHoldTime = 0.f;
 
 public:
-    static CJaneDoeState_Attack* Create() { return new CJaneDoeState_Attack(); }
+    static CJaneDoeState_Attack* Create();
     virtual void Free() override { __super::Free(); }
 };
 

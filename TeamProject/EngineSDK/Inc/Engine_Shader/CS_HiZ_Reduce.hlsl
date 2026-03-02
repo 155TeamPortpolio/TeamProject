@@ -27,6 +27,6 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
     float z2 = InputHiZ.Load(int3(p2, 0));
     float z3 = InputHiZ.Load(int3(p3, 0));
 
-    // LinearZ(near=0, far=1) 기준: min 피라미드
+    // LinearZ(near=0, far=1) 기준: MAX 피라미드
     OutputHiZ[dst] = max(max(z0, z1), max(z2, z3));
 }

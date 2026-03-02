@@ -19,18 +19,22 @@ protected:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void    Priority_Update(_float dt) override {};
+    virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+
 public:
-    void            CaptureRotateToDir(_float3 vTargetDir, _float fSpeed = 10.f);
+    void            CaptureRotateToDir(_float3 vTargetDir, _float fSpeed = 0.5f);
 
 protected:
     void            RotateToDir(_float dt);
+    void            GUI_DebugButton();
+    virtual void    PlaySoundFromMeta();
 
 protected:
     ROT_DIR         m_tRotDir = {};
+    _bool           m_isStop = { false };
 
 protected:
     virtual void Free() override;

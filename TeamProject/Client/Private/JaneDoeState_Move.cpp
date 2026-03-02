@@ -7,22 +7,27 @@
 
 #include "CharacterController.h"
 
+CJaneDoeState_Move* CJaneDoeState_Move::Create()
+{
+    auto pInstance = new CJaneDoeState_Move();
+    pInstance->m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Walk", CJaneDoeState_Walk::Create());
+    pSubStateMachine->Register_State("Run", CJaneDoeState_Run::Create());
+
+    pSubStateMachine->Register_Transition("Walk", "Run",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToRun");
+    pSubStateMachine->Register_Transition("Run", "Walk",
+        CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToWalk");
+
+    pSubStateMachine->Set_DefaultState("Walk");
+
+    return pInstance;
+}
+
 void CJaneDoeState_Move::Enter(CJaneDoe* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("Walk", CJaneDoeState_Walk::Create());
-        m_pSubStateMachine->Register_State("Run", CJaneDoeState_Run::Create());
-
-        m_pSubStateMachine->Register_Transition("Walk", "Run",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToRun");
-        m_pSubStateMachine->Register_Transition("Run", "Walk",
-            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToWalk");
-
-        m_pSubStateMachine->Set_DefaultState("Walk");
-    }
-
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("MoveEntryMode");
     pOwner->Get_StateMachine()->Set_Int("MoveEntryMode", 0);
 

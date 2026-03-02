@@ -1,6 +1,10 @@
 #include "Engine_Defines.h"
 #include "EnvPanel.h"
 #include "GameInstance.h"
+
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
+
 CEnvPanel::CEnvPanel(GUI_CONTEXT* context)
 	:CBasePanel(context)
 {
@@ -147,11 +151,13 @@ void CEnvPanel::Render_GUI()
 
 void CEnvPanel::Check_Env()
 {
-		_bool hasFog = RenderSystem()->Get_FogDesc(m_fogSnapShot);
+    auto pPost = RenderSystem()->GetPostRenderer();
+    auto pFogCmd = pPost->GetCommand<CFogCommand>();
 
-		if (hasFog) {
-			m_bInitialized = true;
-		}
+    if (pFogCmd) {
+        m_fogSnapShot = pFogCmd->GetFogDesc();
+        m_bInitialized = true;
+    }
 }
 
 void CEnvPanel::Render_FogDesc()
@@ -166,13 +172,28 @@ void CEnvPanel::Render_FogDesc()
 
     if (localDirty)
         m_FogDirty = true;
+    auto pPost = RenderSystem()->GetPostRenderer();
 
      if (m_FogDirty && ImGui::Button("Apply Fog")) 
-     { RenderSystem()->Set_FogDesc(m_fogSnapShot); m_FogDirty=false; }
+     {
+         auto pFogCmd = RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>();
+         if (pFogCmd)
+         {
+             pFogCmd
+                 ->SetFogDesc(m_fogSnapShot)     
+                 ->SetEnable(true);
+         }
+         m_FogDirty=false; 
+     }
      ImGui::SameLine();
      if (m_FogDirty && ImGui::Button("Reset Fog")) 
      {
-         m_fogSnapShot = {}; m_FogDirty = false;
+         auto pFogCmd = RenderSystem()->GetPostRenderer()->GetCommand<CFogCommand>();
+         if (pFogCmd)
+         {
+             m_fogSnapShot = pFogCmd->GetFogDesc();
+         }
+         m_FogDirty = false;
      }
     ImGui::Unindent(4.0f);
 }
@@ -180,14 +201,17 @@ void CEnvPanel::Render_FogDesc()
  _bool CEnvPanel::EditFogDescUI(FOG_DESC& fogDesc, bool& outDirty)
 {
      _bool changed = false;
-     _bool useFog = fogDesc.IsUse;
+
+     auto pPost = RenderSystem()->GetPostRenderer();
+     _bool useFog = pPost->GetCommand<CFogCommand>()->IsEnabled();
+
     if (ImGui::Checkbox("Use Fog", &useFog))
     {
-        fogDesc.IsUse = useFog;
+        pPost->GetCommand<CFogCommand>()->SetEnable(useFog);
         changed = true;
     }
 
-    ImGui::BeginDisabled(!fogDesc.IsUse);
+    ImGui::BeginDisabled(!useFog);
 
     // Color
     _float color[4] = { fogDesc.fogColor.x, fogDesc.fogColor.y, fogDesc.fogColor.z, fogDesc.fogColor.w };
@@ -202,29 +226,9 @@ void CEnvPanel::Render_FogDesc()
 
 
     _float density = fogDesc.fogDensity;
-    if (ImGui::SliderFloat("Density", &density, 0.0f, 0.05f, "%.5f"))
+    if (ImGui::SliderFloat("Density", &density, 0.0f, 1.f, "%.5f"))
     {
         fogDesc.fogDensity = density;
-        changed = true;
-    }
-
-    _float startValue = fogDesc.fogStart;
-    _float endValue = fogDesc.fogEnd;
-
-    if (ImGui::DragFloat("Start", &startValue, 0.1f, 0.0f, 100000.0f, "%.2f"))
-    {
-        fogDesc.fogStart = startValue;
-        changed = true;
-    }
-    if (ImGui::DragFloat("End", &endValue, 0.1f, 0.0f, 100000.0f, "%.2f"))
-    {
-        fogDesc.fogEnd = endValue;
-        changed = true;
-    }
-
-    if (fogDesc.fogEnd > 0.0f && fogDesc.fogStart > fogDesc.fogEnd)
-    {
-        swap(fogDesc.fogStart, fogDesc.fogEnd);
         changed = true;
     }
 

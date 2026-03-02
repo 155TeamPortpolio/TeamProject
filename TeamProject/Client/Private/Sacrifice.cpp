@@ -4,11 +4,14 @@
 #include "ResourceMgr.h"
 #include "Helper_Func.h"
 #include "Texture.h"
+#include "BattleSystem.h"
 
 /* Object */
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "EffectContainer.h"
+#include "UI_BossHUD.h"
+#include "UI_EnemyStatus.h"
 
 /* Component */
 #include "CharacterController.h"
@@ -18,6 +21,7 @@
 #include "ObjectContainer.h"
 #include "MaterialInstance.h"
 #include "BoneFollower.h"
+#include "AudioSource.h"
 
 /* States */
 #include "StateMachine.h"
@@ -51,6 +55,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
+	Add_Component<CAudioSource>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer.model");
@@ -63,75 +68,14 @@ HRESULT CSacrifice::Initialize_Prototype()
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "SacrificeBringer.mat");
 
-	/* Pre load 활성화 전까지 잠시 여기서 생성 */
-	{
-		//==================== Effect =======================
-
-		auto pResource = ResourceManager();
-
-		/* Assets */
-		pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/Data/test_particle.json");
-		pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/Data/spawn_smoke.json");
-		pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/Data/fog.json");
-		pResource->Add_ResourcePath("hit_ground_smoke.json", "../Bin/Resources/Effect/Data/hit_ground_smoke.json");
-		pResource->Add_ResourcePath("hit_ground_smoke_strong.json", "../Bin/Resources/Effect/Data/hit_ground_smoke_strong.json");
-		pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/Data/core.json");
-		pResource->Add_ResourcePath("rock_particle.json", "../Bin/Resources/Effect/Data/rock_particle.json");
-		pResource->Add_ResourcePath("sacrifice_spark.json", "../Bin/Resources/Effect/Data/sacrifice_spark.json");
-		pResource->Add_ResourcePath("sacrifice_hit_ground_flare.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare.json");
-		pResource->Add_ResourcePath("sacrifice_hit_ground_flare_smoke.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare_smoke.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_trail_cone.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail_cone.json");
-		pResource->Add_ResourcePath("sacrifice_orb.json", "../Bin/Resources/Effect/Data/sacrifice_orb.json");
-		pResource->Add_ResourcePath("sacrifice_smoke_slash.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash.json");
-		pResource->Add_ResourcePath("sacrifice_sword_slash.json", "../Bin/Resources/Effect/Data/sacrifice_sword_slash.json");
-		pResource->Add_ResourcePath("sacrifice_axe_slash.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash.json");
-		pResource->Add_ResourcePath("sacrifice_rush_trail.json", "../Bin/Resources/Effect/Data/sacrifice_rush_trail.json");
-		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
-
-		/* Textures */
-		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
-		pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Texture/Eff_Particle_044.png");
-		pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_046_LB_01.png");
-		pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_218.png");
-		pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_006.png");
-		pResource->Add_ResourcePath("rock0.png", "../Bin/Resources/Effect/Texture/rock0.png");
-		pResource->Add_ResourcePath("lightning10.png", "../Bin/Resources/Effect/Texture/lightning10.png");
-		pResource->Add_ResourcePath("lightning7.png", "../Bin/Resources/Effect/Texture/lightning7.png");
-		pResource->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
-		pResource->Add_ResourcePath("Eff_Burn_LYX_28.png", "../Bin/Resources/Effect/Texture/Eff_Burn_LYX_28.png");
-		pResource->Add_ResourcePath("Eff_Smoke_259.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_259.png");
-		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
-		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
-		pResource->Add_ResourcePath("Eff_Noise_243_YZ_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_243_YZ_01.png");
-		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
-		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_03.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_03.png");
-		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
-
-		/* Models */
-		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
-		pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
-		pResource->Add_ResourcePath("Sacrifice_Orb.model", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.model");
-		pResource->Add_ResourcePath("Sacrifice_Orb.mat", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.mat");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.model");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.mat");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.model");
-		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
-		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
-		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
-		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.model");
-		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.mat", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.mat");
-	}
-
 	return S_OK;
 }
 
 HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+	m_eEnemyClass = ENEMY_CLASS::BOSS;
 
-	auto pMaterial = Get_Component<CMaterial>();
+	__super::Initialize(pArg);
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "SacrificeBringer.model");
@@ -141,6 +85,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
 	auto pCCT = Get_Component<CCharacterController>();
+
+	auto pAudio = Get_Component<CAudioSource>();
+	pAudio->SoundFolder("Zero_Level", "../Bin/Resources/Zero/Enemy/Sacrifice/Sound");
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
@@ -160,13 +107,19 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	if (FAILED(Create_Colliders()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
+	Create_UIEnemyStatus("Bip001_Spine2");
+	HideHUD(true);
+
 	return S_OK;
 }
 
 void CSacrifice::Awake()
 {
-	m_vRimLightColor = _float3(1.f, 0.2f, 0.f);
-	m_fRimLightPower = 2.f;
+	m_vRimLightColor = _float3(1.f, 0.3f, 0.f);
+	m_fRimLightPower = 8.f;
 	m_fDissolveTilling = 5.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
@@ -194,11 +147,21 @@ void CSacrifice::Update(_float dt)
 {
 	__super::Update(dt);
 
-	Update_States(dt);
 	m_pStateMachine->Update(dt);
-
+	Update_States(dt);
+	
+	_vector3 vBipPosition = Get_Component<CAnimator3D>()->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001");
+	vBipPosition = _vector3::Transform(vBipPosition, m_pTransform->Get_WorldMatrix());
+	Get_Component<CAudioSource>()->Set_AudioPos(vBipPosition);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	Route_AnimEvent();
+
+	if (InputDevice()->Key_Tap('1'))
+		CustomHit(10.f);
+
+	if (InputDevice()->Key_Tap('2'))
+		CustomHit(20.f);
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -211,7 +174,10 @@ void CSacrifice::Render_GUI()
 {
 	__super::Render_GUI();
 
-	ImGui::Text("Distance to target : %lf", m_tTargetingInfo.fDistance);
+	Render_GUI_ForTargetInfo();
+	m_pStateMachine->Render_GUI();
+
+	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 }
 
 CSacrifice* CSacrifice::Create()
@@ -247,8 +213,14 @@ void CSacrifice::Free()
 	Safe_Release(m_pStateMachine);
 }
 
-void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage, CHARACTER charaName)
 {
+	__super::TakeDamage(eDamageType, fDamage, charaName);
+
+	Get_Component<CAudioSource>()->
+		Slot(eDamageType == DAMAGE_TYPE::NORMAL ? "HitLight.wav" : "HitHeavy.wav")
+		.Volume(eDamageType == DAMAGE_TYPE::NORMAL ? 0.2f : 0.25f).Play();
+
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
@@ -274,7 +246,7 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 				}
 			}
 
-			m_tStatus.iNowHP -= fDamage * 1.5f;
+			//m_tStatus.iNowHP -= fDamage * 1.2f;
 		}
 		else
 		{
@@ -286,27 +258,40 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 					.Apply();
 			}
 
-			m_tStatus.iNowHP -= fDamage;
-			m_tStatus.iGroggyValue += 16;
+			//m_tStatus.iNowHP -= fDamage * 0.7f;
+			//m_tStatus.iGroggyValue += 2;
 		}
 	}
+}
+
+void CSacrifice::Parried()
+{
+	__super::Parried();
+
+	m_pStateMachine->Change_State("Parry");
+	SetOnAttack(false);
+	SetParryEnable(false);
+	DeactiveAxe();
+	DeactiveSword();
+	DeactiveWhip();
 }
 
 void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();
 	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
-	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
+	_vector3 vTargetPosition = BattleSystem()->GetCurCharacterHandle().Get()->Get_Component<CTransform>()->Get_WorldPos();
+	_vector3 vTargetDir = vTargetPosition - vPosition;
+
+	vCurrDir.y = 0.f;
 	vCurrDir.Normalize();
-	vTargetDir.Normalize();
+	vTargetDir = Math::NormalizeSafeXZ(vTargetDir);
 
 	if (vCurrDir.Dot(vTargetDir) >= 0.99f)
 		return;
 
-	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
-	_vector3 vAt = vPosition + vCurrDir;
-
-	m_pTransform->LookAt(vAt);
+	vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
+	m_pTransform->Set_Look(vTargetDir);
 }
 
 void CSacrifice::MoveByRootMotion(_float dt, _float moveScale)
@@ -355,6 +340,7 @@ void CSacrifice::DeactiveWhip()
 void CSacrifice::SetOverDrive(_bool overdrive)
 {
 	m_IsOverDrive = overdrive;
+
 	if (!m_IsOverDrive)
 		m_fOverDriveElapsedTime = 0.f;
 }
@@ -377,9 +363,11 @@ void CSacrifice::ChangePhase()
 
 void CSacrifice::ChangePhase_SetUp()
 {
-	m_tStatus.iMaxHP = 100.f;
+	m_tStatus.iMaxHP = 300.f;
 	m_tStatus.iNowHP = m_tStatus.iMaxHP;
 	m_tStatus.iGroggyValue = 0;
+	m_tStatus.isGroggy = false;	
+	m_IsOverDrive = true;
 }
 
 void CSacrifice::Phase1Attack()
@@ -437,11 +425,11 @@ void CSacrifice::OverDrive_Attack1()
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack1();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+	pHandTransform->Set_Look(vLook);
 }
 
 void CSacrifice::OverDrive_Attack2()
@@ -450,11 +438,11 @@ void CSacrifice::OverDrive_Attack2()
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack2();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+	pHandTransform->Set_Look(vLook);
 }
 
 void CSacrifice::OverDrive_Attack3()
@@ -463,11 +451,11 @@ void CSacrifice::OverDrive_Attack3()
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack3();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+	pHandTransform->Set_Look(vLook);
 }
 
 void CSacrifice::ActiveLaser(_uint mode)
@@ -475,9 +463,12 @@ void CSacrifice::ActiveLaser(_uint mode)
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser(mode);
 	
-	HitDesc desc{};
-	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
-	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
+	if (1 != mode)
+	{
+		HitDesc desc{};
+		SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
+		SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
+	}
 }
 
 void CSacrifice::DeactiveLaser()
@@ -536,6 +527,22 @@ void CSacrifice::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 	m_fDissolveDuration = duration;
 	m_fDissolveElapsedTime = 0.f;
 	m_fDissolveProgress = 0.f;
+
+	//switch (state)
+	//{
+	//case Client::CSacrifice::DISSOLVE_STATE::DISAPPEAR:
+	//{
+	//	Control_TargetEnable(false);
+	//}break;
+	//case Client::CSacrifice::DISSOLVE_STATE::APPEAR:
+	//	Control_TargetEnable(true);
+	//	break;
+	//case Client::CSacrifice::DISSOLVE_STATE::NONE:
+	//	Control_TargetEnable(true);
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void CSacrifice::Update_Dissolve(_float dt)
@@ -568,6 +575,60 @@ void CSacrifice::Update_Dissolve(_float dt)
 		else
 			m_fDissolveProgress = 0.f;
 	}
+}
+
+void CSacrifice::Create_UIEnemyStatus(string boneTag)
+{
+	// 월드 행렬 포인터 
+	if (!m_pTransform)
+		return;
+
+	const _float4x4* pParentWorld = m_pTransform->Get_WorldMatrix_Ptr();
+	if (!pParentWorld)
+		return;
+
+	// 본 로컬 행렬 포인터
+	const _float4x4* pBoneLocal = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, boneTag);
+	if (!pBoneLocal)
+		return;
+
+	// ENEMYSTATUS_DESC 생성
+	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
+	pDesc->pParentWorld = pParentWorld;
+	pDesc->pBoneLocal = pBoneLocal;
+	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->tOwnerHandle = Get_Handle();
+
+	// EnemyStatus UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
+		.Add_UIDesc(pDesc)
+		.Build("EnemyStatus");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, strLevelKey);
+
+	m_BoneHUD = pEnemyStatus->Get_Handle();
+}
+
+void CSacrifice::Create_UIBossHUD()
+{
+	// BOSS_HUD_DESC 생성
+	CUI_BossHUD::BOSS_HUD_DESC* pDesc = new CUI_BossHUD::BOSS_HUD_DESC;
+	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->eBoss = BOSS::Sacrifice;
+
+	//pDesc.
+	// BossHUD UI 생성
+	const string& strLevelKey = LevelManager()->Get_NowLevelKey();
+	auto pBossHUD = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_BossHUD" })
+		.Add_UIDesc(pDesc)
+		.Build("bossHUD");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pBossHUD, strLevelKey);
+
+	m_hUIEnemyStatus = pBossHUD->Get_Handle();
 }
 
 void CSacrifice::Create_Children()
@@ -639,7 +700,7 @@ HRESULT CSacrifice::Create_Colliders()
 		RightArmDesc.isAttachBone = true;
 		RightArmDesc.tagBone = "Skn_R_Hand";
 		RightArmDesc.pOwnerAnimator3D = pAnimator;
-		RightArmDesc.vAttackSize = _float3{1.f,1.f,1.f};
+		RightArmDesc.vAttackSize = _float3{2.f,2.f,2.f};
 		RightArmDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
 	
 		if (FAILED(AttachBattleColliderObject(&RightArmDesc)))
@@ -693,77 +754,77 @@ HRESULT CSacrifice::Create_Colliders()
 			return E_FAIL;
 	}
 
-	/* Hand Laser */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Hand_Laser";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_Eye6_05";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-
-	/* Eye Laser0 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser0";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-	
-	/* Eye Laser1 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser1";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
-	
-	/* Eye Laser2 */
-	{
-		BATTLE_COLLIDER_DESC HandLaserDesc{};
-
-		HandLaserDesc.tagName = "Eye_Laser2";
-		HandLaserDesc.isAttachBone = true;
-		HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
-		HandLaserDesc.pOwnerAnimator3D = pAnimator;
-		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
-		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
-		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
-
-		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
-			return E_FAIL;
-	}
+	///* Hand Laser */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Hand_Laser";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_Eye6_05";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser0 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser0";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser1 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser1";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
+	//
+	///* Eye Laser2 */
+	//{
+	//	BATTLE_COLLIDER_DESC HandLaserDesc{};
+	//
+	//	HandLaserDesc.tagName = "Eye_Laser2";
+	//	HandLaserDesc.isAttachBone = true;
+	//	HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
+	//	HandLaserDesc.pOwnerAnimator3D = pAnimator;
+	//	HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+	//	HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+	//	HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+	//	HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+	//
+	//	if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+	//		return E_FAIL;
+	//}
 
 	return S_OK;
 }
@@ -830,6 +891,73 @@ HRESULT CSacrifice::Initialize_Transitions()
 	return S_OK;
 }
 
+HRESULT CSacrifice::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Sword Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_sword_slash.json")
+			.Build("Sacrifice_Sword_Slash");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Axe Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_slash.json")
+			.Build("Sacrifice_Axe_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Axe Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_axe_slash2.json")
+			.Build("Sacrifice_Axe_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Smoke Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash.json")
+			.Build("Sacrifice_Smoke_Slash1");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Smoke Slash2 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash2.json")
+			.Build("Sacrifice_Smoke_Slash2");
+
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect,false);
+	}
+
+	/* Cloud */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_cloud.json")
+			.Build("Sacrifice_Cloud");
+		
+		pEffect->Set_Alive(false);
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
+	return S_OK;
+}
+
 void CSacrifice::Update_States(_float dt)
 {
 	m_fIdleDuration = m_IsOverDriveCharged ? 2.f : 0.2f;
@@ -843,13 +971,19 @@ void CSacrifice::Update_States(_float dt)
 	}
 
 	if (InputDevice()->Key_Tap('P'))
-		m_tStatus.iNowHP = 0.f;
+	{
+		m_tStatus.iNowHP = m_tStatus.iMaxHP * 0.1f;
+		m_tStatus.iGroggyValue = 99;
+	}
 
 	if (PHASE::PHASE2 == m_eCurrPhase && !m_IsOverDrive)
 	{
 		m_fOverDriveElapsedTime += dt;
 		if (m_fOverDriveElapsedTime >= m_fOverDriveDuration)
+		{
 			m_IsOverDrive = true;
+			m_fOverDriveElapsedTime = 0.f;
+		}
 	}
 
 	/* Idle */
@@ -874,10 +1008,58 @@ void CSacrifice::Update_States(_float dt)
 	/* Death */
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() && "ChangePhase" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.iNowHP <= 0.f)
 	{
+		m_tStatus.iGroggyValue = 0;
+		m_tStatus.isGroggy = false;
+
 		m_pStateMachine->Change_State("Death");
 		m_pStateMachine->Reset_Trigger("Change_Phase");
 
 		if (PHASE::PHASE1 == m_eCurrPhase)
 			m_pStateMachine->Set_Trigger("Change_Phase");
 	}
+
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() && "Death" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.isGroggy)
+		m_pStateMachine->Change_State("Groggy");
 }
+
+void CSacrifice::Route_AnimEvent()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto bus = pAnimator->Get_EventBus();
+
+	for (EVENT_INST& instance : bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Control_Sound(instance.Tag);
+			break;
+		}
+	}
+}
+
+void CSacrifice::Control_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.6f).Attribute3D(false).Loop(false).Play();
+}
+
+void CSacrifice::Control_TargetEnable(_bool on)
+{
+	if (!on) {
+		BattleSystem()->ExcludeBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+	else {
+		BattleSystem()->EnterBattleObject(BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle());
+	}
+
+	Get_Component<CCharacterController>()->Set_CompActive(on);
+}
+
+void CSacrifice::HideHUD(_bool hide)
+{
+	if (m_BoneHUD.isValid())
+		m_BoneHUD.Get()->Set_Alive(!hide);
+}	

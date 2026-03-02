@@ -103,6 +103,22 @@ CMaterialInstance* CMaterial::Get_MaterialInstanceByName(const string& MaterialN
 	return *iter;
 }
 
+CMaterialInstance* CMaterial::Find_MaterialInstanceByName(const string& MaterialName)
+{
+	if (m_MaterialInstances.empty())
+		return nullptr;
+
+	auto iter = find_if(m_MaterialInstances.begin(), m_MaterialInstances.end(),
+		[&](CMaterialInstance* pInstance)->bool {
+			string lowerName = Helper::ToLower(pInstance->Get_MaterialName());
+			return lowerName.find(Helper::ToLower(MaterialName)) !=string::npos ;
+		});
+
+	if (iter == m_MaterialInstances.end()) return nullptr;
+
+	return *iter;
+}
+
 CMaterialInstance* CMaterial::Get_MaterialInstance(_uint Index)
 {
 	if (m_MaterialInstances.empty())
@@ -118,6 +134,7 @@ void CMaterial::ResetMaterial(_uint Index)
 {
 	if (Index >= m_MaterialInstances.size()) return;
 	m_MaterialInstances[Index]->Reset_DynamicSlot();
+	m_MaterialInstances[Index]->Reset_Textures();
 }
 
 const string& CMaterial::GetPassConstant(_uint subsetIndex)
@@ -180,14 +197,18 @@ void CMaterial::Render_GUI()
 	ImGui::SeparatorText("Material");
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (m_MaterialInstances.size() * 2) + (ImGui::GetStyle().WindowPadding.y * 4);
+	const float childHeight = (m_MaterialInstances.size() * 2) + 
+		(ImGui::GetStyle().WindowPadding.y * 4);
 	
 	if(ImGui::Button("Material Tabs")) {
 		m_bMaterialTabOpen = true;
 	}
+	if(ImGui::Button("Material BlendHasAlpha")) {
+		SetBlendHasAlpha(AlphaCheckLevel::Precise, "Blend");
+	}
 	
 	if(m_bMaterialTabOpen){
-		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(800, 400), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("Materials", &m_bMaterialTabOpen, ImGuiWindowFlags_NoCollapse))
 		{
 		if (ImGui::BeginTabBar("##MaterialTabs"))

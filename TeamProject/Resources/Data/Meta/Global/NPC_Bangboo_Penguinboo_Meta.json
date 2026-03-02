@@ -1,0 +1,187 @@
+{
+  "AnimPath": "../Bin/Resources/Global/NPC/BangBoos/PenguinBoo/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_AutoBattle_Grab_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_AutoBattle_Grab_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_AutoBattle_Skill",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Gacha",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Hit_H_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Hit_H_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Hit_L_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Hit_L_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_HitFly_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_HitFly_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_MainCity_Sit_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_MainCity_Talk01_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_MainCity_Watch_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_QTE",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Run01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Run02_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Run02_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Run02_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillAttack01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillAttack01_Test",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillAttack02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillEnd01",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillEnd01_Test",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillEnd02",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillMove_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillMove_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SkillStart",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Surprised",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Switch_Left_In",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Switch_Left_Out",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Switch_Right_In",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Switch_Right_Out",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SwitchIn",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_SwitchOut",
+      "Events": []
+    },
+    {
+      "ClipTag": "Bangboo_Penguinboo_Ani_Tried01",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Bangboo_Penguinboo_Ani_HSC_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Bangboo_Penguinboo_Ani_HSC_Happy_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Bangboo_Penguinboo_Ani_HSC_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Bangboo_Penguinboo_Ani_HSC_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Bangboo_Penguinboo_Ani_HSC_Sad_Start",
+      "Events": []
+    }
+  ]
+}

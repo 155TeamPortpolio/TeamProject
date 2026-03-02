@@ -6,6 +6,7 @@
 
 /* Component */
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 /* Sub States */
 #include "SacrificeState_Evade_Phase1.h"

@@ -3,7 +3,7 @@
 
 NS_BEGIN(Client)
 
-class CSpriteAnimationUI final : public CUI_Object
+class CSpriteAnimationUI : public CUI_Object
 {
 private:
 	CSpriteAnimationUI() {}
@@ -17,6 +17,10 @@ public:
 	virtual void    Update(_float dt)                override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void	UI_Active(void* pArg = nullptr) override;
+	virtual void	UI_DeActive(void* pArg = nullptr) override;
+
+	virtual _bool Is_AnimFinished() override;
 
 public:
 	virtual void    Load(const nlohmann::ordered_json& data) override;

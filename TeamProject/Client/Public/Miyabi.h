@@ -3,19 +3,14 @@
 
 NS_BEGIN(Client)
 
+class CMiyabi_Ghost;
+
 class CMiyabi final : public CCharacter
 {
 private:
     CMiyabi();
     CMiyabi(const CMiyabi& rhs);
     virtual ~CMiyabi() DEFAULT;
-
-public:
-    CStateMachine<CMiyabi>* Get_StateMachine() { return m_pStateMachine; }
-
-public:
-    virtual void    On_SwitchIn(SWITCH eType)  {};   //*스위치 인 콜*
-    virtual void    On_SwitchOut()             {};   //*스위치 아웃 콜*
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -25,20 +20,90 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-    void            Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
-private:
-    void         Update_States();
+    //void          Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
+    
+public: // 고스트
+    CMiyabi_Ghost* Get_Ghost() { return m_pGhost; }
+    const string&  Get_GhostName() const { return m_strGhostName; }
+    void           Show_Ghost();
+    void           Hide_Ghost();
 
-private:
+public: // 상태머신
+    CStateMachine<CMiyabi>* Get_StateMachine() { return m_pStateMachine; }
+    // 회피관련 미야비 특수처리
+    virtual _bool Can_Evade() override;
+
+public: // 타겟팅
+    _bool   Is_LookTarget() const { return m_bLookTarget; }
+    void    Set_LookTarget(_bool bLook) { m_bLookTarget = bLook; }
+
+public: // 서리
+    _bool   Has_Frost() const { return m_iFrost > 0; }
+    _bool   Can_Charge() const { return m_iFrost >= 2; }
+    _int    Get_Frost() const { return m_iFrost; }
+    void    Increase_Frost(_uint iFrost);
+    void    Decrease_Frost(_uint iFrost);
+
+public: // 행동 이벤트
+    virtual void    Reset_State()                   override;
+    virtual void    On_Start()                      override;
+    virtual void    On_SwitchIn(SWITCH eType)       override;
+    virtual void    On_ParryImpact()                override;
+    virtual void    On_ChainParry()                 override;
+    virtual void    On_SwitchOut(_bool isParry)     override;
+    virtual void    On_Ultimate()                   override;
+    virtual void    On_Special()                    override;
+    virtual void    On_Hit(DAMAGE_TYPE eType)       override;
+    virtual void    OnDamage()                      override;
+    virtual void    OnPerfectDodge()                override;
+    virtual void    OnDefensiveAssist()             override;
+    virtual void    OnComboSound()                  override;
+
+public: // 모션블러
+    void    Add_MotionBlur();
+    void    Clear_MotionBlur();
+
+public: // 무기 이펙트 메쉬
+    void    Set_WeaponEffectMesh(_bool bOn);
+    void    Set_WeaponFire(_bool bOn);
+
+private: // 초기화
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
-    
-private:
-    HRESULT Add_OutLineRender();
+    HRESULT Initialize_Stat();
+    HRESULT Initialize_Weapon();
+    HRESULT Initialize_Ghost();
+    HRESULT Initialize_Effects() override;
+    HRESULT Initialize_Sound();
+
+private: // 상태 처리
+    void    Update_States();
+    void    Process_AttackInput(const string& strCurrentState);
+    void    Process_EndState(const string& strCurrentState);
+
+private: // 모션블러 렌더
+    HRESULT Update_MotionBlurQueue();
+    HRESULT Render_DashMotionBlur(ID3D11DeviceContext* pContext, _uint index);
 
 private:
+    // 고스트
+    CMiyabi_Ghost* m_pGhost = { nullptr };
+    string m_strGhostName = { "Avatar_Female_Size02_Unagi_Ghost_Ani_" };
+    // 상태머신
     CStateMachine<CMiyabi>* m_pStateMachine = { nullptr };
+
+    // 타겟팅
+    _bool   m_bLookTarget = true;
+
+    // 서리
+    _uint   m_iFrost = { 0 };
+    _uint   MAX_FROST = { 6 };
+
+    // 모션블러
+    deque<vector<vector<_float4x4>>>    m_BoneMatrices;
+    deque<_float4x4>                    m_WorldMatrices;
+    _int                                m_iUseHeightGradient = 0;
 
 public:
     static CMiyabi* Create();

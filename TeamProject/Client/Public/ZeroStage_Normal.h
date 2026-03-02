@@ -1,5 +1,8 @@
 #pragma once
 #include "Stage.h"
+
+NS_BEGIN(Client)
+
 class CZeroStage_Normal :
     public CStage
 {
@@ -13,19 +16,19 @@ public:
 	virtual void    Update()override;
 
 public:
-	virtual HRESULT Ready_Stage(CZero_Level::StageContext& context)override;
-	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)override;
-	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)override;
+	virtual HRESULT Enter_Stage(StageContext& context)override;
 
 private:
 	void Intro();
+	void BattleStart();
 	void Battle(); 
+	void BattleEnd(); 
 	void Outro();
 	void End();
-private:
 
 public:
 	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
 };
 
+NS_END

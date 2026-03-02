@@ -1,4 +1,4 @@
-#include "Engine_Defines.h"
+ï»¿#include "Engine_Defines.h"
 #include "AudioDevice.h"
 #include "SoundData.h"
 #include "Transform.h"
@@ -11,18 +11,23 @@ CAudioDevice::CAudioDevice()
 
 HRESULT CAudioDevice::Initialize()
 {
-	//FMOD ÃÊ±âÈ­
-	FMOD::System_Create(&m_pSystem);
+	//FMOD ì´ˆê¸°í™”
+    FMOD::ChannelGroup* master = nullptr;
+    FMOD::System_Create(&m_pSystem);
 	m_pSystem->init(m_iChannelSize, FMOD_INIT_NORMAL, 0);
+    m_pSystem->getMasterChannelGroup(&master);
 
 	for(size_t i =0; i<static_cast<int>(SOUND_GROUP::END);++i ){
 		FMOD::ChannelGroup* pGroup;
 		m_pSystem->createChannelGroup(to_string(i).c_str(), &pGroup);
+        //if (master && pGroup)
+        //    master->addGroup(pGroup);
+
 		m_Groups.push_back(pGroup);
 	}
-    float dopplerScale = 1.0f; // µµÇÃ·¯ È¿°ú °­µµ
-    float distanceFactor = 15.0f; // 1.0ÀÌ¸é 1 À¯´Ö = 1m
-    float rolloffScale = 0.7f; // ÀÛÀ»¼ö·Ï °Å¸® °¨¼è°¡ ¿Ï¸¸ÇØÁü
+    float dopplerScale = 1.0f; // ë„í”ŒëŸ¬ íš¨ê³¼ ê°•ë„
+    float distanceFactor = 5.0f; // 1.0ì´ë©´ 1 ìœ ë‹› = 1m
+    float rolloffScale = 0.8f; // ìž‘ì„ìˆ˜ë¡ ê±°ë¦¬ ê°ì‡ ê°€ ì™„ë§Œí•´ì§
 
     m_pSystem->set3DSettings(dopplerScale, distanceFactor, rolloffScale);
 
@@ -34,6 +39,7 @@ void CAudioDevice::Update()
 {
 	if (m_pSystem)
 		m_pSystem->update();
+
     CGameInstance::GetInstance()->Get_TimeMgr()->Update_Timer("Audio_Timer");
     if (m_pTransform) {
         _float3 pos;
@@ -50,10 +56,15 @@ void CAudioDevice::Update()
 
         m_pSystem->set3DListenerAttributes(0, &listenerPos, &listenerVel, &listenerForward, &listenerUp);
     }
+
 }
 
 void CAudioDevice::StopAll()
 {
+    FMOD::ChannelGroup* master = nullptr;
+    if (!m_pSystem) return;
+    if (m_pSystem->getMasterChannelGroup(&master) == FMOD_OK && master)
+        master->stop(); // í•˜ìœ„ ê·¸ë£¹/ì±„ë„ ì „ë¶€ stop
 }
 
 FMOD::System* CAudioDevice::Get_System()
@@ -61,81 +72,182 @@ FMOD::System* CAudioDevice::Get_System()
 	return m_pSystem;
 }
 
-void CAudioDevice::Play(AUDIO_PACKET& packet)
+ void CAudioDevice::ApplyLoop(FMOD::Channel* channel, const AUDIO_PACKET& packet)
 {
-    // ÀÌ¹Ì Ã¤³ÎÀÌ ÀÖ°í, ¹«ÇÑ ·çÇÁ/ÆÛÁî »óÈ²ÀÌ¸é ¿©±â¼­ Ã³¸®
-    if (packet.ppChannelToUpdate && *packet.ppChannelToUpdate)
+    if (!channel) return;
+
+    const int loopCount = packet.isInfinite ? -1 : packet.iLoopCount;
+
+    if (loopCount != 0)
     {
-        FMOD::Channel* pOldChannel = *packet.ppChannelToUpdate;
-        bool isPlaying = false;
-
-        if (pOldChannel->isPlaying(&isPlaying) == FMOD_OK)
-        {
-            // 1) ÀÌ¹Ì Àç»ý Áß + ¹«ÇÑ ·çÇÁ + ÆÛÁî »óÅÂ°¡ ¾Æ´Ô
-            if (isPlaying && packet.isInfinite && !packet.isPaused)
-            {
-                // »õ·Î playSound È£ÃâÇÏÁö ¾Ê°í, À§Ä¡/º¼·ý¸¸ °»½Å
-                if (packet.is3DAttribute)
-                {
-                    FMOD_VECTOR pos = { packet.vPosition.x, packet.vPosition.y, packet.vPosition.z };
-                    FMOD_VECTOR vel = { 0.f, 0.f, 0.f };
-                    pOldChannel->set3DAttributes(&pos, &vel);
-                }
-
-                pOldChannel->setVolume(packet.fVolume);
-                return; // ¿©±â¼­ ³¡
-            }
-
-            // 2) ÀÌ¹Ì Ã¤³ÎÀÌ ÀÖ´Âµ¥, ÀÌ¹ø¿¡ ÆÛÁî ÇØÁ¦ÇÏ°í ½Í´Ù¸é
-            if (!isPlaying && packet.isPaused == false)
-            {
-                // ÀÏ´Ü ´Ù½Ã Àç»ýÇÏ°Å³ª, ¿©±â¼­ unpause °°Àº Ã³¸® °¡´É
-                pOldChannel->setPaused(false);
-                if (packet.is3DAttribute)
-                {
-                    FMOD_VECTOR pos = { packet.vPosition.x, packet.vPosition.y, packet.vPosition.z };
-                    FMOD_VECTOR vel = { 0.f, 0.f, 0.f };
-                    pOldChannel->set3DAttributes(&pos, &vel);
-                }
-                pOldChannel->setVolume(packet.fVolume);
-                return;
-            }
-        }
+        channel->setMode(FMOD_LOOP_NORMAL);
+        channel->setLoopCount(loopCount);
     }
-
-    m_pSystem->playSound(
-        packet.pSound->Get_SoundData(),
-        m_Groups[static_cast<_uint>(packet.eGroup)],
-        false,                      // ¹Ù·Î Àç»ý (pause »óÅÂ¸¦ º°µµ·Î °ü¸®ÇÏ°í ½ÍÀ¸¸é true·Î µÎ°í ³ªÁß¿¡ setPaused)
-        packet.ppChannelToUpdate
-    );
-
-    FMOD::Channel* pNewChannel = *packet.ppChannelToUpdate;
-
-    if (pNewChannel)
+    else
     {
-        if (packet.is3DAttribute)
-        {
-            FMOD_VECTOR pos = { packet.vPosition.x, packet.vPosition.y, packet.vPosition.z };
-            FMOD_VECTOR vel = { 0.f, 0.f, 0.f };
-            pNewChannel->set3DAttributes(&pos, &vel);
-        }
-        else
-        {
-            pNewChannel->setMode(FMOD_2D);
-        }
-
-        pNewChannel->setVolume(packet.fVolume);
-
-        // ÀÎÇÇ´ÏÆ®¸é -1, ¾Æ´Ï¸é È½¼ö ±â¹Ý
-        int loopCount = packet.isInfinite ? -1 : packet.iLoopCount;
-        pNewChannel->setLoopCount(loopCount);
-
-        // ÆÐÅ¶¿¡¼­ ÆÛÁî ¿äÃ»ÀÌ ¿Ô´Ù¸é ¹Ù·Î ¸ØÃç¼­ ½ÃÀÛ
-        if (packet.isPaused)
-            pNewChannel->setPaused(true);
+        channel->setMode(FMOD_LOOP_OFF);
+        channel->setLoopCount(0);
     }
 }
+
+ void CAudioDevice::Play(AUDIO_PACKET& packet)
+ {
+     if (!packet.pSound || !packet.ppChannelToUpdate || !m_pSystem)
+         return;
+
+     // 1) ìž¬ì‚¬ìš© ê°€ëŠ¥í•œ ì±„ë„ì´ë©´ ìž¬ì‚¬ìš© (ìž¬ìƒ ì¤‘ì¼ ë•Œë§Œ)
+     if (*packet.ppChannelToUpdate)
+     {
+         FMOD::Channel* oldChannel = *packet.ppChannelToUpdate;
+
+         bool isPlaying = false;
+         if (oldChannel->isPlaying(&isPlaying) == FMOD_OK && isPlaying)
+         {
+             ClearFadePoints(oldChannel);
+             ApplyLoop(oldChannel, packet);
+
+             if (packet.is3DAttribute)
+             {
+                 oldChannel->setMode(FMOD_3D);
+                 FMOD_VECTOR vel = { 0.f, 0.f, 0.f };
+                 oldChannel->set3DAttributes(packet.vPosition, &vel);
+             }
+             else
+             {
+                 oldChannel->setMode(FMOD_2D);
+             }
+
+             oldChannel->setVolume(packet.fVolume);
+             oldChannel->setPaused(packet.isPaused);
+             return;
+         }
+
+         // ëë‚¬ìœ¼ë©´ ìƒˆë¡œ ë§Œë“¤ê¸°
+         *packet.ppChannelToUpdate = nullptr;
+     }
+
+     m_pSystem->playSound(
+         packet.pSound->Get_SoundData(),
+         m_Groups[static_cast<_uint>(packet.eGroup)],
+         true, // í•­ìƒ ì¼ë‹¨ pause ìƒíƒœë¡œ ìƒì„±
+         packet.ppChannelToUpdate
+     );
+
+     FMOD::Channel* newChannel = *packet.ppChannelToUpdate;
+     if (!newChannel) return;
+
+     ClearFadePoints(newChannel);
+
+     if (packet.is3DAttribute)
+     {
+         newChannel->setMode(FMOD_3D);
+         FMOD_VECTOR vel = { 0.f, 0.f, 0.f };
+         newChannel->set3DAttributes(packet.vPosition, &vel);
+     }
+     else
+     {
+         newChannel->setMode(FMOD_2D);
+     }
+
+     newChannel->setVolume(packet.fVolume);
+     ApplyLoop(newChannel, packet);
+
+     newChannel->setPaused(packet.isPaused);
+ }
+
+ //void CAudioDevice::ClearFadePoints(FMOD::Channel* channel)
+ //{
+ //    if (!channel || !m_pSystem) return;
+ //
+ //    unsigned long long channelClock = 0, parentClock = 0;
+ //    if (channel->getDSPClock(&channelClock, &parentClock) != FMOD_OK) return;
+ //
+ //    int sampleRate = 0;
+ //    if (m_pSystem->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
+ //
+ //    const unsigned long long dspNow = parentClock; 
+ //    const unsigned long long dspFar = dspNow + (unsigned long long)(30.0f * (double)sampleRate);
+ //    channel->removeFadePoints(dspNow, dspFar);
+ //}
+
+ void CAudioDevice::ClearFadePoints(FMOD::ChannelControl* controlPtr)
+ {
+     if (!controlPtr || !m_pSystem) return;
+
+     unsigned long long dspClock = 0, parentClock = 0;
+     if (controlPtr->getDSPClock(&dspClock, &parentClock) != FMOD_OK) return;
+
+     int sampleRate = 0;
+     if (m_pSystem->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
+
+     const unsigned long long dspNow = parentClock;
+     const unsigned long long dspFar = dspNow + (unsigned long long)(30.0f * (double)sampleRate);
+     controlPtr->removeFadePoints(dspNow, dspFar);
+ }
+
+ void CAudioDevice::FadeVolume(FMOD::ChannelControl* controlPtr, 
+     _float targetVolume01, _float fadeSeconds)
+ {
+     if (!controlPtr || !m_pSystem) return;
+
+     targetVolume01 = clamp(targetVolume01, 0.f, 1.f);
+
+     ClearFadePoints(controlPtr);
+
+     if (fadeSeconds <= 0.f)
+     {
+         controlPtr->setVolume(targetVolume01);
+         return;
+     }
+
+     float currentVolume = 1.f;
+     controlPtr->getVolume(&currentVolume);
+
+     unsigned long long dspClock = 0, parentClock = 0;
+     if (controlPtr->getDSPClock(&dspClock, &parentClock) != FMOD_OK) return;
+
+     int sampleRate = 0;
+     if (m_pSystem->getSoftwareFormat(&sampleRate, 0, 0) != FMOD_OK || sampleRate <= 0) return;
+
+     const unsigned long long dspNow = parentClock;
+     const unsigned long long dspEnd = dspNow + (unsigned long long)((double)fadeSeconds * (double)sampleRate);
+
+     controlPtr->addFadePoint(dspNow, currentVolume);
+     controlPtr->addFadePoint(dspEnd, targetVolume01);
+ }
+
+ void CAudioDevice::Push_GroupVolume(SOUND_GROUP group, _float tempVolume01, _float fadeOutSec)
+ {
+     const _uint groupIndex = static_cast<_uint>(group);
+     if (groupIndex >= ENUM(SOUND_GROUP::END)) return;
+
+     FMOD::ChannelGroup* groupPtr = m_Groups[groupIndex];
+     if (!groupPtr) return;
+
+     float currentVolume = 1.f;
+     groupPtr->getVolume(&currentVolume);
+
+     m_groupVolumeStack[groupIndex].push_back((_float)currentVolume);
+     FadeVolume(groupPtr, tempVolume01, fadeOutSec);
+ }
+
+ _bool CAudioDevice::Pop_GroupVolume(SOUND_GROUP group, _float fadeInSec)
+ {
+     const _uint groupIndex = static_cast<_uint>(group);
+     if (groupIndex >= ENUM(SOUND_GROUP::END)) return false;
+
+     FMOD::ChannelGroup* groupPtr = m_Groups[groupIndex];
+     if (!groupPtr) return false;
+
+     auto& stackRef = m_groupVolumeStack[groupIndex];
+     if (stackRef.empty()) return false;
+
+     const _float restoreVolume = stackRef.back();
+     stackRef.pop_back();
+
+     FadeVolume(groupPtr, restoreVolume, fadeInSec);
+     return true;
+ }
 
 void CAudioDevice::Set_Listener(CTransform* pTransform)
 {

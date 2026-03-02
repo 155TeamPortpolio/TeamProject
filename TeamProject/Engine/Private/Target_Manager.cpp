@@ -49,6 +49,7 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _uint Clear, ID3D11D
 	m_pContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, pSRV);
 
 	SavedState state;
+	state.targetName = strMRTTag;
 	m_pContext->OMGetRenderTargets(
 		1,
 		&state.pPrevRTV,
@@ -143,15 +144,16 @@ void CTarget_Manager::Render_GUI()
 	static _bool TabOpen = {};
 	static _bool CustomTargetOpen = {};
 	ImGui::SetNextWindowPos(ImVec2(600, 5), ImGuiCond_Always);
-	ImGui::Begin("##Render TargetView", nullptr,
+	ImGui::Begin("##Render Target", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
 		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoBackground |
 		ImGuiWindowFlags_AlwaysAutoResize);
 
-	if (ImGui::Button("Render TargetView"))
+	if (ImGui::Button("Render Target"))
 		TabOpen = !TabOpen;
 	ImGui::End();
 
@@ -211,16 +213,17 @@ void CTarget_Manager::Render_GUI()
 		ImGui::End();
 	}
 
-	ImGui::SetNextWindowPos(ImVec2(900, 5), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(750, 5), ImGuiCond_Always);
 	ImGui::Begin("##Custom Render TargetView", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
 		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoBackground |
 		ImGuiWindowFlags_AlwaysAutoResize);
 
-	if (ImGui::Button("Custom Render TargetView"))
+	if (ImGui::Button("Custom RenderTarget"))
 		CustomTargetOpen = !CustomTargetOpen;
 	ImGui::End();
 
@@ -273,6 +276,17 @@ void CTarget_Manager::Render_GUI()
 		}
 		ImGui::End();
 	}
+}
+
+_bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)
+{
+	if (filter.empty())
+		return true;
+
+	string tagLower = Helper::ToLower(tag);
+	string filterLower = Helper::ToLower(filter);
+
+	return tagLower.find(filterLower) != string::npos;
 }
 #endif // _USING_GUI
 
@@ -384,16 +398,6 @@ vector<CRenderTarget*>& CTarget_Manager::Find_MRT(const string& strMRTTag)
 	return iter->second;
 }
 
-_bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)
-{
-	if (filter.empty())
-		return true;
-
-	string tagLower = Helper::ToLower(tag);
-	string filterLower = Helper::ToLower(filter);
-
-	return tagLower.find(filterLower) != string::npos;
-}
 
 CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

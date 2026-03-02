@@ -131,8 +131,9 @@ HRESULT CAI_Material::Save_Material(const string& SavePath)
 	ofs.write(reinterpret_cast<const char*>(&fileHead), sizeof(fileHead));
 
 	for (size_t i = 0; i < m_MaterialInstances.size(); i++) {
+		string pass  = m_MaterialInstances[i]->Get_PassConstant();
 		CAIMaterial* data = dynamic_cast<CAIMaterial*>(m_MaterialInstances[i]->Get_MaterialData());
-		data->Save_MaterialData(m_pContext, ofs, directory.parent_path().string());
+		data->Save_MaterialData(m_pContext, ofs, directory.parent_path().string(),pass);
 	}
 
 	ofs.close();

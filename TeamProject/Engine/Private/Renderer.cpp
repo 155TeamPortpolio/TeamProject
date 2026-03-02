@@ -39,11 +39,6 @@ HRESULT CRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pPipeL
 	return S_OK;
 }
 
-HRESULT CRenderer::Create_RenderTarget(const RenderTargetDesc& desc)
-{
-	return 	m_pTargetManager->Create_Target(desc, false);
-}
-
 ID3D11ShaderResourceView* CRenderer::Get_CustomTargetSRV(const string strTag)
 {
 	CRenderTarget* pTarget = m_pTargetManager->Get_CustomTarget(strTag);

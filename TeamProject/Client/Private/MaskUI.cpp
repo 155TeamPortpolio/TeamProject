@@ -6,12 +6,15 @@
 HRESULT CMaskUI::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+
 	return S_OK;
 }
 
 HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+
+    m_stencilMode = StencilMode::Write;
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
@@ -22,8 +25,13 @@ void CMaskUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
 
+    m_stencilMode = StencilMode::Write;
+    
+    auto pSprite = Get_Component<CSprite2D>();
     const string maskTextureKey = data.value("maskTextureKey", "empty.png");
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, maskTextureKey);
+    pSprite->Change_Texture(0, G_GlobalLevelKey, maskTextureKey);
+    m_fMaskThreshold = data.value("maskThreshold", m_fMaskThreshold);
+    pSprite->Set_Param("MaskThreshold", { &m_fMaskThreshold, "float", sizeof(_float) }); 
 }
 
 CGameObject* CMaskUI::Create()

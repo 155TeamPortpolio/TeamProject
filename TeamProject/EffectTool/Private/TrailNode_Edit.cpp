@@ -81,9 +81,9 @@ void CTrailNode_Edit::Update(_float dt)
 		if (!pEffectContainer->IsLoop())
 			pTrail->SetFadeOut(true);
 
-		_vector3 vRight = m_pTransform->Dir(STATE::RIGHT);
+		_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
-		_vector3 vNextPostion = vPosition + vRight * 100.f;
+		_vector3 vNextPostion = vPosition + vLook * 100.f;
 		pTrail->Add_LinePoint(vPosition, vNextPostion);
 		pTrail->Update_LinePoint(dt);
 
@@ -105,7 +105,12 @@ void CTrailNode_Edit::Render_GUI()
 
 void CTrailNode_Edit::Play()
 {
-
+	m_IsEffectActive = true;
+	if (CTrailModel::POINT_MODE::LINE == m_eMode)
+	{
+		Get_Component<CTrailModel>()->Reset();
+		Get_Component<CTrailModel>()->SetFadeOut(false);
+	}
 }
 
 void CTrailNode_Edit::Import(nlohmann::ordered_json& json)
@@ -123,6 +128,7 @@ void CTrailNode_Edit::Import(nlohmann::ordered_json& json)
 
 	m_vUVSpeed.x = json.at("uv_speed").at("x").get<_float>();
 	m_vUVSpeed.y = json.at("uv_speed").at("y").get<_float>();
+	m_fTile = json.value("tile", 0.f);
 
 	m_vStartColor.x = json.at("start_color").at("x").get<_float>();
 	m_vStartColor.y = json.at("start_color").at("y").get<_float>();

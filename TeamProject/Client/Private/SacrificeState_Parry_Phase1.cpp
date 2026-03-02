@@ -15,11 +15,19 @@ void CSacrificeState_Parry_Phase1::Enter(CSacrifice* pOwner)
 		__super::Enter(pOwner);
 	}
 
-	_uint iRandIndex = Helper::Get_Random_Int(0, 1);
-	if (0 == iRandIndex)
-		m_pSubStateMachine->Change_State("Parry_R_Phase1");
-	else
+	switch (pOwner->Get_AttackSide())
+	{
+	case CEnemy::ATTACK_SIDE::LEFT:
+	{
 		m_pSubStateMachine->Change_State("Parry_L_Phase1");
+	}break;
+	case CEnemy::ATTACK_SIDE::RIGHT:
+	{
+		m_pSubStateMachine->Change_State("Parry_R_Phase1");
+	}break;
+	default:
+		break;
+	}
 }
 
 void CSacrificeState_Parry_Phase1::Update(CSacrifice* pOwner, _float dt)

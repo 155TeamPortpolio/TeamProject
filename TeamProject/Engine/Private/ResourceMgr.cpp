@@ -36,7 +36,7 @@ CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CResourceMgr::Initiallize()
 {
-	m_pPreloader = CPreloadScheduler::Create(CThreadPool::Create());
+	m_pPreloader = CPreloadScheduler::Create(ThreadPool());
 	Init_PreLoader();
 	return S_OK;
 }
@@ -141,25 +141,34 @@ HRESULT CResourceMgr::Sync_To_Level()
 	return S_OK;
 }
 
-
-
 CSoundData* CResourceMgr::Load_Sound(const string& levelTag, const string& soundKey)
 {
 	int index = ValidLevel(levelTag);
-	if (index == -1) {
-		MSG_BOX("Wrong Level Tag. :Load_Sound ");
-		return nullptr;
+	if (index == -1) return nullptr;
+
+	RS_Pool& pool = m_Resources[index];
+
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		auto it = pool.m_Sounds.find(soundKey);
+		if (it != pool.m_Sounds.end())
+			return it->second;
 	}
 
-	auto& map = m_Resources[index].m_Sounds;
-	auto iter = map.find(soundKey);
+	CSoundData* created = CSoundData::Create(MakePath(soundKey), soundKey);
+	if (!created) return nullptr;
 
-	if (iter != map.end()) return iter->second;
-
-	CSoundData* pData = CSoundData::Create(MakePath(soundKey), soundKey);
-	map.emplace(soundKey, pData);
-
-	return pData;
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		auto it = pool.m_Sounds.find(soundKey);
+		if (it != pool.m_Sounds.end())
+		{
+			Safe_Release(created);
+			return it->second;
+		}
+		pool.m_Sounds.emplace(soundKey, created);
+		return created;
+	}
 }
 
 CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType)
@@ -284,7 +293,7 @@ void CResourceMgr::Init_PreLoader()
 			if (!model)
 			{
 				errorMessage = "Load_Model failed: " + key.resourceKey;
-				return false;
+				return false; 
 			}
 			return true;
 		});
@@ -373,7 +382,7 @@ vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
 	vector<CMaterialData*> container;
 	container.reserve(header.MaterialDataCount);
 
-	const string baseFilePath = MakePath(header.materialFileKey);
+	const string baseFilePath = MakePath(fileKey);
 	const string directory = filesystem::path(baseFilePath).parent_path().string() + "/";
 
 	for (size_t i = 0; i < header.MaterialDataCount; ++i)
@@ -484,7 +493,47 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 
 ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaKey)
 {
-	int index = ValidLevel(levelTag);
+	//const string metaPath = Get_ResourcePath(MetaKey);
+	string metaPath = "../../Resources/Data/Meta/";
+	string foundPath;
+
+	for (const auto& entry : filesystem::directory_iterator(metaPath))
+	{
+		if (!entry.is_directory())
+			continue;
+
+		filesystem::path candidate = entry.path() / MetaKey;
+		if (filesystem::exists(candidate))
+		{
+			foundPath = candidate.string();
+			break;
+		}
+	}
+
+	if (metaPath.empty())
+	{
+		return {};
+	}
+
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(foundPath);
+	
+	ANIMATION_META Meta;
+	const string animDir = MetaData.AnimPath;
+	Meta.PreTransform = MetaData.PreTransform;
+	Meta.pClips.reserve(MetaData.Clips.size());
+
+	if (animDir.empty()) return{};
+	const string key = "Resources/";
+	size_t pos = animDir.find(key);
+
+	pos += key.length();
+	size_t end = animDir.find('/', pos);
+	string LevelTag = animDir.substr(pos, end - pos) + "_Level";
+	
+	if (!levelTag.empty())
+		LevelTag = levelTag;
+
+	int index = ValidLevel(LevelTag);
 	if (index == -1) {
 		MSG_BOX("Wrong Level Tag. : Load_AnimClip");
 		return ANIMATION_META();
@@ -498,19 +547,11 @@ ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string&
 			return it->second;
 	}
 
-	const string metaPath = Get_ResourcePath(MetaKey);
-	const string animDir = filesystem::path(metaPath).parent_path().string();
-
-	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
-
-	ANIMATION_META Meta;
-	Meta.PreTransform = MetaData.PreTransform;
-	Meta.pClips.reserve(MetaData.Clips.size());
-
-	for (auto& DataClip : MetaData.Clips) {
-
-		string animPath = animDir + "\\Anim\\" + DataClip.ClipTag + ".anim";
+	for (auto& DataClip : MetaData.Clips)
+	{
+		string animPath = animDir + DataClip.ClipTag + ".anim";
 		CAnimationClip* pClip = CAnimationClip::Create(animPath);
+
 
 		if (!DataClip.Events.empty())
 			pClip->Set_Events(DataClip.Events);
@@ -731,21 +772,26 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources.resize(1);
 
 	/* Default Shader */
-	Add_ResourcePath("VTX_TexPos.hlsl", "../Bin/ShaderFiles/VTX_TexPos.hlsl");
-	Add_ResourcePath("VTX_Mesh.hlsl", "../Bin/ShaderFiles/VTX_Mesh.hlsl");
-	Add_ResourcePath("VTX_NorTex.hlsl", "../Bin/ShaderFiles/VTX_NorTex.hlsl");
-	Add_ResourcePath("VTX_SkinMesh.hlsl", "../Bin/ShaderFiles/VTX_SkinMesh.hlsl");
-	Add_ResourcePath("VTX_Character.hlsl", "../Bin/ShaderFiles/VTX_Character.hlsl");
-	Add_ResourcePath("VTX_Enemy.hlsl", "../Bin/ShaderFiles/VTX_Enemy.hlsl");
-	Add_ResourcePath("VTX_UI.hlsl", "../Bin/ShaderFiles/VTX_UI.hlsl");
-	Add_ResourcePath("VTX_UIMesh.hlsl", "../Bin/ShaderFiles/VTX_UIMesh.hlsl");
-	Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
-	Add_ResourcePath("VTX_Cloud.hlsl", "../Bin/ShaderFiles/VTX_Cloud.hlsl");
-	Add_ResourcePath("VTX_Portal.hlsl", "../Bin/ShaderFiles/VTX_Portal.hlsl");
-	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
+	Add_ResourcePath("VTX_TexPos.hlsl",		"../Bin/ShaderFiles/VTX_TexPos.hlsl");
+	Add_ResourcePath("VTX_Mesh.hlsl",		"../Bin/ShaderFiles/VTX_Mesh.hlsl");
+	Add_ResourcePath("VTX_NorTex.hlsl",		"../Bin/ShaderFiles/VTX_NorTex.hlsl");
+	Add_ResourcePath("VTX_SkinMesh.hlsl",	"../Bin/ShaderFiles/VTX_SkinMesh.hlsl");
+	Add_ResourcePath("VTX_Character.hlsl",	"../Bin/ShaderFiles/VTX_Character.hlsl");
+	Add_ResourcePath("VTX_Enemy.hlsl",		"../Bin/ShaderFiles/VTX_Enemy.hlsl");
+	Add_ResourcePath("VTX_UI.hlsl",			"../Bin/ShaderFiles/VTX_UI.hlsl");
+	Add_ResourcePath("VTX_UIMesh.hlsl",		"../Bin/ShaderFiles/VTX_UIMesh.hlsl");
+	Add_ResourcePath("VTX_Debug.hlsl",		"../Bin/ShaderFiles/VTX_Debug.hlsl");
+	Add_ResourcePath("VTX_Cloud.hlsl",		"../Bin/ShaderFiles/VTX_Cloud.hlsl");
+	Add_ResourcePath("VTX_Portal.hlsl",		"../Bin/ShaderFiles/VTX_Portal.hlsl");
+	Add_ResourcePath("VTX_XWall.hlsl",		"../Bin/ShaderFiles/VTX_XWall.hlsl");
+	Add_ResourcePath("VTX_PaperEffect.hlsl", "../Bin/ShaderFiles/VTX_PaperEffect.hlsl");
+	Add_ResourcePath("VTX_Point.hlsl",		"../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
 	Add_ResourcePath("VTX_Trail.hlsl", "../Bin/ShaderFiles/VTX_Trail.hlsl");
+	Add_ResourcePath("VTX_Tessellation.hlsl", "../Bin/ShaderFiles/VTX_Tessellation.hlsl");
+	Add_ResourcePath("VTX_NonPlayer.hlsl", "../Bin/ShaderFiles/VTX_NonPlayer.hlsl");
+	Add_ResourcePath("VTX_StaticEnemy.hlsl", "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl");
 	Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
 	Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
 	Add_ResourcePath("Shader_Deferred_SkinnedMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_SkinnedMesh.hlsl");
@@ -785,7 +831,10 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_EffectMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_EffectMesh.hlsl", "VTX_EffectMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Trail.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Trail.hlsl", "VTX_Trail.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Tessellation.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Tessellation.hlsl", "VTX_Tessellation.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UIMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UIMesh.hlsl", "VTX_UIMesh.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_NonPlayer.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_NonPlayer.hlsl", "VTX_NonPlayer.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_StaticEnemy.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_StaticEnemy.hlsl", "VTX_StaticEnemy.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_PostProcess.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_PostProcess.hlsl", "Shader_PostProcess.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred_Effect.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred_Effect.hlsl", "Shader_Deferred_Effect.hlsl"));
@@ -810,50 +859,74 @@ void CResourceMgr::Load_InitialResource()
 			MSG_BOX("Failed to preload Default.mat");
 	}
 }
- 
-_bool CResourceMgr::RequestPreload(const PreloadKey& key)
-{
-	PreloadKey tmpKey = key;
-	int index = ValidLevel(tmpKey.levelKey);
-	if (index == -1) {
-		return false;
-	}
 
-	auto& pool =  m_Resources[index];
+_bool CResourceMgr::RequestPreload(PreloadKey key)
+{
+	PreloadKey tmpKey = std::move(key);
+
+	const int index = ValidLevel(tmpKey.levelKey);
+	if (index == -1)
+		return false;
+
+	auto& pool = m_Resources[index];
+
 	switch (tmpKey.type)
 	{
 	case Engine::ResourceType::Texture:
-		if(pool.m_Textures.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Sound:
-		if (pool.m_Sounds.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Shader:
-		if (pool.m_Shaders.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Model:
-		if (pool.m_ModelDatas.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Material:
-		if (pool.m_MaterialInstances.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::ComputeShader:
-		if (pool.m_ComputeShaders.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Animation:
-		if (pool.m_AnimationMetas.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::Effect:
-		if (pool.m_EffectAssets.count(tmpKey.resourceKey))
-			return false;
-	case Engine::ResourceType::None:
-			return false;
-	default:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.textureMutex);
+		if (pool.m_Textures.count(tmpKey.resourceKey)) return false;
 		break;
 	}
+	case Engine::ResourceType::Sound:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.soundMutex);
+		if (pool.m_Sounds.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	case Engine::ResourceType::Shader:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.shaderMutex);
+		if (pool.m_Shaders.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	case Engine::ResourceType::Model:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.modelMutex);
+		if (pool.m_ModelDatas.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	case Engine::ResourceType::Material:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.materialMutex);
+		if (pool.m_MaterialInstances.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	case Engine::ResourceType::ComputeShader:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.computeMutex);
+		if (pool.m_ComputeShaders.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	case Engine::ResourceType::Animation:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.animMutex);
+		if (pool.m_AnimationMetas.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	case Engine::ResourceType::Effect:
+	{
+		std::lock_guard<std::mutex> lockGuard(pool.effectMutex);
+		if (pool.m_EffectAssets.count(tmpKey.resourceKey)) return false;
+		break;
+	}
+	default:
+		return false;
+	}
 
-	return m_pPreloader->Request(key);
+	return m_pPreloader->Request(tmpKey);
 }
+
 
 void CResourceMgr::PumpPreloads(vector<PreloadCompleted>& outCompleted)
 {

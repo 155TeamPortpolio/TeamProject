@@ -1,16 +1,13 @@
 #pragma once
-#include "UI_Object.h"
+#include "UI_HUD.h"
 
 NS_BEGIN(Client)
 
-class CUI_FieldHUD final : public CUI_Object
+class CUI_FieldHUD final : public CUI_HUD
 {
 private:
-	enum Child { GRADIENTF, GRADIENTJ, ACTION, END };	/*임시로 F, J 그라디언트 */
-
-private:
 	CUI_FieldHUD() {}
-	CUI_FieldHUD(const CUI_FieldHUD& rhs) : CUI_Object(rhs) {}
+	CUI_FieldHUD(const CUI_FieldHUD& rhs) : CUI_HUD(rhs) {}
 	virtual ~CUI_FieldHUD() DEFAULT;
 
 public:
@@ -21,20 +18,8 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
-
-private:
-	UI_HANDLE		m_handles[ENUM(Child::END)];
-
-	_bool			m_isTemp = {};
-
-private:
-	void Ready_PartObjects();
-	void Add_PartObject(const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut, _float2 vOffset);
-
-	void Set_Animation(Child child, _int iIndex);
-
-	//template<typename Func>
-	//void ForChild(Child child, Func&& func);
+	virtual void	UI_Active(void* pArg = nullptr)  override;
+	virtual void	UI_DeActive(void* pArg = nullptr) override;
 
 public:
 	static  CGameObject* Create();
@@ -43,13 +28,3 @@ public:
 };
 
 NS_END
-
-//template<typename Func>
-//inline void CUI_FieldHUD::ForChild(Child child, Func&& func)
-//{
-//	auto& handle = m_handles[ENUM(child)];
-//	if (!handle.isValid())
-//		return;
-//
-//	func(handle.Get());
-//}

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "GameInstance.h"
 #include "BattleSystem.h"
 #include "CorinState_Evade.h"
 #include "Corin.h"
@@ -6,39 +7,71 @@
 #include "CorinState_Dash.h"
 #include "CorinState_Backstep.h"
 
+#include "AudioSource.h"
+
+#include "EventSystem.h"
+#include "EventListener.h"
+
+CCorinState_Evade* CCorinState_Evade::Create()
+{
+    auto pInstance = new CCorinState_Evade();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("Dash", CCorinState_Dash::Create());
+    pSubStateMachine->Register_State("Backstep", CCorinState_Backstep::Create());
+
+    pSubStateMachine->Get_State("Dash")->Set_Tag("Dash");
+    pSubStateMachine->Get_State("Backstep")->Set_Tag("Backstep");
+
+    pSubStateMachine->Set_DefaultState("Backstep");
+
+    return pInstance;
+}
+
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
+    pOwner->Get_StateMachine()->Reset_Trigger("ToMove");
+    pOwner->Get_StateMachine()->Reset_Trigger("ToIdle");
     pOwner->Push_Invincible();
-
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-        m_pSubStateMachine->Register_State("Dash", CCorinState_Dash::Create());
-        m_pSubStateMachine->Register_State("Backstep", CCorinState_Backstep::Create());
-
-        m_pSubStateMachine->Get_State("Dash")->Set_Tag("Dash");
-        m_pSubStateMachine->Get_State("Backstep")->Set_Tag("Backstep");
-    }
 
     if (pOwner->Is_Move())
         m_pSubStateMachine->Set_DefaultState("Dash");
     else
         m_pSubStateMachine->Set_DefaultState("Backstep");
     
+    m_pSubStateMachine->Reset_Trigger("Complete");
     m_pSubStateMachine->Set_Bool("Extreme", false);
+    m_pSubStateMachine->Set_Int("ExitMode", 0);
+
+    pOwner->Control_VoiceSequence("Evade_Voice");
 
     __super::Enter(pOwner);
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    if (m_fAnimProgress >= 0.1f)
+    if (m_fAnimProgress < 0.15f && m_fAnimProgress >= 0.01f)
     {
-        if (pOwner->Can_Parry() && !m_pSubStateMachine->Get_Bool("Extreme"))
+        if (pOwner->Is_Perfect() && !m_pSubStateMachine->Get_Bool("Extreme"))
         {
             BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            if (pOwner->Get_CurrentTutorial() == TUTORIAL_TYPE::EXTREME_EVADE)
+            {
+                TUTORIAL_ACTION_DESC desc;
+                desc.eAction = TUTORIAL_ACTION::DODGE;
+                EventSystem()->Broadcast<TUTORIAL_ACTION_DESC>(desc);
+            }
+            pOwner->Get_Component<CAudioSource>()->Slot("PerfectEvade")
+                .Attribute3D(true)
+                .PlayUnique();
+            pOwner->Play_Effect("Evade", _vector3(0.f, 0.f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
             m_pSubStateMachine->Set_Bool("Extreme", true);
         }
     }
@@ -51,6 +84,10 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
         
         switch (iExitMode)
         {
+        case 5: // CounterAttack
+            pRootFSM->Set_Int("AttackEntryMode", 5);
+            pRootFSM->Set_Trigger("Attack");
+            break;
         case 4:
             pRootFSM->Set_Int("IdleEntryMode", 1);
             pRootFSM->Set_Trigger("ToIdle");

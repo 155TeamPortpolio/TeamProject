@@ -13,7 +13,6 @@ private:
 public:
 	void ApplyData(ID3D11DeviceContext* pContext);
 
-
 public:
 	const string& Get_PassConstant();
 	class CShader* Get_Shader();
@@ -30,19 +29,27 @@ public:
 	HRESULT Override_Constant(const MaterialConstants& materialConstant);
 	HRESULT Reset_Constant();
 	void Reset_DynamicSlot();
+	void Reset_Textures();
+
 public:
-	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
 	void ChangeTexture(TEXTURE_TYPE type, _uint index);
 	void Set_Blended(_bool blend) { m_IsBlended = blend; };
+	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 	_bool IsBlened() { return m_IsBlended; }
+
 	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
 	_bool isValid();
+	_uint Get_InstacneID() { return m_MaterialInstance_ID; }
 
-	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
+	_bool GetMaterialTextureKey(TEXTURE_TYPE type, _uint index, string& outKey);
+	class CTexture* GetBindedTexture(TEXTURE_TYPE type);
+	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
+	_uint Get_BindedIndex(TEXTURE_TYPE type);
+	_uint Get_BindedCount(TEXTURE_TYPE type);
 public:
 	virtual void Render_GUI();
-
+	void TypeCheck(const string& first, SHADER_PARAM& second);
 private:
 	void ClearDynamicSlotsBound(CShader* materialShader);
 
@@ -57,12 +64,15 @@ private:
 	MaterialConstants overrides_Constant = {};
 	class CMaterialData* m_pMaterialData = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
+	_uint m_MaterialInstance_ID = {0};
 
 public:
 	static CMaterialInstance* Make_Handle(class CMaterialData* pData, ID3D11Device* pDevice);
 	static CMaterialInstance* Create_Handle(const string& materialKey, const string& DefualtpassConstant, ID3D11Device* pDevice);
 	CMaterialInstance* Clone();
 	virtual void Free() override;
+
+	static _uint Next_ID ;
 };
 
 NS_END

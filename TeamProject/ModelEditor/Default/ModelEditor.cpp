@@ -174,14 +174,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
     }
     else
     {
-        g_iWinSizeX = 1600;
-        g_iWinSizeY = 900;
+        g_iWinSizeX = 1900;
+        g_iWinSizeY = 1000;
     }
 
     const DWORD style = WS_OVERLAPPEDWINDOW;
     const DWORD exStyle = 0;
 
-    MonitorPickResult mon = GetWorkRectOfMonitorIndex(1);
+    MonitorPickResult mon = GetWorkRectOfMonitorIndex(0);
     if (!mon.found) mon = GetWorkRectOfMonitorIndex(0);
 
     const int clientW = static_cast<int>(g_iWinSizeX);

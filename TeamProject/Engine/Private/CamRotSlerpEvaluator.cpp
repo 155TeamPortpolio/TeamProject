@@ -55,12 +55,12 @@ Quaternion CCamRotSlerpEvaluator::MakeRotFromLookRoll(_vector3 look, _float roll
 
 	const _vector3 forward = look;
 
-	_vector3 referenceUp(0.f, 1.f, 0.f);
-	const float parallel = fabsf(forward.Dot(referenceUp));
+	_vector3 refUp(0.f, 1.f, 0.f);
+	const float parallel = fabsf(forward.Dot(refUp));
 	if (parallel > 0.999f)
-		referenceUp = _vector3(0.f, 0.f, 1.f);
+		refUp = _vector3(0.f, 0.f, 1.f);
 
-	_vector3 right = referenceUp.Cross(forward);
+	_vector3 right = refUp.Cross(forward);
 	right.Normalize();
 
 	_vector3 up = forward.Cross(right);
@@ -73,7 +73,6 @@ Quaternion CCamRotSlerpEvaluator::MakeRotFromLookRoll(_vector3 look, _float roll
 	basis._41 = 0.f;       basis._42 = 0.f;       basis._43 = 0.f;       basis._44 = 1.f;
 
 	Quaternion baseRot = Quaternion::CreateFromRotationMatrix(basis);
-
 	Quaternion rollRot = Quaternion::CreateFromAxisAngle(forward, rollRad);
 	Quaternion finalRot = rollRot * baseRot;
 	finalRot.Normalize();

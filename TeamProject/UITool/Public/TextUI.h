@@ -26,7 +26,7 @@ public:
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_char		m_szText[MAX_PATH]{};
+	_char		m_szText[2048]{};
 	_float		m_fFontScale = 1.f; 
 
 	_bool		m_isOutlined{};
@@ -39,6 +39,9 @@ private:
 
 	_bool		m_isSizeToContent = true;
 
+	_bool		m_isAutoPos = { };
+	ANCHOR		m_eAutoPosAnchor = {};
+
 private:
 	string		m_strFontTag{};
 	_int		m_iFontKeyIndex{};
@@ -48,11 +51,9 @@ public:
 	inline static       _uint  m_iCount{};
 
 private:
-	virtual void Render_GUI_Layout() override;
-	virtual void Render_GUI_Transform() override;
-
-private:
-	void UpdateAnchorOffset_TextAlign();
+	virtual void Render_GUI_Transform() override; 
+	void Render_GUI_Text();
+	void Render_GUI_TextAlign();
 
 public:
 	static CGameObject* Create();

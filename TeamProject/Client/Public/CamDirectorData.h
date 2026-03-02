@@ -3,6 +3,10 @@
 #include "OrbitCam.h"
 #include "FreeCam.h"
 #include "SequenceCam.h"
+#include "Player.h"
+#include "Helper_Func.h"
+#include "Character.h"
+#include "GameInstance.h"
 
 NS_BEGIN(Engine)
 class CCamSequencePlayer; class ICameraService; class IObjectService;
@@ -10,13 +14,51 @@ NS_END
 
 NS_BEGIN(Client)
 namespace fs = filesystem;
+class CBattlePlayer; class CFieldCharacter; class CPlayer; class CCharacter; class CBattlePlayer; class CBattleSystem;
 
-class CBattlePlayer; class CFieldCharacter; class CPlayer; 
-
-enum class CamType { None, Free, Orbit, Sequence, End };
+enum class CamType       { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };
+enum class CamSeqType    { BattleIntro, ZeroIntro, Ultimate, End };
+enum class CamStartDir   { Front, Back };
 
-struct CamSequenceRequestDesc
+enum class CamEventType 
+{
+    IntroFinished,       SpinFinished,        SpinHalfFinished, 
+    Miyabi_01_Finished,  Miyabi_02_Finished,  Miyabi_03_Finished,
+    JaneDoe_01_Finished, JaneDoe_02_Finished, JaneDoe_03_Finished,
+    UltimateFinished, 
+    WipeOutBackFinished, WipeOutLeftFinished, WipeOutRightFinished, WipeOutFrontFinished,
+};
+
+enum class CamShakeType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig, ExplosionHuge, ExplosionMega,
+    LandingLight, LandingHeavy, LandingCrush,
+    Dash, Dodge, SprintStep,
+    Parry, GuardBreak, Knockback, Stun,
+    UltimateStart, UltimateImpact, UltimateEnd,
+    EarthquakeShort, EarthquakeLong,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S, 
+    GachaShake,
+    End
+};
+
+enum class CamZoomType
+{
+    TapSoft, HitLight, HitNormal, HitHeavy, HitCrit,
+    ExplosionSmall, ExplosionBig, ExplosionHuge, ExplosionMega,
+    LandingLight, LandingHeavy, LandingCrush,
+    Dash, Dodge, SprintStep,
+    Parry, GuardBreak, Knockback, Stun,
+    UltimateStart, UltimateImpact, UltimateEnd,
+    EarthquakeShort, EarthquakeLong,
+    Roar1S, Roar15S, Roar2S, Roar25S, Roar4S,
+    GachaShake,
+    End
+};
+
+struct CamSeqReqDesc
 {
     _float blendInSec  = 0.25f;
     _float blendOutSec = 0.25f;
@@ -24,16 +66,19 @@ struct CamSequenceRequestDesc
 
     CamReturnMode returnMode    = CamReturnMode::SnapToEnd;
     CamType       returnCamType = CamType::None;
+
+    EaseType blendInEase  = EaseType::OutSine;
+    EaseType blendOutEase = EaseType::OutSine;
 };
 
-struct CamDirectorSeqEntry
+struct CamSeqEntry
 {
     filesystem::path       path{};
-    CamSequenceDesc        seqDesc{};
-    CamSequenceRequestDesc defaultReq{};
+    CamSeqDesc        seqDesc{};
+    CamSeqReqDesc defaultReq{};
 };
 
-struct CamDirectorPlayingState
+struct CamPlayingState
 {
     _uint            handle = 0u;
     string           key{};
@@ -42,7 +87,8 @@ struct CamDirectorPlayingState
     _bool            pendingStart = false;
     _float           blendInRemain = 0.f;
                      
-    _float           defaultBlendOutSec = 0.25f;
+    _float           defaultBlendOutSec  = 0.25f;
+    EaseType         defaultBlendOutEase = EaseType::OutSine;
                      
     CamReturnMode    returnMode    = CamReturnMode::SnapToEnd;
     CamType          returnCamType = CamType::None;
@@ -51,10 +97,10 @@ struct CamDirectorPlayingState
     Vector3          prevCamPos{};
     Quaternion       prevCamRot = Quaternion::Identity;
 
-    OrbitCamSnapshot prevOrbit{};
+    OrbitSnapshot    prevOrbit{};
 };
 
-using CamDirectorSeqMap     = unordered_map<string, CamDirectorSeqEntry>;
-using CamDirectorCamHandles = array<OBJECT_HANDLE, ENUM(CamType::End)>;
+using CamSeqMap     = unordered_map<string, CamSeqEntry>;
+using CamObjHandles = array<OBJECT_HANDLE, ENUM(CamType::End)>;
 
 NS_END

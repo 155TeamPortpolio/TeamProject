@@ -28,15 +28,47 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
 {
     IHState<CJaneDoe>* pEvade = Get_ParentState();
     if (!pEvade || !pEvade->Get_SubStateMachine()) return;
+    auto pSubMachine = pEvade->Get_SubStateMachine();
 
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
+    if (pOwner->Is_Passion())
+    {
+        if (IsCrossAnimProgress(0.02f))
+        {
+            pOwner->SetRenderLayer(RENDER_LAYER::CustomOnly);
+        }
+        for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+        {
+            if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+            if (Event.Tag == "MotionBlur")
+            {
+                pOwner->Add_MotionBlur();
+            }
+        }
+        if (IsCrossAnimProgress(0.04f))
+        {
+            pOwner->SetRenderLayer(RENDER_LAYER::Default);
+            pOwner->Clear_MotionBlur();
+        }
+    }
+
     if (pOwner->Is_Attack())
-    {   // RushAttack
-        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 3);
-        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+    {   
+        if (pSubMachine->Get_Bool("Extreme"))
+        {
+            // CounterAttack
+            pSubMachine->Set_Int("ExitMode", 5);
+            pSubMachine->Set_Trigger("Complete");
+        }
+        else
+        {
+            // RushAttack
+            pSubMachine->Set_Int("ExitMode", 3);
+            pSubMachine->Set_Trigger("Complete");
+        }
         return;
     }
 
@@ -44,25 +76,28 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
     {
         if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
-            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            pSubMachine->Set_Int("ExitMode", 4);
+            pSubMachine->Set_Trigger("Complete");
             return;
         }
-    }
 
-    if (m_fAnimProgress >= 0.3f)
-    {   // Run
         if (pOwner->Is_Move())
         {
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);
-            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            pSubMachine->Set_Int("ExitMode", 2);
+            pSubMachine->Set_Trigger("Complete");
             return;
         }
     }
 
     if (m_fAnimProgress >= 0.7f)
     {   // Idle
-        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
-        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+        pSubMachine->Set_Int("ExitMode", 0);
+        pSubMachine->Set_Trigger("Complete");
     }
+}
+
+void CJaneDoeState_BackStep::Exit(CJaneDoe* pOwner)
+{
+    pOwner->SetRenderLayer(RENDER_LAYER::Default);
+    pOwner->Clear_MotionBlur();
 }

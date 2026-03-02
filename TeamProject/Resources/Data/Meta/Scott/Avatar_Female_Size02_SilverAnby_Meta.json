@@ -1,0 +1,179 @@
+{
+  "AnimPath" : "../Bin/Resources/Scott/NPC/silverAnbi/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Angry_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Angry_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Angry_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Excited_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Excited_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Excited_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Angry",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Angry",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Happy",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Sad",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Shy",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Surprise",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Blink_Think",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Happy",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Sad",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Shy",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Surprise",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Facial_Think",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Happy_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Happy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Happy_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Sad_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Sad_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Sad_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Shy_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Shy_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Shy_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Surprise_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Surprise_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Surprise_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Think_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Think_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_Galgame_Think_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_MainCity_Idle01_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_MainCity_Stand_Idle_01_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Avatar_Female_Size02_SilverAnby_Ani_MainCity_Stand_Idle_02_Loop",
+      "Events": []
+    }
+  ]
+}

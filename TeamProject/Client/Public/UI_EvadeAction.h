@@ -1,14 +1,17 @@
 #pragma once
 #include "UI_Object.h"
 
+NS_BEGIN(Engine)
+class CTextSlot;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_EvadeAction final : public CUI_Object
 {
 private:
 	enum class CHILD { BG, GAUGE_BG, GAUGE, ICON, TEXT, MOUSE, END };
-
-	static const string INSTANCENAMES[ENUM(CHILD::END)];
+	inline static const string INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "gaugeBg", "gauge", "icon", "text", "mouse" };
 
 	enum class INTERACT_STATE { DISABLE, ENABLE };
 
@@ -28,26 +31,30 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
+	CUI_Object*			m_pChildren[ENUM(CHILD::END)] = {};
+	class CGaugeUI*		m_pGauge = { nullptr };
+	class CTextSlot*	m_pTextSlot = { nullptr };
 
-	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
-	_bool			m_isPerfect = {};
+	INTERACT_STATE		m_interactState = { INTERACT_STATE::ENABLE };
+	_bool				m_isPerfect = {};
+
+	UI_ACTION_PRIMARY_MODE m_eMode = { UI_ACTION_PRIMARY_MODE::END };
 
 private:
+	void Load_Json(const string& resourceKey);
+	void Cache_Children();
+	void Bind_EventListener();
+
 	void Set_InteractState(INTERACT_STATE state);
-	void Set_FillAmount(_float fFillAmount);
+	void Set_Gauge(_float fFillAmount);
 
 	void Refresh_Visual();			// 상태 변경시에만 호출
 
 	void Apply_DisableVisual();
 	void Apply_EnableVisual();
 
-	void Set_Alive(CHILD child, _bool isAlive);
-	void Set_Color(CHILD child, _float4 vColor);
-
-private:
-	template<typename Func>
-	void ForChild(CHILD child, Func&& func);
+	void Set_ChildAlive(CHILD child, _bool isAlive);
+	void Set_ChildColor(CHILD child, _float4 vColor);
 
 public:
 	static  CGameObject* Create();
@@ -56,13 +63,3 @@ public:
 };
 
 NS_END
-
-template<typename Func>
-inline void CUI_EvadeAction::ForChild(CHILD child, Func&& func)
-{
-	auto& handle = m_hChildren[ENUM(child)];
-	if (!handle.isValid())
-		return;
-
-	func(handle.Get());
-}

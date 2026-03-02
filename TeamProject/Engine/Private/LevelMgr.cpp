@@ -32,6 +32,8 @@ HRESULT CLevelMgr::Request_ChangeLevel(string LevelID,_bool Load)
         m_eState = LEVEL_STATE::REQUEST;
     else
         m_eState = LEVEL_STATE::LOADED;
+    if(m_pCurrentLevel)
+    m_prevLevelKey = m_pCurrentLevel->Get_Key();
 
     return S_OK;
 }
@@ -47,7 +49,7 @@ HRESULT CLevelMgr::Request_ChangeLevel(string levelID, LEVEL_TRANS_DESC desc)
     else
         m_eState = LEVEL_STATE::LOADED;
 
-    return E_NOTIMPL;
+    return S_OK;
 }
 
 void CLevelMgr::Update(_float dt)
@@ -58,10 +60,7 @@ void CLevelMgr::Update(_float dt)
         break;
     case Engine::LEVEL_STATE::REQUEST: //다음 레벨로 가는 것을 요청한 상태
         if (!m_LoadingLevelKey.empty() && m_LevelCreators.count(m_LoadingLevelKey)) {
-
-            if(m_TransDesc.KeepResource == false)
-                ClearResource();
-
+            ClearResource();
             m_pCurrentLevel = m_LevelCreators[m_LoadingLevelKey]();
             m_pCurrentLevel->Awake(); //확정 후 초기화
             m_eState = LEVEL_STATE::LOADING; //로딩 레벨 설정이 되어 있으면 로딩을 진행함.
@@ -76,9 +75,7 @@ void CLevelMgr::Update(_float dt)
     case Engine::LEVEL_STATE::LOADED: //로딩이 완료되면 아까 요청한 레벨로 전환
         if (!m_TransDesc.nextLevelKey.empty() && m_LevelCreators.count(m_TransDesc.nextLevelKey)) {
 
-            if (m_TransDesc.KeepResource == false)
-                ClearResource();
-
+            ClearResource();
             m_pCurrentLevel = m_LevelCreators[m_TransDesc.nextLevelKey]();
             m_eState = LEVEL_STATE::STABLE;
             m_TransDesc.Reset();
@@ -122,11 +119,10 @@ void CLevelMgr::Register_Level(const string& levelID, LEVEL_CREATOR creator)
 void CLevelMgr::ClearResource()
 {
     if (!m_pCurrentLevel) return;
-    const string& levelTag = m_pCurrentLevel->Get_Key();
+    string levelTag = m_pCurrentLevel->Get_Key();
     if(levelTag == G_GlobalLevelKey)return;
-
-    CGameInstance::GetInstance()->Clear_LevelResource(levelTag);
     Safe_Release(m_pCurrentLevel);
+    CGameInstance::GetInstance()->Clear_LevelResource(levelTag,m_TransDesc.KeepResource);
 }
 
 #pragma region For_OtherManager
@@ -145,12 +141,17 @@ _bool CLevelMgr::Check_ValidateLevel(const string& LevelTag)
     return m_LevelCreators.count(LevelTag);
 }
 
-const string& CLevelMgr::Get_NowLevelKey()
+string CLevelMgr::Get_NowLevelKey()
 {
     if (m_pCurrentLevel)
         return m_pCurrentLevel->Get_Key();
     else
         return m_TransDesc.nextLevelKey;
+}
+
+string CLevelMgr::Get_PrevLevelKey()
+{
+    return m_prevLevelKey;
 }
 
 #pragma endregion

@@ -226,6 +226,14 @@ void CParticleSystem::Simulation_Particle(_float dt)
 void CParticleSystem::Reset()
 {
 	m_fSpawnAcc = 0.f;
+	m_iBurstCount = m_iMaxBurstCount;
+	m_iSpawnParticleCount = 0;
+	m_IsPause = false;
+}
+
+void CParticleSystem::Pause()
+{
+	m_IsPause = true;
 }
 
 HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
@@ -280,6 +288,10 @@ void CParticleSystem::ApplyPending()
 	if (m_iMaxSpawnParticleCount != m_PendingChanged.iMaxSpawnParticleCount)
 		CreateStructuredBuffers(m_PendingChanged.iMaxSpawnParticleCount);
 
+	m_vRimLightColor = m_PendingChanged.vRimLightColor;
+	m_vPivot = m_PendingChanged.vPivot;
+	m_iUseDepthTest = m_PendingChanged.iUseDepthTest;
+	m_iRenderAlignment = m_PendingChanged.iRenderAlignment;
 	m_iRGBMaskMode = m_PendingChanged.iRGBMaskMode;
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
 	m_eColorMode = static_cast<COLOR_MODE>(m_PendingChanged.iColorMode);
@@ -289,6 +301,7 @@ void CParticleSystem::ApplyPending()
 	m_fElapsedTime = 0.f;
 	m_IsLoop = m_PendingChanged.isLoop;
 	m_iBurstCount = m_PendingChanged.iBurstCount;
+	m_iMaxBurstCount = m_PendingChanged.iBurstCount;
 	m_fSpawnPerSec = m_PendingChanged.fSpawnPerSec;
 	m_fSpawnAcc = 0.f;
 	m_iSpawnParticleCount = 0;
@@ -330,13 +343,18 @@ void CParticleSystem::ApplyPending()
 	m_Noise.vScrollSpeed = m_PendingChanged.vScrollSpeed;
 
 	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
-
+	customInstance->Set_Param("UseDepthTest", { &m_iUseDepthTest,"uint",sizeof(_uint) });
+	customInstance->Set_Param("RenderAlignment", { &m_iRenderAlignment,"uint",sizeof(_uint) });
 	customInstance->Set_Param("RGBMask", { &m_iRGBMaskMode,"uint",sizeof(_uint) });
 
 	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
 	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
 
 	customInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
+
+	customInstance->Set_Param("Pivot", { &m_vPivot,"float2",sizeof(_float2) });
+
+	customInstance->Set_Param("RimLightColor", { &m_vRimLightColor, "float3",sizeof(_float3) });
 
 	m_IsChanged = false;
 }
@@ -467,6 +485,9 @@ void CParticleSystem::ReadAliveOutCount()
 }
 void CParticleSystem::SpawnParticles(_float dt)
 {
+	if (m_IsPause)
+		return;
+
 	m_SpawnList.clear();
 
 	if (m_iBurstCount > 0) /*Use Burst*/
@@ -529,6 +550,9 @@ void CParticleSystem::ResetAliveOut()
 
 void CParticleSystem::UploadSpawnIn()
 {
+	if (m_IsPause)
+		return;
+
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 
 	_uint iSpawnCount = m_SpawnList.size();

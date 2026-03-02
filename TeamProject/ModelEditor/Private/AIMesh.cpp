@@ -407,14 +407,17 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 		}
 	}
 
-	//if (0 == NumBones)
-	//{
-	//	_int BoneIndex = m_pSkeleton->Find_BoneIndexByName(m_VIKey);
-	//	_float4x4       OffsetMatrix;
-	//	XMStoreFloat4x4(&OffsetMatrix, XMMatrixIdentity());
-	//	m_BoneIndices.push_back(BoneIndex);
-	//}
+	_uint skeletonBoneCount = m_pSkeleton->Get_BoneCount();
+	m_UsedBones.clear();
+	m_UsedBones.reserve(skeletonBoneCount);
 
+	m_GlobalToLocal.assign(skeletonBoneCount, (uint16_t)0xFFFF);
+
+	for (_uint boneIndex = 0; boneIndex < skeletonBoneCount; ++boneIndex)
+	{
+		m_UsedBones.push_back((uint16_t)boneIndex);
+		m_GlobalToLocal[boneIndex] = (uint16_t)boneIndex;
+	}
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
 	VertexInitialData.pSysMem = m_Skined.data();
 
@@ -602,6 +605,8 @@ void CAIMesh::Render_GUI()
 		ImGui::Text("Dirty: vertex buffer needs update");
 	}
 }
+
+
 void CAIMesh::Update_SkinBuffer()
 {
 	if (!m_pVB) return;

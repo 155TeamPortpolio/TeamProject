@@ -23,7 +23,6 @@ private:
 
 public:
     static CCamPosBSplineEvaluator* Create() { return new CCamPosBSplineEvaluator(); }
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

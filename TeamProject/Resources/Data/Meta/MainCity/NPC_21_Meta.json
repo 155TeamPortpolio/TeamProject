@@ -1,0 +1,79 @@
+{
+  "AnimPath": "../Bin/Resources/MainCity/NPC/21/Anim/",
+  "PreTransform": {
+    "_11": -1.0,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 1.0,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -1.0,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Stand_Idle01_016",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Stand_Scare01_024",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Stand_Talk01_019",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Stand_PlayPhone_017",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Stand_Talk02_020",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_WithBag_Stand_LeaningWall01_001",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_WithBag_Stand_LeaningWall02_002",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Stand_PlayPhone02_047",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Walk_Normal_028",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Walk_PlayPhone_029",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Walk_Lively_030",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Sit_BenchPlayPhone_033",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Sit_RamenPlayPhone_032",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_Female_Size01_Ani_MainCity_Sit_Scare01_031",
+      "Events": []
+    }
+  ]
+}

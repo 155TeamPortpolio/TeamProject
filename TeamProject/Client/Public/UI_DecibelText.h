@@ -2,20 +2,25 @@
 #include "UI_Object.h"
 #include "UI_Decibel.h"
 
+NS_BEGIN(Engine)
+class CSprite2D;
+class CTextSlot;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_DecibelText final : public CUI_Object
 {
 public:
 	typedef struct tagTextDesc : public UI_DESC {
-		const _uint*	pState = { nullptr };
-		const _float4*	pColor = { nullptr };
+		const _uint* pState = { nullptr };
+		const _float4* pColor = { nullptr };
 	}TEXT_DESC;
 
 private:
-	static const wstring TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)];
+	inline static const wstring TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)] = { L"", L"UPROAR", L"Blasting", L"Maximum" };
 
-	enum class Child { BG, TEXTS, END };
+	enum class CHILD { BG, TEXTS, END };
 
 private:
 	CUI_DecibelText() {}
@@ -31,6 +36,10 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
+	class CSprite2D* m_pBg = { nullptr };
+	class CTextSlot* m_pText = { nullptr };
+
 	const _float	m_fHeight = { 12.f };
 	const _float	m_fTextScale = { 0.32f };
 	const _vector2	m_vPadding = { 10.f, 5.f };
@@ -39,13 +48,18 @@ private:
 	const _float4*	m_pColor = { nullptr };
 	_uint			m_iPrevState = { 999 };
 
-	UI_HANDLE		m_handles[ENUM(Child::END)] = {};
-
 private:
 	void Ready_PartObjects();
 
-	void Set_Color();
+	void Init_TextSlot();
+
 	void Set_Text(const wstring& wstrText);
+	void Update_Layout();
+	_float2 Calc_TextPxSize() const;
+
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAlpha(CHILD child, _float fAlpha);
+	void Change_BgTexture(const string& strTextureKey);
 
 public:
 	static  CGameObject* Create();

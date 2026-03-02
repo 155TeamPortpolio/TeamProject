@@ -30,7 +30,14 @@ void CThugAssaulter_Move::Enter(CThugAssaulter* pOwner)
 		auto hysteriesis = pOwner->GetHysteriesis();
 		_float fDistance = pOwner->GetTargetingInfo().fDistance;
 		if (hysteriesis.fEvadeEnter >= fDistance)
-			iMovePatternIndex = MOVEINDEX::Walk_Back;
+		{
+			_int i = Helper::Get_Random_Int(1, 3);
+
+			if (i == 0)
+				iMovePatternIndex = MOVEINDEX::Walk_Back;
+			else
+				iMovePatternIndex = MOVEINDEX::Evade;
+		}
 		else if (hysteriesis.fComboExit <= fDistance)
 			iMovePatternIndex = MOVEINDEX::Walk_Front;
 		else

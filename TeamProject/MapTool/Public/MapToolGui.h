@@ -28,29 +28,68 @@ public:
 	virtual void	Update_Panel(_float dt) override;
 	virtual void	Render_GUI() override;
 
-private:
+public:
 	void			RakeResources();
 	void			CheckCoolTime(_float dt);
 	void			KeyInput();
 	void			Compute_Ray();
-	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
 	// 기존 레이피킹 방식. 사용X
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
+
+	//Place Object
+	void			Place_Placed(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Trigger(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Entity(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Battle(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_Light(PHYSICS_RAY_HIT* pRayHit);
+	void			Place_MovePoint(PHYSICS_RAY_HIT* pRayHit);
+
+	//Save
+	void			Save_Data();
 	void			Save_MapData();
-	void			Select_PlaceType();
+	void			Save_EntityData();
+	void			Save_BattleData();
+	void			Save_LightData();
+	void			Save_MovePoint();
+
+	void			Load_BattleData(const string& filepath = "");
+
+	//GUI Pannnels
+	void			Select_PlaceType(const string& tagLabel, _bool isShowDetail = true);
 	void			Select_TriggerType();
+	void			Select_BattleDataType();
+
+	void			Setting_SelectType(); //Gui Body
+	void			Setting_Placed();
+	void			Setting_Trigger();
+	void			Setting_Entity();
+	void			Setting_Battle();
+	void			Setting_Light();
+	void			Setting_MovePoint();
+	void			Delete_MovePoint(_int PathIndex, _int OrderIndex);
+	void			Update_MovePoint(_int PathIndex, _int OrderIndex, _vector3 vPos);
+	void			Set_MovePoint(map<_int, vector<_float3>> Path);
+	//Show ModelOnly
+	void			Set_EntityModel();
+	void			Save_EntityInit();
+	void			Load_EntityInit();
+	const vector<string>& Get_EntityModelNames() { return m_EntityModelPathPackName; }
+	const vector<ModelPathPack>& Get_ModelPathPack() { return m_ModelPathPack; }
 
 	void			Render_ClearLayer();
-
+	void			Clear_BattleData();
+	bool			WorldToScreen(const _float3& world, ImVec2& out);
 private:
 	/* Refernce */
-	CGameInstance*			m_pGameInstance = { nullptr };
-	class CMapToolCore*		m_pMapToolCore = { nullptr };
-	class CSlotFieldGui*	m_pSlotFieldGui = { nullptr };
+	CGameInstance* m_pGameInstance = { nullptr };
+	class CMapToolCore* m_pMapToolCore = { nullptr };
+	class CSlotFieldGui* m_pSlotFieldGui = { nullptr };
 	class CMapToolAssistant* m_pAssistant = { nullptr };
-	MAPTOOL_CONTEXT*		m_pMapToolContext = { nullptr };
+	MAPTOOL_CONTEXT* m_pMapToolContext = { nullptr };
 
+	_bool m_bOpenSlotField = false;
 
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};
@@ -65,17 +104,43 @@ private:
 	_bool		m_isObjectPicking = { true };
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
 	_int		m_iSelectedLayerIndex = {};
-	
+
 	/* For.Trigger */
 	TriggerTransform	m_TriggerTransform = {};
 	_int		m_iTriggerIndex = {};
 
-	/* For.Data */
-	MapData_Header	m_Data = {};
-	//string			m_TagArea = {};
+	/* For.Entity */
+	_float3	m_vEntitySize = { 1.f, 1.f, 1.f };
+	_int	m_iEntityIndex = {};
+	_int	m_iPickedEntityModelIndex{ -1 };
 
-	_float2			m_vShowSaveFinish = {};
-	_bool			m_isShowSaveFinish = { false };
+	//NPC MovePoint
+	_int m_SelectedPath = 0;
+	map<_int, vector<_float3>> m_Paths;
+
+	//Only ShowModel
+	vector<string>		 m_EntityModelPathPackName{};
+	class CEntityObject* m_pSelectedEntityObject;
+	unordered_map<string, string> m_iniModelName;
+
+	/* For.BattleData */
+	BATTLE_TYPE			m_eBattlyDataType = {};
+	_float3				m_vBattleDataSize = { 1.f, 1.f, 1.f };
+	_int				m_iPlayerIndex = {};
+	_int				m_iSpawnerIndex = {};
+	_int				m_iMonsterIndex = {};
+	_int				m_iEndPointIndex = {};
+
+	/* For.Data */
+	MapData_Header			m_MapData = {};
+	Entity_Header			m_EntityData = {};
+	BATTLE_FIELD_DATA		m_BattleData = {};
+	Light_Header			m_LightData = {};
+	MovePoint_Header	    m_MovePoint{};
+
+	///_uint			m_iBattleTableIndex = {};
+	_float2			m_vShowDataSaveFinish = {};
+	_bool			m_isShowDataSaveFinish = { false };
 
 public:
 	static CMapToolGui* Create(GUI_CONTEXT* pContext);

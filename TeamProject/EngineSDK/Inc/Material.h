@@ -1,5 +1,7 @@
 #pragma once
 #include "Component.h"
+#include "MaterialInstance.h"
+
 NS_BEGIN(Engine)
 
 class ENGINE_DLL CMaterial :
@@ -22,6 +24,7 @@ public:
     void Apply_Material(ID3D11DeviceContext* pContext, _uint Index);
     vector<class CMaterialInstance*>& Get_MaterialInstances() { return m_MaterialInstances; }
     class CMaterialInstance* Get_MaterialInstanceByName(const string& MaterialName);
+    class CMaterialInstance* Find_MaterialInstanceByName(const string& MaterialName);
     class CMaterialInstance* Get_MaterialInstance(_uint Index);
     void ResetMaterial(_uint Index);
 
@@ -32,7 +35,6 @@ public:
     const string& GetPassConstant(_uint Index);
     CMaterialInstance* Find_MaterialByName(const string& MaterialName);
     _bool isValid(_uint index);
-
 public:
     void SetBlendHasAlpha(AlphaCheckLevel checkLevel, const string& BlendPass);
 

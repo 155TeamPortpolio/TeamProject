@@ -2,30 +2,296 @@
 #include "UIDirector.h"
 
 #include "GameInstance.h"
+#include "GameObject.h"
 #include "UI_Object.h"
 #include "UILoader.h"
 #include "UI_ScreenFade.h"
+#include "UI_HUD.h"
+#include "UI_DamageText.h"
+#include "UI_ResultBanner.h"
+#include "UI_GachaDisplay.h"
+#include "UI_GachaResult.h"
+#include "UI_RenderTargetScreen.h"
+#include "UI_Party.h"
+#include "UI_Switch.h"
+#include "UI_TutorialInfo.h"
+#include "UltimateBG.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
-void CUIDirector::FadeIn_Screen(_float fDuration)
+HRESULT CUIDirector::Register(CUI_Object* pObj)
 {
-	if (!m_hScreenFade.isValid() || fDuration <= 0.f)
-		return;
+	if (!pObj)
+		return E_FAIL;
 
-	CUI_ScreenFade::FADE_DESC desc = {};
-	desc.fDuration = fDuration;
-	m_hScreenFade.Get()->UI_Active(&desc);
+	string strInstanceName = pObj->Get_InstanceName();
+	auto iter = m_handles.find(strInstanceName);
+	if (iter != m_handles.end())
+		return E_FAIL;
+
+	m_handles.emplace(strInstanceName, pObj->Get_Handle());
+
+	return S_OK;
 }
 
-void CUIDirector::FadeOut_Screen(_float fDuration)
+HRESULT CUIDirector::Register_EnemyHUD(CUI_Object* pObj)
 {
-	if (!m_hScreenFade.isValid() || fDuration <= 0.f)
-		return;
+	if (!pObj)
+		return E_FAIL;
 
+	m_hEnemyHUDs.push_back(pObj->Get_Handle());
+
+	return S_OK;
+}
+
+void CUIDirector::FadeIn_Screen(_float fDuration, function<void()> onFinished)
+{
 	CUI_ScreenFade::FADE_DESC desc = {};
 	desc.fDuration = fDuration;
-	m_hScreenFade.Get()->UI_DeActive(&desc);
+	desc.onFinished = onFinished;
+
+	if (!m_hFade.isValid())
+		return;
+
+	m_hFade.Get()->UI_Active(&desc);
+	//UI_Active("screen_fade", &desc);
+}
+
+void CUIDirector::FadeOut_Screen(_float fDuration, function<void()> onFinished)
+{
+	CUI_ScreenFade::FADE_DESC desc = {};
+	desc.fDuration = fDuration;
+	desc.onFinished = onFinished;
+
+	if (!m_hFade.isValid())
+		return;
+
+	m_hFade.Get()->UI_DeActive(&desc);
+	//UI_DeActive("screen_fade", &desc);
+}
+
+void CUIDirector::Create_Fade()
+{
+	auto pFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" }).Build("fade");
+	if (!pFade)
+		return;
+
+	UIManager()->Add_UIObject(pFade, G_GlobalLevelKey);
+	m_hFade = pFade->Get_Handle();
+}
+
+void CUIDirector::Create_Ultimate()
+{
+	ResourceManager()->Add_ResourcePath("UltimateBg_Miyabi.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_Miyabi.png");
+	ResourceManager()->Add_ResourcePath("UltimateBg_JaneDoe.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_JaneDoe.png");
+	ResourceManager()->Add_ResourcePath("UltimateBg_Corin.png", "../Bin/Resources/Global/UI/Image/Ultimate/UltimateBg_Corin.png");
+
+	if (FAILED(PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Ultimate", CUltimateBG::Create())))
+		return;
+
+	auto pUltimate = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Ultimate" }).Build("Ultimate");
+	if (!pUltimate)
+		return;
+	ObjectManager()->Add_Object(pUltimate, { G_GlobalLevelKey, "UI_Layer" });
+
+	m_pUltimate = dynamic_cast<CUltimateBG*>(pUltimate);
+}
+
+void CUIDirector::Show_SceneFrame()
+{
+	UI_Active("scene_frame");
+}
+
+void CUIDirector::Hide_SceneFrame()
+{
+	UI_DeActive("scene_frame");
+}
+
+void CUIDirector::Show_Mouse()
+{
+	UI_Active("mouse");
+}
+
+void CUIDirector::Hide_Mouse()
+{
+	UI_DeActive("mouse");
+}
+
+void CUIDirector::Show_HUD(HUD hud, _bool isFade)
+{
+	Show_HUD(Get_HUDName(hud), isFade);
+}
+
+void CUIDirector::Hide_HUD(HUD hud)
+{
+	Hide_HUD(Get_HUDName(hud));
+}
+
+void CUIDirector::Show_EnemyHUD()
+{
+	for (auto& handle : m_hEnemyHUDs)
+	{
+		if (!handle.isValid())
+			continue;
+
+		handle.Get()->UI_Active();
+	}
+}
+
+void CUIDirector::Hide_EnemyHUD()
+{
+	for (auto& handle : m_hEnemyHUDs)
+	{
+		if (!handle.isValid())
+			continue;
+
+		handle.Get()->UI_DeActive();
+	}
+}
+
+void CUIDirector::Show_Party(vector<CHARACTER> characters)
+{
+	CUI_Party::UI_PARTY_DESC desc = {};
+	desc.characters = characters;
+
+	UI_Active("party", &desc);
+}
+
+void CUIDirector::Hide_Party()
+{
+	UI_DeActive("party");
+}
+
+void CUIDirector::Request_DamageText(const DAMAGE_DESC& desc)
+{
+	const string levelKey = LevelManager()->Get_NowLevelKey();
+
+	auto dmgText = Builder::Create_UIObject({G_GlobalLevelKey, "Proto_GameObject_DamageText"}).FromPool().Build("DamageText");
+
+	dmgText->UI_Active((void*)&desc);
+
+	UIManager()->Add_UIObject(dmgText, levelKey);
+}
+
+void CUIDirector::Show_Switch(CHARACTER eLeft, CHARACTER eRight)
+{
+	CUI_Switch::SWITCH_DESC desc = {};
+	desc.left = eLeft;
+	desc.right = eRight;
+
+	UI_Active("switch", &desc);
+	UI_Active("switchRT");
+}
+
+void CUIDirector::Hide_Switch()
+{
+	UI_DeActive("switch");
+	UI_DeActive("switchRT");
+}
+
+void CUIDirector::Show_Ultimate(CHARACTER eCharacter, _float duration)
+{
+	m_pUltimate->Show_Ultimate(eCharacter, duration);
+}
+
+void CUIDirector::Show_Lottery()
+{
+	UI_Active("lottery");
+}
+
+void CUIDirector::Hide_Lottery()
+{
+	UI_DeActive("lottery");
+}
+
+void CUIDirector::Show_Ramen()
+{
+	UI_Active("ramen");
+}
+
+void CUIDirector::Hide_Ramen()
+{
+	UI_DeActive("ramen");
+}
+
+void CUIDirector::Show_GachaPage()
+{
+	UI_Active("gacha_page");
+}
+
+void CUIDirector::Hide_GachaPage()
+{
+	UI_DeActive("gacha_page");
+}
+
+void CUIDirector::Show_GachaLabel(const _wstring& strLabel)
+{
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
+	desc.eType = CUI_GachaDisplay::TYPE::LABEL;
+	desc.strLabel = strLabel;
+
+	UI_Active("gacha_display", &desc);
+}
+
+void CUIDirector::Hide_GachaLabel()
+{
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
+	desc.eType = CUI_GachaDisplay::TYPE::LABEL;
+
+	UI_DeActive("gacha_display", &desc);
+}
+
+void CUIDirector::Show_GachaSkipButton()
+{
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
+	desc.eType = CUI_GachaDisplay::TYPE::SKIP;
+
+	UI_Active("gacha_display", &desc);
+}
+
+void CUIDirector::Hide_GachaSkipButton()
+{
+	CUI_GachaDisplay::DISPLAY_STATE_DESC desc = {};
+	desc.eType = CUI_GachaDisplay::TYPE::SKIP;
+
+	UI_DeActive("gacha_display", &desc);
+}
+
+void CUIDirector::Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc)
+{
+	CUI_GachaResult::RESULT_DESC desc = {};
+	desc.pResultDesc = pResultDesc;
+
+	UI_Active("gacha_result", &desc);
+}
+
+void CUIDirector::Show_Switch()
+{
+	UI_Active("switchRT");
+}
+
+void CUIDirector::Show_Clear()
+{
+	UI_Active("clearRT");
+}
+
+void CUIDirector::Show_Wipeout()
+{
+	UI_Active("wipeoutRT");
+}
+
+void CUIDirector::Show_WipeoutOverlay()
+{
+	UI_Active("wipeout_overlay");
+}
+
+_bool CUIDirector::Is_WipeoutOverlayFinished()
+{
+	auto handle = Find_Handle("wipeout_overlay");
+	if (!handle)
+		return true;
+
+	return handle->Get()->Is_AnimFinished();
 }
 
 void CUIDirector::Initialize()
@@ -35,11 +301,17 @@ void CUIDirector::Initialize()
 
 	// json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장
 	Load_UILevelData("levelData.json");
+
+	// 페이드인 글로벌 레벨에 생성
+	Create_Fade();
+	Create_Ultimate();
 }
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)
 {
+	// 핸들 정리
 	m_handles.clear();
+	m_hEnemyHUDs.clear();
 
 	m_levelKey = levelKey;
 	// 레벨에 프로토타입 등록
@@ -48,59 +320,67 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 	// json 데이터에서 레벨에 있어야하는 객체 생성
 	const json& levels = m_json["levels"];
 
-	if (!levels.contains(levelKey))
+	if (!levels.contains(levelKey) && !levels.contains("Global_Level"))
 		return;
 
-	const json& objects = levels[levelKey]["objects"];
+	vector<string> targetKeys;
 
-	for (const auto& obj : objects)
+	if (levels.contains(levelKey))
+		targetKeys.push_back(levelKey);
+
+	if (levels.contains("Global_Level"))
+		targetKeys.push_back("Global_Level");
+
+	if (targetKeys.empty())
+		return;
+
+	for (const auto& key : targetKeys)
 	{
-		const string protoTag = obj["prototypeTag"];
-		const string instName = obj["instanceName"];
-		const string prefabPath = obj["prefabPath"];
+		const json& objects = levels[key]["objects"];
 
-		//CUI_Object* pObj = Builder::Create_UIObject({ levelKey, protoTag })
-		//	.Build(instName);
-
-		auto builder = Builder::Create_UIObject({ levelKey, protoTag });
-		if (!prefabPath.empty())
-			builder.Asset(prefabPath);
-
-		CUI_Object* pObj = builder.Build(instName);
-
-		if (!pObj)
+		for (const auto& obj : objects)
 		{
-			MSG_BOX("Failed to Create UI Object : UI Director");
-			continue;
-		}
+			const string protoTag = obj["prototypeTag"];
+			const string instName = obj["instanceName"];
+			const string prefabPath = obj["prefabPath"];
 
-		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pObj, levelKey)))
-		{
-			MSG_BOX("Failed to Add_UIObject : UI Director");
-			continue;
-		}
+			auto builder = Builder::Create_UIObject({ G_GlobalLevelKey, protoTag });	// 나중에 아마도 대부분 글로벌, 그리고 몇몇개만 레벨별로?
+			if (!prefabPath.empty())
+				builder.Asset(prefabPath);
 
-		UI_HANDLE handle = pObj->Get_Handle();
-		if (!handle.isValid())
-		{
-			MSG_BOX("Handle is not Vaild : UI Director");
-			continue;
-		}
+			CUI_Object* pObj = builder.Build(instName);
 
-		auto result = m_handles.emplace(instName, handle);
-		if (!result.second)
-			MSG_BOX("UI Object Already Exists : UI Director");
+			if (!pObj)
+			{
+				MSG_BOX("Failed to Create UI Object : UI Director");
+				continue;
+			}
+
+			if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pObj, levelKey)))
+			{
+				MSG_BOX("Failed to Add_UIObject : UI Director");
+				continue;
+			}
+
+			UI_HANDLE handle = pObj->Get_Handle();
+			if (!handle.isValid())
+			{
+				MSG_BOX("Handle is not Vaild : UI Director");
+				continue;
+			}
+
+			auto result = m_handles.emplace(instName, handle);
+			if (!result.second)
+				MSG_BOX("UI Object Already Exists : UI Director");
+		}
 	}
 
-	// 화면 전환시 사용할 스크린 페이드 
-	auto pScreenFade = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ScreenFade" })
-		.Build("screenFade");
-
-	if (!pScreenFade)
-		return;
-
-	UIManager()->Add_UIObject(pScreenFade, levelKey);
-	m_hScreenFade = pScreenFade->Get_Handle();
+	if (levelKey == "Test_Level" ||
+		levelKey == "Zero_Level" ||
+		levelKey == "Tutorial_Level")
+	{
+		Ready_UIObject(levelKey, "Proto_GameObject_RenderTargetScreen", "rendertargetScreen", CUI_RenderTargetScreen::Create());
+	}
 }
 
 void CUIDirector::Load_UILevelData(const string& resourceKey)
@@ -115,7 +395,73 @@ void CUIDirector::Load_UILevelData(const string& resourceKey)
 	file.close();
 }
 
+void CUIDirector::Show_HUD(const string& strInstanceName, _bool isFade)
+{
+	CUI_HUD::UI_TRANSITION_DESC desc = {};
+	desc.isFade = isFade;
+	UI_Active(strInstanceName, &desc);
+}
+
+void CUIDirector::Hide_HUD(const string& strInstanceName)
+{
+	UI_DeActive(strInstanceName);
+}
+
+string CUIDirector::Get_HUDName(HUD hud)
+{
+	switch (hud)
+	{
+	case HUD::FIELD:		return "hud_field";
+	case HUD::BATTLE:		return "hud_battle";
+	}
+	return "";
+}
+
+HRESULT CUIDirector::Ready_UIObject(const string& strLevelTag, const string& strPrototypeTag, const string& strInstanceName, CGameObject* pProto)
+{
+	if (!pProto)
+		return E_FAIL;
+
+	if (FAILED(PrototypeManager()->Add_ProtoType(strLevelTag, strPrototypeTag, pProto)))
+		return E_FAIL;
+
+	auto pObj = Builder::Create_Object({ strLevelTag, strPrototypeTag })
+		.Build(strInstanceName);
+	if (!pObj)
+		return E_FAIL;
+
+	ObjectManager()->Add_Object(pObj, { strLevelTag, "UI_Layer" });
+
+	return S_OK;
+}
+
+void CUIDirector::UI_Active(const string& strInstanceName, void* pArg)
+{
+	auto handle = Find_Handle(strInstanceName);
+	if (handle)
+		handle->Get()->UI_Active(pArg);
+}
+
+void CUIDirector::UI_DeActive(const string& strInstanceName, void* pArg)
+{
+	auto handle = Find_Handle(strInstanceName);
+	if (handle)
+		handle->Get()->UI_DeActive(pArg);
+}
+
+UI_HANDLE* CUIDirector::Find_Handle(const string& strInstanceName)
+{
+	auto iter = m_handles.find(strInstanceName);
+	if (iter != m_handles.end() && iter->second.isValid())
+		return &iter->second;
+
+	return nullptr;
+}
+
 void CUIDirector::Free()
 {
 	__super::Free();
+
+	m_handles.clear();
+	m_hEnemyHUDs.clear();
 }

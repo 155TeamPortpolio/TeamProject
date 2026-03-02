@@ -1,52 +1,88 @@
 #include "pch.h"
 #include "UI_BattleHUD.h"
-
+#include "GaugeUI.h" 
+#include "UI_DamageText.h"
+// Engine
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "EventListener.h"
 #include "TextSlot.h"
 #include "Sprite2D.h"
-#include "GaugeUI.h" 
+
+#include "UI_Decibel.h"
+#include "UI_DecibelKanji.h"
+#include "UI_DecibelDigits.h"
+#include "UI_DecibelPts.h"
+#include "UI_DecibelText.h"
+#include "UI_BattleHUDAction.h"
+#include "UI_PrimaryAction.h"
+#include "UI_EvadeAction.h"
+#include "UI_SpecialAction.h"
+#include "UI_SwitchAction.h"
+#include "UI_UltimateAction.h"
+#include "UI_AnomalyStack.h"
+#include "UI_AnomalyGauge.h"
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
     Add_Component<CEventListener>();
+    
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Decibel", CUI_Decibel::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelKanji", CUI_DecibelKanji::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelDigits", CUI_DecibelDigits::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelPts", CUI_DecibelPts::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_DecibelText", CUI_DecibelText::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BattleHUDAction", CUI_BattleHUDAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_PrimaryAction", CUI_PrimaryAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EvadeAction", CUI_EvadeAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpecialAction", CUI_SpecialAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SwitchAction", CUI_SwitchAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_UltimateAction", CUI_UltimateAction::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AnomalyStack", CUI_AnomalyStack::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AnomalyGauge", CUI_AnomalyGauge::Create());
 
     return S_OK;
 }
 
 HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath("hud_battle.json");
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("hud_battle.json")));
 
-    // 핸들 캐싱 (JSON으로 로드한 자식들)
-    Cache_Handles();
+    Cache_Children();
 
-    // 클라이언트에서 만든 ui 자식으로 추가 (추가하면서 핸들 캐싱함)
-    const string& strLevelKey = LevelManager()->Get_NowLevelKey();
-    Add_PartObject(strLevelKey, "Proto_GameObject_Decibel", "decibel", Child::ULTIMATE1, _float2(50.f, 136.f));
-    Add_PartObject(strLevelKey, "Proto_GameObject_BattleHUDAction", "action", Child::ACTION, _float2(1178.f, 655.f));
-     
+    // 클라이언트에서 만든 ui 자식으로 추가 (추가하면서 캐싱함)
+    Add_PartObject(G_GlobalLevelKey, "Proto_GameObject_Decibel", "decibel", CHILD::ULTIMATE1, _float2(50.f, 136.f));
+    Add_PartObject(G_GlobalLevelKey, "Proto_GameObject_BattleHUDAction", "action", CHILD::ACTION, _float2(1178.f, 655.f));
+
+    Add_Anomaly(CHARACTER::JaneDoe, G_GlobalLevelKey, "Proto_GameObject_AnomalyGauge", "anomaly_janeDoe");
+    Add_Anomaly(CHARACTER::Miyabi, G_GlobalLevelKey, "Proto_GameObject_AnomalyStack", "anomaly_miyabi");
+
+    // 이벤트 : UI_PLAYER_INIT_DESC
+    Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_INIT_DESC>([&](const UI_PLAYER_INIT_DESC& desc)
+        {
+            for (_int i = 0; i < 3; ++i)
+                Set_ChildAlive(ROLE_CHILD[i], i < desc.iCount);
+        });
+
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             Set_Values(desc);
         });
 
-    Set_Animation(0);
-
     return S_OK;
 }
 
 void CUI_BattleHUD::Awake()
 {
+    Set_Alpha(0.f);
 }
 
 void CUI_BattleHUD::Update(_float dt)
@@ -58,39 +94,76 @@ void CUI_BattleHUD::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset)
+void CUI_BattleHUD::UI_Active(void* pArg)
 {
-    CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
-        .Offset(vOffset)
-        .Build(strInstanceName);
+    if (!pArg)
+        return;
 
+    UI_TRANSITION_DESC* pDesc = static_cast<UI_TRANSITION_DESC*>(pArg);
+    if (pDesc->isFade)
+        Set_Animation(0);
+    else
+        Set_Alpha(1.f);
+}
+
+void CUI_BattleHUD::UI_DeActive(void* pArg)
+{
+    Set_Alpha(0.f);
+}
+
+void CUI_BattleHUD::Cache_Children()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    // 자식 UI 오브젝트 포인터를 배열에 캐싱
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
+    {
+        const string& strInstanceName = INSTANCENAMES[i];
+        if (strInstanceName.empty())
+            continue;
+
+        auto pObj = pContainer->Find_Descendant(strInstanceName);
+        if (!pObj)
+            continue;
+
+        auto pUI = dynamic_cast<CUI_Object*>(pObj);
+        m_pChildren[i] = pUI;
+
+        m_pSprites[i] = pUI->Get_Component<CSprite2D>();
+        m_ptextSlots[i] = pUI->Get_Component<CTextSlot>();
+        m_pGauges[i] = dynamic_cast<CGaugeUI*>(pUI);
+    }
+}
+
+void CUI_BattleHUD::Add_PartObject(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, CHILD child, _float2 vOffset, UI_DESC* pDesc)
+{
+    auto builder = Builder::Create_UIObject({strLevelKey, strPrototypeTag});
+
+    if (pDesc) builder.Add_UIDesc(pDesc);
+
+    CUI_Object* pUI = builder.Offset(vOffset).Build(strInstanceName);
+    if (!pUI) return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pUI);
+    m_pChildren[child] = pUI;
+
+    m_pSprites[child]     = pUI->Get_Component<CSprite2D>();
+    m_ptextSlots[child]   = pUI->Get_Component<CTextSlot>();
+    m_pGauges[child]      = dynamic_cast<CGaugeUI*>(pUI);
+}
+
+void CUI_BattleHUD::Add_Anomaly(CHARACTER eCharacter, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName)
+{
+    auto iter = m_Anomalies.find(eCharacter);
+    if (iter != m_Anomalies.end())
+        return;
+
+    auto pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag }).Build(strInstanceName);
     if (!pObj)
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
-    m_handles[child] = pObj->Get_Handle();
-}
-
-void CUI_BattleHUD::Cache_Handles()
-{
-    for (_int i = 0; i < 3; ++i)
-    {
-        m_handles[ROLE_CHILD[i]] = Get_DescendantHandle("role" + to_string(i + 1));
-        m_handles[ICON_CHILD[i]] = Get_DescendantHandle("icon" + to_string(i + 1));
-        m_handles[HPFRONT_CHILD[i]] = Get_DescendantHandle("hpFront" + to_string(i + 1));
-        m_handles[HPBACK_CHILD[i]] = Get_DescendantHandle("hpBack" + to_string(i + 1));
-        m_handles[SPECIAL_CHILD[i]] = Get_DescendantHandle("special" + to_string(i + 1));
-        m_handles[SPECIALARROW_CHILD[i]] = Get_DescendantHandle("specialArrow" + to_string(i + 1));
-    }
-
-    for (_int i = 1; i < 3; ++i)
-    {
-        m_handles[ULTIMATE_CHILD[i]] = Get_DescendantHandle("ultimate" + to_string(i + 1));
-        m_handles[ULTIMATEICON_CHILD[i]] = Get_DescendantHandle("ultimateIcon" + to_string(i + 1));
-    }
-
-    m_handles[Child::CUR_HP_TEXT] = Get_DescendantHandle("curHpText");
-    m_handles[Child::MAX_HP_TEXT] = Get_DescendantHandle("maxHpText");
+    m_Anomalies.emplace(eCharacter, pObj);
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
@@ -98,7 +171,7 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     const _uint iIndex = ENUM(desc.eOwner);
 
     // Icon
-    Set_Texture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
+    Change_ChildTexture(ICON_CHILD[iIndex], Get_IconPath(desc.eCharacter));
 
     // HP
     _float fRatio = desc.hp.fCurValue / desc.hp.fMaxValue;
@@ -127,9 +200,22 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     // HP Text
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
-        Set_NumberText(Child::CUR_HP_TEXT, static_cast<_int>(desc.hp.fCurValue), m_iPlayerHPWidth);
-        Set_NumberText(Child::MAX_HP_TEXT, static_cast<_int>(desc.hp.fMaxValue), m_iPlayerHPWidth);
+        Set_NumberText(CHILD::CUR_HP_TEXT, static_cast<_int>(desc.hp.fCurValue), m_iPlayerHPWidth);
+        Set_NumberText(CHILD::MAX_HP_TEXT, static_cast<_int>(desc.hp.fMaxValue), m_iPlayerHPWidth);
     }
+    
+    // Anomaly
+    auto iter = m_Anomalies.find(desc.eCharacter);
+    if (iter != m_Anomalies.end())
+    {
+        _float2 vOffset = {};
+
+        auto pChild = m_pChildren[ENUM(ANOMALY_CHILD[iIndex])];
+        if (pChild)
+            vOffset = pChild->Get_AnchorOffset();
+
+        iter->second->Set_AnchorOffset( vOffset );
+    } 
 }
 
 void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
@@ -140,19 +226,17 @@ void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
     // special gauge, 기준점 색깔 변경
     if (fRatio >= fThresRatio)
     {
-        Set_Color(SPECIAL_CHILD[iIndex], Helper::HexToColor("#FBC3D6"));
-        Set_Color(SPECIALARROW_CHILD[iIndex], Helper::HexToColor("#FF0607"));
+        Set_ChildColor(SPECIAL_CHILD[iIndex], Helper::HexToColor("#FBC3D6"));
+        Set_ChildColor(SPECIALARROW_CHILD[iIndex], Helper::HexToColor("#FF0607"));
     }
     else
     {
-        Set_Color(SPECIAL_CHILD[iIndex], UI_GRAY_LIGHTEST);
-        Set_Color(SPECIALARROW_CHILD[iIndex], UI_GRAY_LIGHTEST);
+        Set_ChildColor(SPECIAL_CHILD[iIndex], UI_GRAY_LIGHTEST);
+        Set_ChildColor(SPECIALARROW_CHILD[iIndex], UI_GRAY_LIGHTEST);
     }
 
     // special 기준점 위치 변경
-    ForChild(SPECIALARROW_CHILD[iIndex], [&](CUI_Object* ui) {
-        ui->Set_AnchorOffsetX(fThresRatio * SPECIAL_THRESHOLD[iIndex]);
-        });
+    Set_ChildAnchorOffsetX(SPECIALARROW_CHILD[iIndex], fThresRatio * SPECIAL_THRESHOLD[iIndex]);
 }
 
 void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
@@ -161,13 +245,13 @@ void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
     //    return;
 
     _bool isAlive = (fRatio >= 1.f);
-    if (isAlive && !Is_Alive(ULTIMATEICON_CHILD[iIndex]))
+    if (isAlive && !Is_ChildAlive(ULTIMATEICON_CHILD[iIndex]))
     {
-        Set_Alive(ULTIMATEICON_CHILD[iIndex], true);
-        Set_Animation(ULTIMATEICON_CHILD[iIndex], 0); 
+        Set_ChildAlive(ULTIMATEICON_CHILD[iIndex], true);
+        Set_ChildAnimation(ULTIMATEICON_CHILD[iIndex], 0); 
     }
-    else if(!isAlive && Is_Alive(ULTIMATEICON_CHILD[iIndex]))
-        Set_Alive(ULTIMATEICON_CHILD[iIndex], false);
+    else if(!isAlive && Is_ChildAlive(ULTIMATEICON_CHILD[iIndex]))
+        Set_ChildAlive(ULTIMATEICON_CHILD[iIndex], false);
 }
 
 void CUI_BattleHUD::Update_HPBackGauge(_float dt)
@@ -191,70 +275,89 @@ void CUI_BattleHUD::Update_HPBackGauge(_float dt)
     }
 }
 
-_bool CUI_BattleHUD::Is_Alive(Child child)
+_bool CUI_BattleHUD::Is_ChildAlive(CHILD child)
 {
-    _bool isAlive = {};
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return false;
 
-    ForChild(child, [&isAlive](CUI_Object* ui) {
-        isAlive = ui->Is_Alive();
-        });
-    return isAlive;
+    return pChild->Is_Alive();
 }
 
-void CUI_BattleHUD::Set_Alive(Child child, _bool isAlive)
+void CUI_BattleHUD::Set_ChildAlive(CHILD child, _bool isAlive)
 {
-    ForChild(child, [isAlive](CUI_Object* ui) {
-        ui->Set_Alive(isAlive);
-        });
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Alive(isAlive);
 }
 
-void CUI_BattleHUD::Set_Color(Child child, _float4 vColor)
+void CUI_BattleHUD::Set_ChildColor(CHILD child, _float4 vColor)
 {
-    ForChild(child, [vColor](CUI_Object* ui) {
-        ui->Set_Color(vColor);
-        });
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Color(vColor);
 }
 
-void CUI_BattleHUD::Set_Anim(Child child, _int iIndex)
+void CUI_BattleHUD::Set_ChildAnimation(CHILD child, _int iIndex)
 {
-    ForChild(child, [iIndex](CUI_Object* ui) {
-        ui->Set_Animation(iIndex);
-        });
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
+
+    pChild->Set_Animation(iIndex);
 }
 
-void CUI_BattleHUD::Set_Texture(Child child, const string& strTextureKey)
+void CUI_BattleHUD::Set_ChildAnchorOffsetX(CHILD child, _float fOffsetX)
 {
-    ForChild(child, [&](CUI_Object* ui) {
-        auto pSprite = ui->Get_Component<CSprite2D>();
-        if (!pSprite)
-            return;
+    auto pChild = m_pChildren[ENUM(child)];
+    if (!pChild)
+        return;
 
-        pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
-        });
+    pChild->Set_AnchorOffsetX(fOffsetX);
 }
 
-void CUI_BattleHUD::Set_GaugeFill(Child child, _float fFillAmount)
+void CUI_BattleHUD::Change_ChildTexture(CHILD child, const string& strTextureKey)
 {
-    ForChild(child, [fFillAmount](CUI_Object* ui) {
-        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
-        if (!pGauge)
-            return;
+    auto pSprite = m_pSprites[ENUM(child)];
+    if (!pSprite)
+        return;
 
-        pGauge->Set_FillAmount(fFillAmount);
-        });
+    pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
 }
 
-void CUI_BattleHUD::Set_NumberText(Child child, _int iNum, _int iWidth)
+void CUI_BattleHUD::Set_GaugeFill(CHILD child, _float fFillAmount)
 {
-    ForChild(child, [iNum, iWidth](CUI_Object* ui)         {
-        auto pTextSlot = ui->Get_Component<CTextSlot>();
-        if (!pTextSlot)
-            return;
+    auto pGauge = m_pGauges[ENUM(child)];
+    if (!pGauge)
+        return;
 
-        wchar_t buf[32];
-        Helper::Format_FixedZeroPad(buf, _countof(buf), iNum, iWidth);
-        pTextSlot->Set_Text(buf);
-        });
+    pGauge->Set_FillAmount(fFillAmount);
+}
+
+void CUI_BattleHUD::Set_NumberText(CHILD child, _int iNum, _int iWidth)
+{
+    auto pTextSlot = m_ptextSlots[ENUM(child)];
+    if (!pTextSlot)
+        return;
+
+    wchar_t buf[32];
+    Helper::Format_FixedZeroPad(buf, _countof(buf), iNum, iWidth);
+    pTextSlot->Set_Text(buf);
+}
+
+string CUI_BattleHUD::Get_IconPath(CHARACTER eCharacter)
+{
+    switch (eCharacter)
+    {
+    case CHARACTER::Corin:      return "IconRoleGeneral09.png";
+    case CHARACTER::JaneDoe:    return "IconRoleGeneral24.png";
+    case CHARACTER::Miyabi:     return "IconRoleGeneral13.png";
+    default:                    return "IconRoleGeneral09.png";
+    }
 }
 
 CGameObject* CUI_BattleHUD::Create()
@@ -277,4 +380,14 @@ CGameObject* CUI_BattleHUD::Clone(INIT_DESC* pArg)
         Safe_Release(pInstance);
     }
     return pInstance;
+}
+
+void CUI_BattleHUD::Free()
+{
+    __super::Free();
+
+    //for (auto& pAnomaly : m_Anomalies)
+    //    Safe_Release(pAnomaly.second);
+
+    m_Anomalies.clear();
 }

@@ -10,7 +10,7 @@ class CJaneDoeState_Dash : public IBaseState<CJaneDoe>
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override {}
+    virtual void Exit(CJaneDoe* pOwner) override;
 
 private:
     _bool m_bEvadeType = false;
@@ -18,6 +18,10 @@ private:
 public:
     static CJaneDoeState_Dash* Create() { return new CJaneDoeState_Dash(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 NS_END

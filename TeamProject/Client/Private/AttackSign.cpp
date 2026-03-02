@@ -19,9 +19,6 @@ CAttackSign::CAttackSign(const CAttackSign& rhs)
 
 HRESULT CAttackSign::Initialize_Prototype()
 {
-	
-	ResourceManager()->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
-
 	__super::Initialize_Prototype();
 	Add_Component<CPointModel>();
 	Add_Component<CMaterial>();
@@ -55,6 +52,7 @@ HRESULT CAttackSign::Initialize(INIT_DESC* pArg)
 
 	pMaterial->Insert_MaterialInstance(pMaterialInstance, nullptr);
 
+	m_IsActive = false;
 	m_isAlive = false;
 
 	return S_OK;
@@ -82,7 +80,7 @@ void CAttackSign::Update(_float dt)
 			_float t = m_fElapsedTime / m_fDuration;
 		
 			m_fWidth = Math::Lerp(300.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
-			m_fHeight = Math::Lerp(40.f, 1.f, Math::EaseOutSine(t));
+			m_fHeight = Math::Lerp(70.f, 0.f, Math::EaseOutSine(t));
 		}
 	}
 }

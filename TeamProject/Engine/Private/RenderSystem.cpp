@@ -16,6 +16,7 @@
 #include "UIRenderer.h"
 #include "PostRenderer.h"
 #include "ForwardRenderer.h"
+#include "CellBatcher.h"
 
 CRenderSystem::CRenderSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice{ pDevice }, m_pContext{ pContext }
@@ -37,36 +38,66 @@ HRESULT CRenderSystem::Initialize()
 	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 
 	/*RenderPass*/
-	m_pPriorityPass	= PriorityPass::Create(this);
-	m_pStaticPass	= StaticOpaquePass::Create(this);
-	m_pSkinnedPass	= SkinnedOpaquePass::Create(this);
+	m_pPriorityPass = PriorityPass::Create(this);
+	m_pStaticPass = StaticOpaquePass::Create(this);
+	m_pSkinnedPass = SkinnedOpaquePass::Create(this);
 	m_pStaticShadowPass = StaticShadowPass::Create(this);
 	m_pSkinnedShadowPass = SkinnedShadowPass::Create(this);
-	m_pInstancePass	= InstancePass::Create(this);
-	m_pBlendedPass	= BlendedPass::Create(this);
-	m_pParticlePass	= ParticlePass::Create(this);
-	m_pNonLightPass	= NonLightPass::Create(this);
-	m_pUIPass		= UIPass::Create(this);
-	m_pUI3DPass		= UI3DPass::Create(this);
-	m_pEffectPass	= EffectPass::Create(this);
+	m_pInstancePass = InstancePass::Create(this);
+	m_pBlendedPass = BlendedPass::Create(this);
+	m_pParticlePass = ParticlePass::Create(this);
+	m_pNonLightPass = NonLightPass::Create(this);
+	m_pUIPass = UIPass::Create(this);
+	m_pUI3DPass = UI3DPass::Create(this);
+	m_pEffectPass = EffectPass::Create(this);
 
 
-	m_pForward = CForwardRenderer::Create(m_pDevice,m_pContext, m_pTargetManager,m_pPipeLine);
+	m_pForward = CForwardRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pPost = CPostRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pUI = CUIRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pEffect = CEffectRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
+	m_pBatcher = CCellBatcher::Create(this);
 
 	return S_OK;
 }
 
 HRESULT CRenderSystem::Render()
 {
+	m_pPipeLine->Update_FrameBuffer(m_pContext);
+	m_pPipeLine->Update_Frustum();
+
+	m_pPipeLine->Update_StaticCSM();
+	m_pPipeLine->Update_SkinnedCSM();
+
+	m_pPipeLine->Begin_ObjectBuffer(m_pContext);
+	m_pPipeLine->Begin_SkinningBuffer(m_pContext);
+
+	m_pPriorityPass->Write_Buffer(m_pContext);
+	m_pStaticShadowPass->Write_Buffer(m_pContext);
+	m_pSkinnedShadowPass->Write_Buffer(m_pContext);
+	m_pSkinnedPass->Write_Buffer(m_pContext);
+	m_pStaticPass->Write_Buffer(m_pContext);
+	m_pInstancePass->Write_Buffer(m_pContext);
+	m_pUI3DPass->Write_Buffer(m_pContext);
+	m_pEffectPass->Write_Buffer(m_pContext);
+	m_pParticlePass->Write_Buffer(m_pContext);
+	m_pBlendedPass->Write_Buffer(m_pContext);
+	m_pNonLightPass->Write_Buffer(m_pContext);
+	m_pUIPass->Write_Buffer(m_pContext);
+
+	m_pPipeLine->End_ObjectBuffer(m_pContext);
+	m_pPipeLine->End_SkinningBuffer(m_pContext);
+
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_StaticShadow(m_pStaticShadowPass, !IsOn);
 	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass, !IsOn);
+
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 	m_pPipeLine->Update_HiZ(m_pContext);
+
+	m_pForward->Render_Blended(m_pBlendedPass);
+	m_pForward->Render_NonLight(m_pNonLightPass);
 
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
@@ -75,18 +106,15 @@ HRESULT CRenderSystem::Render()
 
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
+	m_pForward->Render_MotionBlur();
+	m_pForward->Render_Bloom();
+	m_pForward->Render_Vanish();
 	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
-	m_pForward->Render_Blended(m_pBlendedPass);
-	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
 	m_pUI->Render_2D(m_pUIPass);
 
-	m_pPost->Render_Fog();
-	m_pPost->Render_HDRBloom();
-	m_pPost->Render_RadialBlur();
-	m_pForward->Render_Bloom();
-	//m_pPost->Render_Distortion();
+	m_pPost->Render_PostProcessCommand();
 	m_pPost->Render_Final();
 
 	m_pUI->Render_CustomTarget();
@@ -97,31 +125,27 @@ HRESULT CRenderSystem::Render()
 CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CRenderSystem* Instance = new CRenderSystem(pDevice, pContext);
-	if (FAILED(Instance->Initialize())) 
+	if (FAILED(Instance->Initialize()))
 	{
 		Safe_Release(Instance);
 	}
 	return Instance;
 }
 
-_bool CRenderSystem::Get_FogDesc(FOG_DESC& outResult)
+void CRenderSystem::Set_GlitchDesc(GLITCH_DESC desc)
 {
-	if (!m_pPost)
-		return false;
-
-	outResult= m_pPost->Get_FogDesc();
-	return true;
-}
-
-void CRenderSystem::Set_FogDesc(FOG_DESC desc)
-{
-	m_pPost->Set_FogDesc(desc);
+	m_pForward->Set_GlitchDesc(desc);
 }
 
 void CRenderSystem::Update(_float dt)
 {
 	m_pForward->Update(dt);
 	m_pPost->Update(dt);
+}
+
+HRESULT CRenderSystem::Create_RenderTarget(const RenderTargetDesc& desc)
+{
+	return 	m_pTargetManager->Create_Target(desc, false);
 }
 
 CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
@@ -131,6 +155,10 @@ CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 	{
 	case RENDERER_TYPE::FORWARD:
 		pRenderer = dynamic_cast<CRenderer*>(m_pForward);
+		break;
+	case RENDERER_TYPE::STATIC:
+	case RENDERER_TYPE::SKINNED:
+		pRenderer = m_pForward->GetRenderer(eType);
 		break;
 	case RENDERER_TYPE::POST:
 		pRenderer = dynamic_cast<CRenderer*>(m_pPost);
@@ -150,29 +178,47 @@ void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
 	m_pForward->SetRimLightMode(eMode);
 }
 
-void CRenderSystem::Add_NoiseTexture(string strName, CTexture* noiseTexture)
+void CRenderSystem::SetShadowUpdateInterval(_float fInterval)
 {
-	m_pPost->Add_NoiseTexture(strName, noiseTexture);
+	m_pForward->SetShadowUpdateInterval(fInterval);
 }
 
-void CRenderSystem::Apply_Noise(vector<string> strNames, _float duration)
+void CRenderSystem::ResetUpdateInterval()
 {
-	m_pPost->Apply_Noise(strNames, duration);
+	m_pForward->ResetUpdateInterval();
 }
 
-void CRenderSystem::Apply_RadialBlur(_float duration, _float2 center)
+void CRenderSystem::Set_NoiseTexture(NOISE_FXTYPE eNoise, CTexture* noiseTexture)
 {
-	m_pPost->Apply_RadialBlur(duration, center);
+	m_NoiseTextures[eNoise] = noiseTexture;
 }
 
-void CRenderSystem::Register_AddictiveColor(_float3* pColor)
+CTexture* CRenderSystem::Get_NoiseTexture(NOISE_FXTYPE eNoise)
 {
-	m_pPost->Register_AddictiveColor(pColor);
+	return m_NoiseTextures[eNoise];
 }
 
-void CRenderSystem::UnRegister_AddictiveColor()
+void CRenderSystem::BatchBegin()
 {
-	m_pPost->UnRegister_AddictiveColor();
+	_uint FrameIndex = GameInstance()->Get_FrameCount();
+	m_pBatcher->BeginBatchFrame(FrameIndex);
+}
+
+void CRenderSystem::BatchVisiblePacket(OPAQUE_PACKET& packet)
+{
+	m_pBatcher->SubmitVisiblePacket(packet);
+}
+
+void CRenderSystem::BuildBatchesIfNeeded()
+{
+	m_pBatcher->BuildBatchesIfNeeded(m_pDevice);
+}
+
+_uint CRenderSystem::DrawBatches(RenderPass* pPass, CRenderer* pRenderer)
+{
+	_uint count = m_pBatcher->DrawBatches(m_pContext, pPass, pRenderer);
+	m_pBatcher->EndBatchFrame();
+	return count;
 }
 
 
@@ -206,9 +252,9 @@ void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 	m_pForward->Add_OutLineCommand(command);
 }
 
-void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
+void CRenderSystem::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
 {
-	m_pPost->Add_PostProcessCommand(command);
+	m_pForward->Add_MotionBlurCommand(command);
 }
 
 ID3D11ShaderResourceView* CRenderSystem::Get_CustomTargetSRV(const string strTag)
@@ -219,6 +265,46 @@ ID3D11ShaderResourceView* CRenderSystem::Get_CustomTargetSRV(const string strTag
 		return nullptr;
 	}
 	return pTarget->Get_SRV();
+}
+
+ID3D11Texture2D* CRenderSystem::Get_CustomTargetTexture(const string strTag)
+{
+	CRenderTarget* pTarget = m_pTargetManager->Get_CustomTarget(strTag);
+	if (!pTarget) return nullptr;
+
+	ID3D11ShaderResourceView* pSRV = pTarget->Get_SRV();
+	if (!pSRV) return nullptr;
+
+	ID3D11Resource* pResource = nullptr;
+	pSRV->GetResource(&pResource);
+
+	ID3D11Texture2D* pOriginalTexture = nullptr;
+	HRESULT hr = pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pOriginalTexture);
+	Safe_Release(pResource);
+
+	if (FAILED(hr)) return nullptr;
+
+	D3D11_TEXTURE2D_DESC desc;
+	pOriginalTexture->GetDesc(&desc);
+
+	desc.Usage = D3D11_USAGE_STAGING;
+	desc.BindFlags = 0;
+	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	desc.MiscFlags = 0;
+
+	ID3D11Texture2D* pStagingTexture = nullptr;
+	hr = m_pDevice->CreateTexture2D(&desc, nullptr, &pStagingTexture);
+	if (FAILED(hr))
+	{
+		Safe_Release(pOriginalTexture);
+		return nullptr;
+	}
+
+	m_pContext->CopyResource(pStagingTexture, pOriginalTexture);
+
+	Safe_Release(pOriginalTexture);
+
+	return pStagingTexture;
 }
 
 ID3D11ShaderResourceView* CRenderSystem::Get_EngineTargetSRV(const string strTag)
@@ -259,4 +345,5 @@ void CRenderSystem::Free()
 	Safe_Release(m_pPost);
 	Safe_Release(m_pUI);
 	Safe_Release(m_pEffect);
+	Safe_Release(m_pBatcher);
 }

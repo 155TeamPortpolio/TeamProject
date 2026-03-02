@@ -74,6 +74,15 @@ void CTimeMgr::Set_TimeScale(const string& timerID, _float scale)
 	instance->Set_TimeScale(scale);
 }
 
+_float CTimeMgr::Get_TimeScale(const string& timerID)
+{
+	CTimer* instance = Find_Timer(timerID);
+
+	if (!instance) return 0;
+
+	return instance->Get_TimeScale();
+}
+
 CTimer* CTimeMgr::Find_Timer(const string& timerID)
 {
 	auto iter = m_Timers.find(timerID);

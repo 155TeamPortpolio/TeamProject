@@ -32,5 +32,8 @@ namespace GuiUtil
 	 ENGINE_DLL bool DrawOkPopupModalText(const char* popupId, const char* title, const string& bodyText,
 		 const char* okLabel = "OK", float buttonW = 120.f);
 
-
+	 ENGINE_DLL void PushTypeBadgeColor(const std::string& typeName);
+	 ENGINE_DLL void PopTypeBadgeColor();
+	 ENGINE_DLL void DrawBoundDot(bool isBound);
+	 
 }

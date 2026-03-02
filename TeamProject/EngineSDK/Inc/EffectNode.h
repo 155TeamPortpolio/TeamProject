@@ -14,6 +14,7 @@ protected:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void Post_EngineUpdate(_float dt) override;
     virtual void Awake() override {}
     virtual void Priority_Update(_float dt) override {}
     virtual void Update(_float dt) override;

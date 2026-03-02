@@ -23,6 +23,7 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 	Add_AdditionalTexture(fileDirectory, "", "Map_M.png", TEXTURE_TYPE::METALNESS);
 	Add_AdditionalTexture(fileDirectory, "", "Map_A.png", TEXTURE_TYPE::AMBIENT);
 	Add_AdditionalTexture(fileDirectory, "", "Map_D.png", TEXTURE_TYPE::DIFFUSE);
+
 	LoadByAssimp(fileDirectory, pAIMaterial);
 
 	m_passConstant = "Opaque";
@@ -36,12 +37,16 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 	return S_OK;
 }
 
-void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& overrideKey)
+void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& passKey, const string& overrideKey)
 {
 	MATERIAL_INFO_HEADER infoHead = {};
 
 	strcpy_s(infoHead.materialDataKey, sizeof(infoHead.materialDataKey), m_MaterialKey.c_str());
-	strcpy_s(infoHead.passConstant, sizeof(infoHead.passConstant), m_passConstant.c_str());
+	if (passKey.empty())
+		strcpy_s(infoHead.passConstant, sizeof(infoHead.passConstant), m_passConstant.c_str());
+	else {
+		strcpy_s(infoHead.passConstant, sizeof(infoHead.passConstant), passKey.c_str());
+	}
 	if (overrideKey.empty() && m_pShader)
 		strcpy_s(infoHead.ShaderKey, sizeof(infoHead.ShaderKey), m_pShader->Get_Key().c_str());
 	else {
@@ -139,7 +144,48 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 			ImGui::Text(msg.c_str());
 		ImGui::End();
 	}
-	__super::Render_GUI(TextureIndexes);
+	if (m_Textures.empty())
+		return;
+
+	for (auto& pair : m_Textures) {
+		ImGui::SeparatorText(ConvertToConstant(pair.first).c_str()); //텍스처 타입 콘스탄트로
+		_uint& CurrentIndex = TextureIndexes[static_cast<_uint>(pair.first)];
+		 auto& vector = pair.second;
+		for (size_t i = 0; i < vector.size(); i++)
+		{
+			string ButtonID = "##" + vector[i]->Get_Key() + "_" + to_string(i);
+			bool clicked = ImGui::ImageButton(
+				ButtonID.c_str(),
+				(ImTextureID)vector[i]->Get_SRV(),
+				ImVec2(64, 64)
+			);
+			if (clicked)
+			{
+				CurrentIndex = static_cast<_uint>(i);
+			}
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Right))
+			{
+				Safe_Release(vector[i]);
+				pair.second.erase(pair.second.begin() + i);
+
+				if (CurrentIndex >= pair.second.size())
+					CurrentIndex = pair.second.empty() ? 0 : static_cast<_uint>(pair.second.size() - 1);
+				break;
+			}
+
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::BeginTooltip();
+				ImGui::Image((ImTextureID)vector[i]->Get_SRV(), ImVec2(256, 256));
+				ImGui::Text(vector[i]->Get_Key().c_str());
+				ImGui::EndTooltip();
+			}
+			ImGui::Text(vector[i]->Get_Key().c_str());
+			ImGui::Separator();
+		}
+	}
+
 }
 
 void CAIMaterial::LinkShader(const string& shader)
@@ -194,6 +240,12 @@ HRESULT CAIMaterial::LoadByAssimp(const std::string& fileDirectory, const aiMate
 
 void CAIMaterial::ReCheck_Material(const string& fileDirectory)
 {
+
+	Add_AdditionalTexture(fileDirectory, "", "_N.png", TEXTURE_TYPE::NORMALS);
+	Add_AdditionalTexture(fileDirectory, "", "_M.png", TEXTURE_TYPE::METALNESS);
+	Add_AdditionalTexture(fileDirectory, "", "_A.png", TEXTURE_TYPE::AMBIENT);
+	Add_AdditionalTexture(fileDirectory, "", "_D.png", TEXTURE_TYPE::DIFFUSE);
+
 	_bool hasDiffuse = !m_Textures[TEXTURE_TYPE::DIFFUSE].empty();
 	_bool hasNormal = !m_Textures[TEXTURE_TYPE::NORMALS].empty();
 	_bool hasMetal = !m_Textures[TEXTURE_TYPE::METALNESS].empty();

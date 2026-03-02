@@ -49,10 +49,12 @@ CEffectContainer* CEffectBuilder::Build(const string& instanceKey, _uint* id)
 
 	if (m_isFromPool)
 	{
-		instance = ObjectManager()->Acquire(m_CloneDesc);
+		_bool first = {};
+		instance = ObjectManager()->Acquire(m_CloneDesc, m_pObjDesc, first);
 		if (!instance) return nullptr;
 		instance->Set_FromPool(true);
-		instance->OnPooledAcquire(m_pObjDesc);
+		if(!first)
+			instance->OnPooledAcquire(m_pObjDesc);
 	}
 	else {
 		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
@@ -96,7 +98,24 @@ CEffectBuilder& CEffectBuilder::Position(const _float3 position)
 	return *this;
 }
 
+CEffectBuilder& CEffectBuilder::Rotate(const _float3 rotate)
+{
+	auto iter = m_CompDesc.find(type_index(typeid(CTransform)));
+
+	if (iter == m_CompDesc.end())
+	{
+		TRANSFORM_DESC* transformDesc = new TRANSFORM_DESC();
+		iter = m_CompDesc.emplace(type_index(typeid(CTransform)), transformDesc).first;
+	}
+
+	TRANSFORM_DESC* pDesc = static_cast<TRANSFORM_DESC*>(iter->second);
+	pDesc->vInitialEulerVector = rotate;
+	return *this;
+}
+
+
 CEffectBuilder& CEffectBuilder::Scale(const _float3 scale)
 {
 	return *this;
 }
+

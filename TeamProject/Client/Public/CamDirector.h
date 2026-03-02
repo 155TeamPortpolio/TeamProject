@@ -1,76 +1,139 @@
 #pragma once
 
+#include "DisplayGate.h"
 #include "CameraMgr.h"
 #include "CamDirectorData.h"
+#include "CamEventController.h"
+#include "CamDialogueController.h"
+#include "CamParryController.h"
+#include "CamWipeOutController.h"
+#include "CamSwitchController.h"
+#include "CamPortalController.h"
 
 NS_BEGIN(Client)
 
 class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
+    using SeqPlayer = CCamSequencePlayer;
 private:
-    CCamDirector();
-    virtual ~CCamDirector() = default;
+    CCamDirector() {}
+    virtual ~CCamDirector() DEFAULT;
 
 public:
     void          SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
-    void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
-    void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
+    void          SetSpaceRef(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
+    void          SetReturnCam(CamType type) { m_returnCamType = type; }
     void          SetTarget(OBJECT_HANDLE targetHandle);
-    void          AutoTarget();
+    
+    void          EnterBoss();
+    void          ExitBoss();
 
-    OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
-    COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
+    void          AutoTarget();
+    void          AutoField(CamStartDir dir);
+    void          AutoBattle(CamStartDir dir);
+
+    Vector3       GetBipPos(OBJECT_HANDLE h, _float offsetY = 0.f);
+
+    CGameObject*  GetSpaceRef()              const { return m_spaceRefHandle.Get(); }
+    OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
+    COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj()); }
     CSequenceCam* GetSeqCam()                const { return static_cast<CSequenceCam*>(GetSeqObj()); }
-    CFreeCam*     GetFreeCam()               const { return static_cast<CFreeCam*>(GetFreeObj());    }
+    CFreeCam*     GetFreeCam()               const { return static_cast<CFreeCam*>(GetFreeObj()); }
 
     CGameObject*  GetCamObj(CamType type)    const;
     CGameObject*  GetSeqObj()                const { return GetCamObj(CamType::Sequence); }
-    CGameObject*  GetOrbitObj()              const { return GetCamObj(CamType::Orbit);    }
-    CGameObject*  GetFreeObj()               const { return GetCamObj(CamType::Free);     }
+    CGameObject*  GetOrbitObj()              const { return GetCamObj(CamType::Orbit); }
+    CGameObject*  GetFreeObj()               const { return GetCamObj(CamType::Free); }
 
-    CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
-    CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
+    CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>(); }
+    CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>(); }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
-    CPlayer*      GetPlayer()                const;
-    
-    CCamSequencePlayer* GetSeqPlayer()       const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
+    CPlayer*      GetPlayer()                const { return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player))); }
+    CCharacter*   GetCharacter()             const { return static_cast<CCharacter*>(GetCurHandle().Get()); }
+    CHARACTER     GetCharacterName()         const { return GetCharacter()->Get_CharacterName(); }
+    string        GetCharacterStr()          const { return Helper::EnumToString(GetCharacter()->Get_CharacterName()); }
+    OBJECT_HANDLE GetCurHandle()             const { return GetPlayer()->Get_CurCharacterHandle(); }
+    OBJECT_HANDLE GetCurTarget()             const;
+    OBJECT_HANDLE GetCurParry()              const;
+    _float        GetTime()                  const { return GetSeqPlayer()->GetTime(); }
+    const string& GetCurSeqName()            const { return m_playing.active ? m_playing.key : kEmpty; }
+    SeqPlayer*    GetSeqPlayer()             const { return GetSeqObj()->Get_Component<CCamSequencePlayer>(); }
+    Vector3       GetParryPoint()            const { return m_parry.GetImpactPointWorld(); }
 
 public:
     _bool         Register(const string& key, const fs::path& path);
-    _bool         Register(const string& key, const fs::path& path, const CamSequenceRequestDesc& defaultReq);
+    _bool         Register(const string& key, const fs::path& path, const CamSeqReqDesc& defaultReq);
     void          UnRegister(const string& key);
-            
-public:           
     _uint         RequestSequence(const string& key);
-    _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
-    _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
-    
-    _bool         IsPlaying(const string& key) const;
+    _uint         RequestSequence(CamSeqType type);
 
+    _bool         IsPlaying(const string& key)       const;
+    _bool         IsPlaying(CamSeqType type)         const;
+    _bool         IsFinished(CamEventType eventType) const;
 
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
 
-private:
-    void          UpdatePlayer();
-    void          UpdateInput();
+    void          StartBattleIntro(CamSeqType type);
+    // Dialog
+    void          StartDialog();
+    void          EndDialog();
+    // WipeOut
+    void          BeginWipeOut() { m_wipeOut.Begin(); }
+    void          EndWipeOut() { m_wipeOut.End(); }
+    // Parry
+    void          StartParry();
+    void          EndParry() { m_parry.End(); }
+    // Switch
+    void          EnterSwitch() { m_switch.Begin(); }
+    void          EndSwitch() { m_switch.Switch(); }
+    // Portal
+    void          EnterPortal(OBJECT_HANDLE portalHandle) { m_portal.Begin(portalHandle); }
+    void          ExitPortal() { m_portal.End(); }
+
     void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
-    ICameraService&         camMgr;
-    IObjectService&         objMgr;
+    string        ResolveSeqKey(CamSeqType type) const;
+    void          UpdatePlayer();
+    void          UpdateLevel();
+      
+    _bool         IsValid() const { return GetPlayer()->Get_CurCharacterHandle().isValid(); }
+    _uint         RequestSequence(const string& key, const CamSeqReqDesc& req);
 
-    CamDirectorSeqMap       m_seqs{};
-    CamDirectorPlayingState m_playing{};
-    CamDirectorCamHandles   m_camHandles{};
-    OBJECT_HANDLE           m_spaceRefHandle{};
-    CamType                 m_returnCamType = CamType::None;
+    _bool         IsFreeCamActive() const { return CameraManager()->Get_ActiveCam() == GetFreeCamComp(); }
+    void          AbortSequence_NoCam(_bool resetTime);
 
-    OBJECT_HANDLE           m_focusHandle{};
-    _int                    m_focusType = -1;
-};
+private:
+    CMonitorGate           m_gate;
+    CamSeqMap              m_seqs{};
+    CamPlayingState        m_playing{};
+    CamObjHandles          m_camHandles{};
+    CCamEventController    m_events{};
+    CCamDialogueController m_dialogue{};
+    CamParryController     m_parry{};
+    CamWipeOutController   m_wipeOut{};
+    CamSwitchController    m_switch{};
+    CamPortalController    m_portal{};
+
+    OBJECT_HANDLE          m_spaceRefHandle{};
+    CamType                m_returnCamType = CamType::None;
+
+    OBJECT_HANDLE          m_focusHandle{};
+    _int                   m_focusType = -1;
+
+    _bool                  m_lastEndedValid = false;
+    string                 m_lastEndedKey{};
+    _bool                  m_seqInputLocked = false;
+    _bool                  m_dialogueUnlockPending = false;
+
+    string                 m_lastLevelKey{};
+    _bool                  m_levelInit = false;
+
+    inline static const string kEmpty{};
+}; 
 
 inline auto* CamDirector() { return CCamDirector::GetInstance(); }
 

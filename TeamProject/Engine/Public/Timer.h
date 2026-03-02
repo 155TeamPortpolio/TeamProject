@@ -18,6 +18,7 @@ public:
     _float Get_RawTotalTime();
 
     void Set_TimeScale(_float Scale) { m_fTimeScale = Scale; };
+    _float Get_TimeScale() { return m_fTimeScale; };
 
 private:
     _float m_fRawDeltaTime{};

@@ -1,0 +1,1259 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "MainCity",
+  "iVersion": 1,
+  "Layers": [
+    {
+      "TagLayer": "PlacedObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 0,
+          "TagModelResourceKey": "Groundout.model",
+          "TagMaterialResourceKey": "Groundout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 1,
+          "TagModelResourceKey": "Interiorout.model",
+          "TagMaterialResourceKey": "Interiorout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 2,
+          "TagModelResourceKey": "MainCity_Interior_Coffee_01out.model",
+          "TagMaterialResourceKey": "MainCity_Interior_Coffee_01out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 3,
+          "TagModelResourceKey": "Constructionout.model",
+          "TagMaterialResourceKey": "Constructionout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 4,
+          "TagModelResourceKey": "Common_Prop_Ball_01.model",
+          "TagMaterialResourceKey": "Common_Prop_Ball_01.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 5,
+          "TagModelResourceKey": "Bridgeout.model",
+          "TagMaterialResourceKey": "Bridgeout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 6,
+          "TagModelResourceKey": "Buildingout.model",
+          "TagMaterialResourceKey": "Buildingout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 7,
+          "TagModelResourceKey": "Ceilingout.model",
+          "TagMaterialResourceKey": "Ceilingout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 8,
+          "TagModelResourceKey": "CloseUp_01out.model",
+          "TagMaterialResourceKey": "CloseUp_01out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 9,
+          "TagModelResourceKey": "CloseUp_02out.model",
+          "TagMaterialResourceKey": "CloseUp_02out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 10,
+          "TagModelResourceKey": "CloseUp_04 (1)out.model",
+          "TagMaterialResourceKey": "CloseUp_04 (1)out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 11,
+          "TagModelResourceKey": "CloseUp_04out.model",
+          "TagMaterialResourceKey": "CloseUp_04out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 12,
+          "TagModelResourceKey": "CloseUp_05out.model",
+          "TagMaterialResourceKey": "CloseUp_05out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 13,
+          "TagModelResourceKey": "Common_Prop_PlutusCat_02out.model",
+          "TagMaterialResourceKey": "Common_Prop_PlutusCat_02out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 14,
+          "TagModelResourceKey": "Common_Prop_StreetLamp_02 (1)out.model",
+          "TagMaterialResourceKey": "Common_Prop_StreetLamp_02 (1)out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 15,
+          "TagModelResourceKey": "Common_Prop_StreetLamp_02 (2)out.model",
+          "TagMaterialResourceKey": "Common_Prop_StreetLamp_02 (2)out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 16,
+          "TagModelResourceKey": "Common_Prop_StreetLamp_02out.model",
+          "TagMaterialResourceKey": "Common_Prop_StreetLamp_02out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 17,
+          "TagModelResourceKey": "MainCity_Prop_GameConsole_01out.model",
+          "TagMaterialResourceKey": "MainCity_Prop_GameConsole_01out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 18,
+          "TagModelResourceKey": "MainCity_Prop_ArcadeSign_06out.model",
+          "TagMaterialResourceKey": "MainCity_Prop_ArcadeSign_06out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 19,
+          "TagModelResourceKey": "MainCity_Prop_ArcadeSign_07out.model",
+          "TagMaterialResourceKey": "MainCity_Prop_ArcadeSign_07out.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 20,
+          "TagModelResourceKey": "propout.model",
+          "TagMaterialResourceKey": "propout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 21,
+          "TagModelResourceKey": "Stairout.model",
+          "TagMaterialResourceKey": "Stairout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 22,
+          "TagModelResourceKey": "Vehicleout.model",
+          "TagMaterialResourceKey": "Vehicleout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 23,
+          "TagModelResourceKey": "Wallout.model",
+          "TagMaterialResourceKey": "Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 24,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.9999999403953552,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            0.9999929070472717,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            0.9999929070472717,
+            0.0
+          ],
+          "vPos": [
+            3.6500000953674316,
+            2.7200000286102295,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 25,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            4.21999979019165,
+            2.720099925994873,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 26,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            4.769999980926514,
+            2.7200000286102295,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 27,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            5.3374810218811035,
+            2.7200000286102295,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 28,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            5.899993896484375,
+            2.7200000286102295,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 29,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            6.468810081481934,
+            2.720099925994873,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 30,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            7.046796798706055,
+            2.720099925994873,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 31,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            7.650000095367432,
+            2.7200000286102295,
+            -0.054999999701976776,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 32,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            5.364400408325309e-07,
+            0.0,
+            0.9999966621398926,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.9799971580505371,
+            0.0,
+            5.257114708001609e-07,
+            0.0
+          ],
+          "vPos": [
+            3.1579999923706055,
+            2.7200000286102295,
+            1.0840309858322144,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 33,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            -1.192081242606946e-07,
+            0.0,
+            -0.9999901652336121,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.9999901652336121,
+            0.0,
+            -1.192081242606946e-07,
+            0.0
+          ],
+          "vPos": [
+            3.1579999923706055,
+            2.7200000286102295,
+            1.649999976158142,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 34,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            -1.1920757003736071e-07,
+            0.0,
+            -0.9999855160713196,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.9999855160713196,
+            0.0,
+            -1.1920757003736071e-07,
+            0.0
+          ],
+          "vPos": [
+            3.1579999923706055,
+            2.7200000286102295,
+            2.2211313247680664,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 35,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            -1.1920857190261813e-07,
+            0.0,
+            -0.9999939203262329,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.9999939203262329,
+            0.0,
+            -1.1920857190261813e-07,
+            0.0
+          ],
+          "vPos": [
+            3.1579999923706055,
+            2.7200000286102295,
+            2.799999952316284,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 36,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            -1.1920931797249068e-07,
+            2.9802325229866256e-07,
+            -1.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            2.98023280720372e-07,
+            0.0
+          ],
+          "vLook": [
+            1.0,
+            1.4210854715202004e-14,
+            -1.1920928955078125e-07,
+            0.0
+          ],
+          "vPos": [
+            3.1579999923706055,
+            2.7200000286102295,
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 37,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.6414932012557983,
+            0.0,
+            0.7671287059783936,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.7671287059783936,
+            0.0,
+            0.6414932012557983,
+            0.0
+          ],
+          "vPos": [
+            8.460419654846191,
+            2.720099925994873,
+            0.38243672251701355,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 38,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.6440719366073608,
+            0.0,
+            0.764964759349823,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.764964759349823,
+            0.0,
+            0.6440719366073608,
+            0.0
+          ],
+          "vPos": [
+            8.87663745880127,
+            2.720099925994873,
+            0.8743675351142883,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 39,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.6411417126655579,
+            0.0,
+            0.7674223780632019,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.7674223780632019,
+            0.0,
+            0.6411417126655579,
+            0.0
+          ],
+          "vPos": [
+            9.27084732055664,
+            2.720099925994873,
+            1.347187876701355,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 40,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.651488721370697,
+            0.0,
+            0.7586579322814941,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.7586579322814941,
+            0.0,
+            0.651488721370697,
+            0.0
+          ],
+          "vPos": [
+            10.033004760742188,
+            2.7186009883880615,
+            2.252871513366699,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 41,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.631888210773468,
+            0.0,
+            0.775059700012207,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.775059700012207,
+            0.0,
+            0.631888210773468,
+            0.0
+          ],
+          "vPos": [
+            10.455748558044434,
+            2.720099925994873,
+            2.7414987087249756,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 42,
+          "TagModelResourceKey": "MainCity_Prop_NoodleStuff_05.model",
+          "TagMaterialResourceKey": "MainCity_Prop_NoodleStuff_05.mat",
+          "vRight": [
+            0.6326172351837158,
+            0.0,
+            0.7744644284248352,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            -0.7744642496109009,
+            0.0,
+            0.6326170563697815,
+            0.0
+          ],
+          "vPos": [
+            9.65734577178955,
+            2.720661163330078,
+            1.8123594522476196,
+            1.0
+          ]
+        }
+      ]
+    }
+  ]
+}

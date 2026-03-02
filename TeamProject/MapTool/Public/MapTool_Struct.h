@@ -13,6 +13,7 @@ namespace MapTool {
 		string			TagMaterialPath = {};
 	}ModelPathPack;
 
+#pragma region ObjectData
 	typedef struct tagMapObjectData {
 		_int		iObjID = { -1 };
 		string TagModelResourceKey = {};
@@ -37,10 +38,137 @@ namespace MapTool {
 		vector<MapData_Layer> Layers;
 	}MapData_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, TagArea, iVersion, Layers);
+#pragma endregion
 
+#pragma region EntityData
+	typedef struct tagEntity
+	{
+		_int		iEntityID = { -1 };
+		string		tagName = {};
+		_int		iType = {};
+		array<_float, 3> vScale = { 0.f, 0.f, 0.f };
+		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
+		array<_float, 3> vTranslation= { 0.f, 0.f, 0.f };
+		array<_float, 3> vColSize = { 0.f, 0.f, 0.f };
+	}ENTITY;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ENTITY, iEntityID, tagName, iType, vScale, vRotation, vTranslation, vColSize);
+
+	typedef struct tagEntityHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<ENTITY> Entities;
+	}Entity_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Entity_Header, TagDataFormat, TagArea, iVersion, Entities);
+#pragma endregion
+
+#pragma region MovePoint
+	typedef struct tagMovePoint {
+		_int			iPathIndex{};
+		vector<_float3> Orders;
+	}MovePoint;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint, iPathIndex, Orders);
+
+	typedef struct tagMovePointHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<MovePoint> Paths;
+	}MovePoint_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MovePoint_Header, TagDataFormat, TagArea, iVersion, Paths);
+#pragma endregion
+
+#pragma region LightData
+	/* Light Data */
+	NLOHMANN_JSON_SERIALIZE_ENUM(LIGHT_TYPE,
+		{
+			{LIGHT_TYPE::DIRECTIONAL,	"Directional"},
+			{LIGHT_TYPE::POINT,			"Point"},
+			{LIGHT_TYPE::SPOTLIGHT,		"Spotlight"}
+		})
+
+	typedef struct tagLightJsonDesc {
+		LIGHT_TYPE	eLightType	= {};
+
+		_float4 vOffsetPosition	= {};
+		_float4	vLightDirection	= {};
+
+		_float4	vLightDiffuse	= {};
+		_float4	vLightAmbient	= {};
+		_float4	vLightSpecular	= {};
+
+		_float	fLightRange		= {};
+		_float	fLightIntensity = {};
+
+		_float	fInnerCos = {};
+		_float	fOuterCos = {};
+	}LIGHT_DESC_JSON;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LIGHT_DESC_JSON,
+		eLightType, vOffsetPosition, vLightDirection,
+		vLightDiffuse, vLightAmbient, vLightSpecular,
+		fLightRange, fLightIntensity,
+		fInnerCos, fOuterCos);
+
+	typedef struct tagMapLight
+	{
+		_int			 iIndex{};
+		string			 TagArea = {};
+		LIGHT_DESC_JSON	 LightDesc;
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}MAP_LIGHT;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MAP_LIGHT, iIndex, LightDesc, vTranslation);
+
+	typedef struct tagLightHeader {
+		string		TagDataFormat = {};
+		string		TagArea = {};
+		_int		iVersion = 1;
+		vector<MAP_LIGHT> Lights;
+	}Light_Header;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Light_Header, TagDataFormat, TagArea, iVersion, Lights);
+#pragma endregion
+
+#pragma region BattleData
+	typedef struct tagBattlePointData 
+	{
+		string		tagType = {};			// Player, Spawner, Monster Point
+		_int		iIndex = { -1 };		
+
+		array<_float, 3> vScale = { 0.f, 0.f,  0.f };
+		array<_float, 3> vRotation = { 0.f, 0.f, 0.f };
+		array<_float, 3> vTranslation = { 0.f, 0.f, 0.f };
+	}BATTLE_POINT_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_POINT_DATA, tagType, iIndex, vScale, vRotation, vTranslation);
+
+	typedef struct tagBattleSpawnerPointData : public BATTLE_POINT_DATA
+	{
+		vector<_int>		MonsterIndices;
+	}BATTLE_POINT_SPAWNER_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_POINT_SPAWNER_DATA, tagType, iIndex, vScale, vRotation, vTranslation, MonsterIndices);
+
+	typedef struct tagBattleFieldData
+	{
+		string	TagDataFormat = "";
+		string	TagArea = "";
+
+		vector<BATTLE_POINT_DATA>			PlayerSpawnPoint = {};
+		vector<BATTLE_POINT_SPAWNER_DATA>	Spawners;
+		vector<BATTLE_POINT_DATA>			Monsters;
+		vector<BATTLE_POINT_DATA>			EndPoints;
+	}BATTLE_FIELD_DATA;
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BATTLE_FIELD_DATA, TagDataFormat, TagArea, PlayerSpawnPoint, Spawners, Monsters, EndPoints);
+#pragma endregion
+
+
+	//====================================
 	struct LOADED_OBJECT {
 		_int	iObjIdx = { -1 };
 		string	TagModelKey = {};
+	};
+	
+	struct LOADED_DATA
+	{
+		string tagDataFormat = {};
+		vector<LOADED_OBJECT>	LoadedObjects;
 	};
 
 	/* Field Data */

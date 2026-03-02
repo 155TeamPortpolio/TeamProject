@@ -12,8 +12,11 @@ public:
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
+private:
+    _float m_fWeight = 5.f;
+
 public:
-    static CCorinState_Hit* Create() { return new CCorinState_Hit(); }
+    static CCorinState_Hit* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -32,9 +35,10 @@ public:
 class CCorin_HitHard : public IBaseState<CCorin>
 {
 public:
-    virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
-    virtual void Exit(CCorin* pOwner) override {}
+    virtual void  Enter(CCorin* pOwner) override;
+    virtual void  Update(CCorin* pOwner, _float dt) override;
+    virtual void  Exit(CCorin* pOwner) override {}
+    virtual _bool Handle_Transition(CCorin* pOwner, const string& strState) override;
 
 public:
     static CCorin_HitHard* Create() { return new CCorin_HitHard(); }
@@ -44,9 +48,10 @@ public:
 class CCorin_HitKnockOut : public IBaseState<CCorin>
 {
 public:
-    virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
-    virtual void Exit(CCorin* pOwner) override {}
+    virtual void  Enter(CCorin* pOwner) override;
+    virtual void  Update(CCorin* pOwner, _float dt) override;
+    virtual void  Exit(CCorin* pOwner) override {}
+    virtual _bool Handle_Transition(CCorin* pOwner, const string& strState) override;
 
 public:
     static CCorin_HitKnockOut* Create() { return new CCorin_HitKnockOut(); }

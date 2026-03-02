@@ -12,6 +12,7 @@
 #include "BattleSystem.h"
 #include "FieldSystem.h"
 #include "DataBase.h"
+#include "MonsterSpawnConsole.h"
 
 // Camera
 #include "Camera.h"
@@ -22,6 +23,7 @@
 #include "SequenceCam.h"
 #include "CamPanel.h"
 #include "CamLoader.h"
+#include "DisplayGate.h"
 
 /* MapData */
 #include "MapLoader.h"
@@ -35,6 +37,7 @@
 #include "TrailNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
+#include "JaegerLaser.h"
 
 /* Character */
 #include "Miyabi.h"
@@ -42,27 +45,52 @@
 #include "Corin.h"
 #include "JaneDoe.h"
 #include "Player.h"
+#include "BattlePlayer.h"
 
 /* Enemy */
-#include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
+#include "ThugBulkyEnforcer.h"
 #include "ThugAssaulter.h"
+#include "Defiler.h"
+#include "ThugPoacher.h"
+#include "ThugPoacher_Arrow.h"
+#include "Claymore.h"
+#include "Cyclops.h"
+#include "Cyclops_Spit.h"
+#include "StrikeJaeger.h"
+#include "MeleeJaeger.h"
+#include "MeleeJaeger_Shield.h"
+#include "Giant.h"
 
 /*npc*/
 #include "OfficeMeow.h"
 #include "BangBooPay.h"
 #include "BangBooAsk.h"
 #include "BangBooDeliver.h"
+#include "Howl.h"
+#include "ElectricBoo.h"
 
 /* UI */
 #include "UIDirector.h"
+#include "TestVideo.h"
 
 /* Interactable */
 #include "Portal.h"
 
 /* ShaderTest */
 #include "TestCloud.h"
+
+// test
+#include "ZeroPortal.h"
+#include "MiasmaBlade.h"
+#include "XWall.h"
+
+#include "Water.h"
+#include "WaterWave.h"
+#include "UI_RenderTargetScreen.h"
+
+#include "Light.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -78,9 +106,15 @@ HRESULT CTestLevel::Initialize()
 	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
-	// It will be changed soooooon
-	CBattleSystem::GetInstance()->SetActive(true);
-	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+
+	//RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
+	//auto pPortal = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_ZeroPortal" })
+	//	.Position(_float3(0.f,1.f,0.f))
+	//	.Build("Portal");
+	//
+	//ObjectManager()->Add_Object(pPortal, { "Test_Level","Portal" });
 
 	return S_OK;
 }
@@ -90,64 +124,91 @@ HRESULT CTestLevel::Awake()
 	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
+	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
+	pCloud->Set_Alive(true);
+
+
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
-
+	
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Test_Level");
 
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Portal", CPortal::Create());
-	
-	//============== Map ============================
-	//Ready_Map("Test_Level", "Zero_Worksite");
+
 	Ready_Map("Test_Level", "TrainingRoom");
 
-	/* Miyabi */
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
-	//CCT_DESC miyabiCCT;
-	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF;
-	////miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-	//miyabiCCT.bAutoFit = false;
-	//miyabiCCT.fHeight = 1.28f;
-	//miyabiCCT.fRadius = 0.2f;
-	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	////miyabiCCT.fBoundingMinY = -0.88f;
-	//miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
-	//auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
-	//	.Position(_float3(3.f, 0.f, 0.f))
-	//	.CharacterController(miyabiCCT)
-	//	.Build("Miyabi");
-	//objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
-	//
-	//m_miyabiHandle = Miyabi->Get_Handle();
+	auto pShadowCam = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::ShadowCam));
+	auto pTransform = pShadowCam->Get_Component<CTransform>();
+	pTransform->Set_Pos(_float4(0.f, 100.f, 0.f, 1.f));
 
+	LIGHT_DESC lightDesc = {};
+	lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
+	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f); 
+	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
+	lightDesc.fLightIntensity = 1.f;
+	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Defiler", CDefiler::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher", CThugPoacher::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugPoacher_Arrow", CThugPoacher_Arrow::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Claymore", CClaymore::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops", CCyclops::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Cyclops_Spit", CCyclops_Spit::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_StrikeJaeger", CStrikeJaeger::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger", CMeleeJaeger::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeleeJaeger_Shield", CMeleeJaeger_Shield::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Giant", CGiant::Create());
+
+
+	CBattleSystem::GetInstance()->SetActive(true);
 
 	//====================Test=================
 	Ready_TestObject();
-	Ready_Npc();
+	//Ready_Npc();
 
-	m_pCamDirector->AutoTarget();
-	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
-	m_pCamDirector->RequestSequence("Intro/Intro");
+	//CamDirector()->StartBattleIntro(CamSeqType::ZeroIntro);
+	//CUIDirector::GetInstance()->Show_SceneFrame();
+	CUIDirector::GetInstance()->Show_HUD(CUIDirector::HUD::BATTLE);
+	//GameInstance()->Set_EngineTimeScale(0.05f);
 
-	//GameInstance()->Set_EngineTimeScale(0.33f);
+	CamDirector()->AutoBattle(CamStartDir::Back);
+	//CameraManager()->SetFov(-10.f, 1.f, EaseType::InOutSine);
 
+	//CMonitorGate gate;
+	//if (!gate.Pass())
+	//{
+	//	CXWall::XWALL_DESC* XWallDesc = new CXWall::XWALL_DESC;
+	//	XWallDesc->vCount = {15, 3};
+	//
+	//	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_XWall", CXWall::Create());
+	//	auto XWall = Builder::Create_Object({"Test_Level", "Proto_GameObject_XWall"})
+	//		.Add_ObjDesc(XWallDesc)
+	//		.Position({0.f, 1.f, 1.f, })
+	//		.Build("XWall");
+	//
+	//	ObjectManager()->Add_Object(XWall, {"Test_Level", "Effect_Layer"});
+	//}
+
+#ifdef  _USING_GUI
+	Ready_MonsterSpawnConsole();
+#endif
+	string key = LevelManager()->Get_PrevLevelKey();
 	return S_OK;
 }
 
@@ -155,29 +216,35 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
-	if (InputDevice()->Key_Tap(VK_F4))
-	{
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
+	//if (InputDevice()->Key_Tap(VK_F4))
+	//{
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
 	if (InputDevice()->Key_Tap(VK_F5))
 	{
-		auto rushTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("sacrifice_rush_trail.json")
-			.Build("Rush");
+		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Build("AttackSign");
 		
-		ObjectManager()->Add_Object(rushTrail, { "Test_Level","Effect_Layer" });
+		ObjectManager()->Add_Object(pAttackSign, { "Test_Level","Effect_Layer" });
 	}
 	
 	// [`] 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
-	}	
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
-	}
-
+		CBattleSystem::GetInstance()->LockBattleTime(true);
+	}	
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
-	}
+		CBattleSystem::GetInstance()->LockBattleTime(false);
+	}	
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
+	//}
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
+	//}
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
+	//}
 }
 
 void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
@@ -219,6 +286,12 @@ void CTestLevel::Ready_TestObject()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
+	//auto testMap = Builder::Create_Object({ "Test_Level", "Proto_Env_Water" })
+	//	.Position(_float3(0.f, 0.f, 20.f))
+	//	.Scale(_float3(6.f, 1.f, 1.f))
+	//	.Build("Water");
+	//
+	//objMgr->Add_Object(testMap, { "Test_Level", "Env" });
 	//==============TestEffect==========================
 	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
 	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");
@@ -262,12 +335,6 @@ void CTestLevel::Ready_TestObject()
 	//}
 
 	// =====================TestCloud=========================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-		.Scale(_float3(2.f, 2.f, 2.f))
-		.Build("Test_Cloud");
-	
-	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 void CTestLevel::Ready_Npc()
@@ -326,7 +393,39 @@ void CTestLevel::Ready_Npc()
 		.Build("Test_Deliver");
 
 	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
+
+	CCT_DESC howlCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	howlCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	howlCCT.bAutoFit = false;
+	howlCCT.fHeight = 0.7f;
+	howlCCT.fRadius = 0.4f;
+	howlCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	howlCCT.vPos = { 19.f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Howl", CElectricBoo::Create());
+	auto testHowl = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Howl" })
+		.CharacterController(howlCCT)
+		.Build("Test_Howl");
+
+	objMgr->Add_Object(testHowl, { "Test_Level", "Npc_Layer" });
 }
+
+#ifdef  _USING_GUI
+HRESULT CTestLevel::Ready_MonsterSpawnConsole()
+{
+	auto pGuiSystem = m_pGameInstance->Get_GUISystem();
+
+	CMonsterSpawnConsole* pConsole = CMonsterSpawnConsole::Create(pGuiSystem->Get_Context());
+	if (nullptr == pConsole)
+		return E_FAIL;
+
+	pGuiSystem->Register_Panel(pConsole); 
+	
+	return S_OK;
+}
+#endif
 
 HRESULT CTestLevel::Render()
 {
@@ -354,7 +453,10 @@ void CTestLevel::Free()
 	__super::Free();
 	//CBattleSystem::GetInstance()->DestroyInstance();
 	//CDataBase::GetInstance()->DestroyInstance();
+
+	//CameraManager()->SetFov(10.f, 0.f, EaseType::InOutSine);
+
+	m_pPlayer->Clear_Characters();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
-	m_pPlayer->Clear_Characters();
 }

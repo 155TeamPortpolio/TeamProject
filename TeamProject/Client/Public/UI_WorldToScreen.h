@@ -18,9 +18,20 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void UI_Active(void* pArg = nullptr) override {};
+	virtual void UI_DeActive(void* pArg = nullptr) override {};
 
 protected:
 	void Update_WorldToScreen(_float3 vPosition);
+
+private:
+	_bool			m_isValid = {};
+
+private:
+	/* 월드 위치로 스크린 위치 구하기. true : 카메라 앞, false : 카메라 뒤 */
+	_bool Update_WorldToScreenPos(_float3 vPosition);
+	void Update_Visibility(_bool isValid);
+	void Update_ZPriority(_float3 vPosition);
 
 public:
 	virtual void Free() { __super::Free(); }

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BangBooAsk.h"
 
 #include "GameInstance.h"
@@ -28,9 +28,9 @@ HRESULT CBangBooAsk::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("CashierBangbooAsk.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/CashierBangbooAsk.model");
-	pResource->Add_ResourcePath("CashierBangbooAsk.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/CashierBangbooAsk.mat");
-	pResource->Add_ResourcePath("NPC_CashierBangbooAsk_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooAsk_Meta.json");
+	pResource->Add_ResourcePath("CashierBangbooAsk.model", "../Bin/Resources/Global/NPC/141BangBoo/Ask/CashierBangbooAsk.model");
+	pResource->Add_ResourcePath("CashierBangbooAsk.mat", "../Bin/Resources/Global/NPC/141BangBoo/Ask/CashierBangbooAsk.mat");
+	pResource->Add_ResourcePath("NPC_CashierBangbooAsk_Meta.json", "../Bin/Resources/Global/NPC/141BangBoo/Ask/NPC_CashierBangbooAsk_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "CashierBangbooAsk.model");
@@ -59,11 +59,13 @@ void CBangBooAsk::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooAsk_Ani_";
-	m_strName = "Ask";
+	m_strName = L"문의";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CBangBooAsk::Priority_Update(_float dt)

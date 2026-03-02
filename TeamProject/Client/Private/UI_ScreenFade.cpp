@@ -6,14 +6,16 @@
 
 HRESULT CUI_ScreenFade::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CUI_ScreenFade::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
     auto pSprite = Get_Component<CSprite2D>();
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
@@ -38,26 +40,66 @@ void CUI_ScreenFade::Awake()
 void CUI_ScreenFade::Update(_float dt)
 {
     __super::Update(dt);
+
+    if (m_iLastAnimIndex != -1 && Is_AnimFinished())
+    {
+        if (m_iLastAnimIndex == m_iFadeInIndex)
+        {
+            if (m_onFadeInFinished)
+            {
+                m_onFadeInFinished();
+                m_onFadeInFinished = nullptr;
+                m_iLastAnimIndex = -1;
+                return;
+            }
+        }
+        else if (m_iLastAnimIndex == m_iFadeOutIndex)
+        {
+            if (m_onFadeOutFinished)
+            {
+                m_onFadeOutFinished();
+                m_onFadeOutFinished = nullptr;
+                m_iLastAnimIndex = -1;
+                return;
+            }
+        }
+    }
 }
 
 void CUI_ScreenFade::UI_Active(void* pArg)
 { 
+    if (!pArg)
+        return;
+
     FADE_DESC* pDesc = static_cast<FADE_DESC*>(pArg);
     if (!pDesc)
+        return;
+
+    if (m_iFadeInIndex < 0)
         return;
 
     Set_LastKeyframeTime(m_iFadeInIndex, pDesc->fDuration);
     Set_Animation(m_iFadeInIndex);
+    m_onFadeInFinished = pDesc->onFinished;
+    m_iLastAnimIndex = m_iFadeInIndex;
 }
 
 void CUI_ScreenFade::UI_DeActive(void* pArg)
 {
+    if (!pArg)
+        return;
+
     FADE_DESC* pDesc = static_cast<FADE_DESC*>(pArg);
     if (!pDesc)
         return;
 
+    if (m_iFadeOutIndex < 0)
+        return;
+
     Set_LastKeyframeTime(m_iFadeOutIndex, pDesc->fDuration);
     Set_Animation(m_iFadeOutIndex);
+    m_onFadeOutFinished = pDesc->onFinished;
+    m_iLastAnimIndex = m_iFadeOutIndex;
 }
 
 void CUI_ScreenFade::Ready_FadeIn()

@@ -26,10 +26,15 @@ private:
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
+    HRESULT Initialize_Effects();
     void    Awake() override;
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
+
+private:
+    void Route_AnimEvent();
+    void Control_Sound(const string& event);
 
 public:
     static CSacrificeHand* Create();
@@ -48,30 +53,38 @@ public:
 
     void Idle();
 
+    /* Bubble */
+    void Active_Bubble();
+    void Deactive_Bubble();
+
     /* Dissolve */
     void Set_DissolveState(DISSOLVE_STATE state, _float duration);
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
 
+    /* RimLight */
+    void Active_SwordRimLight() { m_fSwordRimLightPower = 2.f; }
+    void Deactive_SwordRimLight() { m_fSwordRimLightPower = 0.f; }
+
+    /* Collider */
+    void Active_HandCore();
+    void Deactive_HandCore();
+    void Active_Sword();
+    void Deactive_Sword();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
-    HRESULT Create_Colliders();
+    HRESULT Create_Children();
 
 private:
     CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };
     SACRIFICE_HAND_BLACK_BOARD m_AttackBlackBoard{};
 
     /* Material Params */
-    _float3 m_vRimLightColor{};
-    _float m_fRimLightPower{};
-    _float m_fDissolveProgress{};
-    _float m_fDissolveTilling{};
-
     _bool m_IsOnDissolve = false;
-    _float m_fDissolveDuration{};
-    _float m_fDissolveElapsedTime{};
+    _float m_fSwordRimLightPower{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 };
 NS_END

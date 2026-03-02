@@ -6,6 +6,7 @@ class CGameInstance;
 class CUI_Object;
 class IProtoService;
 class IObjectService;
+class CAudioSource;
 NS_END
 
 NS_BEGIN(Client)
@@ -22,15 +23,20 @@ public:
 	virtual void    Update()override;
 
 public:
-	virtual HRESULT Ready_Stage(CZero_Level::StageContext& context)override;
-	virtual HRESULT Enter_Stage(CZero_Level::StageContext& context)override;
-	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)override;
+	virtual HRESULT Enter_Stage(StageContext& context)override;
+	virtual HRESULT Exit_Stage(StageContext& context)override;
 
 private:
-	class CGameInstance* m_pGameInstance{};
-	class CCamDirector* m_pCamDirector{};
-	OBJECT_HANDLE m_PlayerHandle = {};
+	void Intro();
+	void BattleStart();
+	void Battle();
+	void BattleEnd();
+	void Outro();
+	void End();
+
+private:
 	_bool m_isSequenceEnd = {};
+	LIGHT_DESC m_PrevShadowLight{};
 
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);

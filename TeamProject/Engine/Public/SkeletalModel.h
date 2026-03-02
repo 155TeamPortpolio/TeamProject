@@ -42,11 +42,13 @@ public:
 	_float4x4* Get_BoneMatrixPtr(const string& boneName);
 
 	_bool isReadyToDraw()	override;
+	virtual void SetModelDrawable(_bool isDraw) override;
 
 public:
 	void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
 	void Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix);
-	void Hide_MehsByName(const string& name);
+	vector<_uint> Hide_MehsByName(const string& name);
+	vector<_uint> Show_MehsByName(const string& name);
 
 public:
 	virtual void Render_GUI();

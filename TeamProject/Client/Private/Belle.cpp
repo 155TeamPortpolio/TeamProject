@@ -11,6 +11,8 @@
 #include "BelleState_Idle.h"
 #include "BelleState_Move.h"
 
+#include "AudioSource.h"
+
 CBelle::CBelle()
 {
 }
@@ -20,18 +22,23 @@ CBelle::CBelle(const CBelle& rhs)
 {
 }
 
+void CBelle::PlaySFX(string str)
+{
+	auto pAudio = Get_Component<CAudioSource>();
+	pAudio->Slot(str)
+		.Attribute3D(false)
+		.Volume(1.0)
+		.Loop(false)
+		.Play();
+}
+
 HRESULT CBelle::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Belle.model",
-		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Belle.model");
-	pRcsMgr->Add_ResourcePath("Belle.mat",
-		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Belle.mat");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Belle_Suibianguan_Meta.json",
-		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
+	auto pAudio = Add_Component<CAudioSource>();
+	pAudio->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/FieldCharacter/Sound");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Belle.model");
 	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Belle.mat");
@@ -53,8 +60,8 @@ void CBelle::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Belle.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Belle.model");
+	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
 	m_strAnimName = "Avatar_Female_Size02_Belle_";
 	m_strName = "Belle";
 

@@ -40,13 +40,12 @@ void CPlayer::Set_PlayerType(PLAYER ePlayer)
 {
 	m_ePlayerType = ePlayer;
 
-	if (m_ePlayerType == PLAYER::BATTLE)
-	{
-		m_pBattlePlayer->Initialize();
-	}
-	else
+	if (m_ePlayerType == PLAYER::FIELD)
 	{
 		m_pFieldPlayer->Initialize();
+	}
+	else {
+		m_pBattlePlayer->Initialize();
 	}
 }
 
@@ -63,12 +62,15 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 
 	m_pBattlePlayer = CBattlePlayer::Create();
 	m_pFieldPlayer = CFieldPlayer::Create();
-
+	CBattleSystem::GetInstance()->SetBattlePlayer(m_pBattlePlayer);
 	return S_OK;
 }
 
 void CPlayer::Awake()
 {
+	//First Setting Denny
+	_uint Denny = 150000;
+	RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", Denny);
 }
 
 void CPlayer::Priority_Update(_float dt)
@@ -95,10 +97,41 @@ void CPlayer::Late_Update(_float dt)
 	else m_pFieldPlayer->Late_Update(dt);
 }
 
+void CPlayer::Lock_Input()
+{
+	if (m_ePlayerType == PLAYER::END) return;
+
+	if (m_ePlayerType == PLAYER::BATTLE) 
+		m_pBattlePlayer->Lock_Input();
+
+	if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->Lock_Input();
+}
+
+void CPlayer::Unlock_Input()
+{
+	if (m_ePlayerType == PLAYER::END) return;
+
+	if (m_ePlayerType == PLAYER::BATTLE)
+		m_pBattlePlayer->UnLock_Input();
+
+	if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->UnLock_Input();
+}
+
 void CPlayer::Render_GUI()
 {
 	if (m_pBattlePlayer)
 	{
+		ImGui::SeparatorText("Character Inject");
+		for (size_t i = 0; i < ENUM(CHARACTER::END); i++)
+		{
+			CHARACTER eCharacter = static_cast<CHARACTER>(i);
+			string characterName = Helper::EnumToString(eCharacter);
+			if (ImGui::Button(characterName.c_str())) {
+				m_pBattlePlayer->SetBattleCharacter(eCharacter);
+			};
+		}
 		m_pBattlePlayer->Render_GUI();
 	}
 }

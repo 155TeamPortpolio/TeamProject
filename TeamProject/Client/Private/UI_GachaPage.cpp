@@ -1,0 +1,248 @@
+#include "pch.h"
+#include "UI_GachaPage.h"
+
+#include "GameInstance.h"
+#include "ObjectContainer.h"
+#include "AudioSource.h"
+
+#include "DataBase.h"
+#include "FieldSystem.h"
+#include "UIDirector.h"
+
+#include "UI_BackButton.h" 
+
+#include "UI_GachaCharacterIntro.h"
+#include "UI_GachaChannel.h"
+#include "UI_GachaCurrency.h"
+#include "UI_GachaConversion.h"
+
+void CUI_GachaPage::Select_Channel(class CUI_GachaChannel* pSelected)
+{
+    if (m_pSelectedChannel == pSelected || !pSelected)
+        return;
+
+    if (m_pSelectedChannel)
+        m_pSelectedChannel->UI_DeActive();
+
+    m_pSelectedChannel = pSelected;
+    m_pSelectedChannel->UI_Active();
+
+    if (m_pIntro) 
+        m_pIntro->Play_Video(m_pSelectedChannel->Get_Channel());
+}
+
+HRESULT CUI_GachaPage::Initialize_Prototype()
+{
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
+
+	Add_Component<CObjectContainer>();
+    Add_Component<CAudioSource>();
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/UI/Sound/");
+
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCharacterIntro", CUI_GachaCharacterIntro::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaChannel", CUI_GachaChannel::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaCurrency", CUI_GachaCurrency::Create());
+    PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_GachaConversion", CUI_GachaConversion::Create());
+
+	return S_OK;
+}
+
+HRESULT CUI_GachaPage::Initialize(INIT_DESC* pArg)
+{
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
+
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("fullScreenBlack.json")));
+
+    Create_CharacterIntro();
+
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("gacha.json")));
+
+    Create_BackButton();
+    Create_Currency();
+    Create_Channels();
+    Create_Conversions();
+
+	return S_OK;
+}
+
+void CUI_GachaPage::Awake()
+{
+    Set_Alive(false);
+}
+
+void CUI_GachaPage::Update(_float dt)
+{
+	__super::Update(dt);
+
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_GachaPage::UI_Active(void* pArg)
+{
+    UIDirector()->FadeIn_Screen(0.2f);
+    UIDirector()->Show_Mouse();
+    Select_Channel(m_pFirstChannel);
+    Set_Alive(true);        
+    Get_Component<CAudioSource>()->Slot("UI_Beep.wav").Play(); 
+}
+
+void CUI_GachaPage::UI_DeActive(void* pArg)
+{
+    Deactive_SelectedChannel();
+    Set_Alive(false);
+    if (m_pIntro)
+        m_pIntro->UI_DeActive();
+    UIDirector()->Hide_Mouse();
+}
+
+void CUI_GachaPage::Create_CharacterIntro()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaCharacterIntro" })
+        .Build("characterIntro");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pIntro = dynamic_cast<CUI_GachaCharacterIntro*>(pObj);
+}
+
+void CUI_GachaPage::Create_BackButton()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_BackButton" })
+        .Build("buttonBack");
+
+    if (!pObj)
+        return;
+
+    pObj->Set_OnClick([this]() { UI_DeActive(); FieldSystem()->RequestExitTop(); });
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_GachaPage::Create_Currency()
+{
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaCurrency" })
+        .Build("currency");
+
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+}
+
+void CUI_GachaPage::Create_Channels()
+{
+    static const _int iMaxChannels = { 8 };
+    auto& channels = CDataBase::GetInstance()->GeGachaChannels();
+
+    _int iChannelsCount = min(iMaxChannels, channels.size());
+    for (_int i = 0; i < iChannelsCount; ++i)
+    {
+        CUI_GachaChannel::CHANNEL_DESC* pDesc = new CUI_GachaChannel::CHANNEL_DESC;
+        pDesc->eChannel = static_cast<CHANNEL>(i);
+        pDesc->strLabel = channels[i].strLabel;
+        pDesc->strTextureKey = channels[i].strTextureKey; 
+        pDesc->onSelect = [this](CUI_GachaChannel* pChannel) { Select_Channel(pChannel); };
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaChannel" })
+            .Add_UIDesc(pDesc)
+            .Build("channel");
+
+        if (!pObj)
+            continue;
+        
+        if (i == 0)
+            m_pFirstChannel = dynamic_cast<CUI_GachaChannel*>(pObj);
+        //if (i == 0)
+        //    Select_Channel(dynamic_cast<CUI_GachaChannel*>(pObj));
+
+        pObj->Set_Anchor(ANCHOR::Left | ANCHOR::Top);
+        pObj->Set_AnchorOffset({ 57.f, 118.f + 88.f  * i });
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+    } 
+}
+
+void CUI_GachaPage::Create_Conversions()
+{
+    static const _int iMaxCount = 2;
+    static const _int COSTS[2] = { 10000, 100000 };
+    static const _int COUNTS[2] = { 1, 10 }; 
+
+    for (_int i = 0; i < iMaxCount; ++i)
+    {
+        CUI_GachaConversion::CONVERSION_DESC* pDesc = new CUI_GachaConversion::CONVERSION_DESC;
+        pDesc->iCost = COSTS[i];
+        pDesc->iCount = COUNTS[i];
+
+        auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_GachaConversion" })
+            .Add_UIDesc(pDesc)
+            .Build("conversion");
+
+        if (!pObj)
+            return;
+
+        pObj->Set_OnClick([this]() { OnClick_Conversion(); });
+        _float fStartX = -55.f - 390.f * iMaxCount;
+        _float fSpacing = 390.f;
+
+        pObj->Set_Anchor(ANCHOR::Right | ANCHOR::Bottom);
+        pObj->Set_AnchorOffset({ fStartX + fSpacing * i, -68.f });
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+    }
+}
+
+void CUI_GachaPage::Deactive_SelectedChannel()
+{
+    if (m_pSelectedChannel)
+        m_pSelectedChannel->UI_DeActive();
+
+    m_pSelectedChannel = nullptr;
+}
+
+void CUI_GachaPage::OnClick_Conversion()
+{
+    UIDirector()->Hide_Mouse();
+    UIDirector()->FadeOut_Screen(0.2f, [this]() {
+        LevelManager()->Request_ChangeLevel("Gacha_Level", LEVEL_TRANS_DESC{ "Gacha_Level", false ,true });
+        });
+
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+
+    //if (iDenny < 10000)
+    //{
+    //    MSG_BOX("µ· ºÎÁ·ÇÔ!");
+    //    return;
+    //} 
+    
+    iDenny = (iDenny - 10000 <= 0) ? 0 : iDenny - 10000;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+
+    //LevelManager()->Request_ChangeLevel("Gacha_Level", false);
+
+    if (m_pIntro)
+        m_pIntro->UI_DeActive();
+}
+
+CGameObject* CUI_GachaPage::Create()
+{
+    CUI_GachaPage* pInstance = new CUI_GachaPage();
+    if (FAILED(pInstance->Initialize_Prototype()))
+    {
+        MSG_BOX("Failed to Create : CUI_GachaPage");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+CGameObject* CUI_GachaPage::Clone(INIT_DESC* pArg)
+{
+    CUI_GachaPage* pInstance = new CUI_GachaPage(*this);
+    if (FAILED(pInstance->Initialize(pArg)))
+    {
+        MSG_BOX("Failed to Clone : CUI_GachaPage");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}

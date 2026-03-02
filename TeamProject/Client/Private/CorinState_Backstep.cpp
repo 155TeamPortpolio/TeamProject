@@ -3,6 +3,7 @@
 #include "Corin.h"
 
 #include "CharacterController.h"
+#include "AudioSource.h"
 
 void CCorinState_Backstep::Enter(CCorin* pOwner)
 {
@@ -10,21 +11,38 @@ void CCorinState_Backstep::Enter(CCorin* pOwner)
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back")
         .Speed(1.f)
 		.Apply();
+
+    pOwner->Control_SFX("Corin_BackStep_01_SFX.wav");
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Stop_Effect("Corin_Ultimate_Saw_Slash0");
 }
 
 void CCorinState_Backstep::Update(CCorin* pOwner, _float dt)
 {
     IHState<CCorin>* pEvade = Get_ParentState();
     if (!pEvade || !pEvade->Get_SubStateMachine()) return;
+    auto pSubMachine = pEvade->Get_SubStateMachine();
 
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     if (pOwner->Is_Attack())
-    {   // RushAttack
-        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 3);
-        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+    {
+        if (pSubMachine->Get_Bool("Extreme"))
+        {
+            // CounterAttack
+            pSubMachine->Set_Int("ExitMode", 5);
+            pSubMachine->Set_Trigger("Complete");
+        }
+        else
+        {
+            // RushAttack
+            pSubMachine->Set_Int("ExitMode", 3);
+            pSubMachine->Set_Trigger("Complete");
+        }
         return;
     }
 
@@ -32,8 +50,8 @@ void CCorinState_Backstep::Update(CCorin* pOwner, _float dt)
     {
         if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
-            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            pSubMachine->Set_Int("ExitMode", 4);
+            pSubMachine->Set_Trigger("Complete");
             return;
         }
     }
@@ -42,15 +60,15 @@ void CCorinState_Backstep::Update(CCorin* pOwner, _float dt)
     {   // Run
         if (pOwner->Is_Move())
         {
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);
-            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            pSubMachine->Set_Int("ExitMode", 2);
+            pSubMachine->Set_Trigger("Complete");
             return;
         }
     }
 
     if (m_fAnimProgress >= 0.7f)
     {   // Idle
-        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
-        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+        pSubMachine->Set_Int("ExitMode", 0);
+        pSubMachine->Set_Trigger("Complete");
     }
 }

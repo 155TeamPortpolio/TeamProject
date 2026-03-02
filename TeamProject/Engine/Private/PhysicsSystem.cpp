@@ -39,12 +39,12 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pFoundation) return E_FAIL;
 
     // PVD (Visual Debugger) 설정
-#ifdef _DEBUG 
+#ifdef _PHYSICS_DEBUG 
     // PVD 생성
     m_pPvd = PxCreatePvd(*m_pFoundation);
     // PVD 연결 (로컬호스트, 포트 5425, 타임아웃 10ms)
     PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eDEBUG);
     if (m_pPvd->isConnected())
     {
         // 연결 성공 로그
@@ -68,7 +68,16 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pPhysics) return E_FAIL;
     if (!PxInitExtensions(*m_pPhysics, m_pPvd)) return E_FAIL;   // Extensions 초기화 (필수적인 확장 기능들)
 
-    m_pDispatcher = PxDefaultCpuDispatcherCreate(2);             // Dispatcher 생성 (CPU 스레드 2개 사용)
+    PxCudaContextManagerDesc cudaDesc;
+    m_pCudaManager = PxCreateCudaContextManager(*m_pFoundation, cudaDesc, PxGetProfilerCallback());
+    if (m_pCudaManager && !m_pCudaManager->contextIsValid())
+    {
+        m_pCudaManager->release();
+        m_pCudaManager = nullptr;
+    }
+
+    const _uint threadCount = min(4u, max(1u, (unsigned int)std::thread::hardware_concurrency() - 1));
+    m_pDispatcher = PxDefaultCpuDispatcherCreate(threadCount);      // Dispatcher 생성
 
     // Scene(물리 월드) 생성
     PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
@@ -76,11 +85,27 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.cpuDispatcher = m_pDispatcher;
     sceneDesc.filterShader = SimulationFilterShader; // 기본 충돌 필터
     sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
-    sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+    //sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+    if (m_pCudaManager)
+    {
+        // GPU 가속 활성화 (NVIDIA 전용)
+        sceneDesc.cudaContextManager = m_pCudaManager;
+        sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS;
+        sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+
+        OutputDebugStringA("[PhysX] GPU Acceleration Enabled\n");
+    }
+    else
+    {
+        // CPU 폴백 (AMD 또는 CUDA 미지원 환경)
+        sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+        OutputDebugStringA("[PhysX] GPU Unavailable, CPU Fallback\n");
+    }
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    sceneDesc.ccdMaxPasses = 4;
+    sceneDesc.ccdMaxPasses = 0;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
-#ifdef _DEBUG
+
+#ifdef _PHYSICS_DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
     if (m_pPvd->isConnected())
     {
@@ -95,14 +120,14 @@ HRESULT CPhysicsSystem::Initialize()
     m_pScene = m_pPhysics->createScene(sceneDesc);
     if (!m_pScene) return E_FAIL;
 
-#ifdef _DEBUG
+#ifdef _PHYSICS_DEBUG
     // Scene의 PVD 플래그
     PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
     if (pvdClient)
     {
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
-        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, false);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, false);
+        pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, false);
     }
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
@@ -130,19 +155,17 @@ void CPhysicsSystem::Update(_float dt)
     if (!m_pScene) return;
 
     m_fAccumulator += dt;
+}
 
+void CPhysicsSystem::Late_Update(_float dt)
+{
+    //m_pScene->fetchResults(true);
     while (m_fAccumulator >= m_fFixedTimeStep)
     {
         m_pScene->simulate(m_fFixedTimeStep);
         m_pScene->fetchResults(true);
         m_fAccumulator -= m_fFixedTimeStep;
     }
-
-}
-
-void CPhysicsSystem::Late_Update(_float dt)
-{
-    //m_pScene->fetchResults(true);
 }
 
 _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
@@ -153,22 +176,65 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
     PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
     direction.normalize();
 
-    PxRaycastBuffer hit;
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
     CRaycastFilterCallback filterCallback(desc.iCollisionMask, desc.bQueryTrigger);
 
-    _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
-        PxHitFlag::eDEFAULT, filterData, &filterCallback);
-
-    if (bResult && hit.hasBlock)
+    if (desc.bQueryTrigger)
     {
-        Setup_RayHitInfo(hit.block, outHit);
-        return true;
-    }
+        // 트리거 쿼리 : Touch 버퍼 사용
+        const PxU32 bufferSize = 32;
+        PxRaycastHit hitBuffer[bufferSize];
+        PxRaycastBuffer hit(hitBuffer, bufferSize);
 
-    return false;
+        m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+            PxHitFlag::eDEFAULT, filterData, &filterCallback);
+
+        // Block, Touch
+        PxRaycastHit closestHit;
+        _float closestDist = FLT_MAX;
+        _bool bFound = false;
+
+        if (hit.hasBlock && hit.block.distance < closestDist)
+        {
+            closestHit = hit.block;
+            closestDist = hit.block.distance;
+            bFound = true;
+        }
+
+        for (PxU32 i = 0; i < hit.getNbTouches(); ++i)
+        {
+            const PxRaycastHit& touch = hit.getTouch(i);
+            if (touch.distance < closestDist)
+            {
+                closestHit = touch;
+                closestDist = touch.distance;
+                bFound = true;
+            }
+        }
+
+        if (bFound)
+        {
+            Setup_RayHitInfo(closestHit, outHit);
+            return true;
+        }
+        return false;
+    }
+    else
+    {
+        // 일반 쿼리
+        PxRaycastBuffer hit;
+        _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+            PxHitFlag::eDEFAULT, filterData, &filterCallback);
+
+        if (bResult && hit.hasBlock)
+        {
+            Setup_RayHitInfo(hit.block, outHit);
+            return true;
+        }
+        return false;
+    }
 }
 
 _bool CPhysicsSystem::Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits)
@@ -578,6 +644,12 @@ void CPhysicsSystem::Free()
     {
         m_pScene->release();
         m_pScene = nullptr;
+    }
+
+    if (m_pCudaManager)
+    {
+        m_pCudaManager->release();
+        m_pCudaManager = nullptr;
     }
 
     if (m_pDispatcher)

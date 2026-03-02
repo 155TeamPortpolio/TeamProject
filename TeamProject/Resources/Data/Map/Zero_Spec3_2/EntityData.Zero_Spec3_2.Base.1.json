@@ -1,0 +1,32 @@
+{
+  "TagDataFormat": "Base",
+  "TagArea": "Zero_Spec3_2",
+  "iVersion": 1,
+  "Entities": [
+    {
+      "iEntityID": 0,
+      "tagName": "Invwall_XWall",
+      "iType": 4,
+      "vScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "vRotation": [
+        -0.0,
+        0.0,
+        -0.0
+      ],
+      "vTranslation": [
+        -20.714061737060547,
+        2.1671626567840576,
+        17.818130493164063
+      ],
+      "vColSize": [
+        20.0,
+        3.0,
+        0.8361368179321289
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "TagDataFormat": "NPCSlot",
+  "TagArea": "Zero_Worksite",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 1,
+      "TagName": "Gravity",
+      "defaultvalue": {
+        "type": "Bool",
+        "value": false
+      }
+    },
+    {
+      "iObjID": 27,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "AgentBoo"
+      }
+    },
+    {
+      "iObjID": 28,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "RocketBoo"
+      }
+    },
+    {
+      "iObjID": 29,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "SafetyBoo"
+      }
+    },
+    {
+      "iObjID": 30,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "PenguinBoo"
+      }
+    },
+    {
+      "iObjID": 31,
+      "TagName": "BangBoo",
+      "defaultvalue": {
+        "type": "String",
+        "value": "EousBoo"
+      }
+    },
+    {
+      "iObjID": 27,
+      "TagName": "Name",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "신나는 BangBoo"
+      }
+    },
+    {
+      "iObjID": 28,
+      "TagName": "Name",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "깔끔한 BangBoo"
+      }
+    },
+    {
+      "iObjID": 29,
+      "TagName": "Name",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "무난한 BangBoo"
+      }
+    },
+    {
+      "iObjID": 30,
+      "TagName": "Name",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "심심한 BangBoo"
+      }
+    },
+    {
+      "iObjID": 31,
+      "TagName": "Name",
+      "defaultvalue": {
+        "type": "WString",
+        "value": "행복한 BangBoo"
+      }
+    }
+  ]
+}

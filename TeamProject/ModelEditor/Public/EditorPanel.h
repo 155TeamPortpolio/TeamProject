@@ -15,6 +15,7 @@ public:
 
 private:
 	void CreateObject(_bool binary = false);
+	void CreateAdjust();
 	void Render_Rules();
 
 private:

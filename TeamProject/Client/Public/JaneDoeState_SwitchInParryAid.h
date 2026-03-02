@@ -13,7 +13,7 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override;
 
 public:
-    static CJaneDoeState_SwitchInParryAid* Create() { return new CJaneDoeState_SwitchInParryAid(); }
+    static CJaneDoeState_SwitchInParryAid* Create();
     virtual void Free() override { __super::Free(); }
 };
 

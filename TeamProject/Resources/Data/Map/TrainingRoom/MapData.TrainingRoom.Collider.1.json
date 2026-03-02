@@ -12,7 +12,7 @@
       }
     },
     {
-      "iObjID": 1,
+      "iObjID": 2,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
@@ -20,19 +20,11 @@
       }
     },
     {
-      "iObjID": 2,
-      "TagName": "bCooking",
-      "defaultvalue": {
-        "type": "Bool",
-        "value": false
-      }
-    },
-    {
       "iObjID": 3,
       "TagName": "bCooking",
       "defaultvalue": {
         "type": "Bool",
-        "value": false
+        "value": true
       }
     }
   ]

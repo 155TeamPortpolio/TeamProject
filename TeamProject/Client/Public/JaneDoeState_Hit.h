@@ -12,8 +12,11 @@ public:
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override;
 
+private:
+    _float m_fWeight = 5.f;
+
 public:
-    static CJaneDoeState_Hit* Create() { return new CJaneDoeState_Hit(); }
+    static CJaneDoeState_Hit* Create();
     virtual void Free() override { __super::Free(); }
 };
 
@@ -33,7 +36,7 @@ class CJaneDoe_HitHard : public IBaseState<CJaneDoe>
 {
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
-    virtual void Update(CJaneDoe* pOwner, _float dt) override {}
+    virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
@@ -45,7 +48,7 @@ class CJaneDoe_HitKnockOut : public IBaseState<CJaneDoe>
 {
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
-    virtual void Update(CJaneDoe* pOwner, _float dt) override {}
+    virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:

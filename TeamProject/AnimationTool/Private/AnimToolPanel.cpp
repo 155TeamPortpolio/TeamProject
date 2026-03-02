@@ -7,7 +7,7 @@
 #include "AnimationLayout.h"
 #include "DynamicBone.h"
 #include "Channel.h"
-
+#include "AudioSource.h"
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext) 
 	: CBasePanel{pContext}
@@ -25,6 +25,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
 		Reset_Panel();
 	}
+
 	if (nullptr != m_pSelectAnimator) {
 		float fPause = 1.f;
 		if (m_bPause) fPause = 0.f;
@@ -38,6 +39,7 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 				if (m_pSelectAnimator->isCurrentAnimEnd()) {
 					if (m_iCurrentPrevIndex < m_PreviewList.size() - 1) {
+						m_fPrevTrackPos = 0.f;
 						m_fTrackPos = 0.f;
 						m_pSelectAnimator->Set_Animation(m_PreviewList[++m_iCurrentPrevIndex])
 							.Loop(false);
@@ -47,7 +49,36 @@ void CAnimToolPanel::Update_Panel(_float dt)
 				}
 			}
 		}
+
+		if (m_iCurClipIndex != -1)
+		{
+			for (auto& Event : m_AnimClip[m_iCurClipIndex].Events)
+			{
+				bool bTrigger = false;
+
+				if (m_fPrevTrackPos <= m_fTrackPos)
+				{
+					// 일반 진행
+					if (m_fPrevTrackPos < Event.EventTime && Event.EventTime <= m_fTrackPos)
+						bTrigger = true;
+				}
+				else
+				{
+					// 루프 발생 (Prev > Cur)
+					if (Event.EventTime > m_fPrevTrackPos || Event.EventTime <= m_fTrackPos)
+						bTrigger = true;
+				}
+
+				if (bTrigger && Event.EventType == CLIP_EVENT_TYPE::SOUND)
+				{
+					auto AS = m_pSelectModel->Get_Component<CAudioSource>();
+					if (AS) AS->Play(Event.EventTag);
+				}
+			}
+		}
 	}
+	m_fPrevTrackPos = m_fTrackPos;
+	return;
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
 		if (nullptr != m_pSelectAnimator) {
@@ -69,10 +100,9 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('U')) {
 		if (nullptr != m_pSelectAnimator) {
-			m_pSelectAnimator->Change_Animation(66)
+			m_pSelectAnimator->Change_Animation(2)
 				.Loop(false)
-				.StartAt(0.3f)
-				.EndAt(0.8f)
+				.StartAt(0.18f)
 				.Apply();
 		}
 	}
@@ -141,7 +171,12 @@ void CAnimToolPanel::Render_GUI()
 
 		ImGui::EndTabBar();
 	}
-
+	ImGui::SameLine();
+	if (ImGui::Button("ReloadSound"))
+	{
+		if (m_pSelectModel)
+			dynamic_cast<CAnimModel*>(m_pSelectModel)->ReLoad_Sound();
+	}
 	ImGui::End();
 }
 
@@ -171,6 +206,16 @@ void CAnimToolPanel::GUI_DefaultSetting()
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::Text("ClipTag : "); ImGui::SameLine();
+	ImGui::SetNextItemWidth(130.f);
+
+	static char s_ClipSearch[256] = {};
+	ImGui::InputTextWithHint(
+		"##ClipSearch",
+		"Search clip...",
+		s_ClipSearch,
+		IM_ARRAYSIZE(s_ClipSearch)
+	);
+	ImGui::SameLine();
 	ImGui::SetNextItemWidth(300.f);
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
 	{
@@ -178,7 +223,16 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 			int iIndex = 0;
 			for (auto& Clip : m_AnimClip)
 			{
-				string ClipTag = Clip.ClipTag;
+				const string& ClipTag = Clip.ClipTag;
+				if (s_ClipSearch[0] != '\0')
+				{
+					if (ClipTag.find(s_ClipSearch) == string::npos)
+					{
+						iIndex++;
+						continue;
+					}
+				}
+
 				bool selected = (m_CurClipTag == ClipTag);
 				if (ImGui::Selectable(ClipTag.c_str(), selected))
 				{
@@ -202,70 +256,6 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 			}
 		}
 		ImGui::EndCombo();
-	}
-
-	//Set Layer
-	ImGui::SameLine();
-	ImGui::Text("	Layer : "); ImGui::SameLine();
-
-	static int LayerIndex = 0;
-	int LayerCount = m_pSelectAnimator ? m_pSelectAnimator->Get_NumLayer() : 0;
-
-	char preview[16];
-	sprintf_s(preview, "%d", LayerIndex);
-	ImGui::PushItemWidth(50.f);
-	if (ImGui::BeginCombo("##LayerCombo", preview))
-	{
-		for (int i = 0; i < LayerCount; ++i)
-		{
-			bool selected = (LayerIndex == i);
-			char label[16];
-			sprintf_s(label, "%d", i);
-
-			if (ImGui::Selectable(label, selected))
-				LayerIndex = i;
-
-			if (selected)
-				ImGui::SetItemDefaultFocus();
-		}
-		ImGui::EndCombo();
-	}
-
-	//Start Bone
-	ImGui::SameLine();
-	ImGui::Text("	Start Bone : "); ImGui::SameLine();
-	static int StartBoneIndex = -1;
-	ImGui::PushItemWidth(50.f);
-	ImGui::InputInt("##StartBone", &StartBoneIndex, 0, 0);
-	ImGui::SameLine();
-	if (ImGui::Button("Set##StartBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_StartBone(StartBoneIndex);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Reset##StartBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_StartBone();
-	}
-
-	//Extract Bone
-	ImGui::SameLine();
-	ImGui::Text("	Extrack Bone : "); ImGui::SameLine();
-	static int MoveBoneIndex = -1;
-	ImGui::PushItemWidth(50.f);
-	ImGui::InputInt("##ExtractBone", &MoveBoneIndex, 0, 0);
-	ImGui::SameLine();
-	if (ImGui::Button("Set##ExtractBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) {
-			m_pSelectAnimator->Set_MotionBone(MoveBoneIndex);
-			m_pSelectAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-		}
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Reset##ExtractBone", { 55.f, 0.f }))
-	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_ExtractBoneMovement();
 	}
 
 	Draw_ToolbarUI();
@@ -420,7 +410,9 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 		float hoverTime = local01 * endT;
 
 		ImGui::BeginTooltip();
-		ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
+		if (m_pSelectAnimator) {
+			ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
+		}
 		ImGui::EndTooltip();
 
 		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);
@@ -430,65 +422,67 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 	{
 		float mx = ImGui::GetIO().MousePos.x;
 		float local01 = clamp((mx - barPos.x) / barSize.x, 0.f, 1.f);
+		m_fPrevTrackPos = m_fTrackPos = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
 		ioTime = local01 * endT;
 	}
 }
 
 void CAnimToolPanel::Draw_EventListUI()
 {
-	ImGui::BeginTable("##EventTable", 4,
+	if (ImGui::BeginTable("##EventTable", 4,
 		ImGuiTableFlags_RowBg |
 		ImGuiTableFlags_ScrollY |
-		ImGuiTableFlags_BordersInnerV);
+		ImGuiTableFlags_BordersInnerV)) 
+	{
+		ImGui::TableSetupColumn("TrackPos", ImGuiTableColumnFlags_WidthFixed, 70.f);
+		ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
+		ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
+		ImGui::TableHeadersRow();
 
-	ImGui::TableSetupColumn("TrackPos", ImGuiTableColumnFlags_WidthFixed, 70.f);
-	ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
-	ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
-	ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
-	ImGui::TableHeadersRow();
-	
-	//클립이 없거나 선택을 하지 않으면 렌더하지 않음
-	if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
-		auto& Events = m_AnimClip[m_iCurClipIndex].Events;
-		for (size_t i = 0; i < Events.size(); ++i)
-		{
-			ANIM_EVENT& e = Events[i];
-			ImGui::PushID((int)i);
-
-			ImGui::TableNextRow();
-
-			// Time
-			ImGui::TableNextColumn();
-			ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
-
-			// Type
-			ImGui::TableNextColumn();
-			ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
-			int type = (int)e.EventType;
-			ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
-			e.EventType = (CLIP_EVENT_TYPE)type;
-
-			// Tag
-			ImGui::TableNextColumn();
-			char tagBuf[64];
-			strcpy_s(tagBuf, e.EventTag.c_str());
-			if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
-				e.EventTag = tagBuf;
-
-			// Delete
-			ImGui::TableNextColumn();
-			if (ImGui::SmallButton("X"))
+		//클립이 없거나 선택을 하지 않으면 렌더하지 않음
+		if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
+			auto& Events = m_AnimClip[m_iCurClipIndex].Events;
+			for (size_t i = 0; i < Events.size(); ++i)
 			{
-				Events.erase(Events.begin() + i);
+				ANIM_EVENT& e = Events[i];
+				ImGui::PushID((int)i);
+
+				ImGui::TableNextRow();
+
+				// Time
+				ImGui::TableNextColumn();
+				ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
+
+				// Type
+				ImGui::TableNextColumn();
+				ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
+				int type = (int)e.EventType;
+				ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
+				e.EventType = (CLIP_EVENT_TYPE)type;
+
+				// Tag
+				ImGui::TableNextColumn();
+				char tagBuf[64];
+				strcpy_s(tagBuf, e.EventTag.c_str());
+				if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
+					e.EventTag = tagBuf;
+
+				// Delete
+				ImGui::TableNextColumn();
+				if (ImGui::SmallButton("X"))
+				{
+					Events.erase(Events.begin() + i);
+					ImGui::PopID();
+					break;
+				}
+
 				ImGui::PopID();
-				break;
 			}
-
-			ImGui::PopID();
 		}
-	}
 
-	ImGui::EndTable();
+		ImGui::EndTable();
+	}
 }
 
 void CAnimToolPanel::GUI_Preview(_float fChildHeight)
@@ -500,7 +494,6 @@ void CAnimToolPanel::GUI_Preview(_float fChildHeight)
 		{
 			m_bPreviewPlay = true;
 			m_bPause = false;
-
 
 			if (m_pSelectAnimator && !m_PreviewList.empty())
 			{
@@ -617,6 +610,16 @@ void CAnimToolPanel::Setting_NewClip()
 	}
 }
 
+vector<ANIM_CLIP>& CAnimToolPanel::Get_AnimClip(const string& AnimKey)
+{
+	static vector<ANIM_CLIP> EmptyResult;
+	auto iter = m_Meta.find(AnimKey);
+	if (iter != m_Meta.end())
+		return iter->second;
+	
+	return EmptyResult;
+}
+
 void CAnimToolPanel::Reset_Panel()
 {
 	m_bPause = true;
@@ -651,6 +654,7 @@ void CAnimToolPanel::Save_Event()
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 
 	ANIM_META tMeta{};
+	tMeta.AnimPath = m_pSelectAnimator->Get_AnimPath();
 	tMeta.PreTransform = m_pSelectAnimator->Get_PreTransform();
 	tMeta.Clips = m_AnimClip;
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "BangBooPay.h"
 
 #include "GameInstance.h"
@@ -28,9 +28,9 @@ HRESULT CBangBooPay::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Modelout.model");
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Modelout.mat");
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Idle_Start_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Idle_Start_Meta.json");
+	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.model", "../Bin/Resources/Global/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Modelout.model");
+	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.mat", "../Bin/Resources/Global/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Modelout.mat");
+	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Idle_Start_Meta.json", "../Bin/Resources/Global/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Idle_Start_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "NPC_CashierBangbooPay_Modelout.model");
@@ -59,11 +59,13 @@ void CBangBooPay::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooPay_";
-	m_strName = "Pay";
+	m_strName = L"구매";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
 		.Apply();
+
+	__super::Awake();
 }
 
 void CBangBooPay::Priority_Update(_float dt)

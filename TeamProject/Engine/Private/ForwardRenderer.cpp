@@ -36,11 +36,33 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 	return S_OK;
 }
 
+CRenderer* CForwardRenderer::GetRenderer(RENDERER_TYPE eType)
+{
+	if (eType == RENDERER_TYPE::STATIC)
+		return dynamic_cast<CRenderer*>(m_pStaticRenderer);
+	if (eType == RENDERER_TYPE::SKINNED)
+		return dynamic_cast<CRenderer*>(m_pSkinnedRenderer);
+	return nullptr;
+}
+
+void CForwardRenderer::Set_GlitchDesc(GLITCH_DESC desc)
+{
+	m_pSkinnedRenderer->Set_GlitchDesc(desc);
+}
+
+void CForwardRenderer::SetShadowUpdateInterval(_float fInterval)
+{
+	m_fStaticUpdateInterval = fInterval;
+}
+
+void CForwardRenderer::ResetUpdateInterval()
+{
+	m_fStaticUpdateInterval = 0.1f;
+}
+
 HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 {
-	m_pPipeLine->Update_FrameBuffer(m_pContext);
-	m_pPipeLine->Update_Frustum();
-
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final"))) return E_FAIL;
 	pPriorityPass->Execute(m_pContext, this);
 
@@ -55,8 +77,6 @@ HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bo
 		return S_OK;
 	}
 
-	m_pPipeLine->Update_StaticCSM();
-
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 
@@ -64,12 +84,12 @@ HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bo
 
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 
-	for (_uint i = 0; i < 4; ++i)
+	for (_uint i = 0; i < 3; ++i)
 	{
 		m_pPipeLine->Begin_ShadowRender(false, i);
 		m_pPipeLine->Update_ShadowBuffer(m_pContext, false, i);
 
-		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		if (i < 2) pShadowPass->Execute(m_pContext, this, false);
 		else pShadowPass->Execute(m_pContext, this, true);
 		m_pPipeLine->End_ShadowRender(false);
 	}
@@ -87,7 +107,6 @@ HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _
 		return S_OK;
 	}
 
-	m_pPipeLine->Update_SkinnedCSM();
 
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
@@ -96,12 +115,12 @@ HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _
 
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 
-	for (_uint i = 0; i < 4; ++i)
+	for (_uint i = 0; i < 3; ++i)
 	{
 		m_pPipeLine->Begin_ShadowRender(true, i);
 		m_pPipeLine->Update_ShadowBuffer(m_pContext, true, i);
 
-		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		if (i < 2) pShadowPass->Execute(m_pContext, this, false);
 		else pShadowPass->Execute(m_pContext, this, true);
 		m_pPipeLine->End_ShadowRender(true);
 	}
@@ -147,21 +166,31 @@ HRESULT CForwardRenderer::Render_OutLine()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::Render_Vanish()
+{
+	m_pSkinnedRenderer->Render_Vanish_Noise();
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Render_MotionBlur()
+{
+	m_pSkinnedRenderer->Process_MotionBlurQueue();
+	m_pSkinnedRenderer->Render_MotionBlur_Noise();
+	return S_OK;
+}
+
 HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
-	pBlendPass->Execute(m_pContext, this);
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Blend", 0xFF, pDeferredDSV, false))) 
+		return E_FAIL;
 
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
+	pBlendPass->Execute(m_pContext, this);
+
+	if (FAILED(m_pTargetManager->End_MRT())) 
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -171,16 +200,13 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
-	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
-	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
-	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
-	pNonLightPass->Execute(m_pContext, this);
-	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
-	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_NonLight", 0xFF, pDeferredDSV, false)))
+		return E_FAIL;
 
-	Safe_Release(pPrevRTV);
-	Safe_Release(pPrevDSV);
+	pNonLightPass->Execute(m_pContext, this);
+
+	if (FAILED(m_pTargetManager->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -189,7 +215,7 @@ HRESULT CForwardRenderer::Render_Combined()
 {
 	m_pSkinnedRenderer->Render_SkinnedMesh_Combined();
 	m_pStaticRenderer->Render_StaticMesh_Combined();
-
+	
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
 	ID3D11InputLayout* pLayout;
@@ -198,10 +224,14 @@ HRESULT CForwardRenderer::Render_Combined()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
-	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
+	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
+	m_pTargetManager->Bind_Target("Target_VanishNoise", m_pShader, "VanishNoiseTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Blend", m_pShader, "BlendTexture");
+	m_pTargetManager->Bind_Target("Target_NonLight", m_pShader, "NonLightTexture");
 
-	Bind_WorldMatrix();
+	Bind_WorldMatrix(); 
 
 	m_pShader->Apply("COMBINED", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
@@ -222,9 +252,15 @@ void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 	m_pSkinnedRenderer->Add_OutLineCommand(command);
 }
 
+void CForwardRenderer::Add_MotionBlurCommand(const MOTIONBLUR_COMMAND& command)
+{
+	m_pSkinnedRenderer->Add_MotionBlurCommand(command);
+}
+
 void CForwardRenderer::Update(_float dt)
 {
 	m_fStaticUpdateTimer -= dt;
+	m_pSkinnedRenderer->Update(dt);
 }
 
 void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)
@@ -238,6 +274,14 @@ HRESULT CForwardRenderer::Ready_Target()
 	D3D11_VIEWPORT		ViewportDesc{};
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
+	{
+		RenderTargetDesc BlendDesc = { "Target_Blend" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(BlendDesc);
+	}
+	{
+		RenderTargetDesc NonLightDesc = { "Target_NonLight" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(NonLightDesc);
+	}
 	{
 		RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 		m_pTargetManager->Create_Target(ShadowDesc);
@@ -256,6 +300,12 @@ HRESULT CForwardRenderer::Ready_Target()
 
 HRESULT CForwardRenderer::Ready_MRT()
 {
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Blend", "Target_Blend"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_NonLight", "Target_NonLight"))) return E_FAIL;
+	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
 	}

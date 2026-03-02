@@ -3,22 +3,92 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
+class CUI_Object;
 NS_END
 
 NS_BEGIN(Client)
+struct DAMAGE_DESC;
 
 class CUIDirector final : public CBase
 {
 	DECLARE_SINGLETON(CUIDirector);
+
+public:
+	enum HUD { FIELD, BATTLE, END };
+
 private:
 	CUIDirector() {}
 	virtual ~CUIDirector() = default;
 
 public:
+	HRESULT Register(class CUI_Object* pObj);
+	HRESULT Register_EnemyHUD(class CUI_Object* pObj);
+
+public:
+	//==================== Common ===============
 	/* 화면 페이드인 실행 (검정 화면 -> 화면) */
-	void FadeIn_Screen(_float fDuration = 0.5f);
+	void FadeIn_Screen(_float fDuration = 0.5f, function<void()> onFinished = nullptr );
 	/* 화면 페이드아웃 실행 (화면 -> 검정 화면) */
-	void FadeOut_Screen(_float fDuration = 0.5f);
+	void FadeOut_Screen(_float fDuration = 0.5f, function<void()> onFinished = nullptr);
+
+	/* 씬 프레임을 화면에 표시 (화면 위, 아래에 프레임) */
+	void Show_SceneFrame();
+	/* 씬 프레임을 화면에서 숨김 (화면 위, 아래에 프레임) */
+	void Hide_SceneFrame();
+
+	void Show_Mouse();
+	void Hide_Mouse();
+
+	//==================== HUD ===============
+	/* HUD를 화면에 표시 */
+	void Show_HUD(HUD hud, _bool isFade = true);
+	/* HUD를 화면에서 숨김 */
+	void Hide_HUD(HUD hud);
+
+	/* Enemy, Boss HUD를 화면에 표시 */
+	void Show_EnemyHUD();
+	/* Enemy, Boss HUD를 화면에서 숨김 */
+	void Hide_EnemyHUD();
+
+	//==================== Scott ===============
+	void Show_Party(vector<CHARACTER> characters);
+	void Hide_Party();
+
+	//==================== Battle ===============
+	void Request_DamageText(const DAMAGE_DESC& desc);
+	void Show_Switch(CHARACTER eLeft, CHARACTER eRight);
+	void Hide_Switch();
+
+	void Show_Ultimate(CHARACTER eCharacter, _float duration);
+	//==================== MainCity ===============
+	void Show_Lottery();
+	void Hide_Lottery();
+	void Show_Ramen();
+	void Hide_Ramen();
+	void Show_GachaPage();
+	void Hide_GachaPage(); 
+
+	//==================== Gacha ===============
+	/* 가챠 결과 연출 중, 현재 가챠의 이름을 화면에 표시 */
+	void Show_GachaLabel(const _wstring& strLabel);
+	/* 가챠 이름 표시를 숨김 */
+	void Hide_GachaLabel();
+	/* 가챠 결과 연출을 건너뛸 수 있는 버튼을 화면에 표시 */
+	void Show_GachaSkipButton();
+	/* 가챠 결과 연출 건너뛰기 버튼을 숨김 */
+	void Hide_GachaSkipButton();
+	/* 가챠 결과를 화면에 표시 */
+	void Show_GachaResult(const vector<GACHA_RESULT_DESC>* pResultDesc);
+
+	//==================== Switch / Clear / Wipeout =============== 
+	/* 월드상에 Switch 문구만 뜨는 함수로 Show_Switch(vector<CHARACTER>) 함수 쓰면 switch ui 까지 같이 보입니다*/
+	void Show_Switch();
+	void Show_Clear();
+	void Show_Wipeout();
+	void Show_WipeoutOverlay();
+	/* wipeout overlay가 없으면 이미 종료된 것으로 간주하고, 존재하면 애니메이션 완료 여부를 반환 */
+	_bool Is_WipeoutOverlayFinished();
 
 public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
@@ -27,14 +97,30 @@ public:
 	void Load_LevelObjects(const string& levelKey);
 
 private:
+	void Create_Fade();
+	void Create_Ultimate();
+
 	/* json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장 */
 	void Load_UILevelData(const string& resourceKey);
+	void Show_HUD(const string& strInstanceName, _bool isFade = true);
+	void Hide_HUD(const string& strInstanceName);
+	string Get_HUDName(HUD hud);
+
+	HRESULT Ready_UIObject(const string& strLevelTag, const string& strPrototypeTag, const string& strInstanceName, class CGameObject* pProto);
+
+	void UI_Active(const string& strInstanceName, void* pArg = nullptr);
+	void UI_DeActive(const string& strInstanceName, void* pArg = nullptr);
+
+	UI_HANDLE* Find_Handle(const string& strInstanceName);
 
 private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 	unordered_map<string, UI_HANDLE>	m_handles = {};
-	UI_HANDLE							m_hScreenFade = {};
+	UI_HANDLE		m_hFade = {};
+	class CUltimateBG*	m_pUltimate = nullptr;
+
+	vector<UI_HANDLE>	m_hEnemyHUDs;
 
 public:
 	virtual void Free() override;

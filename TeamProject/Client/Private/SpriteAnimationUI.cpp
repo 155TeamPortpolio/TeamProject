@@ -17,6 +17,10 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("SpriteAnimation");
 
+    auto pSprite = Get_Component<CSprite2D>();
+    pSprite->Set_Param("Col", { &m_iFrameCountX, "uint", sizeof(_uint) });
+    pSprite->Set_Param("Row", { &m_iFrameCountY, "uint", sizeof(_uint) });
+
     return S_OK;
 }
 
@@ -26,28 +30,52 @@ void CSpriteAnimationUI::Update(_float dt)
 
     auto pSprite = Get_Component<CSprite2D>();
 
-    if (m_isPlaying)
+    if (!m_isPlaying)
+        return;
+
+    m_fFrameAccTime += dt;
+
+    if (m_fFrameAccTime >= (1.f / m_fFrameSpeed))
     {
-        m_fFrameAccTime += dt;
+        m_fFrameAccTime = 0.f;
+        _uint iNextFrame = m_iCurrentFrameIndex + 1;
 
-        if (!m_isLoop && m_iCurrentFrameIndex >= m_iFrameCountTotal - 1)
+        if (iNextFrame >= m_iFrameCountTotal)
         {
-            m_fFrameAccTime = 0.f;
-            m_iCurrentFrameIndex = 0;
-            m_isPlaying = false;
-            return;
+            if (m_isLoop)
+            {
+                m_iCurrentFrameIndex = 0;
+            }
+            else
+            {
+                m_iCurrentFrameIndex = m_iFrameCountTotal - 1;
+                m_isPlaying = false;
+            }
         }
-
-        if (m_fFrameAccTime >= (1.f / m_fFrameSpeed))
+        else
         {
-            m_fFrameAccTime = 0.f;
-            m_iCurrentFrameIndex = (m_iCurrentFrameIndex + 1) % m_iFrameCountTotal;// (m_iFrameCountX * m_iFrameCountY);
-            pSprite->Set_Param("FrameIndex", { &m_iCurrentFrameIndex,"uint",sizeof(_uint) });
+            m_iCurrentFrameIndex = iNextFrame;
         }
-
-        pSprite->Set_Param("Col", { &m_iFrameCountX, "uint", sizeof(_uint) });
-        pSprite->Set_Param("Row", { &m_iFrameCountY, "uint", sizeof(_uint) });
+        Get_Component<CSprite2D>()->Set_Param("FrameIndex", { &m_iCurrentFrameIndex,"uint",sizeof(_uint) });
     }
+}
+
+void CSpriteAnimationUI::UI_Active(void* pArg)
+{
+    m_isPlaying = true;
+    m_iCurrentFrameIndex = 0;
+    m_fFrameAccTime = 0.f;
+}
+
+void CSpriteAnimationUI::UI_DeActive(void* pArg)
+{
+    m_isPlaying = false;
+}
+
+_bool CSpriteAnimationUI::Is_AnimFinished()
+{
+    //return m_isPlaying;
+    return !m_isPlaying;
 }
 
 void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)

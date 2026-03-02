@@ -12,7 +12,7 @@ class CLightMgr :
     };
 
     struct LightSlot {
-        _bool alive = false;
+        _bool alive = false; /*이거 지금 안씀*/
         _uint generation = {};
         class CLight* pLight = { nullptr };
         LightState eState = { LightState::NONE };
@@ -31,13 +31,15 @@ public:
     virtual void Active_Light(class CLight* Light, _int Index)override;
 public:
     virtual vector<LIGHT_DESC> Visible_Lights() override;
+    virtual void SetMain(class CLight* Light, _int Index)override;
+    virtual LIGHT_DESC Get_MainDirectional();
 
 private:
     void CleanUp(); // 매 프레임의 마지막에 빛을 정리해줌
 
 private:
     vector<LightSlot> m_LightSlots;
-
+    _int m_MainDirectional = {-1};
 public:
     static CLightMgr* Create();
     virtual void Free() override;

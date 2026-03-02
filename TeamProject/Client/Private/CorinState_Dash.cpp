@@ -5,6 +5,8 @@
 #include "CorinState_Evade.h"
 #include "CharacterController.h"
 
+#include "AudioSource.h"
+
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
     pOwner->Use_Evade();
@@ -15,19 +17,34 @@ void CCorinState_Dash::Enter(CCorin* pOwner)
     _vector3 vDir = pOwner->Get_InputDir();
     if (vDir.Length() > 0.01f)
         pOwner->Rotate(vDir);
+
+    pOwner->Control_SFX("Corin_Dash_02_SFX.wav");
 }
 
 void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
 {
     IHState<CCorin>* pEvade = Get_ParentState();
     if (!pEvade || !pEvade->Get_SubStateMachine()) return;
+    auto pSubMachine = pEvade->Get_SubStateMachine();
 
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     if (pOwner->Is_Attack())
-    {   // RushAttack
-        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 3);
-        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+    {
+        if (pSubMachine->Get_Bool("Extreme"))
+        {
+            // CounterAttack
+            pSubMachine->Set_Int("ExitMode", 5);
+            pSubMachine->Set_Trigger("Complete");
+        }
+        else
+        {
+            // RushAttack
+            pSubMachine->Set_Int("ExitMode", 3);
+            pSubMachine->Set_Trigger("Complete");
+        }
         return;
     }
 
@@ -35,22 +52,33 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
     {
         if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
-            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            pSubMachine->Set_Int("ExitMode", 4);
+            pSubMachine->Set_Trigger("Complete");
             return;
         }
 
         if (pOwner->Is_Move())
         {
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);
-            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            pSubMachine->Set_Int("ExitMode", 2);
+            pSubMachine->Set_Trigger("Complete");
             return;
         }
     }
 
     if (m_fAnimProgress >= 0.7f)
     {   // Idle
-        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
-        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+        pSubMachine->Set_Int("ExitMode", 0);
+        pSubMachine->Set_Trigger("Complete");
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CCorinState_Dash::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.02f))
+    {
+        pOwner->Play_Effect("Player_Run_Start0", _vector3(0.f, 1.1f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+        pOwner->Play_Effect("Player_Run_Start1", _vector3(0.f, 0.15f, 0.f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
     }
 }

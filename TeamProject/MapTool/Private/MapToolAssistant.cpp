@@ -78,11 +78,11 @@ void CMapToolAssistant::Render_GUI()
 
 void CMapToolAssistant::Rake_BoneData()
 {
-    filesystem::path OriginPath = "../Bin/Data/BoneData/";
+    filesystem::path MaterialOrigin = "../Bin/Data/BoneData/";
     
-    HelperMT::EnsureDirectoryExists(OriginPath);
+    HelperMT::EnsureDirectoryExists(MaterialOrigin);
 
-    for (const auto& entry : filesystem::recursive_directory_iterator(OriginPath))
+    for (const auto& entry : filesystem::recursive_directory_iterator(MaterialOrigin))
     {
         if (entry.is_regular_file() && entry.path().extension() == ".json")
         {

@@ -411,69 +411,6 @@
             0.0,
             1.0
           ]
-        },
-        {
-          "iObjID": 14,
-          "TagModelResourceKey": "Stage_Zero_Boss1_Decal.model",
-          "TagMaterialResourceKey": "Stage_Zero_Boss1_Decal.mat",
-          "vRight": [
-            1.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            0.0,
-            1.0,
-            0.0,
-            0.0
-          ],
-          "vLook": [
-            0.0,
-            0.0,
-            1.0,
-            0.0
-          ],
-          "vPos": [
-            0.0,
-            -75.0,
-            0.0,
-            1.0
-          ]
-        }
-      ]
-    },
-    {
-      "TagLayer": "TriggerObject_Layer",
-      "Objects": [
-        {
-          "iObjID": 15,
-          "TagModelResourceKey": "SpawnPoint",
-          "TagMaterialResourceKey": "BOX",
-          "vRight": [
-            0.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            1.0,
-            1.0,
-            1.0,
-            0.0
-          ],
-          "vLook": [
-            -0.0,
-            0.0,
-            -0.0,
-            0.0
-          ],
-          "vPos": [
-            3.783473253250122,
-            1.0667926788330078,
-            -3.4180643558502197,
-            0.0
-          ]
         }
       ]
     }

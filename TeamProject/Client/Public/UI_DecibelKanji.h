@@ -2,20 +2,24 @@
 #include "UI_Object.h"
 #include "UI_Decibel.h"
 
+NS_BEGIN(Engine)
+class CSprite2D;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_DecibelKanji final : public CUI_Object
 {
 public:
 	typedef struct tagKanjiDesc : public UI_DESC {
-		const _uint*	pState = { nullptr };
-		const _float4*	pColor = { nullptr };
+		const _uint* pState = { nullptr };
+		const _float4* pColor = { nullptr };
 	}KANJI_DESC;
 
 private:
-	static const string KANJI_TEXTURES[ENUM(CUI_Decibel::State::END)];
+	inline static const string KANJI_TEXTURES[ENUM(CUI_Decibel::State::END)] = { "CombatMaximum.png", "CombatUproar.png", "CombatBlasting.png", "CombatMaximum.png" };
 
-	enum class Child { BG, KANJI, END };
+	enum class CHILD { BG, KANJI, END };
 
 private:
 	CUI_DecibelKanji() {}
@@ -31,6 +35,9 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	CUI_Object*		m_pChildren[ENUM(CHILD::END)] = {};
+	class CSprite2D* m_pSprites[ENUM(CHILD::END)] = {};
+
 	const _float	m_fHeight = 50.f;
 	const _vector2	m_vPadding = { 20.f, 10.f };
 
@@ -38,13 +45,12 @@ private:
 	const _float4*	m_pColor = { nullptr };
 	_uint			m_iPrevState = { 999 };
 
-	UI_HANDLE		m_handles[ENUM(Child::END)];
-
 private:
 	void Ready_PartObjects();
 
-	void Set_Color();
-	void Set_Kanji(CUI_Decibel::State texture); 
+	void Set_ChildColor(CHILD child, _float4 vColor);
+	void Set_ChildAlpha(CHILD child, _float fAlpha);
+	void Change_SpriteTexture(CHILD child, const string& strTextureKey); 
 
 	void Set_KanjiTexture(string textureKey);
 	void Set_Layout();

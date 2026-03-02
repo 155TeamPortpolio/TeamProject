@@ -12,6 +12,7 @@
 #include "TextUI.h"
 #include "UVAnimationUI.h"
 #include "MaskUI.h"
+#include "NineSliceUI.h"
 
 #include "UI_Logo.h"
 #include "UI_Loading.h"
@@ -27,12 +28,21 @@
 #include "UI_SpecialAction.h"
 #include "UI_SwitchAction.h"
 #include "UI_UltimateAction.h"
+#include "UI_SceneFrame.h"
 
-#include "UI_FieldHUD.h"
+#include "UI_AtlasSprite.h"
+#include "UI_DamageText.h"
 
 #include "UI_BossHUD.h"
 
+#include "UI_FieldHUD.h"
+
 #include "UI_IconLabel.h"
+
+#include "UI_Lottery.h"
+#include "UI_ScratchCard.h"
+#include "UI_ResultBanner.h"
+#include "UI_Newspaper.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -115,56 +125,64 @@ namespace
 
 void UILoader::Add_ResourcePath()
 {
-	const string uiRoot = "../Bin/Resources/UI";
+	const string uiRoot = "../Bin/Resources/Global/UI";
 	const string jsonRoot = "../../Resources/Data/UI";
 
-	ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
-	ScanDirectory(uiRoot + "/Model", { ".dds", ".mat", ".model"});
+	//ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
+	//ScanDirectory(uiRoot + "/Model", { ".dds", ".mat", ".model"});
 	ScanDirectory(jsonRoot, {".json"});
 	RegisterFonts(uiRoot + "/Font");
 }
 
 void UILoader::Add_Prototype(const string& levelKey)
 {
-	struct Entry { const char* typeTag; CGameObject* (*createFunc)(); };
-
-	static const Entry entries[] =
-	{
-		{"Button",          &CButtonUI::Create          },
-		{"CanvasPanel",     &CCanvasPanel::Create       },
-		{"Gauge",           &CGaugeUI::Create           },
-		{"Image",           &CImageUI::Create           },
-		{"SpriteAnimation", &CSpriteAnimationUI::Create },
-		{"Text",            &CTextUI::Create            },
-		{"UVAnimation",     &CUVAnimationUI::Create     },
-		{"Mask",			&CMaskUI::Create			},
-
-		{"Logo",			&CUI_Logo::Create			},
-		{"Loading",			&CUI_Loading::Create		},
-
-		{"BattleHUD",		&CUI_BattleHUD::Create		},
-		{"Decibel",			&CUI_Decibel::Create		},
-		{"DecibelKanji",	&CUI_DecibelKanji::Create	},
-		{"DecibelDigits",	&CUI_DecibelDigits::Create	},
-		{"DecibelPts",		&CUI_DecibelPts::Create		},
-		{"DecibelText",		&CUI_DecibelText::Create	},
-		{"BattleHUDAction",	&CUI_BattleHUDAction::Create},
-		{"PrimaryAction",	&CUI_PrimaryAction::Create	},
-		{"EvadeAction",		&CUI_EvadeAction::Create	},
-		{"SpecialAction",	&CUI_SpecialAction::Create	},
-		{"SwitchAction",	&CUI_SwitchAction::Create	},
-		{"UltimateAction",	&CUI_UltimateAction::Create	},
-
-		{"FieldHUD",		&CUI_FieldHUD::Create		},
-
-		{"BossHUD",			&CUI_BossHUD::Create		},
-
-		{"IconLabel",		&CUI_IconLabel::Create		},
-	};
-
-	for (const Entry& entry : entries)
-	{
-		const string protoTag = string("Proto_GameObject_") + entry.typeTag;
-		CGameInstance::GetInstance()->Get_PrototypeMgr()->Add_ProtoType(levelKey, protoTag, entry.createFunc());
-	}
+	//struct Entry { const char* typeTag; CGameObject* (*createFunc)(); };
+	//
+	//static const Entry entries[] =
+	//{
+	//	//{"Button",          &CButtonUI::Create          },
+	//	//{"CanvasPanel",     &CCanvasPanel::Create       },
+	//	//{"Gauge",           &CGaugeUI::Create           },
+	//	//{"Image",           &CImageUI::Create           },
+	//	//{"SpriteAnimation", &CSpriteAnimationUI::Create },
+	//	//{"Text",            &CTextUI::Create            },
+	//	//{"UVAnimation",     &CUVAnimationUI::Create     },
+	//	//{"Mask",			&CMaskUI::Create			},
+	//	//{"NineSlice",		&CNineSliceUI::Create		},
+	//
+	//	//{"Logo",			&CUI_Logo::Create			},
+	//	//{"Loading",			&CUI_Loading::Create		},
+	//
+	//	//{"BattleHUD",		&CUI_BattleHUD::Create		},
+	//	//{"Decibel",			&CUI_Decibel::Create		},
+	//	//{"DecibelKanji",	&CUI_DecibelKanji::Create	},
+	//	//{"DecibelDigits",	&CUI_DecibelDigits::Create	},
+	//	//{"DecibelPts",		&CUI_DecibelPts::Create		},
+	//	//{"DecibelText",		&CUI_DecibelText::Create	},
+	//	//{"BattleHUDAction",	&CUI_BattleHUDAction::Create},
+	//	//{"PrimaryAction",	&CUI_PrimaryAction::Create	},
+	//	//{"EvadeAction",		&CUI_EvadeAction::Create	},
+	//	//{"SpecialAction",	&CUI_SpecialAction::Create	},
+	//	//{"SwitchAction",	&CUI_SwitchAction::Create	},
+	//	//{"UltimateAction",	&CUI_UltimateAction::Create	}, 
+	//	//
+	//	//{"BossHUD",			&CUI_BossHUD::Create		},
+	//	//
+	//	//{"FieldHUD",		&CUI_FieldHUD::Create		},
+	//
+	//	//{"IconLabel",		&CUI_IconLabel::Create		},
+	//	//{"SceneFrame",		&CUI_SceneFrame::Create		},
+	//	//
+	//	//{"Lottery",			&CUI_Lottery::Create		},
+	//	//{"ScratchCard",		&CUI_ScratchCard::Create	},
+	//	//{"Newspaper",		&CUI_Newspaper::Create		},
+	//	//
+	//	//{"ResultBanner",	&CUI_ResultBanner::Create	},
+	//};
+	//
+	//for (const Entry& entry : entries)
+	//{
+	//	const string protoTag = string("Proto_GameObject_") + entry.typeTag;
+	//	CGameInstance::GetInstance()->Get_PrototypeMgr()->Add_ProtoType(levelKey, protoTag, entry.createFunc());
+	//}
 }

@@ -3,31 +3,38 @@
 #include "CorinState_ExAttack.h"
 #include "Corin.h"
 
+#include "AudioSource.h"
+
+CCorinState_ExAttack* CCorinState_ExAttack::Create()
+{
+    auto pInstance = new CCorinState_ExAttack();
+    pInstance->m_pSubStateMachine = CStateMachine<CCorin>::Create();
+    auto pSubStateMachine = pInstance->Get_SubStateMachine();
+
+    pSubStateMachine->Register_State("ExAttack_Start", CCorinState_ExAttack_Start::Create());
+    pSubStateMachine->Register_State("ExAttack_Loop", CCorinState_ExAttack_Loop::Create());
+    pSubStateMachine->Register_State("ExAttack_Loop_Walk", CCorinState_ExAttack_Loop_Walk::Create());
+    pSubStateMachine->Register_State("ExAttack_Explode", CCorinState_ExAttack_Explode::Create());
+    pSubStateMachine->Register_State("ExAttack_End", CCorinState_ExAttack_End::Create());
+
+    pSubStateMachine->Get_State("ExAttack_End")->Set_Tag("End");
+
+    pSubStateMachine->Register_Transition("ExAttack_Start", "ExAttack_Loop",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+    pSubStateMachine->Register_Transition("ExAttack_Loop", "ExAttack_Loop_Walk",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToWalk");
+    pSubStateMachine->Register_AnyStateTransition("ExAttack_Explode",
+        CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExplode");
+    pSubStateMachine->Register_Transition("ExAttack_Explode", "ExAttack_End",
+        CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+    pSubStateMachine->Set_DefaultState("ExAttack_Start");
+
+    return pInstance;
+}
+
 void CCorinState_ExAttack::Enter(CCorin* pOwner)
 {
-    if (!m_pSubStateMachine)
-    {
-        m_pSubStateMachine = CStateMachine<CCorin>::Create();
-
-        m_pSubStateMachine->Register_State("Start", CCorinState_ExAttack_Start::Create());
-        m_pSubStateMachine->Register_State("Loop", CCorinState_ExAttack_Loop::Create());
-        m_pSubStateMachine->Register_State("Loop_Walk", CCorinState_ExAttack_Loop_Walk::Create());
-        m_pSubStateMachine->Register_State("Explode", CCorinState_ExAttack_Explode::Create());
-        m_pSubStateMachine->Register_State("End", CCorinState_ExAttack_End::Create());
-
-        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
-
-        m_pSubStateMachine->Register_Transition("Start", "Loop",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Loop", "Loop_Walk",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToWalk");
-        m_pSubStateMachine->Register_AnyStateTransition("Explode",
-            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToExplode");
-        m_pSubStateMachine->Register_Transition("Explode", "End",
-            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
-
-        m_pSubStateMachine->Set_DefaultState("Start");
-    }
     // 강화 상태 판정
     auto tDesc = pOwner->Get_EnergyDesc();
     _bool bEnhanced = tDesc.fCurrentEnergy >= tDesc.fSpecialEnergy;
@@ -35,6 +42,7 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
     // current, special 변경
     if (bEnhanced)
     {
+        pOwner->Get_StateMachine()->Set_Bool("Resistance", true);
         pOwner->Set_CurrentEnergy(tDesc.fCurrentEnergy - 20.f);
         pOwner->Set_SpecialEnergy(20.f);
     }
@@ -46,30 +54,114 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
 
 void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 {
+    _float fOnceRatio;
+    _float fIntervalRatio;
+    if (!m_pOwnerStateMachine->Get_Bool("Enhanced"))
+    {
+        fOnceRatio = 0.667f;
+        fIntervalRatio = 0.375f;
+    }
+    else
+    {
+        fOnceRatio = 3.451f;
+        fIntervalRatio = 0.345f;
+    }
+
+    //m_eType = m_eType == DAMAGE_TYPE::NORMAL ? DAMAGE_TYPE::HARD : DAMAGE_TYPE::NORMAL;
+    for (const auto& Event : pOwner->Get_Animator()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+        if (Event.Tag == "SawOnce")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::ONCE)
+                .Damage(pOwner->Get_AttackPower() * fOnceRatio * Helper::Get_Random_Float(1.0f, 1.5f)
+                    , DAMAGE_TYPE::NORMAL)
+                .Charge(0.f, 100.f)
+            );
+        }
+        else if (Event.Tag == "SawInterval")
+        {
+            pOwner->Begin_AttackCollider("Saw",
+                HitDesc()
+                .Type(HIT_TYPE::INTERVAL)
+                .Damage(pOwner->Get_AttackPower() * fIntervalRatio * Helper::Get_Random_Float(1.0f, 1.5f)
+                    , DAMAGE_TYPE::HARD)
+                .Interval(0.12f)
+                .Charge(0.f, 50.f)
+            );
+        }
+        else if (Event.Tag == "SawEnd")
+        {
+            pOwner->End_AttackCollider("Saw");
+        }
+        else if (Event.Tag == "PopInvincible")
+        {
+            pOwner->Pop_Invincible();
+        }
+    }
+
     if (!m_pSubStateMachine->Get_Bool("ExFinished"))
     {
-        if (!InputDevice()->Key_Down('E'))
+        string strCurrentState = m_pSubStateMachine->Get_CurrentStateName();
+        if (strCurrentState == "ExAttack_Loop" || strCurrentState == "ExAttack_Loop_Walk")
         {
-            if (m_pSubStateMachine->Get_Bool("Enhanced"))
-                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
-            else
-                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
-            m_pSubStateMachine->Set_Trigger("ToExplode");
-        }
-        else if (m_pSubStateMachine->Get_Bool("Enhanced"))
-        {
-            if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
+            if (!InputDevice()->Key_Down('E'))
             {
-                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                if (m_pSubStateMachine->Get_Bool("Enhanced"))
+                    m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                else
+                    m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
                 m_pSubStateMachine->Set_Trigger("ToExplode");
+            }
+            else if (m_pSubStateMachine->Get_Bool("Enhanced"))
+            {
+                if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
+                {
+                    m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                    m_pSubStateMachine->Set_Trigger("ToExplode");
+                }
             }
         }
     }
+
+    auto pCorinState = pOwner->Get_StateMachine();
+    if (pCorinState->Get_Bool("OutReserve"))
+    {
+        if (m_pSubStateMachine->Get_CurrentStateName() == "ExAttack_End" ||
+            m_pSubStateMachine->Get_CurrentStateName() == "ExAttack_Explode" ||
+            Is_AnimEnd())
+        {
+            pCorinState->Set_Trigger("SwitchOut");
+            pCorinState->Set_Bool("OutReserve", false);
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 
 void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
+    pOwner->Reset_ReserveCombo();
+    pOwner->Set_SpecialEnergy(80.f);
+    pOwner->Get_StateMachine()->Set_Bool("Resistance", false);
+
+    if (pOwner->Is_MainCharacter())
+    {
+        UI_ACTION_DESC desc;
+        desc.eType = UI_ACTION_TYPE::SPECIAL;
+        if (pOwner->Get_EnergyDesc().fCurrentEnergy >= pOwner->Get_EnergyDesc().fSpecialEnergy)
+        {
+            desc.eState = UI_ACTION_STATE::AVAILABLE;
+        }
+        else
+        {
+            desc.eState = UI_ACTION_STATE::ENABLE;
+        }
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    }
+
     __super::Exit(pOwner);
 }
 
@@ -82,6 +174,7 @@ void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_02")
             .Speed(1.5f)
             .Apply();
+        pOwner->Push_Invincible();
     }
     else
     {
@@ -89,6 +182,9 @@ void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
             .Speed(1.f)
             .Apply();
     }
+
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+   // sound.Slot("Corin_ExAttack_Loop_Charge_SFX.wav").Attribute3D(true).Loop(false).Pause(false).Volume(0.5f).Play();
 }
 
 void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
@@ -97,12 +193,25 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.4f)
-        pOwner->Begin_AttackCollider("Saw", {HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, 1.f});
-    if (m_fAnimProgress >= 0.5f)
-        pOwner->End_AttackCollider("Saw");
-    if (m_fAnimProgress >= 0.55f)
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, 1.f, 0.01f, 1 });
+    if (IsCrossAnimProgress(0.5f))
+    {
+        auto& sound = *pOwner->Get_Component<CAudioSource>();
+        sound.Sequence("ExAttack_Voice").Attribute3D(true).Loop(false).PlayNext();
+    }
+
+    Update_Effects(pOwner);
+}
+
+void CCorinState_ExAttack_Start::Update_Effects(CCorin* pOwner)
+{
+    if (IsCrossAnimProgress(0.15f))
+        pOwner->Play_Effect("Corin_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
+    if (IsCrossAnimProgress(0.41f))
+        pOwner->Play_Effect("Corin_Normal_Slash0", _vector3(-0.2f, 0.6f, 0.f), _quaternion(0.28f, -0.63f, 0.66f, 0.29f));
+    if (IsCrossAnimProgress(0.52f))
+        pOwner->Play_Effect("Corin_Normal_Slash1", _vector3(-0.1f, 0.7f, 0.f), _quaternion(0.6f, -0.37f, 0.39f, 0.59f));
+    if (IsCrossAnimProgress(0.55f))
+        pOwner->Play_Effect("Corin_Ex_Saw_Slash0", _vector3(), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
@@ -142,8 +251,11 @@ void CCorinState_ExAttack_Loop::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    auto desc = pOwner->Get_EnergyDesc();
-    pOwner->Set_CurrentEnergy(desc.fCurrentEnergy - desc.fEnergyWeight * dt);
+    if(bEnhanced)
+    {
+        auto desc = pOwner->Get_EnergyDesc();
+        pOwner->Set_CurrentEnergy(desc.fCurrentEnergy - desc.fEnergyWeight * dt);
+    }
 }
 
 void CCorinState_ExAttack_Loop_Walk::Enter(CCorin* pOwner)
@@ -194,9 +306,13 @@ void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_02_Explode")
             .Loop(false)
             .Apply();
+        pOwner->Take_Explode(DAMAGE_TYPE::HARD);
         break;
     }
     pSubStateMachine->Set_Int("EndEntryMode", iEntryMode);
+
+    pOwner->Stop_Effect("Corin_Ex_Saw_Slash0");
+    pOwner->Play_Effect("Corin_Ex_Explode", _vector3(0.1f, 0.7f, 1.3f), _quaternion(0.f, 0.f, 0.f, 1.f), false);
 }
 
 void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)
@@ -204,6 +320,12 @@ void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CCorinState_ExAttack_Explode::Exit(CCorin* pOwner)
+{
+    auto& sound = *pOwner->Get_Component<CAudioSource>();
+    //sound.Set_SlotPuase("Corin_ExAttack_Loop_Charge_SFX.wav", true);
 }
 
 void CCorinState_ExAttack_End::Enter(CCorin* pOwner)
@@ -228,4 +350,6 @@ void CCorinState_ExAttack_End::Enter(CCorin* pOwner)
             .Apply();
         break;
     }
+
+    pOwner->Stop_Effect("Corin_Saw_Slash0");
 }

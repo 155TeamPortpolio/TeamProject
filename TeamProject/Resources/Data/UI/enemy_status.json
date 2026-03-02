@@ -458,14 +458,14 @@
                             "alive": true,
                             "instanceName": "groggyText",
                             "transform": {
-                                "anchor": 4,
+                                "anchor": 10,
                                 "anchorOffset": [
-                                    24.0,
-                                    -1.5
+                                    -11.0,
+                                    -11.5
                                 ],
                                 "size": [
-                                    20.699993133544922,
-                                    23.418743133544922
+                                    0.0,
+                                    0.0
                                 ],
                                 "scale": [
                                     1.0,
@@ -488,7 +488,7 @@
                             "children": [],
                             "typeTag": "Text",
                             "text": {
-                                "content": "73",
+                                "content": "00",
                                 "fontTag": "Impact.spritefont",
                                 "fontScale": 0.4499998688697815,
                                 "outlined": false,
@@ -502,7 +502,9 @@
                                 "shear": [
                                     -0.6000000238418579,
                                     0.0
-                                ]
+                                ],
+                                "autoPos": true,
+                                "anchor": 0
                             }
                         }
                     ],

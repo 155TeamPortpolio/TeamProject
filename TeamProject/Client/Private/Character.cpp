@@ -1,7 +1,11 @@
 #include "pch.h"
 #include "Character.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
+
 #include "CamObject.h"
+#include "Enemy.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -9,524 +13,967 @@
 #include "Material.h"
 #include "ObjectContainer.h"
 #include "BoneFollower.h"
+#include "Child.h"
+#include "IInteract.h"
 
 #include "CharacterAttackCollider.h"
+#include "CharacterParryCollider.h"
+
+#include "UI_DamageText.h"
+#include "UIDirector.h"
+
+#include "EffectContainer.h"
+#include "AudioSource.h"
+#include "CamDirector.h"
+
+#include "EventListener.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
-	: CGameObject(rhs)
-	, m_fMaxHP(rhs.m_fMaxHP)
-	, m_fCurrentHP(rhs.m_fCurrentHP)
-	, m_fAttackPower(rhs.m_fAttackPower)
-	, m_fDefense(rhs.m_fDefense)
-	, m_fMoveSpeed(rhs.m_fMoveSpeed)
+    : CGameObject(rhs)
+    , m_fMaxHP(rhs.m_fMaxHP)
+    , m_fCurrentHP(rhs.m_fCurrentHP)
+    , m_fAttackPower(rhs.m_fAttackPower)
+    , m_fDefense(rhs.m_fDefense)
+    , m_fMoveSpeed(rhs.m_fMoveSpeed)
 {
-}
-
-void CCharacter::Update_DissolveProgress(_float dt)
-{
-	m_fDissolveProgress += dt;
-}
-
-void CCharacter::Reset_DissolveProgress()
-{
-	m_fDissolveProgress = 0.f;
-	SetRenderLayer(RENDER_LAYER::None);
-}
-
-void CCharacter::Active_Character()
-{
-	m_pCCT->Set_CompActive(true);
-	SetRenderLayer(RENDER_LAYER::Default);
-}
-
-void CCharacter::DeActive_Character()
-{
-	m_pCCT->Set_CompActive(false);
-	SetRenderLayer(RENDER_LAYER::None);
-}
-
-void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
-{
-	auto pTransform = Get_Component<CTransform>();
-	_vector3 vRootDelta = m_pAnimator->Get_RootBoneMoveDelta();
-	_vector4 vQuatDelta = m_pAnimator->Get_RootBoneQuatDelta();
-	_vector3 vInputDir = Get_InputDir();
-
-	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::QUATERNION)) != 0)
-	{
-		if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
-		else if (desc.fRotateWeight > 0.01f)
-		{
-			_quaternion qWeighted = _quaternion::Slerp(_quaternion::Identity, vQuatDelta, desc.fRotateWeight);
-			pTransform->Add_Quaternion(qWeighted);
-		}
-	}
-	else
-	{
-		if (vInputDir.Length() > 0.01f)
-		{
-			vInputDir.Normalize();
-			Rotate(vInputDir);
-		}
-	}
-
-	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::MOVE)) != 0)
-	{
-		if (vRootDelta.x != 0.f || vRootDelta.z != 0.f)
-		{
-			_vector3 vWeightedDelta = vRootDelta * desc.fMoveWeight;
-			_quaternion qRot = pTransform->Get_QuaternionRotate();
-			m_pCCT->Move_RootMotion(vWeightedDelta, qRot, dt);
-		}
-	}
-	else
-	{
-		if (vInputDir.Length() > 0.01f)
-		{
-			vInputDir.Normalize();
-			m_pCCT->Move_Direction(vInputDir, desc.fMoveSpeed, dt);
-		}
-	}
-}
-
-void CCharacter::Process_RootMotion(_float dt, _uint iModeMask)
-{
-	ROOTMOTION_DESC desc;
-	desc.iModeMask = iModeMask;
-	Process_RootMotion(dt, desc);
 }
 
 HRESULT CCharacter::Initialize_Prototype()
 {
-	__super::Initialize_Prototype();
-	Add_Component<CSkeletalModel>();
-	Add_Component<CMaterial>();
-	Add_Component<CObjectContainer>();
-	Add_Component<CAnimator3D>();
-	Add_Component<CCharacterController>();
-	return S_OK;
+    __super::Initialize_Prototype();
+    Add_Component<CSkeletalModel>();
+    Add_Component<CMaterial>();
+    Add_Component<CObjectContainer>();
+    Add_Component<CAnimator3D>();
+    Add_Component<CCharacterController>();
+    Add_Component<CAudioSource>();
+    Add_Component<CEventListener>();
+    return S_OK;
 }
 
 HRESULT CCharacter::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
-	m_pAnimator = Get_Component<CAnimator3D>();
-	m_pCCT = Get_Component<CCharacterController>();
-	Safe_AddRef(m_pAnimator);
-	Safe_AddRef(m_pCCT);
+    __super::Initialize(pArg);
+    m_pAnimator = Get_Component<CAnimator3D>();
+    m_pCCT = Get_Component<CCharacterController>();
+    Safe_AddRef(m_pAnimator);
+    Safe_AddRef(m_pCCT);
 
-	if (pArg == nullptr) return S_OK;
-	GAMEOBJECT_DESC* pCharacterDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
-	return S_OK;
+    Get_Component<CAudioSource>()->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Global/Sound/Character");
+
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+        {
+            if (desc.eState != TUTORIAL_STATE::PLAY)
+                return;
+            if (desc.eType == TUTORIAL_TYPE::END)
+                return;
+            else
+            {
+                m_eTutorial = desc.eType;
+                Reset_State();
+                _vector3 vInitPos = { 0.1f, 1.1f, -6.6f };
+                _vector3 vInitLook = { 0.f, 0.f, 1.f };
+                if(m_pTransform && m_pCCT)
+                {
+                    m_pTransform->Set_Look(vInitLook);
+                    m_pCCT->Set_Position(vInitPos);
+                }
+            }
+        });
+
+    if (pArg == nullptr)
+        return S_OK;
+
+    return S_OK;
 }
 
 void CCharacter::Awake()
 {
-	auto pMaterial = Get_Component<CMaterial>();
-	auto MaterialInstances = pMaterial->Get_MaterialInstances();
-	for (auto& Instance : MaterialInstances)
-	{
-		pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
-		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
-		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
-		pMaterial->Add_MaterialData(Instance, "fDissolveTiling", { &m_fDissolveTiling, "float", sizeof(_float) });
-	}
+    auto pMaterial = Get_Component<CMaterial>();
+    auto MaterialInstances = pMaterial->Get_MaterialInstances();
+    for (auto& Instance : MaterialInstances)
+    {
+        pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+        pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+        pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+        pMaterial->Add_MaterialData(Instance, "fDissolveTiling", { &m_fDissolveTiling, "float", sizeof(_float) });
+    }
 
-	SetRenderLayer(RENDER_LAYER::None);
+    SetRenderLayer(RENDER_LAYER::None);
 }
 
 void CCharacter::Priority_Update(_float dt)
 {
-	if (InputDevice()->Key_Tap('T'))
-		m_bTest = !m_bTest;
+    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+
+    // ']'
+    if (InputDevice()->Key_Tap(VK_OEM_6))
+        m_bTest = !m_bTest;
 }
 
 void CCharacter::Update(_float dt)
 {
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
+    m_pAnimator->Update_Animation(dt);
+    m_pCCT->Update(dt);
+    Update_Evade(dt);
+    if (m_bIsRotating) Update_Rotation(dt);
+    Update_Energy(dt);
+    Update_Decibel(dt);
+    Update_Invincible(dt);
 
-	m_pAnimator->Update_Animation(dt);
-	m_pCCT->Update(dt);
-	Update_Evade(dt);
-	if (m_bIsRotating)	Update_Rotation(dt);
-	Update_Energy(dt);
-	Update_Decibel(dt);
-	Update_Invincible(dt);
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
 {
-	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+    m_pCCT->Late_Update(dt);
+    Get_Component<CAudioSource>()->Set_AudioPos(Get_WorldPos());
 
-	m_pCCT->Late_Update(dt);
-	m_bIsAttack = false;
-	m_bIsEvade = false;
-	m_bEvadeBuffer = false;
+    m_bIsAttack = false;
+    m_bIsEvade = false;
+    m_bEvadeBuffer = false;
+
+    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCharacter::OnCollisionExit(CGameObject* pOther)
+void CCharacter::Render_GUI()
 {
-	//MSG_BOX("Exit");
+    ImGui::Separator();
+    ImGui::Text("HP : %3.2f / %3.2f", m_fCurrentHP, m_fMaxHP);
+    ImGui::InputFloat("AttackPower", &m_fAttackPower ,0.f, 0.f, "%.2f");
+
+    __super::Render_GUI();
 }
 
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
-	if (Is_Invincible())	return;
-	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
-	if (!pCollidable) return;
-	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
-	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
-	{
+    ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+    if (!pCollidable) return;
 
-		m_ParryableTargets.insert(pOther);
-		CollisionSystem()->Log_CollisionEvent("Insert");
-	}
-	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
-	{
-		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
-	}
+    if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
+    {
+        UI_ACTION_PRIMARY_DESC desc;
+        desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
+        EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+        if (m_bCanInteract)
+        {
+            auto pInteract = dynamic_cast<IInteract*>(pOther);
+            if (pInteract != nullptr)
+            {
+                pInteract->Interact();
+                m_inputInfo = {};
+                Reset_State();
+            }
+        }
+    }
+
+    if (Is_Invincible()) return;
+
+    if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
+    {
+        m_vHitPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
+    }
 }
 
 void CCharacter::OnTriggerStay(CGameObject* pOther)
 {
-	if (Is_Invincible())	return;
-	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
-	if (!pCollidable) return;
-	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
-	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
-	{
-		m_ParryableTargets.insert(pOther);
-		CollisionSystem()->Log_CollisionEvent("Insert");
-	}
-	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
-	{
-		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
-	}
+    if (m_bCanInteract)
+    {
+        auto pInteract = dynamic_cast<IInteract*>(pOther);
+        if (pInteract != nullptr)
+        {
+            pInteract->Interact();
+            m_inputInfo = {};
+            Reset_State();
+        }
+    }
+
+    if (Is_Invincible()) return;
+
+    ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+    if (!pCollidable) return;
+
+    if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
+    {
+        m_vHitPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
+    }
 }
 
 void CCharacter::OnTriggerExit(CGameObject* pOther)
 {
-	m_ParryableTargets.erase(pOther);
+    ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+    if (!pCollidable) return;
+
+    if (pCollidable->Get_Group() == COLLISION_GROUP::INTERACTABLE)
+    {
+        UI_ACTION_PRIMARY_DESC desc;
+        desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+        EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+
+        UI_ACTION_DESC actiondesc;
+        actiondesc.eType = UI_ACTION_TYPE::SPECIAL;
+        if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
+            actiondesc.eState = UI_ACTION_STATE::AVAILABLE;
+        else
+            actiondesc.eState = UI_ACTION_STATE::ENABLE;
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ actiondesc });
+
+        actiondesc.eType = UI_ACTION_TYPE::ULTIMATE;
+        if (m_fCurrentDecibel >= MAX_DECIBEL)
+            actiondesc.eState = UI_ACTION_STATE::AVAILABLE;
+        else
+            actiondesc.eState = UI_ACTION_STATE::ENABLE;
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ actiondesc });
+    }
+}
+
+void CCharacter::Rush_Target()
+{
+    if (!m_TargetHandle.isValid()) return;
+
+    auto pTarget = m_TargetHandle.Get();
+    _vector3 vTargetPos = pTarget->Get_WorldPos();
+    _float fOffset = {};
+    CCharacterController* pCCT = pTarget->Get_Component<CCharacterController>();
+    if (pCCT)
+    {
+        fOffset = pCCT->Get_Radius();
+    }
+    else
+    {
+        CCollider* pCollider = pTarget->Get_Component<CCollider>();
+        _float3 vSize = pCollider->Get_Size();
+        fOffset = max(vSize.x, vSize.z) * 0.5f;
+    }
+
+    _vector3 vDir = vTargetPos - Get_WorldPos();
+    vDir.y = 0.f;
+    vDir.Normalize();
+
+    _vector3 vDest = vTargetPos - vDir * fOffset * 2.f;
+    vDest.y = Get_WorldPos().y + 0.5f;
+
+    m_pCCT->Set_Position(vDest);
+    Get_Component<CTransform>()->Set_Look(vDir);
+}
+
+_vector3 CCharacter::Get_BipedPos(const string strBone)
+{
+    _smatrix boneMat = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, strBone);
+    _smatrix WorldMat = m_pTransform->Get_WorldMatrix();
+    _vector3 S, T; _quaternion R;
+    (boneMat * WorldMat).Decompose(S, R, T);
+    return T;
+}
+
+_bool CCharacter::Can_SwitchIn() const
+{
+    return !m_pCCT->Get_CompActive();
+}
+
+void CCharacter::Active_Character()
+{
+    m_pCCT->Set_CollisionMask(m_iDefaultMask);
+    m_pCCT->Set_CompActive(true);
+    Active_ParryCollider(true);
+    SetRenderLayer(RENDER_LAYER::Default);
+    m_fDissolveProgress = 0.f;
+}
+
+void CCharacter::DeActive_Character()
+{
+    m_pCCT->Set_CompActive(false);
+    Active_ParryCollider(false);
+    SetRenderLayer(RENDER_LAYER::None);
+    m_fDissolveProgress = 0.f;
+    m_iInvincibleCount = 0;
+    m_inputInfo = {};
+    //Reset_State();
+}
+
+void CCharacter::Update_DissolveProgress(_float dt)
+{
+    m_fDissolveProgress += dt;
+}
+
+_bool CCharacter::Can_Parry()
+{
+    CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+        (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (pParry && pParry->Can_Parry())
+        return true;
+    return false;
+}
+
+OBJECT_HANDLE CCharacter::Calculate_Parry()
+{
+    _bool isChainParry = BattleSystem()->GetBattlePlayer()->Is_ChainParry();
+
+    CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+        (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    _vector3 vPos = Get_WorldPos();
+    OBJECT_HANDLE targetHandle;
+    _float fMinDist = FLT_MAX;
+
+    for (auto iter : pParry->Get_ParryTargets())
+    {
+        if (!BattleSystem()->isValidTarget(BATTLE_OBJ_TYPE::MONSTER, iter)) continue;
+        _vector3 vDiff = vPos - iter.Get()->Get_WorldPos();
+        vDiff.y = 0.f;
+        _float fDist = vDiff.Length();
+        if (fDist >= fMinDist)
+            continue;
+        fMinDist = fDist;
+        targetHandle = iter;
+    }
+
+    _vector3 vAttackPos = {};
+    _vector3 vAttackLook = {};
+    _float vAttackOffset = {};
+
+    if (targetHandle.isValid())
+    {
+        vAttackPos = targetHandle.Get()->Get_WorldPos();
+        vAttackPos.y = vPos.y;
+        vAttackLook = vPos - vAttackPos;
+        vAttackLook.y = 0.f;
+        vAttackLook.Normalize();
+
+        CCharacterController* pCCT = targetHandle.Get()->Get_Component<CCharacterController>();
+        if (pCCT)
+        {
+            vAttackOffset = pCCT->Get_Radius();
+        }
+        else
+        {
+            CCollider* pCollider = targetHandle.Get()->Get_Component<CCollider>();
+            CTransform* pMonsterTransform = targetHandle.Get()->Get_Component<CTransform>();
+            _float3 vSize = pCollider->Get_Size();
+            _vector3 vMonsterLook = pMonsterTransform->Dir(STATE::LOOK);
+            vMonsterLook.y = 0.f;
+            vMonsterLook.Normalize();
+            _vector3 vMonsterRight = pMonsterTransform->Dir(STATE::RIGHT);
+            vMonsterRight.y = 0.f;
+            vMonsterRight.Normalize();
+            vAttackOffset = fabsf(vAttackLook.Dot(vMonsterLook)) * vSize.z * 0.5f
+                + fabsf(vAttackLook.Dot(vMonsterRight)) * vSize.x * 0.5f;
+#pragma region PARRY_POSITION_DEBUG
+            //{
+            //    _float fDotLook = fabsf(vAttackLook.Dot(vMonsterLook));
+            //    _float fDotRight = fabsf(vAttackLook.Dot(vMonsterRight));
+
+            //    wstring strDebug = L"[Parry Debug]\n";
+            //    strDebug += L"  PlayerPos: (" + to_wstring(vPos.x) + L", " + to_wstring(vPos.z) + L")\n";
+            //    strDebug += L"  MonsterPos: (" + to_wstring(vAttackPos.x) + L", " + to_wstring(vAttackPos.z) + L")\n";
+            //    strDebug += L"  ApproachDir: (" + to_wstring(vAttackLook.x) + L", " + to_wstring(vAttackLook.z) + L")\n";
+            //    strDebug += L"  MonsterLook: (" + to_wstring(vMonsterLook.x) + L", " + to_wstring(vMonsterLook.z) + L")\n";
+            //    strDebug += L"  MonsterRight: (" + to_wstring(vMonsterRight.x) + L", " + to_wstring(vMonsterRight.z) + L")\n";
+            //    strDebug += L"  Dot(Approach, MLook): " + to_wstring(fDotLook) + L"\n";
+            //    strDebug += L"  Dot(Approach, MRight): " + to_wstring(fDotRight) + L"\n";
+            //    strDebug += L"  DotSum: " + to_wstring(fDotLook + fDotRight) + L"\n";
+            //    strDebug += L"  ColliderSize: (" + to_wstring(vSize.x) + L", " + to_wstring(vSize.z) + L")\n";
+            //    strDebug += L"  AttackOffset: " + to_wstring(vAttackOffset) + L"\n";
+            //    strDebug += L"  FinalOffset(x3): " + to_wstring(vAttackOffset * 3.f) + L"\n";
+            //    strDebug += L"  ParryPos: (" + to_wstring(vAttackPos.x + vAttackLook.x * vAttackOffset * 3.f)
+            //        + L", " + to_wstring(vAttackPos.z + vAttackLook.z * vAttackOffset * 3.f) + L")\n";
+            //    strDebug += L"  FinalParryPos: (" + to_wstring(vAttackPos.x + vAttackLook.x * min(vAttackOffset * 3.f, fMinDist))
+            //        + L", " + to_wstring(vAttackPos.z + vAttackLook.z * vAttackOffset * min(vAttackOffset * 3.f, fMinDist)) + L")\n";
+            //    OutputDebugString(strDebug.c_str());
+            //}
+#pragma endregion
+        }
+    }
+    _float fFinalOffset = min(vAttackOffset * 3.f, fMinDist);   // 위치 튀는거 방지
+
+    m_vParryPos = vAttackPos + vAttackLook * fFinalOffset;
+    m_vParryPos.y = vPos.y + 1.f;
+
+    m_vParryLook = vAttackPos - m_vParryPos;
+    m_vParryLook.y = 0.f;
+    // 룩방향 튀는거 방지
+    if (m_vParryLook.LengthSquared() < 1e-6f)
+        m_vParryLook = -vAttackLook;
+    m_vParryLook.Normalize();
+
+    return targetHandle;
 }
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
-	_bool prevResetMove = m_inputInfo.resetMove;
-	m_inputInfo = inputInfo;
-	m_inputInfo.resetMove = prevResetMove;
+    if (!m_bIsMain)
+        return;
+    if (m_bCanInteract)
+        return;
 
-	if (false == m_bCanMove) return;
+    _bool prevResetMove = m_inputInfo.resetMove;
+    m_inputInfo = inputInfo;
+    m_inputInfo.resetMove = prevResetMove;
 
-	if (inputInfo.direction.LengthSquared() > 0.01f)
-	{
-		_vector3 dir = inputInfo.direction;
-		dir.Normalize();
-		Rotate(dir);
-	}
+    if (false == m_bCanMove) return;
+
+    if (inputInfo.direction.LengthSquared() > 0.01f)
+    {
+        _vector3 dir = inputInfo.direction;
+        dir.Normalize();
+        Rotate(dir);
+    }
 }
 
 void CCharacter::On_Attack()
 {
-	m_bIsAttack = true;
+    m_bIsAttack = true;
 }
 
 void CCharacter::On_Evade()
 {
-	if (!Can_Evade()) return;
-	m_bIsEvade = true;
+    if (!Can_Evade()) return;
+    m_bIsEvade = true;
+}
+
+void CCharacter::On_SwitchOut(_bool isParry)
+{
+    Push_Invincible();
+    Lock_Move();
+    Stop_Rotation();
+    m_pCCT->Set_CollisionMask(m_iDefaultMask - ENUM(COLLISION_GROUP::MONSTER));
 }
 
 void CCharacter::On_Ultimate()
 {
-	UI_ACTION_DESC desc;
-	desc.eType = UI_ACTION_TYPE::ULTIMATE;
-	desc.eState = UI_ACTION_STATE::EXECUTING;
-	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	m_fCurrentDecibel = 0.f;
+    UI_ACTION_DESC desc;
+    desc.eType = UI_ACTION_TYPE::ULTIMATE;
+    desc.eState = UI_ACTION_STATE::EXECUTING;
+    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    m_fCurrentDecibel = 0.f;
 }
 
-HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
+void CCharacter::On_Interact()
 {
-	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+    m_bCanInteract = true;
+}
 
-	if (nullptr == pObjectContainer)	
-		return E_FAIL;
-	if (nullptr == pDesc) 
-		return E_FAIL;
-	if (nullptr == pDesc->pOwnerAnimator) 
-		return E_FAIL;
+void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
+{
+    auto pTransform = Get_Component<CTransform>();
+    _vector3 vRootDelta = m_pAnimator->Get_RootBoneMoveDelta();
+    _vector4 vQuatDelta = m_pAnimator->Get_RootBoneQuatDelta();
+    _vector3 vInputDir = Get_InputDir();
 
-	string strLevel = LevelManager()->Get_NowLevelKey();
+    if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::QUATERNION)) != 0)
+    {
+        // 루트모션 회전 사용시 수동 회전 비활성화
+        m_bIsRotating = false;
+        
+        if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
+        else if (desc.fRotateWeight > 0.01f)
+        {
+            _quaternion qWeighted = _quaternion::Slerp(_quaternion::Identity, vQuatDelta, desc.fRotateWeight);
+            pTransform->Add_Quaternion(qWeighted);
+        }
+    }
+    else
+    {
+        if (vInputDir.Length() > 0.01f)
+        {
+            vInputDir.Normalize();
+            Rotate(vInputDir);
+        }
+    }
 
-	RIGIDBODY_DESC rigidDesc{};
-	rigidDesc.isKinematic = true;
-	rigidDesc.bEnableGravity = false;
-	rigidDesc.bLockX = false;
-	rigidDesc.bLockZ = true;
+    if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::MOVE)) != 0)
+    {
+        if (vRootDelta.x != 0.f || vRootDelta.z != 0.f)
+        {
+            _vector3 vWeightedDelta = vRootDelta * desc.fMoveWeight;
+            _quaternion qRot = pTransform->Get_QuaternionRotate();
+            m_pCCT->Move_RootMotion(vWeightedDelta, qRot, dt);
+        }
+    }
+    else
+    {
+        if (vInputDir.Length() > 0.01f)
+        {
+            vInputDir.Normalize();
+            m_pCCT->Move_Direction(vInputDir, desc.fMoveSpeed, dt);
+        }
+    }
+}
 
-	COLLIDER_DESC colliderDesc{};
-	colliderDesc.eType = pDesc->eColliderType;
-	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
-	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
-	colliderDesc.bAutoFit = false;
-	colliderDesc.vCenter = pDesc->vCenter;
-	colliderDesc.vSize = pDesc->vSize;
-	colliderDesc.vRotation = pDesc->vRotation;
-	colliderDesc.bTrigger = true;
-
-	string strAttackName = pDesc->tagName + "_AttackCollider";
-
-	CGameObject* pAttackCollider = Builder::Create_Object(
-		{ G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider" })
-		.RigidBody(rigidDesc)
-		.Collider(colliderDesc)
-		.Build(strAttackName);
-	if (nullptr == pAttackCollider)
-		return E_FAIL;
-
-	_int iAttackColliderIndex = { -1 };
-	iAttackColliderIndex = pObjectContainer->Add_Child(pAttackCollider, false);
-	pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator, pDesc->tagBone);
-
-	m_AttackColliderIndex.emplace(strAttackName, iAttackColliderIndex);
-
-	return S_OK;
+void CCharacter::Process_RootMotion(_float dt, _uint iModeMask)
+{
+    ROOTMOTION_DESC desc;
+    desc.iModeMask = iModeMask;
+    Process_RootMotion(dt, desc);
 }
 
 void CCharacter::Rotate(_vector3 vDirection)
 {
-	_vector3 dir = vDirection;
-	dir.y = 0.f;
-	dir.Normalize();
-	const _float lenSq = dir.LengthSquared();
-	const _float yaw = atan2f(dir.x, dir.z); 
+    _vector3 dir = vDirection;
+    dir.y = 0.f;
+    dir.Normalize();
+    const _float lenSq = dir.LengthSquared();
+    const _float yaw = atan2f(dir.x, dir.z);
 
-	m_qTargetRot = _quaternion::CreateFromAxisAngle(_vector3::Up, yaw);
-	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
-	m_bIsRotating = true;
+    m_qTargetRot = _quaternion::CreateFromAxisAngle(_vector3::Up, yaw);
+    m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
+    m_bIsRotating = true;
 }
 
 void CCharacter::Stop_Rotation()
 {
-	m_bIsRotating = false;
-	m_qTargetRot = m_pTransform->Get_QuaternionRotate();
+    m_bIsRotating = false;
+    m_qTargetRot = m_pTransform->Get_QuaternionRotate();
 }
 
-
-_bool CCharacter::Can_Evade() const
+void CCharacter::Look_Target()
 {
-	if (m_fEvadeCooldown > 0.f) return false;
-	return true;
-}
+    if (!m_TargetHandle.isValid())
+        return;
+    auto target = m_TargetHandle.Get();
+    _vector3 vLook = target->Get_WorldPos() - Get_WorldPos();
+    vLook.y = 0;
 
-void CCharacter::Use_Evade()
-{
-	++m_iEvadeCount;
-	m_fEvadeTimer = EVADE_COOLDOWN;
+    if (vLook.LengthSquared() < 1.f)
+    {
+        return;
+    }
 
-	if (m_iEvadeCount >= m_iEvadeMax)
-	{
-		m_fEvadeCooldown = EVADE_COOLDOWN;
-		m_iEvadeCount = 0;
-		m_fEvadeTimer = 0.f;
-	}
-}
-
-_bool CCharacter::Use_EvadeBuffer()
-{
-	if (m_bEvadeBuffer)
-	{
-		m_bEvadeBuffer = false;
-		return true;
-	}
-	return false;
-}
-
-_bool CCharacter::Can_Ultimate()
-{
-	if (m_fCurrentDecibel == MAX_DECIBEL) return true;
-	return false;
-}
-
-void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
-{
-	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
-	if (nullptr == pCollider)
-		return;
-
-	pCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
-}
-
-void CCharacter::Begin_AttackCollider(const string& strName, const HitDesc& hitdesc)
-{
-	if (Is_Active_AttackCollider(strName))
-		return;
-
-	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
-	if (nullptr == pCollider)
-		return;
-
-	pCollider->Begin_Attack(hitdesc);
-}
-
-void CCharacter::End_AttackCollider(const string& strName)
-{
-	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
-	if (nullptr == pCollider)
-		return;
-
-	pCollider->End_Attack();
-}
-
-void CCharacter::End_AllAttackColliders()
-{
-	CObjectContainer* pContainer = Get_Component<CObjectContainer>();
-	if (!pContainer) return;
-
-	auto& children = pContainer->Get_Children();
-
-	for (auto& Collider : m_AttackColliderIndex)
-	{
-		if (Collider.second < 0 || Collider.second >= static_cast<_int>(children.size()))
-			continue;
-
-		CCharacterAttackCollider* pCollider =
-			static_cast<CCharacterAttackCollider*>(children[Collider.second]);
-		if (nullptr == pCollider) continue;
-
-		pCollider->End_Attack();
-	}
-}
-
-_bool CCharacter::Is_Active_AttackCollider(const string& strName)
-{
-	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
-	if (nullptr == pCollider)
-		return false;
-
-	return pCollider->Get_Component<CCollider>()->Get_CompActive();
-}
-
-void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
-{
-	if (Is_Invincible()) return;
-	m_fCurrentHP -= fDamage;
-	On_Hit(eType);
+    vLook.Normalize();
+    Get_Component<CTransform>()->Set_Look(vLook);
 }
 
 _bool CCharacter::Is_OppositeInput() const
 {
-	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
-	if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
+    if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
+    if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
 
-	_vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
-	_vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
-	vPrev.Normalize();
-	vCur.Normalize();
+    _vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
+    _vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
+    vPrev.Normalize();
+    vCur.Normalize();
 
-	_float fDot = vPrev.Dot(vCur);
-	_float fAngle = XMConvertToDegrees(acosf(fDot));
+    _float fDot = vPrev.Dot(vCur);
+    _float fAngle = XMConvertToDegrees(acosf(fDot));
 
-	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
+    return fAngle >= TURNBACK_ANGLE_THRESHOLD;
 }
 
-_bool CCharacter::Can_Parry() const
+_bool CCharacter::Can_Evade()
 {
-	if (m_ParryableTargets.empty())	return false;
-	return true;
+    if (m_fEvadeCooldown > 0.f)
+        return false;
+    return true;
+}
+
+void CCharacter::Use_Evade()
+{
+    ++m_iEvadeCount;
+    m_fEvadeTimer = EVADE_COOLDOWN;
+
+    if (m_iEvadeCount >= m_iEvadeMax)
+    {
+        m_fEvadeCooldown = EVADE_COOLDOWN;
+        m_iEvadeCount = 0;
+        m_fEvadeTimer = 0.f;
+    }
+}
+
+_bool CCharacter::Use_EvadeBuffer()
+{
+    if (m_bEvadeBuffer)
+    {
+        m_bEvadeBuffer = false;
+        return true;
+    }
+    return false;
+}
+
+_bool CCharacter::Can_Ultimate()
+{
+    if (m_fCurrentDecibel == MAX_DECIBEL) return true;
+    return false;
+}
+
+_bool CCharacter::Is_Perfect()
+{
+    CCharacterParryCollider* pParry = dynamic_cast<CCharacterParryCollider*>
+        (Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (pParry && pParry->Can_Perfect())
+        return true;
+    return false;
+}
+
+HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
+{
+    CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+
+    if (nullptr == pObjectContainer) return E_FAIL;
+    if (nullptr == pDesc) return E_FAIL;
+    if (nullptr == pDesc->pOwnerAnimator) return E_FAIL;
+
+    string strLevel = LevelManager()->Get_NowLevelKey();
+
+    RIGIDBODY_DESC rigidDesc{};
+    rigidDesc.isKinematic = true;
+    rigidDesc.bEnableGravity = false;
+
+    COLLIDER_DESC colliderDesc{};
+    colliderDesc.eType = pDesc->eColliderType;
+    colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
+    colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER) | ENUM(COLLISION_GROUP::MONSTER_ATTACK);
+    colliderDesc.bAutoFit = false;
+    colliderDesc.vCenter = pDesc->vCenter;
+    colliderDesc.vSize = pDesc->vSize;
+    colliderDesc.vRotation = pDesc->vRotation;
+    colliderDesc.bTrigger = true;
+
+    string strAttackName = pDesc->tagName + "_AttackCollider";
+
+    CGameObject* pAttackCollider = Builder::Create_Object(
+        { G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider" })
+        .RigidBody(rigidDesc)
+        .Collider(colliderDesc)
+        .Build(strAttackName);
+    if (nullptr == pAttackCollider)
+        return E_FAIL;
+
+    _int iAttackColliderIndex = { -1 };
+    iAttackColliderIndex = pObjectContainer->Add_Child(pAttackCollider, false);
+    pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator, pDesc->tagBone);
+
+    m_AttackColliderIndex.emplace(strAttackName, iAttackColliderIndex);
+
+    return S_OK;
+}
+
+HRESULT CCharacter::Attach_ParryCollider()
+{
+    CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+
+    if (nullptr == pObjectContainer)
+        return E_FAIL;
+
+    string strLevel = LevelManager()->Get_NowLevelKey();
+
+    RIGIDBODY_DESC rigidDesc{};
+    rigidDesc.isKinematic = true;
+    rigidDesc.bEnableGravity = false;
+
+    COLLIDER_DESC colliderDesc{};
+    colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+    colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
+    colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
+    colliderDesc.bAutoFit = false;
+    colliderDesc.vCenter = { 0.f, 0.f, 0.f };
+    colliderDesc.vSize = { 8.f, 0.f, 0.f };
+    colliderDesc.bTrigger = true;
+
+    CGameObject* pParryCollider = Builder::Create_Object(
+        { G_GlobalLevelKey, "Proto_GameObject_CharacterParryCollider" })
+        .RigidBody(rigidDesc)
+        .Collider(colliderDesc)
+        .Build(m_strName + "_ParryCollider");
+    if (nullptr == pParryCollider)
+        return E_FAIL;
+
+    m_iParryColliderIndex = pObjectContainer->Add_Child(pParryCollider, true);
+
+    return S_OK;
+}
+
+void CCharacter::Active_ParryCollider(_bool bActive)
+{
+    CCharacterParryCollider* pCollider = static_cast<CCharacterParryCollider*>(
+        Get_Component<CObjectContainer>()->Get_Children()[m_iParryColliderIndex]);
+    if (nullptr == pCollider)
+        return;
+
+    pCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
+}
+
+void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
+{
+    CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+    if (nullptr == pCollider)
+        return;
+
+    pCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
+}
+
+void CCharacter::Begin_AttackCollider(const string& strName, const HitDesc& hitdesc)
+{
+    if (Is_Active_AttackCollider(strName))
+        return;
+
+    CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+    if (nullptr == pCollider)
+        return;
+
+    pCollider->Begin_Attack(hitdesc);
+}
+
+void CCharacter::End_AttackCollider(const string& strName)
+{
+    CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+    if (nullptr == pCollider)
+        return;
+
+    pCollider->End_Attack();
+}
+
+void CCharacter::End_AllAttackColliders()
+{
+    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer) return;
+
+    auto& children = pContainer->Get_Children();
+
+    for (auto& Collider : m_AttackColliderIndex)
+    {
+        if (Collider.second < 0 || Collider.second >= static_cast<_int>(children.size()))
+            continue;
+
+        CCharacterAttackCollider* pCollider =
+            static_cast<CCharacterAttackCollider*>(children[Collider.second]);
+        if (nullptr == pCollider) continue;
+
+        pCollider->End_Attack();
+    }
+}
+
+_bool CCharacter::Is_Active_AttackCollider(const string& strName)
+{
+    CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+    if (nullptr == pCollider)
+        return false;
+
+    return pCollider->Get_Component<CCollider>()->Get_CompActive();
+}
+
+void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
+{
+    // 패링 가능했을때
+    if(m_eSwitchType == SWITCH::PARRYAID && m_ParryHandle.isValid())
+    {
+        if(m_bIsMain)
+        {
+            //auto pos = CamDirector()->GetParryPoint();
+            //auto pParryEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Parry");
+            //if (pParryEffect)
+            //{
+            //    pParryEffect->Get_Component<CTransform>()->Set_WorldPos(pos);
+            //    static_cast<CEffectContainer*>(pParryEffect)->Play();
+            //}
+
+            //BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::PARRY);
+            m_ParryHandle.GetAs<CEnemy>()->Parried();
+            Get_Component<CAudioSource>()->Slot("Parry")
+                .Attribute3D(true)
+                .Play();
+            On_ParryImpact();
+        }
+        return;
+    }
+
+    if (Is_Invincible()) 
+        return;
+    {
+        _int damage = Helper::Get_Random_Int(1000.f, 10000.f);
+
+        DAMAGE_DESC desc{};
+        desc.damage = damage;
+        desc.followHandle = Get_Handle();
+        desc.followOffset = Vector3(0.f, 1.3f, 0.f);
+        desc.isEnemy = false;
+
+        UIDirector()->Request_DamageText(desc);
+    }
+    m_fCurrentHP -= fDamage;
+    m_fCurrentHP = max(m_fCurrentHP, 0.f);
+
+    On_Hit(eType);
+}
+
+HRESULT CCharacter::Initialize_Effects()
+{
+    auto pObjectContainer = Get_Component<CObjectContainer>();
+
+    // Dash
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start0.json")
+            .Build("Player_Run_Start0");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("player_run_start1.json")
+            .Build("Player_Run_Start1");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("evade.json")
+            .Build("Evade");
+        pEffect->Stop();
+        pEffect->AttachBone(m_pAnimator, "Bip001_Spine");
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+    {
+        auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+            .Asset("parry.json")
+            .Build("Parry");
+        pEffect->Stop();
+        pObjectContainer->Add_Child(pEffect, false);
+    }
+
+    return S_OK;
+}
+
+void CCharacter::Play_Effect(const string& effectTag, _fvector offsetPosition, _fvector offsetQuaternion, _bool syncTransform)
+{
+    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+    if (!pEffect)
+        return;
+
+    auto pEffectTransform = pEffect->Get_Component<CTransform>();
+    if (syncTransform)
+    {
+        pEffectTransform->Set_Pos(_vector3(offsetPosition));
+        pEffectTransform->Set_Quaternion(offsetQuaternion);
+    }
+    else
+    {
+        _smatrix worldMatrix = m_pTransform->Get_WorldMatrix();
+        _quaternion worldQuaternion = m_pTransform->Get_QuaternionRotate();
+
+        _vector3 vWorldPosition = _vector3::Transform(offsetPosition, worldMatrix);
+        _quaternion localQuaternion(offsetQuaternion);
+        localQuaternion *= worldQuaternion;
+
+        pEffectTransform->Set_WorldPos(vWorldPosition);
+        pEffectTransform->Set_WorldQuaternion(localQuaternion);
+    }
+
+    static_cast<CEffectContainer*>(pEffect)->Play();
+}
+
+void CCharacter::Stop_Effect(const string& effectTag)
+{
+    auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName(effectTag);
+    if (!pEffect)
+        return;
+
+    static_cast<CEffectContainer*>(pEffect)->Stop();
+}
+
+void CCharacter::Stop_ComboSound()
+{
+    auto AudioSource = Get_Component<CAudioSource>();
+    if (AudioSource)
+    {
+        AudioSource->Slot("ComboSwitch")
+            .Stop();
+    }
 }
 
 void CCharacter::Update_Rotation(_float dt)
 {
-	_float fSpeed = 20.f;
-	if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
-	{
-		m_pTransform->Set_Quaternion(m_qTargetRot);
-		m_bIsRotating = false;
-		return;
-	}
+    if (!m_bCanRotate) return;
 
-	m_qCurrentRot = _quaternion::Slerp(m_qCurrentRot, m_qTargetRot, dt * fSpeed);
-	m_pTransform->Set_Quaternion(m_qCurrentRot);
+    _float fSpeed = 8.f;
+    if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
+    {
+        m_pTransform->Set_Quaternion(m_qTargetRot);
+        m_bIsRotating = false;
+        return;
+    }
+
+    m_qCurrentRot = _quaternion::Slerp(m_qCurrentRot, m_qTargetRot, dt * fSpeed);
+    m_pTransform->Set_Quaternion(m_qCurrentRot);
 }
 
 void CCharacter::Update_Evade(_float dt)
 {
-	if (m_fEvadeCooldown > 0.f)
-	{
-		m_fEvadeCooldown -= dt;
-		if (m_fEvadeCooldown <= 0.f)
-		{
-			m_fEvadeCooldown = 0.f;
-			m_iEvadeCount = 0;
-		}
-	}
+    if (m_fEvadeCooldown > 0.f)
+    {
+        m_fEvadeCooldown -= dt;
+        if (m_fEvadeCooldown <= 0.f)
+        {
+            m_fEvadeCooldown = 0.f;
+            m_iEvadeCount = 0;
+        }
+    }
 
-	if (m_fEvadeTimer > 0.f)
-	{
-		m_fEvadeTimer -= dt;
-		if (m_fEvadeTimer <= 0.f)
-		{
-			m_fEvadeTimer = 0.f;
-			m_iEvadeCount = 0;
-		}
-	}
+    if (m_fEvadeTimer > 0.f)
+    {
+        m_fEvadeTimer -= dt;
+        if (m_fEvadeTimer <= 0.f)
+        {
+            m_fEvadeTimer = 0.f;
+            m_iEvadeCount = 0;
+        }
+    }
 }
 
 void CCharacter::Update_Energy(_float dt)
 {
-	m_tEnergy.fPrevEnergy = m_tEnergy.fCurrentEnergy;
-	if (m_tEnergy.fCurrentEnergy >= MAX_ENERGY)
-	{
-		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
-		return;
-	}
-	if (m_tEnergy.fCurrentEnergy < 0.f)
-	{
-		m_tEnergy.fCurrentEnergy = 0.f;
-	}
-	if (InputDevice()->Key_Down('P'))
-		m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
-	if (InputDevice()->Key_Tap('M'))
-		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
+    m_tEnergy.fPrevEnergy = m_tEnergy.fCurrentEnergy;
+    if (m_tEnergy.fCurrentEnergy >= MAX_ENERGY)
+    {
+        m_tEnergy.fCurrentEnergy = MAX_ENERGY;
+        m_tEnergy.fPrevEnergy = MAX_ENERGY;
+        return;
+    }
+    if (m_tEnergy.fCurrentEnergy < 0.f)
+    {
+        m_tEnergy.fCurrentEnergy = 0.f;
+        m_tEnergy.fPrevEnergy = 0.f;
+    }
+    m_tEnergy.fCurrentEnergy += dt;
 
-	m_tEnergy.fCurrentEnergy += dt;
+    if (InputDevice()->Key_Down('P'))
+        m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
 }
 
 void CCharacter::Update_Decibel(_float dt)
 {
-	m_fPrevDecibel = m_fCurrentDecibel;
-	if (m_fCurrentDecibel >= MAX_DECIBEL)
-	{
-		m_fCurrentDecibel = MAX_DECIBEL;
-		return;
-	}
-	if (InputDevice()->Key_Tap('U'))
-		m_fCurrentDecibel = MAX_DECIBEL;
-	m_fCurrentDecibel += dt * 50.f;
+    m_fPrevDecibel = m_fCurrentDecibel;
+    if (m_fCurrentDecibel >= MAX_DECIBEL)
+    {
+        m_fCurrentDecibel = MAX_DECIBEL;
+        m_fPrevDecibel = MAX_DECIBEL;
+        return;
+    }
+    m_fCurrentDecibel += dt * 10.f;
+
+    if (InputDevice()->Key_Tap('U'))
+        m_fCurrentDecibel = MAX_DECIBEL;
 }
 
 void CCharacter::Update_Invincible(_float dt)
 {
-	if (m_fInvincibleTimer > 0.f)
-		m_fInvincibleTimer -= dt;
+    if (m_fInvincibleTimer > 0.f)
+        m_fInvincibleTimer -= dt;
 }
 
 CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)
 {
-	string ColliderName = strName + "_AttackCollider";
+    string ColliderName = strName + "_AttackCollider";
 
-	auto iter = m_AttackColliderIndex.find(ColliderName);
-	if (iter == m_AttackColliderIndex.end())
-		return nullptr;
+    auto iter = m_AttackColliderIndex.find(ColliderName);
+    if (iter == m_AttackColliderIndex.end())
+        return nullptr;
 
-	return static_cast<CCharacterAttackCollider*>(
-		Get_Component<CObjectContainer>()->Get_Children()[iter->second]);
+    return static_cast<CCharacterAttackCollider*>(
+        Get_Component<CObjectContainer>()->Get_Children()[iter->second]);
 }
 
 void CCharacter::Free()
 {
-	__super::Free();
-	Safe_Release(m_pAnimator);
-	Safe_Release(m_pCCT);
+    __super::Free();
+    Safe_Release(m_pAnimator);
+    Safe_Release(m_pCCT);
 }

@@ -21,6 +21,7 @@ CPipeLine::CPipeLine()
 
 HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSystem)
 {
+	XMStoreFloat4x4(&identity, XMMatrixIdentity());
 	/*---------------------------------------------------------------------------------------------------- - */
 	/*상수 버퍼*/
 	D3D11_BUFFER_DESC desc = {};
@@ -194,14 +195,15 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSk
 HRESULT CPipeLine::Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize)
 {
 	LightBuffer lightBuffer{};
-	lightBuffer.vLightDir = Desc.vLightDirection;
-	lightBuffer.vLightPos = Desc.vLightPosition;
-	lightBuffer.vLightDiffuse = Desc.vLightDiffuse;
-	lightBuffer.vLightAmbient = Desc.vLightAmbient;
-	lightBuffer.vLightSpecular = Desc.vLightSpecular;
-	lightBuffer.fLightRange = Desc.fLightRange;
+	lightBuffer.vLightDir		= Desc.vLightDirection;
+	lightBuffer.vLightPos		= Desc.vLightPosition;
+	lightBuffer.vLightDiffuse	= Desc.vLightDiffuse;
+	lightBuffer.vLightAmbient	= Desc.vLightAmbient;
+	lightBuffer.vLightSpecular	= Desc.vLightSpecular;
+	lightBuffer.fLightRange		= Desc.fLightRange;
 	lightBuffer.fLightIntensity = Desc.fLightIntensity;
-	lightBuffer.iLightSize = lightSize;
+	lightBuffer.fInnerCos		= Desc.fInnerCos;
+	lightBuffer.fOuterCos		= Desc.fOuterCos;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -291,13 +293,13 @@ HRESULT CPipeLine::Write_SSAOKernelBuffer(ID3D11Device* pDevice)
 
 void CPipeLine::Update_Frustum()
 {
-	_matrix view = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ViewMatrix());
 	_matrix proj = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
+	_smatrix invView = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
 
-	BoundingFrustum frustum;
-	BoundingFrustum::CreateFromMatrix(frustum, proj);
+	BoundingFrustum frustumView;
+	BoundingFrustum::CreateFromMatrix(frustumView, proj);
 
-	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
+	frustumView.Transform(m_Frustum, invView);
 }
 
 void CPipeLine::Update_StaticCSM()
@@ -317,28 +319,139 @@ void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
+
+	// 월드 AABB 계산
+	MINMAX_BOX worldBox = minMax.TransformBox_8Corner(Matrix(worldTransform));
+
 	XMFLOAT3 center{
-		(minMax.vMin.x + minMax.vMax.x) * 0.5f,
-		(minMax.vMin.y + minMax.vMax.y) * 0.5f,
-		(minMax.vMin.z + minMax.vMax.z) * 0.5f
+		(worldBox.vMin.x + worldBox.vMax.x) * 0.5f,
+		(worldBox.vMin.y + worldBox.vMax.y) * 0.5f,
+		(worldBox.vMin.z + worldBox.vMax.z) * 0.5f
 	};
 	XMFLOAT3 extents{
-		(minMax.vMax.x - minMax.vMin.x) * 0.5f,
-		(minMax.vMax.y - minMax.vMin.y) * 0.5f,
-		(minMax.vMax.z - minMax.vMin.z) * 0.5f
+		(worldBox.vMax.x - worldBox.vMin.x) * 0.5f,
+		(worldBox.vMax.y - worldBox.vMin.y) * 0.5f,
+		(worldBox.vMax.z - worldBox.vMin.z) * 0.5f
 	};
 
-	BoundingBox localAabb(center, extents);
-; 
-	BoundingOrientedBox obb;
-	BoundingOrientedBox::CreateFromBoundingBox(obb, localAabb);
+	if (!(extents.x > 0.f || extents.y > 0.f || extents.z > 0.f))
+		return false;
 
-	BoundingOrientedBox worldObb;
-	obb.Transform(worldObb, worldTransform);
+	extents.x = max(extents.x, 0.2f);
+	extents.y = max(extents.y, 0.2f);
+	extents.z = max(extents.z, 0.2f);
 
-	return m_Frustum.Intersects(worldObb);
+	BoundingBox worldAabb(center, extents);
+
+	return m_Frustum.Intersects(worldAabb);
 }
 
+static XMVECTOR NormalizePlane(XMVECTOR plane)
+{
+	XMVECTOR normal = XMVectorSetW(plane, 0.f);
+	float length = XMVectorGetX(XMVector3Length(normal));
+	if (length <= 1e-6f) return plane;
+	return XMVectorScale(plane, 1.f / length);
+}
+
+static void ExtractFrustumPlanesFromMatrix(const XMMATRIX& clipFromWorld, XMVECTOR outPlanes[6])
+{
+	XMFLOAT4X4 matrixFloat;
+	XMStoreFloat4x4(&matrixFloat, clipFromWorld);
+
+	XMVECTOR row0 = XMVectorSet(matrixFloat._11, matrixFloat._12, matrixFloat._13, matrixFloat._14);
+	XMVECTOR row1 = XMVectorSet(matrixFloat._21, matrixFloat._22, matrixFloat._23, matrixFloat._24);
+	XMVECTOR row2 = XMVectorSet(matrixFloat._31, matrixFloat._32, matrixFloat._33, matrixFloat._34);
+	XMVECTOR row3 = XMVectorSet(matrixFloat._41, matrixFloat._42, matrixFloat._43, matrixFloat._44);
+
+	outPlanes[0] = NormalizePlane(XMVectorAdd(row3, row0));      // left
+	outPlanes[1] = NormalizePlane(XMVectorSubtract(row3, row0)); // right
+	outPlanes[2] = NormalizePlane(XMVectorAdd(row3, row1));      // bottom
+	outPlanes[3] = NormalizePlane(XMVectorSubtract(row3, row1)); // top
+	outPlanes[4] = NormalizePlane(XMVectorAdd(row3, row2));      // near
+	outPlanes[5] = NormalizePlane(XMVectorSubtract(row3, row2)); // far
+}
+
+static bool IntersectAabbWithPlanes(const XMFLOAT3& minPos, const XMFLOAT3& maxPos, const XMVECTOR planes[6])
+{
+	XMFLOAT3 centerFloat;
+	centerFloat.x = (minPos.x + maxPos.x) * 0.5f;
+	centerFloat.y = (minPos.y + maxPos.y) * 0.5f;
+	centerFloat.z = (minPos.z + maxPos.z) * 0.5f;
+
+	XMFLOAT3 extentFloat;
+	extentFloat.x = (maxPos.x - minPos.x) * 0.5f;
+	extentFloat.y = (maxPos.y - minPos.y) * 0.5f;
+	extentFloat.z = (maxPos.z - minPos.z) * 0.5f;
+
+	XMVECTOR center = XMVectorSet(centerFloat.x, centerFloat.y, centerFloat.z, 1.f);
+	XMVECTOR extents = XMVectorSet(extentFloat.x, extentFloat.y, extentFloat.z, 0.f);
+
+	for (int planeIndex = 0; planeIndex < 6; ++planeIndex)
+	{
+		XMVECTOR plane = planes[planeIndex];
+
+		float distance = XMVectorGetX(XMPlaneDotCoord(plane, center));
+
+		XMVECTOR normalAbs = XMVectorAbs(XMVectorSetW(plane, 0.f));
+		float radius = XMVectorGetX(XMVector3Dot(normalAbs, extents));
+
+		if (distance + radius < 0.f)
+			return false;
+	}
+	return true;
+}
+
+void CPipeLine::filterVisibleCSM(vector<OPAQUE_PACKET>& packets, vector<OPAQUE_PACKET>& outPacket)
+{
+	outPacket.clear();
+	outPacket.reserve(packets.size());
+
+	auto* gameInstance = CGameInstance::GetInstance();
+	if (!gameInstance) return;
+
+	CCSMShadow* csm = m_pStaticCSM;
+	if (!csm) return;
+
+	// 캐스케이드 플레인 미리 뽑기
+	const _uint cascadeCount = csm->GetCascadeCount();
+	XMVECTOR cascadePlanes[4][6];
+
+	for (_uint cascadeIndex = 0; cascadeIndex < cascadeCount; ++cascadeIndex)
+	{
+		const _matrix& lightViewProj = csm->GetLightViewProj(cascadeIndex);
+		ExtractFrustumPlanesFromMatrix(lightViewProj, cascadePlanes[cascadeIndex]);
+	}
+
+	// 패킷 1번 순회: 월드박스 만든 다음, 어느 캐스케이드라도 걸리면 통과(합집합)
+	for (auto& packet : packets)
+	{
+		if (!packet.pModel || !packet.pWorldMatrix)
+			continue;
+
+		MINMAX_BOX localBox = packet.pModel->Get_MeshBoundingBox(packet.DrawIndex);
+		MINMAX_BOX worldBox = localBox.TransformBox_8Corner(Matrix(*packet.pWorldMatrix));
+
+		// MINMAX_BOX -> XMFLOAT3로 변환 (멤버명은 네 타입에 맞춰 수정)
+		XMFLOAT3 minPos(worldBox.vMin.x, worldBox.vMin.y, worldBox.vMin.z);
+		XMFLOAT3 maxPos(worldBox.vMax.x, worldBox.vMax.y, worldBox.vMax.z);
+
+		bool anyCascadeHit = false;
+		for (_uint cascadeIndex = 0; cascadeIndex < cascadeCount; ++cascadeIndex)
+		{
+			if (IntersectAabbWithPlanes(minPos, maxPos, cascadePlanes[cascadeIndex]))
+			{
+				anyCascadeHit = true;
+				break;
+			}
+		}
+
+		if (!anyCascadeHit)
+			continue;
+
+		outPacket.push_back(packet);
+	}
+}
 
 _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 {
@@ -347,7 +460,7 @@ _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 	const _uint offsetCount = 1;
 
 	if (m_ObjectOffset + offsetCount > g_iMaxTransform) {
-		MSG_BOX("To Many Transform");
+		//MSG_BOX("To Many Transform");
 		return UINT_MAX; // 초과
 	}
 
@@ -357,21 +470,28 @@ _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 	return LastOffset;
 }
 
+_uint CPipeLine::GetOrWriteTransform(_uint objId, const _float4x4& world)
+{
+	auto found = m_transformIndexCache.find(objId);
+	if (found != m_transformIndexCache.end())
+		return found->second;
+
+	_uint index = Write_ObjectData(world);
+	if (index != UINT_MAX)
+		m_transformIndexCache.emplace(objId, index);
+	return index;
+}
+
 HRESULT CPipeLine::Begin_ObjectBuffer(ID3D11DeviceContext* pContext)
 {
-	HRESULT hr = pContext->Map(
-		m_pDeviceObjectBuffer,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&m_mappedObjectBuffer
-	);
+	m_transformIndexCache.clear(); // 추가
 
-	if (FAILED(hr))
-		return hr;
+	HRESULT hr = pContext->Map(m_pDeviceObjectBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &m_mappedObjectBuffer);
+	if (FAILED(hr)) return hr;
 
 	m_pObjectArray = reinterpret_cast<_float4x4*>(m_mappedObjectBuffer.pData);
-	m_ObjectOffset = 0;
+	m_pObjectArray[0] = identity;
+	m_ObjectOffset = 1;
 	return S_OK;
 }
 
@@ -379,39 +499,53 @@ HRESULT CPipeLine::End_ObjectBuffer(ID3D11DeviceContext* pContext)
 {
 	pContext->Unmap(m_pDeviceObjectBuffer, 0);
 	m_pObjectArray = nullptr;
-	m_ObjectOffset = 0;
+	m_ObjectOffset = 1;
 	return S_OK;
 }
 
-_uint CPipeLine::Write_SkinningBuffer(vector<_float4x4> bones)
+static uint64_t MakeSkinKey(uint32_t objId, uint32_t drawIndex)
+{
+	return (uint64_t(objId) << 32) | uint64_t(drawIndex);
+}
+
+_uint CPipeLine::GetOrWriteSkinning(_uint objId, _uint drawIndex, const vector<_float4x4>& bones)
+{
+	uint64_t key = MakeSkinKey((uint32_t)objId, (uint32_t)drawIndex);
+
+	auto found = m_skinningCache.find(key);
+	if (found != m_skinningCache.end())
+		return found->second;
+
+	uint32_t offset = Write_SkinningBuffer(bones);
+	if (offset != UINT_MAX)
+		m_skinningCache.emplace(key, offset);
+	return offset;
+}
+
+_uint CPipeLine::Write_SkinningBuffer(const vector<_float4x4>& bones)
 {
 	if (!m_pSkinningArray) return UINT_MAX;
 
-	const _uint SkinningCount = static_cast<_uint>(bones.size());
+	const _uint count = (_uint)bones.size();
+	if (count == 0) return UINT_MAX;
 
-	if (m_SkinningOffset + SkinningCount > g_iMaxNumBones) {
+	if (m_SkinningOffset + count > g_iMaxNumBones) {
 		MSG_BOX("To Many Skinning");
-		return UINT_MAX; // 초과
+		return UINT_MAX;
 	}
 
-	memcpy(&m_pSkinningArray[m_SkinningOffset], bones.data(), sizeof(_float4x4) * SkinningCount);
-	_uint LastOffset = m_SkinningOffset;
-	m_SkinningOffset += SkinningCount;
-	return LastOffset;
+	memcpy(&m_pSkinningArray[m_SkinningOffset], bones.data(), sizeof(_float4x4) * count);
+	_uint last = m_SkinningOffset;
+	m_SkinningOffset += count;
+	return last;
 }
 
 HRESULT CPipeLine::Begin_SkinningBuffer(ID3D11DeviceContext* pContext)
 {
-	HRESULT hr = pContext->Map(
-		m_pDeviceSkinningBuffer,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&m_mappedSkinningBuffer
-	);
+	m_skinningCache.clear(); // 추가
 
-	if (FAILED(hr))
-		return hr;
+	HRESULT hr = pContext->Map(m_pDeviceSkinningBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &m_mappedSkinningBuffer);
+	if (FAILED(hr)) return hr;
 
 	m_pSkinningArray = reinterpret_cast<_float4x4*>(m_mappedSkinningBuffer.pData);
 	m_SkinningOffset = 0;
@@ -476,6 +610,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 
 		switch (LightSnapShots[i].eType)
 		{
+
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "DIRECTIONAL", &pLayout);
 			pContext->IASetInputLayout(pLayout);
@@ -485,6 +620,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
+
 		case Engine::LIGHT_TYPE::POINT:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "POINT", &pLayout);
 			pContext->IASetInputLayout(pLayout);
@@ -493,8 +629,16 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
+
 		case Engine::LIGHT_TYPE::SPOTLIGHT:
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "SPOTLIGHT", &pLayout);
+			pContext->IASetInputLayout(pLayout);
+			pShader->Apply("SPOTLIGHT", pContext);
+			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
+			pBuffer->Bind_Buffer(pContext);
+			pBuffer->Render(pContext);
 			break;
+
 		default:
 			break;
 		}
@@ -507,6 +651,7 @@ vector<OPAQUE_PACKET> CPipeLine::OcculsionCulling(const vector<OPAQUE_PACKET>& f
 {
 	return m_pHiZ->OcculsionCulling(frustums);
 }
+
 
 #ifdef _USING_GUI
 void CPipeLine::Render_GUI()
@@ -539,7 +684,6 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOBuffer);
 	Safe_Release(m_pDeviceLightBuffer);
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
-
 	Safe_Release(m_pHiZ);
 	Safe_Release(m_pSkinnedCSM);
 	Safe_Release(m_pStaticCSM);

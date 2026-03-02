@@ -6,7 +6,8 @@
 
 HRESULT CUI_Logo::Initialize_Prototype()
 {
-    __super::Initialize_Prototype();
+    if (FAILED(__super::Initialize_Prototype()))
+        return E_FAIL;
 
     Add_Component<CObjectContainer>();
 
@@ -15,11 +16,10 @@ HRESULT CUI_Logo::Initialize_Prototype()
 
 HRESULT CUI_Logo::Initialize(INIT_DESC* pArg)
 {
-    __super::Initialize(pArg);
+    if (FAILED(__super::Initialize(pArg)))
+        return E_FAIL;
 
-    // JSON 기반 UI 구성 로드
-    const string& filePath = ResourceManager()->Get_ResourcePath("logo.json");
-    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("logo.json")));
 
     // 자식(fade) 자식의 0번 애니메이션 재생 (FadeIn)
     if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("fade"))

@@ -1,0 +1,51 @@
+{
+  "AnimPath" : "../Bin/Resources/Global/NPC/141BangBoo/Ask/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_Chat_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_Chat_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_Chat_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_Idle_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_Idle_Start",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_Pay",
+      "Events": []
+    },
+    {
+      "ClipTag": "NPC_CashierBangbooAsk_Ani_TurnAround",
+      "Events": []
+    }
+  ]
+}

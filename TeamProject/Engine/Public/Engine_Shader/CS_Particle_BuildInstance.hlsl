@@ -4,7 +4,7 @@
 void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
 {
     uint i = DispatchThreadID.x;
-    if (i >= iAliveCount)
+    if (i >= iInstanceCount)
         return;
     
     uint index = AliveIn[i];

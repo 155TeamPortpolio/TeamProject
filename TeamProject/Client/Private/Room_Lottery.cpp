@@ -1,0 +1,71 @@
+#include "pch.h"
+#include "Room_Lottery.h"
+
+#include  "FieldSystem.h"
+#include "GameInstance.h"
+#include "CamDirector.h"
+#include "UIDirector.h"
+#include "Npc.h"
+#include "FieldPlayer.h"
+
+CRoom_Lottery::CRoom_Lottery(const ROOM_DESC& desc)
+	:CRoom(desc)
+{
+}
+
+void CRoom_Lottery::Enter()
+{
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			UIDirector()->Hide_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Show_Lottery();
+			UIDirector()->FadeIn_Screen();
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->Lock_Input();
+			pFieldPlayer->DeActive_Field();
+
+			CamDirector()->SetSpaceRef(FieldSystem()->GetInteractHandle());
+			CamDirector()->RequestSequence("Field/Howl");
+
+			FieldSystem()->PlayBGM("LotteryBGM.wav", 0.2f);
+		});
+}
+
+void CRoom_Lottery::Exit()
+{
+	FieldSystem()->FadeOutBGM();
+	UIDirector()->FadeOut_Screen(0.4f, []()
+		{
+			auto pFieldPlayer = FieldSystem()->GetFieldPlayer();
+			pFieldPlayer->Active_Field();
+			pFieldPlayer->UnLock_Input();
+			UIDirector()->FadeIn_Screen();
+			auto NpcHandle = FieldSystem()->GetInteractHandle();
+			if (NpcHandle.isValid()) dynamic_cast<CNpc*>(NpcHandle.Get())->Reset();
+
+			CamDirector()->SetSpaceRef(CamDirector()->GetCurHandle());
+			CamDirector()->RequestSequence("Field/Back");
+
+			UIDirector()->Show_HUD(CUIDirector::HUD::FIELD);
+			UIDirector()->Hide_Lottery();
+		});
+}
+
+void CRoom_Lottery::Update()
+{
+}
+
+void CRoom_Lottery::OnResumeFromOverlay()
+{
+}
+
+CRoom_Lottery* CRoom_Lottery::Create(const ROOM_DESC& desc)
+{
+	CRoom_Lottery* instance = new CRoom_Lottery(desc);
+	return instance;
+}
+
+void CRoom_Lottery::Free()
+{
+	__super::Free();
+}

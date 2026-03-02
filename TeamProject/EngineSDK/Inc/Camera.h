@@ -20,7 +20,6 @@ public:
 public:
 	Matrix         Get_ViewMatrix()  const;
 	Matrix         Get_ProjMatrix()  const;			
-	_vector        Get_Pos()         const;
 	_float         Get_FOV()         const { return m_lens.fov;    }
 	_float         Get_Near()        const { return m_lens.zNear;  }
 	_float         Get_Far()         const { return m_lens.zFar;   }
@@ -35,10 +34,7 @@ public:
 	void           Set_Aspect(_float aspect)          { m_lens.aspect = aspect;   }
 	void           Set_ProjType(CamProjType projType) { m_projType    = projType; }
 	void           Set_Lens(_float fov, _float aspect, _float zNear, _float zFar);
-				   
-	_bool          Lerp_FOV(_float dst, _float dt);
-
-	virtual void   Render_GUI() override;
+	void           Render_GUI() override;
 
 private:
 	Lens        m_lens{};
@@ -47,6 +43,6 @@ private:
 
 public:
 	static  CCamera*    Create();
-	virtual CComponent* Clone() { return new CCamera(*this); }
+	CComponent* Clone() { return new CCamera(*this); }
 };
 NS_END

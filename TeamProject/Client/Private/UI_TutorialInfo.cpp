@@ -1,0 +1,288 @@
+#include "pch.h"
+#include "UI_TutorialInfo.h"
+
+#include "GameInstance.h"
+#include "ObjectContainer.h"
+#include "EventListener.h"
+#include "TextSlot.h"
+
+#include "UI_ButtonPanel.h"
+#include "UI_TutorialDescription.h"
+#include "UI_TutorialVideo.h"
+#include "UI_Banner.h"
+
+#include "UIDirector.h"
+#include "BattleSystem.h"
+
+HRESULT CUI_TutorialInfo::Initialize_Prototype()
+{
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+    Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
+
+    PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialDescription", CUI_TutorialDescription::Create());
+    PrototypeManager()->Add_ProtoType("Tutorial_Level", "Proto_GameObject_TutorialVideo", CUI_TutorialVideo::Create());
+
+	return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Initialize(INIT_DESC* pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+    Load(Helper::LoadJson<nlohmann::ordered_json>(ResourceManager()->Get_ResourcePath("tutorial_info.json")));
+    Cache();
+     
+    Create_TutorialDescriptions();
+    Create_TutorialVideo();
+    Create_ExitButton();
+    Create_ExitBanner();
+    Create_EnterButton();
+
+    // 이벤트 : TUTORIAL_DESC
+    Get_Component<CEventListener>()->Add_Listener<TUTORIAL_DESC>([&](const TUTORIAL_DESC& desc)
+        {
+            if (desc.eState != TUTORIAL_STATE::INFO)
+                return;
+
+            UI_Active();
+            Change_Description(desc.eType);
+        });
+
+	return S_OK;
+}
+
+void CUI_TutorialInfo::Awake()
+{
+    //UI_Active();
+    //Change_Description(TUTORIAL_TYPE::EXTREME_EVADE);
+}
+
+void CUI_TutorialInfo::Update(_float dt)
+{
+    __super::Update(dt);
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    if (!m_isQuit)
+    {
+        BattleSystem()->LockBattleTime(true);//////////////////////////////////////////////////////////////
+        BattleSystem()->LockPlayer(true);//////////////////////////////////////////////////////////////
+    } 
+
+    if (m_isCheck && Is_AnimFinished())
+        Set_Alive(false);
+}
+
+void CUI_TutorialInfo::UI_Active(void* pArg)
+{
+    m_isCheck = false; 
+    Set_Animation(0);
+    auto pContainer = Get_Component<CObjectContainer>();
+    for (auto& pChild : pContainer->Get_Children())
+    {
+        if (!pChild)
+            continue;
+
+        if (auto pUI = dynamic_cast<CUI_Object*>(pChild))
+            pUI->Set_Animation(0);
+    }
+
+    Set_Alive(true);
+    
+    UIDirector()->Show_Mouse();
+    UIDirector()->FadeIn_Screen(0.2f);
+}
+
+void CUI_TutorialInfo::UI_DeActive(void* pArg)
+{
+}
+
+void CUI_TutorialInfo::Cache()
+{
+    auto pTitle = Get_Component<CObjectContainer>()->Find_Descendant("title");
+    if (pTitle)
+        m_pTitle = pTitle->Get_Component<CTextSlot>();
+}
+
+HRESULT CUI_TutorialInfo::Create_TutorialDescriptions()
+{
+    for (_int i = 0; i < ENUM(TUTORIAL_TYPE::END); ++i)
+    {
+        TUTORIAL_TYPE eType = static_cast<TUTORIAL_TYPE>(i);
+        CUI_TutorialDescription::TUTORIAL_DESC* pDesc = new CUI_TutorialDescription::TUTORIAL_DESC;
+        pDesc->eType = eType;
+
+        auto pObj = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialDescription"})
+            .Add_UIDesc(pDesc)
+            .Build("description");
+
+        if (!pObj)
+            return E_FAIL;
+
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+        m_Descriptions.emplace(eType, pObj);
+    } 
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_TutorialVideo()
+{
+    auto pObj = Builder::Create_UIObject({ "Tutorial_Level", "Proto_GameObject_TutorialVideo"})
+        .Build("TutorialVideo");
+
+    if (!pObj)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pVideo = dynamic_cast<CUI_TutorialVideo*>(pObj);
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_ExitButton()
+{
+    CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
+    pDesc->strJsonKey = "tutorial_exitButton.json";
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonExit");
+
+    if (!pObj)
+        return E_FAIL;
+
+    pObj->Set_OnClick([this]() { 
+        if (m_pExitBanner) 
+            m_pExitBanner->UI_Active(); });
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_ExitBanner()
+{
+    CUI_Banner::BANNER_DESC* pDesc = new CUI_Banner::BANNER_DESC;
+    pDesc->strTitle = L"튜토리얼을 나가시겠습니까?";
+    pDesc->strSubtitle = L"튜토리얼 진행도는 저장되지 않습니다.";
+    pDesc->onClickConfirm = [this]() { 
+        UIDirector()->FadeOut_Screen();
+        LevelManager()->Request_ChangeLevel("Scott_Level", true);
+        m_isQuit = true;
+        BattleSystem()->LockBattleTime(false);  ///////////////////////////////////////////////////
+        BattleSystem()->LockPlayer(false);  /////////////////////////////////////////////////// 
+        };
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_Banner" })
+        .Add_UIDesc(pDesc)
+        .Build("bannerExit");
+
+    if (!pObj)
+        return E_FAIL;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+    m_pExitBanner = pObj;
+
+    return S_OK;
+}
+
+HRESULT CUI_TutorialInfo::Create_EnterButton()
+{
+    CUI_ButtonPanel::BUTTON_DESC* pDesc = new CUI_ButtonPanel::BUTTON_DESC;
+    pDesc->strJsonKey = "tutorial_enterButton.json";
+
+    auto pObj = Builder::Create_UIObject({ G_GlobalLevelKey, "Proto_GameObject_ButtonPanel" })
+        .Add_UIDesc(pDesc)
+        .Build("buttonEnter");
+
+    if (!pObj)
+        return E_FAIL;
+
+    pObj->Set_OnClick([this]() { OnClickEnter(); });
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+
+    return S_OK;
+}
+
+void CUI_TutorialInfo::OnClickEnter()
+{
+    m_isCheck = true;
+    Set_Animation(1);
+    if (m_pVideo)
+        m_pVideo->UI_DeActive();
+
+    TUTORIAL_DESC desc = {};
+    desc.eType = m_eType;
+    desc.eState = TUTORIAL_STATE::PLAY;
+    EventSystem()->Broadcast<TUTORIAL_DESC>({ desc });
+}
+
+void CUI_TutorialInfo::Change_Description(TUTORIAL_TYPE eType)
+{
+    m_eType = eType;
+
+    for (auto& pair : m_Descriptions)
+        pair.second->Set_Alpha(0.f);
+
+    auto iter = m_Descriptions.find(eType);
+    if (iter == m_Descriptions.end())
+        return;
+
+    iter->second->Set_Alpha(1.f);
+
+    Change_TitleText(eType);
+
+    if (m_pVideo) 
+        m_pVideo->Play(eType);
+}
+
+void CUI_TutorialInfo::Change_TitleText(TUTORIAL_TYPE eType)
+{
+    if (!m_pTitle)
+        return;
+
+    m_pTitle->Set_Text(Get_TitleText(eType));
+}
+
+wstring CUI_TutorialInfo::Get_TitleText(TUTORIAL_TYPE eType)
+{
+    switch (eType)
+    {
+    case TUTORIAL_TYPE::EXTREME_EVADE: return L"극한 회피 및 회피 반격";
+    case TUTORIAL_TYPE::EXTREME_SUPPORT: return L"극한 지원 및 지원 돌격";
+    case TUTORIAL_TYPE::DECIBEL_ULTIMATE: return L"데시벨 및 궁극기";
+    case TUTORIAL_TYPE::GROGGY_COMBO: return  L"그로기 수치 및 콤보 스킬";
+    default: return  L"제목";
+    }
+}
+
+CGameObject* CUI_TutorialInfo::Create()
+{
+    CUI_TutorialInfo* pInstance = new CUI_TutorialInfo();
+    if (FAILED(pInstance->Initialize_Prototype()))
+    {
+        MSG_BOX("Failed to Create : CUI_TutorialInfo");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+CGameObject* CUI_TutorialInfo::Clone(INIT_DESC* pArg)
+{
+    CUI_TutorialInfo* pInstance = new CUI_TutorialInfo(*this);
+    if (FAILED(pInstance->Initialize(pArg)))
+    {
+        MSG_BOX("Failed to Clone : CUI_TutorialInfo");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+void CUI_TutorialInfo::Free()
+{
+    __super::Free();
+
+    m_Descriptions.clear();
+}

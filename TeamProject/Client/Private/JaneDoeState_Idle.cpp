@@ -17,8 +17,26 @@ void CJaneDoeState_Idle::Enter(CJaneDoe* pOwner)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Evade");
     }
+    else if (iEntryMode == 2)
+    {
+        pOwner->Set_Switch(CCharacter::SWITCH::PARRYAID);
+        pOwner->Get_StateMachine()->Set_Trigger("SwitchIn");
+    }
 
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
         .Loop(true)
         .Apply();
+
+    __super::Enter(pOwner);
+}
+
+void CJaneDoeState_Idle::Update(CJaneDoe* pOwner, _float dt)
+{
+    __super::Update(pOwner, dt);
+    pOwner->Get_StateMachine()->Reset_Trigger("ResetState");
+}
+
+void CJaneDoeState_Idle::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
 }

@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "GameInstance.h"
 #include "CharacterAttackCollider.h"
 
+#include "GameInstance.h"
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 
@@ -11,8 +11,11 @@
 #include "Child.h"
 
 #include "Enemy.h"
+#include "Character.h"
 // Camera
 #include "CameraMgr.h"
+
+#include "EffectContainer.h"
 
 CCharacterAttackCollider::CCharacterAttackCollider()
 	: CGameObject()
@@ -51,14 +54,15 @@ void CCharacterAttackCollider::Awake()
 
 void CCharacterAttackCollider::Priority_Update(_float dt)
 {
+	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
+	m_vPrevPos = m_pTransform->Get_Pos();
 }
 
 void CCharacterAttackCollider::Update(_float dt)
 {
 	m_fTimer += dt;
-	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
-	Get_Component<CCollider>()->Update(dt);
+	//Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	//Get_Component<CCollider>()->Update(dt);
 }
 
 void CCharacterAttackCollider::Late_Update(_float dt)
@@ -69,20 +73,15 @@ void CCharacterAttackCollider::Late_Update(_float dt)
 void CCharacterAttackCollider::Render_GUI()
 {
 	__super::Render_GUI();
-}
-
-void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
-{
-
-}
-
-void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
-{
-
-}
-
-void CCharacterAttackCollider::OnCollisionExit(CGameObject* pOther)
-{
+	if (ImGui::TreeNode("Hit Records"))
+	{
+		for (const auto& pair : m_HitRecords)
+		{
+			ImGui::Text("Target: %s | Hits: %d | LastTime: %.2f",
+				pair.first->Get_InstanceName(), pair.second.iHitCount, pair.second.fLastHitTime);
+		}
+		ImGui::TreePop();
+	}
 }
 
 void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
@@ -90,20 +89,38 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
 		return;
+
 	if (!Try_Hit(pOther))
+	{
 		return;
+	}
 
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
-		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
-		
+		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage, pCharacter->Get_CharacterName());
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
+		if (pCharacter != nullptr)
+		{
+			pCharacter->OnDamage();
+			if ((m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD || m_tHitDesc.eDamageType == DAMAGE_TYPE::SWITCH || m_tHitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
+				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			{
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
+				{
+					pEnemy->Decrease_ComboCount();
+					pCharacter->Reserve_ComboAttack();
+				}
+			}
+		}
+
 		// Camera
-		//CameraManager()->AddShake(CamShakeType::HitCrit);
-		//CameraManager()->AddZoomPunch(0.8f, 0.045f, 0.15f);
-		//CameraManager()->AddImpact(CamShakeType::TapSoft, CamZoomType::TapSoft, 1.5f);
-		CameraManager()->AddImpact(0);
+		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+		{
+			CameraManager()->AddShakeAxis(CamShakeAxis::Roll, 1.f,  10.f, 0.025f, 0.f);
+			CameraManager()->AddShakeAxis(CamShakeAxis::Yaw,  0.4f, 10.f, 0.025f, 0.f);
+		}
 	}
 
 }
@@ -113,17 +130,38 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
 		return;
-	if (!Try_Hit(pOther))
-		return;
 
+	if (!Try_Hit(pOther))
+	{
+		return;
+	}
+	
 	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
 	if (nullptr != pEnemy)
 	{
-		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
-		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
+		auto pCharacter = dynamic_cast<CCharacter*>(Get_Component<CChild>()->Get_Parent());
+		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage, pCharacter->Get_CharacterName());
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(m_tHitDesc.fEnergyCharge, m_tHitDesc.fDecibelCharge);
+		if (pCharacter != nullptr)
+		{
+			pCharacter->OnDamage();
+			if ((m_tHitDesc.eDamageType == DAMAGE_TYPE::HARD || m_tHitDesc.eDamageType == DAMAGE_TYPE::SWITCH || m_tHitDesc.eDamageType == DAMAGE_TYPE::ULTIMATE)
+				&& pEnemy->IsGroggy() && pEnemy->Get_ComboCount() != 0)
+			{
+				if (pCharacter->Is_MainCharacter() && !pCharacter->Is_ReserveCombo())
+				{
+					pEnemy->Decrease_ComboCount();
+					pCharacter->Reserve_ComboAttack();
+				}
+			}
+		}
 
 		// Camera
-		CameraManager()->AddImpact(0);
+		if (pCharacter != nullptr && pCharacter->Is_MainCharacter())
+		{
+			CameraManager()->AddShakeAxis(CamShakeAxis::Roll, 1.f,  10.f, 0.025f, 0.f);
+			CameraManager()->AddShakeAxis(CamShakeAxis::Yaw,  0.4f, 10.f, 0.025f, 0.f);
+		}
 	}
 }
 
@@ -155,12 +193,10 @@ _bool CCharacterAttackCollider::Try_Hit(CGameObject* pTarget)
 		if (record.iHitCount >= 1)
 			return false;
 		break;
-
 	case HIT_TYPE::INTERVAL:
-		if (m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
+		if (record.iHitCount > 0 && m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
 			return false;
 		break;
-
 	case HIT_TYPE::COUNT:
 		if (record.iHitCount >= m_tHitDesc.iMaxCount)
 			return false;

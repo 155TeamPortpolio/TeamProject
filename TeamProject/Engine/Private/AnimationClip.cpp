@@ -11,7 +11,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 {
 	ifstream ifs(animationPath.c_str(), ios::binary);
 
-	if (!ifs.is_open()) {
+ 	if (!ifs.is_open()) {
 		string msg = "Anim Add Failed path: " + animationPath + "\n";
 		OutputDebugStringA(msg.c_str());
 		return E_FAIL;
@@ -20,7 +20,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	ANIMATION_CLIP_HEADER ClipHeader = {};
 	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_CLIP_HEADER));
 
-	m_ClipName = ClipHeader.ClipName;
+	m_ClipName = filesystem::path(animationPath).stem().string();
 	m_fDuration = ClipHeader.fDuration;
 	m_fTickPerSecond = ClipHeader.fTickPerSecond;
 	m_iNumChannels= ClipHeader.iNumChannels;
@@ -38,30 +38,42 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 {
 	m_Events = Events;
+	sort(m_Events.begin(), m_Events.end(),
+		[](const ANIM_EVENT& lhs, const ANIM_EVENT& rhs)
+		{
+			return lhs.EventTime < rhs.EventTime;
+		});
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
 	_float CurrentTrackPosition, _float dt,
 	_bool isLoop, _float fEndAt, _float fStartAt,
-	_bool* isWarpped, _bool* isAnimEnd, _float* outProgress,
+	_bool* isWarpped, _bool* isJumpedAnim,
+	_bool* isAnimEnd, _float* outProgress,
 	vector<EVENT_INST>& EventBus)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
 	_float EndTime = m_fDuration * fEndAt;
 	*isAnimEnd = false;
+	*isWarpped = false;
 
 	if (isLoop) {
-		*isWarpped = false;
 		if (RealTrackPosition > EndTime) {
 			_float StartTime = fStartAt * m_fDuration;
 			RealTrackPosition -= EndTime - StartTime;
 			*isWarpped = true;
+
+			if (fEndAt != 0.f)
+				*isJumpedAnim = true;
 		}
 	}
 	else {
 		if (RealTrackPosition > EndTime) {
 			RealTrackPosition = EndTime;
 			*isAnimEnd = true;
+
+			if (fEndAt != 0.f)
+				*isJumpedAnim = true;
 		}
 	}
 
@@ -124,11 +136,21 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 {
 	for (auto& Event : m_Events)
 	{
-		//이전 프레임엔 작았고 현재프레임엔 크면
-		if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
+		_bool bTrigger = false;
+
+		if (PrevTrackPos <= CurTrackPos) //평시 체크
 		{
-			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
+			if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
+				bTrigger = true;
 		}
+		else // 루프시 체크
+		{
+			if (Event.EventTime > PrevTrackPos || Event.EventTime <= CurTrackPos)
+				bTrigger = true;
+		}
+
+		if (bTrigger)
+			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
 	}
 }
 

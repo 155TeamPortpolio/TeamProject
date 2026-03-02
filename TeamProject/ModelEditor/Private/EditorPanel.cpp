@@ -24,6 +24,10 @@ void CEditorPanel::Render_GUI()
 		CreateObject(true);
 	};
 
+	if (ImGui::Button("MaterialEdit")) {
+		CreateAdjust();
+	};
+
 	ImGui::SeparatorText("ImportRules");
 	Render_Rules();
 	ImGui::End();
@@ -42,6 +46,14 @@ void CEditorPanel::CreateObject(_bool binary)
 	else
 		 Model = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_BinaryModel" }).Build("Binary Obj");
 
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(Model, { levelKey,"Model_Layer" });
+}
+
+void CEditorPanel::CreateAdjust()
+{
+	string levelKey = m_pContext->pSelectedLevel->Get_Key();
+	CGameObject* Model = nullptr;
+	Model = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_MaterialAdjust" }).Build("MatAdjuster Obj");
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(Model, { levelKey,"Model_Layer" });
 }
 

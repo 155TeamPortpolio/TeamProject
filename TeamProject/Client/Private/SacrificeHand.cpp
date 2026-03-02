@@ -1,14 +1,22 @@
-#include "pch.h"
+      #include "pch.h"
 #include "SacrificeHand.h"
 #include "GameInstance.h"
 #include "Texture.h"
+
+/* Object */
+#include "EffectContainer.h"
+#include "Hand_Core.h"
+#include "Hand_Sword.h"
 
 /* Component */
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "ObjectContainer.h"
 #include "Animator3D.h"
+#include "AudioSource.h"
+#include "BoneFollower.h"
 
 /* State */
 #include "StateMachine.h"
@@ -31,12 +39,7 @@ HRESULT CSacrificeHand::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CAnimator3D>();
-
-	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.model");
-	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.mat");
-	pResource->Add_ResourcePath("Monster_SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand_Meta.json");
-
+	Add_Component<CAudioSource>();
 	return S_OK;
 }
 
@@ -54,11 +57,34 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringerHand_Meta.json");
 
+	auto pAudio = Get_Component<CAudioSource>();
+	pAudio->SoundFolder(G_GlobalLevelKey, "../Bin/Resources/Zero/Enemy/Sacrifice/Sound");
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	if (FAILED(Create_Colliders()))
+	if (FAILED(Create_Children()))
 		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSacrificeHand::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("attack_range.json")
+			.Build("Attack_Range");
+
+		pEffect->Get_Component<CTransform>()->Scale(_float3(8.f, 8.f, 8.f));
+		pEffect->Stop();
+		pObjectContainer->Add_Child(pEffect, false);
+	}
 
 	return S_OK;
 }
@@ -66,18 +92,25 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 void CSacrificeHand::Awake()
 {
 	m_fDissolveTilling = 5.f;
+	m_vRimLightColor = _float3(1.f, 0.f, 0.f);
+	m_fRimLightPower = 0.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
 
-	for (const auto& instance : materialInstances)
+	for (_uint i = 0; i < materialInstances.size(); ++i)
 	{
-		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
-		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
+		/* Ä®¸¸ ¸²¶óÀÌÆ® ¸ÔÀ½ */
+		if (2 == i)
+			materialInstances[i]->Set_Param("fRimLightPower", { &m_fSwordRimLightPower,"float",sizeof(_float) });
+		else
+			materialInstances[i]->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+
+		materialInstances[i]->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		materialInstances[i]->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		materialInstances[i]->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		materialInstances[i]->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 }
 
@@ -87,14 +120,39 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	m_pStateMachine->Update(dt);
-
 	__super::Update(dt);
+
+	m_pStateMachine->Update(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Route_AnimEvent();
 }
 
 void CSacrificeHand::Late_Update(_float dt)
 {
+}
+
+void CSacrificeHand::Route_AnimEvent()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto bus = pAnimator->Get_EventBus();
+
+	for (EVENT_INST& instance : bus)
+	{
+		switch (instance.Type)
+		{
+		case CLIP_EVENT_TYPE::NOTIFY:
+			break;
+
+		case CLIP_EVENT_TYPE::SOUND:
+			Control_Sound(instance.Tag);
+			break;
+		}
+	}
+}
+
+void CSacrificeHand::Control_Sound(const string& event)
+{
+	Get_Component<CAudioSource>()->Slot(event).Volume(0.6f).Attribute3D(false).Loop(false).Play();
 }
 
 CSacrificeHand* CSacrificeHand::Create()
@@ -133,8 +191,6 @@ void CSacrificeHand::Free()
 void CSacrificeHand::Phase1Attack()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE1;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -142,8 +198,6 @@ void CSacrificeHand::Phase1Attack()
 void CSacrificeHand::Phase2Attack()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE2;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -151,8 +205,6 @@ void CSacrificeHand::Phase2Attack()
 void CSacrificeHand::OverDrive_Start()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_START;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -160,8 +212,6 @@ void CSacrificeHand::OverDrive_Start()
 void CSacrificeHand::OverDrive_Attack1()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK01;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -169,8 +219,6 @@ void CSacrificeHand::OverDrive_Attack1()
 void CSacrificeHand::OverDrive_Attack2()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK02;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -178,8 +226,6 @@ void CSacrificeHand::OverDrive_Attack2()
 void CSacrificeHand::OverDrive_Attack3()
 {
 	m_isAlive = true;
-	SetVisable(true);
-
 	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK03;
 	m_pStateMachine->Change_State("Attack");
 }
@@ -189,22 +235,28 @@ void CSacrificeHand::SetVisable(_bool isActive)
 	auto pModel = Get_Component<CSkeletalModel>();
 	_uint iMeshCount = pModel->Get_MeshCount();
 
-	if (isActive)
-	{
-		for (_uint i = 0; i < iMeshCount; ++i)
-			pModel->SetDrawable(i, true);
-	}
-	else
-	{
-		for (_uint i = 0; i < iMeshCount; ++i)
-			pModel->SetDrawable(i, false);
-	}
+	for (_uint i = 0; i < iMeshCount; ++i)
+		pModel->SetDrawable(i, isActive);
 }
 
 void CSacrificeHand::Idle()
 {
 	m_pStateMachine->Change_State("Idle");
 	SetVisable(false);
+}
+
+void CSacrificeHand::Active_Bubble()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = pObjectContainer->Find_ObjectByName("Sacrifice_Hand_Bubble");
+	static_cast<CEffectContainer*>(pBubble)->Play();
+}
+
+void CSacrificeHand::Deactive_Bubble()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pBubble = pObjectContainer->Find_ObjectByName("Sacrifice_Hand_Bubble");
+	static_cast<CEffectContainer*>(pBubble)->Stop();
 }
 
 void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)
@@ -214,7 +266,7 @@ void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 	m_fDissolveElapsedTime = 0.f;
 
 	if (DISSOLVE_STATE::APPEAR == state)
-		m_fDissolveProgress = 1.f;
+		m_fDissolveProgress = 1.1f;
 	else
 		m_fDissolveProgress = 0.f;
 }
@@ -254,6 +306,34 @@ void CSacrificeHand::Update_Dissolve(_float dt)
 	}
 }
 
+void CSacrificeHand::Active_HandCore()
+{
+	auto pHandCore = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Core");
+	if(pHandCore)
+		static_cast<CHand_Core*>(pHandCore)->Active_Hand();
+}
+
+void CSacrificeHand::Deactive_HandCore()
+{
+	auto pHandCore = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Core");
+	if (pHandCore)
+		static_cast<CHand_Core*>(pHandCore)->Deactive_Hand();
+}
+
+void CSacrificeHand::Active_Sword()
+{
+	auto pHandSword = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Sword");
+	if (pHandSword)
+		static_cast<CHand_Sword*>(pHandSword)->Active_Sword();
+}
+
+void CSacrificeHand::Deactive_Sword()
+{
+	auto pHandSword = Get_Component<CObjectContainer>()->Find_ObjectByName("Hand_Sword");
+	if (pHandSword)
+		static_cast<CHand_Sword*>(pHandSword)->Deactive_Sword();
+}
+
 HRESULT CSacrificeHand::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrificeHand>::Create();
@@ -285,42 +365,51 @@ HRESULT CSacrificeHand::Initialize_Transitions()
 	return S_OK;
 }
 
-HRESULT CSacrificeHand::Create_Colliders()
+HRESULT CSacrificeHand::Create_Children()
 {
 	auto pAnimator = Get_Component<CAnimator3D>();
+	auto pObjectContainer = Get_Component<CObjectContainer>();
 
-	/* Hand */
 	{
-		BATTLE_COLLIDER_DESC HandDesc{};
+		COLLIDER_DESC desc{};
+		desc.eType = COLLIDER_TYPE::SPHERE;
 
-		HandDesc.tagName = "Hand";
-		HandDesc.isAttachBone = true;
-		HandDesc.tagBone = "Eye01_A1";
-		HandDesc.pOwnerAnimator3D = pAnimator;
-		HandDesc.vAttackSize = _float3{ 3.f,3.f,3.f };
-		HandDesc.vTriggerSize = _float3{ 5.f,5.f,5.f };
+		auto pHandCore = Builder::Create_Object({ "Zero_Level","Proto_GameObject_HandCore" })
+			.Collider(desc)
+			.Build("Hand_Core");
 
-		if (FAILED(AttachBattleColliderObject(&HandDesc)))
-			return E_FAIL;
+		if (pHandCore)
+		{
+			pHandCore->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Eye01_A1");
+			pObjectContainer->Add_Child(pHandCore, false);
+		}
 	}
 
-	/* Hand Sword */
 	{
-		BATTLE_COLLIDER_DESC HandSwordDesc{};
+		COLLIDER_DESC desc{};
+		desc.eType = COLLIDER_TYPE::BOX;
 
-		HandSwordDesc.tagName = "Hand_Sword";
-		HandSwordDesc.isAttachBone = true;
-		HandSwordDesc.tagBone = "Ctr_HSword";
-		HandSwordDesc.pOwnerAnimator3D = pAnimator;
-		HandSwordDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
-		HandSwordDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
-		HandSwordDesc.vCenter = _float3{ 19.5f,0.f,0.f };
-		HandSwordDesc.vAttackSize = _float3{ 34.f,3.f,4.f };
-		HandSwordDesc.vTriggerSize = _float3{ 34.f,6.f,4.f };
+		auto pHandSword = Builder::Create_Object({ "Zero_Level","Proto_GameObject_HandSword" })
+			.Collider(desc)
+			.Build("Hand_Sword");
 
-		if (FAILED(AttachBattleColliderObject(&HandSwordDesc)))
-			return E_FAIL;
+		if (pHandSword)
+		{
+			pHandSword->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_HSword");
+			pObjectContainer->Add_Child(pHandSword, false);
+		}
 	}
 
+	{
+		auto pBubble = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_bubble.json")
+			.Build("Sacrifice_Hand_Bubble");
+		//pBubble->Stop();
+		pObjectContainer->Add_Child(pBubble, false);
+
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(-4.f, 0.f, 0.f));
+		pBubble->AttachBone(pAnimator, "Ctr_Main", offsetMatrix);
+	}
 	return S_OK;
 }

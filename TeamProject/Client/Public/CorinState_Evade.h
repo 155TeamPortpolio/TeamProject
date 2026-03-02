@@ -13,11 +13,12 @@ public:
     virtual void  Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_Evade* Create() { return new CCorinState_Evade(); }
+    static CCorinState_Evade* Create();
     virtual void Free() override { __super::Free(); }
 
 private:
     _bool m_bEvade = false;
+    _int  m_iDodgeCount = 0;
 };
 
 NS_END

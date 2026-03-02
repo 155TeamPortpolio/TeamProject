@@ -1,0 +1,501 @@
+{
+  "AnimPath": "../Bin/Resources/Zero/Enemy/Giant/Anim/",
+  "PreTransform": {
+    "_11": -0.009999999776482582,
+    "_12": 0.0,
+    "_13": 0.0,
+    "_14": 0.0,
+    "_21": 0.0,
+    "_22": 0.009999999776482582,
+    "_23": 0.0,
+    "_24": 0.0,
+    "_31": 0.0,
+    "_32": 0.0,
+    "_33": -0.009999999776482582,
+    "_34": 0.0,
+    "_41": 0.0,
+    "_42": 0.0,
+    "_43": 0.0,
+    "_44": 1.0
+  },
+  "Clips": [
+    {
+      "ClipTag": "Giant_Ani_Attack_01",
+      "Events": [
+        {
+          "EventTime": 0.05999999865889549,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack1_FULL.wav"
+        },
+        {
+          "EventTime": 0.7797271013259888,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithOutSound"
+        },
+        {
+          "EventTime": 1.1695905923843384,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_KnockOut"
+        },
+        {
+          "EventTime": 1.4863547086715698,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 1.4863547086715698,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_02",
+      "Events": [
+        {
+          "EventTime": 0.2199999988079071,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack2_FULL.wav"
+        },
+        {
+          "EventTime": 0.8999999761581421,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithOutSound"
+        },
+        {
+          "EventTime": 1.2288498878479004,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_Hard"
+        },
+        {
+          "EventTime": 1.3056529760360718,
+          "EventType": "Notify",
+          "EventTag": "ParryDisable"
+        },
+        {
+          "EventTime": 1.4464586973190308,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.7280702590942383,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
+          "EventTime": 1.8944768905639648,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 2.2016894817352295,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_Hard"
+        },
+        {
+          "EventTime": 2.4064977169036865,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 2.649707555770874,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
+          "EventTime": 2.867316484451294,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 3.1105263233184814,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_Hard"
+        },
+        {
+          "EventTime": 3.4561405181884766,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 3.7249510288238525,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
+          "EventTime": 3.916959047317505,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 4.352176666259766,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_Hard"
+        },
+        {
+          "EventTime": 4.670000076293945,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 4.672189712524414,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 5.005003452301025,
+          "EventType": "Notify",
+          "EventTag": "Skip"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_02_01",
+      "Events": [
+        {
+          "EventTime": 0.019999999552965164,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack2_1_FULL.wav"
+        },
+        {
+          "EventTime": 1.2553606033325195,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithOutSound"
+        },
+        {
+          "EventTime": 1.4346978664398193,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 1.6050682067871094,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.6100000143051147,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_02_Explode",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack2_Explode_FULL.wav"
+        },
+        {
+          "EventTime": 0.3844054639339447,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithOutSound"
+        },
+        {
+          "EventTime": 0.5653020739555359,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 0.9195581078529358,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 0.9195581078529358,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_03",
+      "Events": [
+        {
+          "EventTime": 1.0051982402801514,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithOutSound"
+        },
+        {
+          "EventTime": 1.392917513847351,
+          "EventType": "Notify",
+          "EventTag": "StartAttack3"
+        },
+        {
+          "EventTime": 1.5939570665359497,
+          "EventType": "Notify",
+          "EventTag": "ParryDisable"
+        },
+        {
+          "EventTime": 3.029954671859741,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 3.049999952316284,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_KnockOut"
+        },
+        {
+          "EventTime": 3.5756335258483887,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 3.5756335258483887,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack3_FULL.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_03_Hitwall",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_04",
+      "Events": [
+        {
+          "EventTime": 0.6299999952316284,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack_WithOutSound"
+        },
+        {
+          "EventTime": 1.030994176864624,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_R_Hard"
+        },
+        {
+          "EventTime": 1.265692114830017,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_R"
+        },
+        {
+          "EventTime": 1.626120924949646,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 1.9362574815750122,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 1.9362574815750122,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.019999999552965164,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack4_FULL.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_05",
+      "Events": [
+        {
+          "EventTime": 0.22923976182937622,
+          "EventType": "Notify",
+          "EventTag": "UnleashAttack"
+        },
+        {
+          "EventTime": 0.5812864899635315,
+          "EventType": "Notify",
+          "EventTag": "TurnOnAttackCol_L_KnockOut"
+        },
+        {
+          "EventTime": 0.949707567691803,
+          "EventType": "Notify",
+          "EventTag": "TurnOffAttackCol_L"
+        },
+        {
+          "EventTime": 0.949707567691803,
+          "EventType": "Notify",
+          "EventTag": "FinishAll"
+        },
+        {
+          "EventTime": 0.2199999988079071,
+          "EventType": "Sound",
+          "EventTag": "giant_Attack5.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_06_AttackBack",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_07",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_07_Jump",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Attack_07_Revenge",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Born",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "giant_Spawn.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Chaos",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Death_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Death_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Death_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Dodge",
+      "Events": [
+        {
+          "EventTime": 0.001,
+          "EventType": "Sound",
+          "EventTag": "giant_Evade.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_H_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_H_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_Parry_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_Parry_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Hit_Stay",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Ignite",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Ignite_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Run_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Run_loop",
+      "Events": [
+        {
+          "EventTime": 0.14000000059604645,
+          "EventType": "Sound",
+          "EventTag": "giant_Step.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_Run_Start",
+      "Events": [
+        {
+          "EventTime": 0.23000000417232513,
+          "EventType": "Sound",
+          "EventTag": "giant_Step.wav"
+        },
+        {
+          "EventTime": 1.25,
+          "EventType": "Sound",
+          "EventTag": "giant_Step.wav"
+        }
+      ]
+    },
+    {
+      "ClipTag": "Giant_Ani_SideStep_L",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_SideStep_R",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Down",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Left",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Right",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Stun_L_Front_Up",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Walk_B",
+      "Events": []
+    },
+    {
+      "ClipTag": "Giant_Ani_Walk_F",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_End",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_Loop",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_Start_Back",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Debuff_Stun_Start_Front",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Hit_Shake",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Idle",
+      "Events": []
+    },
+    {
+      "ClipTag": "Monster_Giant_Ani_Stun_Hit_Stay",
+      "Events": []
+    }
+  ]
+}

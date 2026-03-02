@@ -27,7 +27,25 @@
         1.0,
         1.0
     ],
+    "stencilMode": 0,
     "pass": "Opaque",
+    "colorTexKey": "empty.png",
+    "colorTexMode": 0,
+    "colorTexMix": 1.0,
+    "colorUVUse": 0,
+    "colorUVOffset": [
+        0.0,
+        0.0
+    ],
+    "colorUVScale": [
+        1.0,
+        1.0
+    ],
+    "colorUVAutoScroll": false,
+    "colorUVSpeed": [
+        0.0,
+        0.0
+    ],
     "animClips": [],
     "children": [
         {
@@ -59,7 +77,25 @@
                 0.0,
                 1.0
             ],
+            "stencilMode": 0,
             "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
+                0.0
+            ],
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [],
             "children": [],
             "typeTag": "Image",
@@ -92,9 +128,27 @@
                 0.0,
                 0.0,
                 0.0,
+                1.0
+            ],
+            "stencilMode": 0,
+            "pass": "Opaque",
+            "colorTexKey": "empty.png",
+            "colorTexMode": 0,
+            "colorTexMix": 1.0,
+            "colorUVUse": 0,
+            "colorUVOffset": [
+                0.0,
                 0.0
             ],
-            "pass": "Opaque",
+            "colorUVScale": [
+                1.0,
+                1.0
+            ],
+            "colorUVAutoScroll": false,
+            "colorUVSpeed": [
+                0.0,
+                0.0
+            ],
             "animClips": [
                 {
                     "duration": 0.5,
@@ -217,11 +271,30 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 1,
                     "pass": "UI_StencilWrite",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
                     "animClips": [],
                     "children": [],
                     "typeTag": "Mask",
-                    "maskTextureKey": "empty.png"
+                    "maskTextureKey": "empty.png",
+                    "maskThreshold": 0.10000000149011612
                 },
                 {
                     "alive": true,
@@ -252,7 +325,25 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 2,
                     "pass": "Opaque_StencilTest",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
                     "animClips": [],
                     "children": [],
                     "typeTag": "Image",
@@ -268,7 +359,7 @@
                             52.0
                         ],
                         "size": [
-                            402.6666564941406,
+                            237.3333282470703,
                             120.0
                         ],
                         "scale": [
@@ -287,11 +378,29 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
                     "animClips": [],
                     "children": [],
                     "typeTag": "Image",
-                    "textureTag": "Title_HollowLogo.png"
+                    "textureTag": "Title_CityLogo.png"
                 },
                 {
                     "alive": true,
@@ -303,8 +412,8 @@
                             200.0
                         ],
                         "size": [
-                            391.99993896484375,
-                            85.11998748779297
+                            0.0,
+                            0.0
                         ],
                         "scale": [
                             1.0,
@@ -322,7 +431,25 @@
                         0.7803921699523926,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
                     "animClips": [],
                     "children": [],
                     "typeTag": "Text",
@@ -341,7 +468,9 @@
                         "shear": [
                             0.0,
                             0.0
-                        ]
+                        ],
+                        "autoPos": true,
+                        "anchor": 5
                     }
                 },
                 {
@@ -373,7 +502,25 @@
                         1.0,
                         1.0
                     ],
+                    "stencilMode": 0,
                     "pass": "Opaque",
+                    "colorTexKey": "empty.png",
+                    "colorTexMode": 0,
+                    "colorTexMix": 1.0,
+                    "colorUVUse": 0,
+                    "colorUVOffset": [
+                        0.0,
+                        0.0
+                    ],
+                    "colorUVScale": [
+                        1.0,
+                        1.0
+                    ],
+                    "colorUVAutoScroll": false,
+                    "colorUVSpeed": [
+                        0.0,
+                        0.0
+                    ],
                     "animClips": [
                         {
                             "duration": 0.30000001192092896,
@@ -489,7 +636,25 @@
                                 1.0,
                                 1.0
                             ],
+                            "stencilMode": 0,
                             "pass": "Opaque",
+                            "colorTexKey": "empty.png",
+                            "colorTexMode": 0,
+                            "colorTexMix": 1.0,
+                            "colorUVUse": 0,
+                            "colorUVOffset": [
+                                0.0,
+                                0.0
+                            ],
+                            "colorUVScale": [
+                                1.0,
+                                1.0
+                            ],
+                            "colorUVAutoScroll": false,
+                            "colorUVSpeed": [
+                                0.0,
+                                0.0
+                            ],
                             "animClips": [],
                             "children": [],
                             "typeTag": "Image",
@@ -524,7 +689,25 @@
                                 1.0,
                                 1.0
                             ],
+                            "stencilMode": 0,
                             "pass": "SpriteAnimation",
+                            "colorTexKey": "empty.png",
+                            "colorTexMode": 0,
+                            "colorTexMix": 1.0,
+                            "colorUVUse": 0,
+                            "colorUVOffset": [
+                                0.0,
+                                0.0
+                            ],
+                            "colorUVScale": [
+                                1.0,
+                                1.0
+                            ],
+                            "colorUVAutoScroll": false,
+                            "colorUVSpeed": [
+                                0.0,
+                                0.0
+                            ],
                             "animClips": [],
                             "children": [],
                             "typeTag": "SpriteAnimation",
