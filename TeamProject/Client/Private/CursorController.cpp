@@ -49,7 +49,7 @@ void CCursorController::SetMouseLock(_bool lock)
         RECT rc = GetClientRectInScreen();
         ClipCursor(&rc);
 
-        //while (ShowCursor(FALSE) >= 0) {}
+        while (ShowCursor(FALSE) >= 0) {}
 
         POINT c = GetClientCenterInScreen();
         SetCursorPos(c.x, c.y);
@@ -57,7 +57,7 @@ void CCursorController::SetMouseLock(_bool lock)
     else
     {
         ClipCursor(nullptr);
-        //while (ShowCursor(TRUE) < 0) {}
+        while (ShowCursor(TRUE) < 0) {}
     }
 }
 

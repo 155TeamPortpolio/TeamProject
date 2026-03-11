@@ -580,9 +580,9 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	XMFLOAT3 corners[8];
 	worldAabb.GetCorners(corners);
 
-	const XMMATRIX projMatrix =
+	const XMMATRIX projMatrix = m_bSnapCam ? XMMATRIX(m_pSnapCam->Get_ProjMatrix()) :
 		XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
-	const XMMATRIX viewProjMatrix = XMMatrixMultiply(viewMatrix, projMatrix);
+	const XMMATRIX viewProjMatrix = XMMatrixMultiply(m_bSnapCam ? XMMATRIX(m_pSnapCam->Get_ViewMatrix()) : viewMatrix, projMatrix);
 
 	_float minX = (_float)viewportW;
 	_float minY = (_float)viewportH;
@@ -694,6 +694,12 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	outInput.padding = flags;
 
 	return true;
+}
+
+void CHiZ_Culling::Snap_Camera()
+{
+	m_bSnapCam = !m_bSnapCam;
+	m_pSnapCam = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ActiveCam();
 }
 
 

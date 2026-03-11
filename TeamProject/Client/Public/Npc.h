@@ -43,7 +43,8 @@ protected:
     wstring m_strName = TEXT("");
     wstring m_strSpeech = TEXT("¸»Ç³¼±");
     _float m_fCamFadeAlpha = 0.f;
-
+    
+    class CUI_Object* m_pNameIndicator = { nullptr };
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

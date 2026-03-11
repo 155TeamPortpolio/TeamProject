@@ -293,12 +293,20 @@ HRESULT CPipeLine::Write_SSAOKernelBuffer(ID3D11Device* pDevice)
 
 void CPipeLine::Update_Frustum()
 {
-	_matrix proj = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
-	_smatrix invView = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
+	_matrix proj;
+	_smatrix invView;
+
+	if (m_bSnapCam) {
+		proj = m_pSnapCam->Get_ProjMatrix();
+		invView = m_pSnapCam->Get_ViewMatrix().Invert();
+	}
+	else {
+		proj = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
+		invView = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
+	}
 
 	BoundingFrustum frustumView;
 	BoundingFrustum::CreateFromMatrix(frustumView, proj);
-
 	frustumView.Transform(m_Frustum, invView);
 }
 
@@ -315,6 +323,14 @@ void CPipeLine::Update_SkinnedCSM()
 void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
 {
 	m_pHiZ->Update_HiZ(pContext);
+}
+
+void CPipeLine::Snap_Camera()
+{
+	m_bSnapCam = !m_bSnapCam;
+	m_pSnapCam = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ActiveCam();
+	m_pHiZ->Snap_Camera();
+	
 }
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)

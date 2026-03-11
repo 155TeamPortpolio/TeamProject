@@ -112,6 +112,7 @@ public:
 
 public:
     vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
+    void Snap_Camera();
 
 #ifdef _USING_GUI
     void Render_GUI();
@@ -175,6 +176,10 @@ private:
     vector<OcclusionKey> m_cachedKeys;    // last read keys
 
     unordered_map<OcclusionKey, OcclusionHysteresisState, OcclusionKeyHash, OcclusionKeyEq> m_hysteresis;
+
+ private:
+     _bool m_bSnapCam = { false };
+     class CCamera* m_pSnapCam = { nullptr };
 public:
     static CHiZ_Culling* Create();
     void Free() override;

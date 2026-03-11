@@ -84,6 +84,7 @@ public:
 	void Update_StaticCSM();
 	void Update_SkinnedCSM();
 	void Update_HiZ(ID3D11DeviceContext* pContext);
+	void Snap_Camera();
 
 	HRESULT Begin_ObjectBuffer(ID3D11DeviceContext* pContext);
 	_uint Write_ObjectData(const _float4x4& worldMatrix);
@@ -121,6 +122,8 @@ public:
 
 
 private:
+	_bool m_bSnapCam = { false };
+	class CCamera* m_pSnapCam = { nullptr };
 
 private:
 	ID3D11Buffer* m_pDeviceFrameBuffer = { nullptr };

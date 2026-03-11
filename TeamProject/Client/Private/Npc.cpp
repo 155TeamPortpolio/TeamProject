@@ -103,6 +103,7 @@ HRESULT CNpc::Add_NameIndicator()
     if (!pNameIndicator)
         return E_FAIL;
 
+    m_pNameIndicator = pNameIndicator;
     UIManager()->Add_UIObject(pNameIndicator, LevelManager()->Get_NowLevelKey());
 
     return S_OK;
@@ -171,4 +172,5 @@ HRESULT CNpc::Add_InteractZone(_float4 vCenter, _float3 vOffset, _float3 vRotate
 void CNpc::Free()
 {
     __super::Free();
+    UIManager()->Remove_UIObject(m_pNameIndicator);
 }

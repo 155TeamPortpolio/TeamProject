@@ -141,6 +141,11 @@ void CRenderSystem::Update(_float dt)
 {
 	m_pForward->Update(dt);
 	m_pPost->Update(dt);
+
+	if (InputDevice()->Key_Tap(VK_CONTROL)) {
+		m_pPipeLine->Snap_Camera();
+
+	}
 }
 
 HRESULT CRenderSystem::Create_RenderTarget(const RenderTargetDesc& desc)

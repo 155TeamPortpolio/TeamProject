@@ -777,7 +777,7 @@ void CCharacterController::Set_SlopeLimit(_float fDegree)
 _vector CCharacterController::Get_FootPosition()
 {
 	if (!m_pController)
-		return _vector();
+		return { 1000,1000,1000 };
 
 	const PxExtendedVec3& pos = m_pController->getFootPosition();
 	return XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
