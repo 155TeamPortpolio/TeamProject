@@ -201,25 +201,20 @@ void CUI_GachaPage::Deactive_SelectedChannel()
 }
 
 void CUI_GachaPage::OnClick_Conversion()
-{
+{ 
+    _uint iDenny = {};
+    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
+
+    if (iDenny < 100000)
+        return;
+    
+    iDenny = (iDenny - 100000 <= 0) ? 0 : iDenny - 100000;
+    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
+
     UIDirector()->Hide_Mouse();
     UIDirector()->FadeOut_Screen(0.2f, [this]() {
         LevelManager()->Request_ChangeLevel("Gacha_Level", LEVEL_TRANS_DESC{ "Gacha_Level", false ,true });
         });
-
-    _uint iDenny = {};
-    RuntimeBucket().Int64.TryGet(PersistScope::SaveSlot, "Denny", iDenny);
-
-    //if (iDenny < 10000)
-    //{
-    //    MSG_BOX("µ· ºÎÁ·ÇÔ!");
-    //    return;
-    //} 
-    
-    iDenny = (iDenny - 10000 <= 0) ? 0 : iDenny - 10000;
-    RuntimeBucket().Int64.Set(PersistScope::SaveSlot, "Denny", iDenny);
-
-    //LevelManager()->Request_ChangeLevel("Gacha_Level", false);
 
     if (m_pIntro)
         m_pIntro->UI_DeActive();
