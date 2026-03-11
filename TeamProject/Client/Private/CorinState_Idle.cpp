@@ -15,7 +15,9 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
     pOwner->Get_StateMachine()->Set_Int("IdleEntryMode", 0);
 
     if (iEntryMode == 1)
-        pOwner->Get_StateMachine()->Set_Trigger("Evade");
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("ToEvade");
+    }
     else if (iEntryMode == 2)
     {
         pOwner->Set_Switch(CCharacter::SWITCH::PARRYAID);

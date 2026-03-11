@@ -15,7 +15,7 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 
     if (iEntryMode == 1)
     {
-        pOwner->Get_StateMachine()->Set_Trigger("Evade");
+        pOwner->Get_StateMachine()->Set_Trigger("ToEvade");
     }
     else if (iEntryMode == 2)
     {
