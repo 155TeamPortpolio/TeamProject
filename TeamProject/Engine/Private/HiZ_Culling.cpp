@@ -188,8 +188,8 @@ void CHiZ_Culling::Check_Resource()
 
 	if (m_pDepthSrv && m_pCopyShader && m_pReduceShader && m_pOcclusionShader)
 		m_isReady = true;
-
 }
+
 #ifdef _USING_GUI
 void CHiZ_Culling::Render_GUI()
 {
@@ -198,7 +198,7 @@ void CHiZ_Culling::Render_GUI()
 		ImGui::SetNextWindowPos(ImVec2(1200, 5));
 		if (ImGui::Begin("HiZ Occlusion",&isTabOpen))
 		{
-			ImGui::Text("Frustum In      : %u", m_stats.frustumIn);
+			ImGui::Text(u8"프러스텀      : %u", m_stats.frustumIn);
 			ImGui::Text("Tested (inputs) : %u", m_stats.tested);
 			ImGui::Text("Not Tested      : %u", m_stats.notTested);
 
@@ -210,14 +210,14 @@ void CHiZ_Culling::Render_GUI()
 
 			ImGui::Separator();
 
-			ImGui::Text("Result Out       : %u", m_stats.outResult);
+			ImGui::Text(u8"최종 결과       : %u", m_stats.outResult);
 
 			if (m_stats.frustumIn > 0)
 			{
 				float testedRatio = (float)m_stats.tested / (float)m_stats.frustumIn * 100.0f;
 				float culledRatio = (m_stats.tested > 0) ? (float)m_stats.culledByOcc / (float)m_stats.tested * 100.0f : 0.0f;
 				ImGui::Text("Tested Ratio     : %.1f%%", testedRatio);
-				ImGui::Text("Culled Ratio     : %.1f%% (of tested)", culledRatio);
+				ImGui::Text(u8"컬링 비율    : %.1f%% (of tested)", culledRatio);
 			}
 		}
 		ImGui::End();

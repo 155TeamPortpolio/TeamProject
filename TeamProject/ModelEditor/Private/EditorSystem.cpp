@@ -22,7 +22,9 @@ HRESULT CEditorSystem::Initialize()
 {
     m_CheckNameRules.emplace("proxy");
     m_CheckNameRules.emplace("dummy");
+    m_CheckNameRules.emplace("lod");
 
+    RenderSystem()->SetOn(false);
 	return S_OK;
 }
 

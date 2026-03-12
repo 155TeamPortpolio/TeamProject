@@ -56,11 +56,13 @@ void CBattleSystem::Update()
 	Update_BattleInfo();
 	CleanUp_Data();
 
-	if(InputDevice()->Key_Tap(VK_SHIFT))
+	if(InputDevice()->Key_Tap('L'))
 	{
-		m_pFXFlow->Start_Ultimate(2.6f);
+		HitDesc desc;
+		desc.fDamage = 70;
+		TakeAllDamage(desc, BATTLE_OBJ_TYPE::MONSTER);
 	}
-	if(InputDevice()->Key_Tap(VK_CONTROL))
+	if (InputDevice()->Key_Tap('K'))
 	{
 		AllKill();
 	}

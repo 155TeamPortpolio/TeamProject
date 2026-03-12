@@ -19,6 +19,7 @@ public:
     void    Update(_float dt)           override {}
     void    Late_Update(_float dt)      override {}
     void    Render_GUI()                override;
+    void IsMain(_bool main);
 
 private:
     void    ApplyRotation(_float dt);
@@ -32,6 +33,7 @@ private:
     _vector2   m_vRotDegTarget = {};
     Quaternion m_qCurRot = Quaternion::Identity;
     Quaternion m_qRotTarget = Quaternion::Identity;
+    _bool isMain = false;
 
 public:
     static CFreeCam* Create();

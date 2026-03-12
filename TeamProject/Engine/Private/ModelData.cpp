@@ -213,7 +213,7 @@ void CModelData::Render_GUI()
 		ImGui::SetNextWindowSize(ImVec2(520, 420), ImGuiCond_FirstUseEver);
 		if (ImGui::Begin("MaterialUsage", &isGui_MaterialStatsOpen, ImGuiWindowFlags_NoCollapse))
 		{
-			ImGui::Text("Mesh Count: %d", (int)m_Meshes.size());
+			ImGui::Text(u8"메쉬 개수: %d", (int)m_Meshes.size());
 			ImGui::Separator();
 
 			if (ImGui::Button("Refresh"))
@@ -223,8 +223,8 @@ void CModelData::Render_GUI()
 
 			if (ImGui::BeginTable("##MatUsageTable", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY))
 			{
-				ImGui::TableSetupColumn("MaterialIndex", ImGuiTableColumnFlags_WidthFixed, 120.f);
-				ImGui::TableSetupColumn("Meshes", ImGuiTableColumnFlags_WidthFixed, 70.f);
+				ImGui::TableSetupColumn(u8"머티리얼", ImGuiTableColumnFlags_WidthFixed, 120.f);
+				ImGui::TableSetupColumn(u8"중복 메쉬 개수", ImGuiTableColumnFlags_WidthFixed, 70.f);
 				ImGui::TableSetupColumn("Mesh Indices", ImGuiTableColumnFlags_WidthStretch);
 				ImGui::TableHeadersRow();
 
@@ -264,6 +264,24 @@ void CModelData::Render_GUI()
 		ImGui::End();
 	}
 }
+
+_uint CModelData::Get_MostMaterial()
+{
+	if (m_cachedMaterialUsage.empty())
+		return 0;
+
+	auto maxIter = std::max_element(
+		m_cachedMaterialUsage.begin(),
+		m_cachedMaterialUsage.end(),
+		[](const MaterialUsageRow& leftRow, const MaterialUsageRow& rightRow)
+		{
+			return leftRow.meshCount < rightRow.meshCount;
+		});
+
+	return maxIter->materialIndex;
+}
+
+
 
 vector<MaterialUsageRow> CModelData::BuildMaterialUsageTable(_bool includeMeshIndices) const
 {

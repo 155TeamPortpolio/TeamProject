@@ -11,8 +11,12 @@ int Col;
 int Row;
 
 float2 UVTiling;
-
-float g_Time;
+float g_Time = 0.f;
+float g_ScatterDistance = 35.f;
+float g_RotationStrength = 0.9f;
+float g_UpBias = 0.3f;
+uint SubMeshScatterIndex = 0;
+float3 SubMeshLocalCenter = float3(0.f, 0.f, 0.f);
 
 struct VS_IN
 {
@@ -40,7 +44,7 @@ VS_OUT VS_MAIN(VS_IN In)
     VS_OUT Out;
     
     matrix matWV, matWVP;
-    
+
     float3 worldPos = mul(float4(In.vPosition, 1.f), ObjectBufferArray[TransformIndex].Transform).xyz;
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
@@ -55,6 +59,113 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vWorldPos = worldPos; 
     return Out;
 }
+float Hash01(uint seed)
+{
+    seed ^= 2747636419u;
+    seed *= 2654435769u;
+    seed ^= seed >> 16;
+    seed *= 2654435769u;
+    seed ^= seed >> 16;
+    seed *= 2654435769u;
+    return frac((float) seed / 4294967296.0f);
+}
+
+float HashSigned(uint seed)
+{
+    return Hash01(seed) * 2.f - 1.f;
+}
+
+float HashScalar(float seedValue)
+{
+    return frac(sin(seedValue * 12.9898f) * 43758.5453f);
+}
+
+float3 MakeScatterDirection(uint scatterIndex, float upBias)
+{
+    float angle = Hash01(scatterIndex * 17u + 13u) * 6.2831853f;
+
+    float2 horizontalDirection = float2(cos(angle), sin(angle));
+
+    float horizontalScaleX = lerp(0.7f, 1.3f, Hash01(scatterIndex * 29u + 5u));
+    float horizontalScaleZ = lerp(0.7f, 1.3f, Hash01(scatterIndex * 43u + 11u));
+
+    float verticalValue = HashSigned(scatterIndex * 31u + 7u) * 0.35f + upBias;
+
+    float3 scatterDirection = float3(
+        horizontalDirection.x * horizontalScaleX,
+        verticalValue,
+        horizontalDirection.y * horizontalScaleZ
+    );
+
+    return normalize(scatterDirection);
+}
+
+float3 RotateAroundAxis(float3 inputVector, float3 rotationAxis, float rotationAngle)
+{
+    float sinValue = sin(rotationAngle);
+    float cosValue = cos(rotationAngle);
+
+    return inputVector * cosValue
+         + cross(rotationAxis, inputVector) * sinValue
+         + rotationAxis * dot(rotationAxis, inputVector) * (1.f - cosValue);
+}
+
+VS_OUT VS_NewMAIN(VS_IN In)
+{
+    VS_OUT Out;
+
+    matrix objectTransform = ObjectBufferArray[TransformIndex].Transform;
+
+    float scatterTime = saturate(g_Time);
+
+    float3 localPosition = In.vPosition.xyz;
+    float3 localNormal = In.vNormal.xyz;
+    float3 localTangent = In.vTangent.xyz;
+
+    float3 scatterDirectionLocal = MakeScatterDirection(SubMeshScatterIndex, g_UpBias);
+
+    float3 rotationAxis = float3(
+        HashSigned(SubMeshScatterIndex * 53u + 17u),
+        HashSigned(SubMeshScatterIndex * 97u + 31u),
+        HashSigned(SubMeshScatterIndex * 193u + 67u)
+    );
+    rotationAxis = normalize(rotationAxis);
+
+    float rotationRandomScale = 0.7f + Hash01(SubMeshScatterIndex * 71u + 23u) * 0.6f;
+    float rotationAngle = g_RotationStrength * scatterTime * rotationRandomScale;
+
+    float distanceRandomScale = 0.8f + Hash01(SubMeshScatterIndex * 89u + 41u) * 0.4f;
+    float scatterDistance = g_ScatterDistance * scatterTime * distanceRandomScale;
+
+    float3 centeredLocalPosition = localPosition - SubMeshLocalCenter;
+    float3 rotatedLocalPosition = RotateAroundAxis(centeredLocalPosition, rotationAxis, rotationAngle);
+    float3 finalLocalPosition = rotatedLocalPosition + SubMeshLocalCenter;
+
+    float3 rotatedLocalNormal = RotateAroundAxis(localNormal, rotationAxis, rotationAngle);
+    float3 rotatedLocalTangent = RotateAroundAxis(localTangent, rotationAxis, rotationAngle);
+
+    float3 worldScatterOffset = mul(float4(scatterDirectionLocal * scatterDistance, 0.f), objectTransform).xyz;
+    float3 worldPosition = mul(float4(finalLocalPosition, 1.f), objectTransform).xyz + worldScatterOffset;
+
+    float4 viewPosition = mul(float4(worldPosition, 1.f), matView);
+    float4 projectionPosition = mul(viewPosition, matProjection);
+
+    float3 worldNormal = normalize(mul(float4(rotatedLocalNormal, 0.f), objectTransform).xyz);
+    float3 worldTangent = normalize(mul(float4(rotatedLocalTangent, 0.f), objectTransform).xyz);
+    float3 worldBinormal = normalize(cross(worldNormal, worldTangent));
+
+    Out.vPosition = projectionPosition;
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = float4(worldNormal, 0.f);
+    Out.vProjPos = projectionPosition;
+    Out.vTangent = worldTangent;
+    Out.vBinormal = worldBinormal;
+    Out.viewZ = viewPosition.z;
+    Out.vWorldPos = worldPosition;
+
+    return Out;
+}
+
 
 VS_OUT VS_ORTHOMAIN(VS_IN In)
 {
@@ -410,7 +521,16 @@ void PS_MAIN_SHADOW(PS_IN_SHDOW In)
 
 technique11 DefaultTechnique
 {
-    pass Opaque
+    pass testOpaque
+    {
+        SetRasterizerState(RS_NoCull);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_NewMAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    } 
+   pass Opaque
     {
         SetRasterizerState(RS_NoCull);
         SetDepthStencilState(DSS_Default, 0);

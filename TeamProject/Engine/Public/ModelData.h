@@ -58,6 +58,8 @@ public:
 	virtual void Render_GUI();
 #pragma endregion 
 
+public :
+	_uint Get_MostMaterial();
 protected:
 	class CSkeleton* m_pSkeleton = { nullptr };
 	vector<class CMesh*> m_Meshes;

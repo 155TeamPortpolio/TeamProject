@@ -41,10 +41,17 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 void CEditModel::Awake()
 {
 	Add_Component<CDebugRender>();
+	m_pTransform->Scale({ 0.01f,0.01f,0.01f });  
 }
 
 void CEditModel::Priority_Update(_float dt)
 {
+	if (InputDevice()->Key_Tap('T')) {
+		Test();
+	}
+
+	if (isTesting)
+		time += dt;
 }
 
 void CEditModel::Update(_float dt)
@@ -330,6 +337,70 @@ HRESULT CEditModel::ExportBoneInfo()
 	
 
 	return S_OK;
+}
+static _float3 Make_SubMesh_ExplodeDir(int index)
+{
+	const float angle = index * 2.39996323f; // golden angle 느낌
+	const float x = cosf(angle);
+	const float z = sinf(angle);
+	const float y = 0.35f + 0.15f * sinf(index * 1.713f);
+
+	_float3 dir = { x, y, z };
+
+	const float len = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+	if (len > 0.0001f)
+	{
+		dir.x /= len;
+		dir.y /= len;
+		dir.z /= len;
+	}
+
+	return dir;
+}
+
+void CEditModel::Test()
+{
+	auto* material = Get_Component<CMaterial>();
+	if (!material)
+		return;
+
+	auto& instances = material->Get_MaterialInstances();
+
+	if (isTesting)
+	{
+		isTesting = false;
+		time = 0.f;
+
+		for (auto& instance : instances)
+		{
+			instance->Reset_Pass();
+		}
+		m_subMeshExplodeParams.clear();
+	}
+	else
+	{
+		isTesting = true;
+		time = 0.f;
+
+		m_subMeshExplodeParams.resize(instances.size());
+
+		for (size_t index = 0; index < instances.size(); ++index)
+		{
+			auto& instance = instances[index];
+			auto& param = m_subMeshExplodeParams[index];
+
+			param.explodeStrength = 35.f;               // 전체 세기
+			param.explodeDelay = index * 0.03f;         // 순차 폭발 느낌
+			param.explodeDir = Make_SubMesh_ExplodeDir(static_cast<int>(index));
+
+			instance->Set_Param("g_Time", { &time, "float", sizeof(float) });
+			instance->Set_Param("g_ExplodeStrength", { &param.explodeStrength, "float", sizeof(float) });
+			instance->Set_Param("g_ExplodeDelay", { &param.explodeDelay, "float", sizeof(float) });
+			instance->Set_Param("g_ExplodeDir", { &param.explodeDir, "float3", sizeof(_float3) });
+
+			instance->Override_Pass("testOpaque");
+		}
+	}
 }
 
 void CEditModel::Clear_Models()

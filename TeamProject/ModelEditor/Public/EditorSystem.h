@@ -22,8 +22,12 @@ public:
    void Push_NamingRules(string MeshName);
    void Pop_NamingRules(string MeshName);
 
+public:
+    _bool Get_Island() { return m_islandParse;}
+    void Set_Island(_bool island) { m_islandParse = island; }
 private:
     unordered_set<string> m_CheckNameRules;
+    _bool m_islandParse = {};
 
 public:
     virtual void Free() override;

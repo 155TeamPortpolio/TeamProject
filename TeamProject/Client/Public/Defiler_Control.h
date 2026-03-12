@@ -106,6 +106,7 @@ inline void RemoveFlag(TraceFlag& value, TraceFlag flag)
 
 typedef struct tagDefilerBlackBoard
 {
+    _bool testTrace = { false };
     _bool MiasmaPhase = {};
     _bool ForceIDLE = {};
     _bool isChainParry = {};

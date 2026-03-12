@@ -43,6 +43,9 @@ HRESULT CEditCamera::Initialize(INIT_DESC* pArg)
 
 void CEditCamera::Priority_Update(_float dt)
 {
+	if (isMain == false)
+		return;
+
 	_vector LookDir = m_pTransform->Dir(STATE::LOOK);
 	_vector UpDir = m_pTransform->Dir(STATE::UP);
 	_vector RightDir = m_pTransform->Dir(STATE::RIGHT);
@@ -114,6 +117,11 @@ void CEditCamera::Render_GUI()
 	}
 
 	ImGui::EndChild();
+}
+
+void CEditCamera::IsMain(_bool main)
+{
+	isMain = main;
 }
 
 

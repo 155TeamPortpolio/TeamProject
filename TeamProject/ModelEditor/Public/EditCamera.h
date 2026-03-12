@@ -19,11 +19,16 @@ public:
 public:
     void Render_GUI() override;
 
+public:
+    void IsMain(_bool main);
+
 private:
     _float m_fSpeed = { 10.f };
     _float m_fMouseSensitive = { 10.f };
 
     _float2 m_vCurrentRotate = {};
+    _bool isMain = false;
+
 public:
     static CEditCamera* Create();
     virtual void Free() override;

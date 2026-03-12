@@ -64,6 +64,11 @@ void CEditorPanel::Render_Rules()
 	ImGui::Separator();
 	ImGui::Text("RuleSet");
 
+	_bool isIsland = CEditorSystem::GetInstance()->Get_Island();
+
+	if (ImGui::Checkbox("Island", &isIsland)) {
+		CEditorSystem::GetInstance()->Set_Island(isIsland);
+	}
 	// 1) 입력 + Set 버튼을 양쪽으로 벌리기
 	const float btnW = 60.0f; // "Set" 버튼 폭
 	const float spacing = ImGui::GetStyle().ItemSpacing.x;

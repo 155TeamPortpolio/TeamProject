@@ -32,6 +32,7 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 		blackBoard.patternTransition.push_back({ "Attack01_02",0.19f,1.f });
 		break;
 	}
+
 	case 1 :
 	{
 		blackBoard.patternTransition.push_back({ "Attack03",0.f,1.f });//내리찍
@@ -126,11 +127,16 @@ void CDefilerState_Attack::Build_Pattern(CDefiler* pOwner, _int Type)
 	}
 	case 14:
 	{
-		// 제현 전용
-		blackBoard.patternTransition.push_back({"Attack07", 0.f, 1.f});//미야즈마
+		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "Attack01_02",0.f,1.f });
 		break;
 	}
-
+	case 15:
+	{
+		blackBoard.patternTransition.push_back({ "Attack01_01",0.f,1.f });
+		blackBoard.patternTransition.push_back({ "Attack01_02",0.f,1.f });
+		break;
+	}
 	default:
 		break;
 	}
@@ -289,7 +295,12 @@ void CDefilerState_Attack_01_01_P2::Enter(CDefiler* pOwner)
 {
 
 	DEFILER_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	blackBoard.TraceType_OnTarget();
+	if (blackBoard.testTrace) {
+		blackBoard.TraceType_OnlyAnim();
+	}
+	else {
+		blackBoard.TraceType_OnTarget();
+	}
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_IsoldetheDefiler_Ani_Attack_01_01_P2")
 		.StartAt(blackBoard.reservedPattern.animStartProgress)

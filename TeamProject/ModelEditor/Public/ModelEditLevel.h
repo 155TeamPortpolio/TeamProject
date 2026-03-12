@@ -6,6 +6,7 @@ class CGameInstance;
 class CUI_Object;
 class IProtoService;
 class IObjectService;
+class CGameObject;
 NS_END
 
 NS_BEGIN(ModelEdit)
@@ -28,6 +29,8 @@ public:
 private:
     CGameInstance* m_pGameInstance = { nullptr };
 
+    vector<CGameObject*> m_Cameras;
+    _uint nowCam = {};
 public:
     static CModelEditLevel* Create(const string& LevelKey);
     virtual void Free() override;

@@ -15,7 +15,7 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
     unordered_set<string> loadedMeshNames;
     loadedMeshNames.reserve(meshNum);
 
-    constexpr float epsilon = 30;
+    constexpr float epsilon =20;
 
     for (size_t meshIndex = 0; meshIndex < meshNum; ++meshIndex)
     {
@@ -24,15 +24,14 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 
         if (!CEditorSystem::GetInstance()->CheckNamingRule(meshName))
             continue;
-
         CAIMesh* pSourceMesh = CAIMesh::Create(_eType, srcMesh, static_cast<CAISkeleton*>(m_pSkeleton));
         if (nullptr == pSourceMesh)
             return E_FAIL;
 
         const vector<_uint>& sourceIndices = pSourceMesh->Get_Indices();
         _uint sourceVertexCount = pSourceMesh->Get_VertexCount();
-
-        if (sourceIndices.empty() || (sourceIndices.size() % 3 != 0) || sourceVertexCount == 0 || _eType == MESH_TYPE::ANIM)
+        _bool isIsland = CEditorSystem::GetInstance()->Get_Island();
+        if (sourceIndices.empty() || (sourceIndices.size() % 3 != 0) || sourceVertexCount == 0 || _eType == MESH_TYPE::ANIM || !isIsland)
         {
             m_Meshes.push_back(pSourceMesh);
             continue;

@@ -180,6 +180,7 @@ void CDefiler::Render_GUI()
 {
 #ifdef _USING_GUI
 	ImGui::Text("ComboCount : %d", m_tStatus.iPlayerComboCount);
+	ImGui::Checkbox("ForceNoTrace", &m_BlackBoard.testTrace);
 	Client::DefilerDebugGUI::Render(m_BlackBoard);
 #endif
 	__super::Render_GUI();

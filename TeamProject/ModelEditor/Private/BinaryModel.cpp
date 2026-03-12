@@ -44,6 +44,13 @@ void CBinaryModel::Awake()
 
 void CBinaryModel::Priority_Update(_float dt)
 {
+	if (InputDevice()->Key_Tap('T')) {
+		Test();
+	}
+
+	if (isTesting) {
+		time += dt;
+	}
 }
 
 void CBinaryModel::Update(_float dt)
@@ -58,6 +65,10 @@ void CBinaryModel::Late_Update(_float dt)
 
 void CBinaryModel::Render_GUI()
 {
+	bool alive = Is_Alive();
+	if (ImGui::Checkbox("Alive", &alive))
+		Set_Alive(alive);
+
 	if(ImGui::Button("Load Model")) {
 		string path = Helper::OpenFile_Dialogue();
 		filesystem::path file(path);
@@ -111,4 +122,72 @@ void CBinaryModel::Free()
 	__super::Free();
 	//m_Importer.FreeScene();
 	//m_pAIScene = nullptr;
+}
+
+
+static _float3 Make_SubMesh_ExplodeDir(int index)
+{
+	const float angle = index * 2.39996323f; // golden angle ´À³¦
+	const float x = cosf(angle);
+	const float z = sinf(angle);
+	const float y = 0.35f + 0.15f * sinf(index * 1.713f);
+
+	_float3 dir = { x, y, z };
+
+	const float len = sqrtf(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+	if (len > 0.0001f)
+	{
+		dir.x /= len;
+		dir.y /= len;
+		dir.z /= len;
+	}
+
+	return dir;
+}
+
+void CBinaryModel::Test()
+{
+	auto* materialComponent = Get_Component<CMaterial>();
+	if (!materialComponent)
+		return;
+
+	auto& materialInstances = materialComponent->Get_MaterialInstances();
+
+	if (isTesting)
+	{
+		isTesting = false;
+		time = 0.f;
+
+		for (auto& materialInstance : materialInstances)
+			materialInstance->Reset_Pass();
+
+		m_subMeshScatterIndices.clear();
+		m_subMeshLocalCenters.clear();
+	}
+	else
+	{
+		isTesting = true;
+		time = 0.f;
+
+		m_subMeshScatterIndices.resize(materialInstances.size());
+		m_subMeshLocalCenters.resize(materialInstances.size());
+
+		for (size_t subsetIndex = 0; subsetIndex < materialInstances.size(); ++subsetIndex)
+		{
+			m_upBias = Helper::Get_Random_Float(-0.2f, 0.2f);
+
+			auto& materialInstance = materialInstances[subsetIndex];
+			m_subMeshScatterIndices[subsetIndex] = static_cast<uint32_t>(subsetIndex);
+			m_subMeshLocalCenters[subsetIndex] = Get_Component<CStaticModel>()->Get_MeshBoundingBox(subsetIndex).GetHalfPoint();
+			materialInstance->Set_Param("g_Time", { &time, "float", sizeof(float) });
+			materialInstance->Set_Param("g_ScatterDistance", { &m_scatterDistance, "float", sizeof(float) });
+			materialInstance->Set_Param("g_RotationStrength", { &m_rotationStrength, "float", sizeof(float) });
+			materialInstance->Set_Param("g_UpBias", { &m_upBias, "float", sizeof(float) });
+
+			materialInstance->Set_Param("SubMeshScatterIndex", { &m_subMeshScatterIndices[subsetIndex], "uint", sizeof(uint32_t) });
+			materialInstance->Set_Param("SubMeshLocalCenter", { &m_subMeshLocalCenters[subsetIndex], "float3", sizeof(_float3) });
+
+			materialInstance->Override_Pass("testOpaque");
+		}
+	}
 }

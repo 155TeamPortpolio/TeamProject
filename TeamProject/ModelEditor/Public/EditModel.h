@@ -36,10 +36,24 @@ private:
     _bool HasBones();
     HRESULT ExportBoneInfo();
 
+    void Test();
 private:
     const aiScene*      m_pAIScene = { nullptr };
     Assimp::Importer	m_Importer = {};
     MODEL_IMPORT_MODE m_eMode = { MODEL_IMPORT_MODE::AUTO };
+
+    _bool isTesting = {};
+    _float time = {};
+    struct SUBMESH_EXPLODE_PARAM
+    {
+        float explodeStrength = 1.f;
+        float explodeDelay = 0.f;
+        _float3 explodeDir = { 0.f, 1.f, 0.f };
+        float padding = 0.f;
+    };
+
+    vector<SUBMESH_EXPLODE_PARAM> m_subMeshExplodeParams;
+
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

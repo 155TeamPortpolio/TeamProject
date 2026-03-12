@@ -322,6 +322,8 @@ void CPipeLine::Update_SkinnedCSM()
 
 void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
 {
+	if (m_bSnapCam)
+		return;
 	m_pHiZ->Update_HiZ(pContext);
 }
 
@@ -665,6 +667,9 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 
 vector<OPAQUE_PACKET> CPipeLine::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
 {
+	if (m_bSnapCam)
+		return frustums;
+
 	return m_pHiZ->OcculsionCulling(frustums);
 }
 

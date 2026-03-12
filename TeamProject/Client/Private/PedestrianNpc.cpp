@@ -49,6 +49,12 @@ void CPedestrianNpc::Awake()
 
 void CPedestrianNpc::Priority_Update(_float dt)
 {
+    if (InputDevice()->Key_Tap(VK_F7))
+    {
+        modelPreset.RandomizeModel(true, Get_Component<CSkeletalModel>(), Get_Component<CMaterial>(), Get_Component<CAnimator3D>());
+        colorPreset.Randomize_Natural(m_ObjectID);
+        colorPreset.LinkMaterial(Get_Component<CMaterial>());
+    }
     auto pPipeLine = RenderSystem()->Get_Pipeline();
     if (pPipeLine) {
         auto pModel = Get_Component<CModel>();

@@ -18,6 +18,16 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 
 void CFreeCam::Priority_Update(_float dt)
 {
+    if (!isMain) {
+        if (InputDevice()->Key_Down(VK_RIGHT)) {
+            m_pTransform->Rotation({ 0,dt,0 });
+        }
+        else if (InputDevice()->Key_Down(VK_LEFT)) {
+            m_pTransform->Rotation({ 0,-dt,0 });
+        }
+
+        return;
+    }
     auto input = GAME->Get_InputDev();
 
     if (input->Mouse_Down(MOUSE_BTN::RB))
@@ -122,4 +132,9 @@ void CFreeCam::Render_GUI()
 
         ImGui::PopID();
     }
+}
+
+void CFreeCam::IsMain(_bool main)
+{
+    isMain = main;
 }
