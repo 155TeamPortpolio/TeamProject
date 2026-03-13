@@ -198,7 +198,7 @@ void CHiZ_Culling::Render_GUI()
 		ImGui::SetNextWindowPos(ImVec2(1200, 5));
 		if (ImGui::Begin("HiZ Occlusion",&isTabOpen))
 		{
-			ImGui::Text(u8"프러스텀      : %u", m_stats.frustumIn);
+			ImGui::Text("Frustum Culled      : %u", m_stats.frustumIn);
 			ImGui::Text("Tested (inputs) : %u", m_stats.tested);
 			ImGui::Text("Not Tested      : %u", m_stats.notTested);
 
@@ -210,14 +210,14 @@ void CHiZ_Culling::Render_GUI()
 
 			ImGui::Separator();
 
-			ImGui::Text(u8"최종 결과       : %u", m_stats.outResult);
+			ImGui::Text("Occlusion Culled     : % u", m_stats.outResult);
 
 			if (m_stats.frustumIn > 0)
 			{
 				float testedRatio = (float)m_stats.tested / (float)m_stats.frustumIn * 100.0f;
 				float culledRatio = (m_stats.tested > 0) ? (float)m_stats.culledByOcc / (float)m_stats.tested * 100.0f : 0.0f;
 				ImGui::Text("Tested Ratio     : %.1f%%", testedRatio);
-				ImGui::Text(u8"컬링 비율    : %.1f%% (of tested)", culledRatio);
+				ImGui::Text("Culled Ratio    : %.1f%% (of tested)", culledRatio);
 			}
 		}
 		ImGui::End();
@@ -460,6 +460,7 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 		const _uint flag = m_cachedVisibleFlags[cachedIndex];
 		const _bool gpuVisible = (flag == 1);
+		const _bool effectiveVisible = Opposite ? !gpuVisible : gpuVisible;
 
 		auto stateIter = m_hysteresis.find(key);
 		if (stateIter == m_hysteresis.end())
@@ -469,7 +470,7 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 		touched.emplace(key);
 
-		if (gpuVisible)
+		if (effectiveVisible)
 		{
 			state.hiddenStreak = 0;
 			if (state.visibleStreak < 255) ++state.visibleStreak;
@@ -700,6 +701,12 @@ void CHiZ_Culling::Snap_Camera()
 {
 	m_bSnapCam = !m_bSnapCam;
 	m_pSnapCam = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ActiveCam();
+}
+
+void CHiZ_Culling::Do_Opposite()
+{
+	Opposite = !Opposite;
+	m_hysteresis.clear();
 }
 
 

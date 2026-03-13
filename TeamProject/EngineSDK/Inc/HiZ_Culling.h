@@ -113,6 +113,7 @@ public:
 public:
     vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
     void Snap_Camera();
+    void Do_Opposite();
 
 #ifdef _USING_GUI
     void Render_GUI();
@@ -180,6 +181,8 @@ private:
  private:
      _bool m_bSnapCam = { false };
      class CCamera* m_pSnapCam = { nullptr };
+
+     _bool Opposite = { false };
 public:
     static CHiZ_Culling* Create();
     void Free() override;

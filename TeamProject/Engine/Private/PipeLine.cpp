@@ -335,6 +335,11 @@ void CPipeLine::Snap_Camera()
 	
 }
 
+void CPipeLine::Opposite_Cull()
+{
+	m_pHiZ->Do_Opposite();
+}
+
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
 

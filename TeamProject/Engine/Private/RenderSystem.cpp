@@ -144,7 +144,9 @@ void CRenderSystem::Update(_float dt)
 
 	if (InputDevice()->Key_Tap(VK_CONTROL)) {
 		m_pPipeLine->Snap_Camera();
-
+	}
+	if (InputDevice()->Key_Tap('O')) {
+		m_pPipeLine->Opposite_Cull();
 	}
 }
 

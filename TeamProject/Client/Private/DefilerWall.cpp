@@ -50,10 +50,12 @@ HRESULT CDefilerWall::Initialize(INIT_DESC* pArg)
 	m_pTransform->Set_Look(desc->vLook);
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	auto Texture =ResourceManager()->Load_Texture(G_GlobalLevelKey, "Eff_AZX_010.png");
 	for (const auto& instance : materialInstances)
 	{
 		instance->Override_Pass("Opaque");
 		instance->Set_Param("fTime",{ &m_ElapsedTime,"float",  sizeof(_float) });
+		instance->Set_Param("DissolveTexture",{ Texture->Get_SRV(),"Texture2D",  0});
 	}
 
 	m_pTransform->Scale({ 0,0,0 });
