@@ -222,18 +222,6 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
-	//if (InputDevice()->Key_Tap(VK_F4))
-	//{
-	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	//}
-	if (InputDevice()->Key_Tap(VK_F5))
-	{
-		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-			.Build("AttackSign");
-		
-		ObjectManager()->Add_Object(pAttackSign, { "Test_Level","Effect_Layer" });
-	}
-	
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
 		CBattleSystem::GetInstance()->LockBattleTime(true);
@@ -241,13 +229,13 @@ void CTestLevel::Update()
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
 		CBattleSystem::GetInstance()->LockBattleTime(false);
 	}	
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
-	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
-	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugPoacher", { -0.18f, 0.f, 7.f });
-	//}
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Claymore", { -0.18f, 0.f,5.f });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Cyclops", { -0.18f, 0.f, 7.f });
+	}
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F8)) {
 	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Defiler", { -0.18f, 0.f,5.f });
 	//}
