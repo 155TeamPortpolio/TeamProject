@@ -170,22 +170,28 @@ void CGUISystem::GUI_Begin()
 
 void CGUISystem::Render_GUI()
 {
-	GUI_Begin();
-	Render_Frame();
-	if (!m_bActiveGUI) { GUI_End();  return; };
-	for (auto& panel : m_Panels) {
-		if (panel->Get_Active())
-			panel->Render_GUI();
-	}
+	static _bool used = false;
+	if (InputDevice()->Key_Tap('M'))
+		used = used ? false : true;
+	if (!used)
+		return;
 
-	Render_CollisionBtn();
+	GUI_Begin();
+	//Render_Frame();
+	//if (!m_bActiveGUI) { GUI_End();  return; };
+	//for (auto& panel : m_Panels) {
+	//	if (panel->Get_Active())
+	//		panel->Render_GUI();
+	//}
+
+	//Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
 	//g_Profiler.RenderImGui();
 #endif // _USING_GUI
 
-	Render_DebugBtn();
-	Render_TimeScaleBtn();
+	//Render_DebugBtn();
+	//Render_TimeScaleBtn();
 	GUI_End();
 }
 

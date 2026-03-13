@@ -141,141 +141,52 @@ ID3D11DepthStencilView* CTarget_Manager::Get_MTR_DSV(const string& strMRTTag)
 #ifdef _USING_GUI
 void CTarget_Manager::Render_GUI()
 {
-	static _bool TabOpen = {};
-	static _bool CustomTargetOpen = {};
-	ImGui::SetNextWindowPos(ImVec2(600, 5), ImGuiCond_Always);
-	ImGui::Begin("##Render Target", nullptr,
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+	const string topTargetName = "Target_DiffuseEffectAcc";
+	const string bottomTargetName = "Target_Revealage";
+
+	ImVec2 imageSize(800.f, 450.f);
+	float panelW = 800.f;
+	float panelH = 900.f;
+
+	// 메인 뷰포트의 오른쪽 끝에 정확히 붙임
+	float panelX = viewport->Pos.x;
+	float panelY = viewport->Pos.y;
+
+	ImGui::SetNextWindowPos(ImVec2(panelX, panelY), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(panelW, panelH), ImGuiCond_Always);
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.f);
+
+	ImGui::Begin("##RenderTargetView", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_AlwaysAutoResize);
+		ImGuiWindowFlags_NoScrollbar);
 
-	if (ImGui::Button("Render Target"))
-		TabOpen = !TabOpen;
+	auto DrawTargetByName = [&](const string& targetName)
+		{
+			auto iter = m_EngineRenderTargets.find(targetName);
+			if (iter == m_EngineRenderTargets.end() || !iter->second || !iter->second->Get_SRV())
+			{
+				ImGui::Dummy(imageSize);
+				return;
+			}
+
+			ImGui::Image((ImTextureID)iter->second->Get_SRV(), imageSize);
+		};
+
+	DrawTargetByName(topTargetName);
+	DrawTargetByName(bottomTargetName);
+
 	ImGui::End();
 
-	if (TabOpen) {
-		if (ImGui::Begin("RenderTargets", &TabOpen))
-		{
-			ImGui::Text("Filter"); ImGui::SameLine();
-			ImGui::InputText("##FilterText", &Filter);
-
-
-			for (auto& rtPair : m_EngineRenderTargets)
-			{
-				const string& tag = rtPair.first;
-				CRenderTarget* pRT = rtPair.second;
-				if (!pRT) continue;
-				if (!TargetFilter(tag, Filter))
-					continue;
-
-				if (ImGui::TreeNode(tag.c_str()))
-				{
-					ID3D11ShaderResourceView* pSRV = pRT->Get_SRV();
-					if (pSRV)
-					{
-						ImGui::Image((ImTextureID)pSRV,
-							ImVec2(1280 / 5, 720 / 5));
-
-						if (ImGui::IsItemHovered())
-						{
-							ImGui::BeginTooltip();
-
-							// 원본 렌더타겟 크기 가져오기
-							auto desc = *pRT->Get_ViewPort();
-							float w = (float)desc.Width;
-							float h = (float)desc.Height;
-
-							// 너무 크면 화면 넘치니까 스케일 다운
-							float maxPreview = 600.f;
-							float scale = 1.f;
-
-							if (w > maxPreview || h > maxPreview)
-							{
-								scale = maxPreview / max(w, h);
-							}
-
-							ImVec2 previewSize(w * scale, h * scale);
-
-							// 확대 이미지 출력
-							ImGui::Image((ImTextureID)pSRV, previewSize);
-
-							ImGui::EndTooltip();
-						}
-					}
-					ImGui::TreePop();
-				}
-			}
-		}
-		ImGui::End();
-	}
-
-	ImGui::SetNextWindowPos(ImVec2(750, 5), ImGuiCond_Always);
-	ImGui::Begin("##Custom Render TargetView", nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_NoBackground |
-		ImGuiWindowFlags_AlwaysAutoResize);
-
-	if (ImGui::Button("Custom RenderTarget"))
-		CustomTargetOpen = !CustomTargetOpen;
-	ImGui::End();
-
-	if (CustomTargetOpen) {
-		if (ImGui::Begin("CustomRenderTargets", &CustomTargetOpen))
-		{
-			for (auto& rtPair : m_CustomTargets)
-			{
-				const string& tag = rtPair.first;
-				CRenderTarget* pRT = rtPair.second;
-				if (!pRT) continue;
-
-				if (ImGui::TreeNode(tag.c_str()))
-				{
-					ID3D11ShaderResourceView* pSRV = pRT->Get_SRV();
-					if (pSRV)
-					{
-						ImGui::Image((ImTextureID)pSRV,
-							ImVec2(1280 / 5, 1280 / 5));
-
-						if (ImGui::IsItemHovered())
-						{
-							ImGui::BeginTooltip();
-
-							// 원본 렌더타겟 크기 가져오기
-							auto desc = *pRT->Get_ViewPort();
-							float w = (float)desc.Width;
-							float h = (float)desc.Height;
-
-							// 너무 크면 화면 넘치니까 스케일 다운
-							float maxPreview = 600.f;
-							float scale = 1.f;
-
-							if (w > maxPreview || h > maxPreview)
-							{
-								scale = maxPreview / max(w, h);
-							}
-
-							ImVec2 previewSize(w * scale, h * scale);
-
-							// 확대 이미지 출력
-							ImGui::Image((ImTextureID)pSRV, previewSize);
-
-							ImGui::EndTooltip();
-						}
-					}
-					ImGui::TreePop();
-				}
-			}
-		}
-		ImGui::End();
-	}
+	ImGui::PopStyleVar(3);
 }
 
 _bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)

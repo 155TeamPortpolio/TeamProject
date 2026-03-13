@@ -2,6 +2,9 @@
 #include "TestLevel.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
+#include "PostRenderer.h"
+#include "PostProcessCommand.h"
 
 #include "TestMap.h"
 #include "TestObject.h"
@@ -127,7 +130,6 @@ HRESULT CTestLevel::Awake()
 	auto pCloud = ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Cloud));
 	pCloud->Set_Alive(true);
 
-
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
@@ -154,10 +156,14 @@ HRESULT CTestLevel::Awake()
 	LIGHT_DESC lightDesc = {};
 	lightDesc.vLightPosition = _float4(0.f, 50.f, 0.f, 1.f);
 	lightDesc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	lightDesc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f); 
+	lightDesc.vLightAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f); 
 	lightDesc.vLightSpecular = _float4(0.f, 0.f, 0.f, 1.f);
 	lightDesc.fLightIntensity = 1.f;
 	pShadowCam->Get_Component<CLight>()->Set_Desc(lightDesc, LIGHT_TYPE::DIRECTIONAL);
+
+	RenderSystem()->GetPostRenderer()
+		->GetCommand<CFogCommand>()
+		->SetEnable(false);
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());

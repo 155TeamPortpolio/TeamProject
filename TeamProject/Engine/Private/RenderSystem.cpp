@@ -226,7 +226,7 @@ _uint CRenderSystem::DrawBatches(RenderPass* pPass, CRenderer* pRenderer)
 void CRenderSystem::Render_GUI()
 {
 	m_pTargetManager->Render_GUI();
-	m_pPipeLine->Render_GUI();
+	//m_pPipeLine->Render_GUI();
 }
 #endif // _USING_GUI
 
