@@ -43,10 +43,14 @@ private:
 
 	/* Value */
 	_float3		m_vSpawnPos = {};
-
+	_bool		m_isDirty = { false };
+	
 	/* Alarm*/
 	_bool		m_isSpawnFailed = { false };
 	_float2		m_vSpawnFailedTime = { 3.f, 0.f };
+	_bool		m_isUseSpawnDelay = { false };
+	_bool		m_isSpawnWithDelay = { false };
+	_float2		m_vSpawnDelayTime = { 3.f, 0.f };
 
 public:
 	static CMonsterSpawnConsole* Create(GUI_CONTEXT* pContext);

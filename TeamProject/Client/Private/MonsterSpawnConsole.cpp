@@ -23,6 +23,16 @@ HRESULT CMonsterSpawnConsole::Initialize()
 
 void CMonsterSpawnConsole::Update_Panel(_float dt)
 {
+	CheckCoolTime(dt);
+
+	if (m_isDirty)
+	{
+		if (m_tagSelectedKey.empty() || m_tagSelectedProtoTag.empty())
+			m_isSpawnFailed = true;
+
+		BattleSystem()->SpawnMosnter(m_tagSelectedProtoTag, m_vSpawnPos);
+		m_isDirty = false;
+	}
 }
 
 void CMonsterSpawnConsole::Render_GUI()
@@ -161,11 +171,24 @@ HRESULT CMonsterSpawnConsole::LoadMonsterTableData(const string& csvpath)
 
 void CMonsterSpawnConsole::CheckCoolTime(_float dt)
 {
-	if (m_isSpawnFailed) {
+	if (m_isSpawnFailed) 
+	{
 		m_vSpawnFailedTime.y += dt;
-		if (m_vSpawnFailedTime.x < m_vSpawnFailedTime.y) {
+		if (m_vSpawnFailedTime.x < m_vSpawnFailedTime.y) 
+		{
 			m_vSpawnFailedTime.y = 0.f;
 			m_isSpawnFailed = false;
+		}
+	}
+
+	if (m_isSpawnWithDelay) 
+	{
+		m_vSpawnDelayTime.y += dt;
+		if (m_vSpawnDelayTime.x < m_vSpawnDelayTime.y) 
+		{
+			m_vSpawnDelayTime.y = 0.f;
+			m_isSpawnWithDelay = false;
+			m_isDirty = true;
 		}
 	}
 }
@@ -181,10 +204,10 @@ void CMonsterSpawnConsole::Render_GUI_Contents()
 	ImGui::Spacing();
 	if (ImGui::Button("Spawn Monster"))
 	{
-		if (m_tagSelectedKey.empty() || m_tagSelectedProtoTag.empty())
-			m_isSpawnFailed = true;
-
-		BattleSystem()->SpawnMosnter(m_tagSelectedProtoTag, m_vSpawnPos);
+		if (m_isUseSpawnDelay)
+			m_isSpawnWithDelay = true;
+		else
+			m_isDirty = true;
 	}
 
 	if (true == m_isSpawnFailed)
@@ -192,9 +215,6 @@ void CMonsterSpawnConsole::Render_GUI_Contents()
 		ImGui::SameLine(0.f, 20.f);
 		ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Faild Spawn Monster");
 	}
-
-
-
 
 	ImGui::PopID();
 }
@@ -263,7 +283,10 @@ void CMonsterSpawnConsole::RenderGuiSetValue()
 		m_pBattleSystem->SetUseInspector(isUseInspector);
 	}
 
-}
+	ImGui::SeparatorText("Set Spawn Delay");
+	ImGui::Checkbox("Use Spawn Delay", &m_isUseSpawnDelay);
+	ImGui::DragFloat("Delay Time##DelayTime", &m_vSpawnDelayTime.x, 0.1f);
+} 
 
 void CMonsterSpawnConsole::RenderGuiSpawnMonster()
 {
