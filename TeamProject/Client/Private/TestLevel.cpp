@@ -223,12 +223,12 @@ void CTestLevel::Update()
 	CBattleSystem::GetInstance()->Update();
 
 	// [`] 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
-		CBattleSystem::GetInstance()->LockBattleTime(true);
-	}	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
-		CBattleSystem::GetInstance()->LockBattleTime(false);
-	}	
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+	//	CBattleSystem::GetInstance()->LockBattleTime(true);
+	//}	
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+	//	CBattleSystem::GetInstance()->LockBattleTime(false);
+	//}	
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Claymore", { -0.18f, 0.f,5.f });
 	}
