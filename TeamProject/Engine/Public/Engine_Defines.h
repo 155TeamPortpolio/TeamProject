@@ -104,7 +104,7 @@ using namespace Engine;
 
 #pragma warning(disable :4251) //맵 컨테이너 경고 무시
 
-//#define _USING_GUI
+#define _USING_GUI
 
 
 #ifdef _DEBUG
