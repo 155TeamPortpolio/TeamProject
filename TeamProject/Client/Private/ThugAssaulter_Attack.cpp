@@ -46,7 +46,7 @@ void CThugAssaulter_Attack::Enter(CThugAssaulter* pOwner)
 		else if (targetinginfo.fDistance <= hysteriesis.fComboExit)
 			iAttackPatternIndex = Helper::Get_Random_Int(3, 4);
 	}
-		iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
+		//iAttackPatternIndex = Helper::Get_Random_Int(1, 4);
 	AttackFromIndex(iAttackPatternIndex);
 	//pOwner->SetOnAttack(true);
 }

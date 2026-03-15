@@ -79,7 +79,7 @@ void CMeleeJaeger_Attack::Enter(CMeleeJaeger* pOwner)
 		}
 		AttackFromIndex(iAttackPatternIndex);
 	}
-
+	pOwner->CaptureRotateToDir(pOwner->GetTargetingInfo().vDirToTarget);
 }
 
 void CMeleeJaeger_Attack::Update(CMeleeJaeger* pOwner, _float dt)

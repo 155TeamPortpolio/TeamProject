@@ -137,17 +137,17 @@ void CGUISystem::Set_Bone(_int boneIndex)
 
 void CGUISystem::Render_Frame()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	ImGui::SetNextWindowPos(ImVec2(300, 5), ImGuiCond_Always);
-	ImGui::Begin("FPSWindow", nullptr,
-		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoResize |
-		ImGuiWindowFlags_NoMove |
-		ImGuiWindowFlags_NoScrollbar |
-		ImGuiWindowFlags_NoSavedSettings |
-		ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
-	ImGui::End();
+	//ImGuiIO& io = ImGui::GetIO();
+	//ImGui::SetNextWindowPos(ImVec2(300, 5), ImGuiCond_Always);
+	//ImGui::Begin("FPSWindow", nullptr,
+	//	ImGuiWindowFlags_NoTitleBar |
+	//	ImGuiWindowFlags_NoResize |
+	//	ImGuiWindowFlags_NoMove |
+	//	ImGuiWindowFlags_NoScrollbar |
+	//	ImGuiWindowFlags_NoSavedSettings |
+	//	ImGuiWindowFlags_AlwaysAutoResize);
+	//ImGui::Text("FPS: %d", (int)ImGui::GetIO().Framerate);
+	//ImGui::End();
 }
 
 void CGUISystem::Adjust_Alpha(_float dt)

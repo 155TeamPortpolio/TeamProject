@@ -215,27 +215,31 @@ void CGiant_Attack::DecideAttackPattern(CGiant* pOwner)
 			iAttackPatternIndex = pOwner->GetAttackHistoryFront();
 			while (iAttackPatternIndex == pOwner->GetAttackHistoryFront())
 			{
-				_int i = Helper::Get_Random_Int(1, 4);
+				// 돌진 영상촬영으로 잠깐 뺌
+				_int i = Helper::Get_Random_Int(1, 3);
 				switch (i)
 				{
 				case 1:
 					iAttackPatternIndex = ATTACK::Attack2_Explode;
 					break;
 				case 2:
-					iAttackPatternIndex = ATTACK::Attack3;
-					break;
-				case 3:
 					iAttackPatternIndex = ATTACK::Attack4;
 					break;
-				case 4:
+				case 3:
 					iAttackPatternIndex = ATTACK::Attack5;
+					break;
+				case 4:
+					iAttackPatternIndex = ATTACK::Attack3;
 					break;
 				}
 			}
 		}
 		else if (targetinginfo.fDistance <= hysteriesis.fComboExit)			// 장거리 공격(도약 및 돌진)
 		{
-			iAttackPatternIndex = pOwner->GetAttackHistoryFront();
+			// 돌진 영상촬영으로 잠깐 뺌
+			iAttackPatternIndex = ATTACK::Attack2_1;
+
+			/*iAttackPatternIndex = pOwner->GetAttackHistoryFront();
 			while (iAttackPatternIndex == pOwner->GetAttackHistoryFront())
 			{
 				_int i = Helper::Get_Random_Int(1, 2);
@@ -248,7 +252,7 @@ void CGiant_Attack::DecideAttackPattern(CGiant* pOwner)
 					iAttackPatternIndex = ATTACK::Attack3;
 					break;
 				}
-			}
+			}*/
 		}
 	}
 	AttackFromIndex(pOwner, iAttackPatternIndex);

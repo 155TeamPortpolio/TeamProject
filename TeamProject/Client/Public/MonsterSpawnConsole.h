@@ -42,7 +42,7 @@ private:
 	string							m_tagSelectedProtoTag = "";
 
 	/* Value */
-	_float3		m_vSpawnPos = {};
+	_float3		m_vSpawnPos = {-0.18f, 0.f, 1.59f};
 	_bool		m_isDirty = { false };
 	
 	/* Alarm*/

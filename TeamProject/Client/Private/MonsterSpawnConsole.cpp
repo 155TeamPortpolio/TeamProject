@@ -286,6 +286,7 @@ void CMonsterSpawnConsole::RenderGuiSetValue()
 	ImGui::SeparatorText("Set Spawn Delay");
 	ImGui::Checkbox("Use Spawn Delay", &m_isUseSpawnDelay);
 	ImGui::DragFloat("Delay Time##DelayTime", &m_vSpawnDelayTime.x, 0.1f);
+	ImGui::Text("Now Delay time : %.2f", m_vSpawnDelayTime.y);
 } 
 
 void CMonsterSpawnConsole::RenderGuiSpawnMonster()

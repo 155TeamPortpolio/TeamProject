@@ -56,14 +56,14 @@ void CBattleSystem::Update()
 	Update_BattleInfo();
 	CleanUp_Data();
 
-	if(InputDevice()->Key_Tap(VK_SHIFT))
-	{
-		m_pFXFlow->Start_Ultimate(2.6f);
-	}
-	if(InputDevice()->Key_Tap(VK_CONTROL))
-	{
-		AllKill();
-	}
+	//if(InputDevice()->Key_Tap(VK_SHIFT))
+	//{
+	//	m_pFXFlow->Start_Ultimate(2.6f);
+	//}
+	//if(InputDevice()->Key_Tap(VK_CONTROL))
+	//{
+	//	AllKill();
+	//}
 }
 
 

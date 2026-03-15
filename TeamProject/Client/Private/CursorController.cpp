@@ -36,12 +36,11 @@ POINT CCursorController::GetClientCenterInScreen() const
 
     POINT c{};
     c.x = (rc.left + rc.right) / 2;
-    c.y = (rc.top + rc.bottom) / 2;
     return c;
 }
 
 void CCursorController::SetMouseLock(_bool lock)
-{
+{   
     m_isMouseLocked = lock;
 
     if (lock)

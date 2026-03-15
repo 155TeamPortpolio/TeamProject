@@ -157,7 +157,7 @@ void CEnemyNormal::GUI_DebugButton()
 			Get_Component<CCharacterController>()->Set_Position(XMVectorSet(-0.18f, 2.f, 1.59f, 1.f));
 
 		if (ImGui::Button(u8"그로기 수치 증가##DebugButton"))
-			m_tStatus.iGroggyValue += 30;
+			m_tStatus.iGroggyValue = 99.9f;
 
 		if (ImGui::Button("Hit##DebugButton"))
 			TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);

@@ -134,6 +134,10 @@ void CThugBulkyEnforcer::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+
+	if (ImGui::Button(u8"원점 이동##DebugButton"))
+		Get_Component<CCharacterController>()->Set_Position(XMVectorSet(-0.18f, 2.f, 1.59f, 1.f));
+
 	if (ImGui::Button(u8"그로기 수치 증가##DebugButton"))
 		m_tStatus.iGroggyValue += 30;
 
@@ -693,7 +697,7 @@ HRESULT CThugBulkyEnforcer::Initialize_Effects()
 HRESULT CThugBulkyEnforcer::Ready_Rules()
 {
 	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
-	m_vIdleTime = { 0.2f, 0.f };
+	m_vIdleTime = { 0.1f, 0.f };
 
 	// Target 감지 범위 (default = 5.f)
 	//m_fDetectedRange = 5.f;
