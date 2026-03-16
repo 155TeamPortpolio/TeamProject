@@ -205,7 +205,7 @@ void CMapToolGui::Render_GUI()
 
 void CMapToolGui::RakeResources()
 {
-    string openpath = "../Bin/Resources/Model/";
+    string openpath = "../../Client/Bin/Resources/Zero/Map/";
 
     HelperMT::EnsureDirectoryExists(openpath);
 

@@ -39,6 +39,9 @@ HRESULT CBattleObject::Initialize(INIT_DESC* pArg)
 
 	Get_Component<CCollider>()->Set_MapToolMode(true);
 
+	_float3 vScale = { 0.5f,0.5f, 0.5f };
+	m_pTransform->Scale(vScale);
+
 	BATTLE_INIT_DESC* pDesc = static_cast<BATTLE_INIT_DESC*>(pArg);
 	m_iIndex = pDesc->iIndex;
 	m_isDirtyName = true;

@@ -29,6 +29,10 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 
 void CFreeCam::Priority_Update(_float dt)
 {
+    if (GUISystem()->UsingUI())
+        return;
+
+
     if (InputDevice()->Mouse_Down(MOUSE_BTN::RB))
     {
         m_vRotDegTarget.x += InputDevice()->Mouse_DeltaX() * m_fSensitivity;
